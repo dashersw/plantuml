@@ -1,19 +1,19 @@
 /* ========================================================================
- * Plantuml : a free UML diagram generator
+ * PlantUML : a free UML diagram generator
  * ========================================================================
  *
  * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
  *
  * Project Info:  http://plantuml.sourceforge.net
  * 
- * This file is part of Plantuml.
+ * This file is part of PlantUML.
  *
- * Plantuml is free software; you can redistribute it and/or modify it
+ * PlantUML is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Plantuml distributed in the hope that it will be useful, but
+ * PlantUML distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.

@@ -1,19 +1,19 @@
 /* ========================================================================
- * Plantuml : a free UML diagram generator
+ * PlantUML : a free UML diagram generator
  * ========================================================================
  *
  * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
  *
  * Project Info:  http://plantuml.sourceforge.net
  * 
- * This file is part of Plantuml.
+ * This file is part of PlantUML.
  *
- * Plantuml is free software; you can redistribute it and/or modify it
+ * PlantUML is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Plantuml distributed in the hope that it will be useful, but
+ * PlantUML distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
@@ -72,7 +72,7 @@ public class CucaPngMaker {
 	}
 
 	public List<File> createPng(File pngFile, String... dotStrings) throws IOException, InterruptedException {
-		final DotMaker dotMaker = new DotMaker(diagram, dotStrings);
+		final DotMaker dotMaker = createDotMaker(dotStrings);
 		File tmpFile = null;
 		File actorFile = null;
 		final Map<Entity, File> imageFiles = createImages();
@@ -91,6 +91,10 @@ public class CucaPngMaker {
 			}
 		}
 		return Arrays.asList(pngFile);
+	}
+
+	protected DotMaker createDotMaker(String... dotStrings) {
+		return new DotMaker(diagram, dotStrings);
 	}
 
 	private Map<Entity, File> createImages() throws IOException {
@@ -147,5 +151,9 @@ public class CucaPngMaker {
 		ImageIO.write(im, "png", result);
 		return result;
 
+	}
+
+	protected CucaDiagram getDiagram() {
+		return diagram;
 	}
 }

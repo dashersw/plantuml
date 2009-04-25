@@ -1,19 +1,19 @@
 /* ========================================================================
- * Plantuml : a free UML diagram generator
+ * PlantUML : a free UML diagram generator
  * ========================================================================
  *
  * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
  *
  * Project Info:  http://plantuml.sourceforge.net
  * 
- * This file is part of Plantuml.
+ * This file is part of PlantUML.
  *
- * Plantuml is free software; you can redistribute it and/or modify it
+ * PlantUML is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Plantuml distributed in the hope that it will be useful, but
+ * PlantUML distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
@@ -32,8 +32,11 @@
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
@@ -65,6 +68,19 @@ public class DotMaker {
 
 	public void generateFile(final File out, File actorFile, Map<Entity, File> images) throws IOException {
 
+		final PrintWriter pw = initPrintWriter(out);
+
+		this.actorFile = actorFile;
+		this.images = images;
+
+		printEntities(pw, diagram.entities().values());
+		printLinks(pw, diagram.getLinks());
+
+		pw.println("}");
+		pw.close();
+	}
+
+	protected PrintWriter initPrintWriter(final File out) throws FileNotFoundException {
 		final PrintWriter pw = new PrintWriter(out);
 
 		pw.println("digraph unix {");
@@ -73,22 +89,17 @@ public class DotMaker {
 				pw.println(s);
 			}
 		}
-
-		this.actorFile = actorFile;
-		this.images = images;
-
-		printEntities(pw);
-		printLinks(pw);
-
-		pw.println("}");
-		pw.close();
+		return pw;
 	}
 
 	private File actorFile;
 	private Map<Entity, File> images;
 
-	private void printLinks(PrintWriter pw) {
-		for (Link link : diagram.getLinks()) {
+	protected void printLinks(PrintWriter pw, List<Link> links) {
+
+		//Map<Entity, Integer> branchesDeparture = new HashMap<Entity, Integer>();
+
+		for (Link link : links) {
 			String decoration = "[color=" + RED + ",";
 			if (link.getLabel() != null) {
 				decoration += "label=\"" + link.getLabel() + "\",";
@@ -100,6 +111,21 @@ public class DotMaker {
 				decoration += "headlabel=\"" + link.getQualifier2() + "\",";
 			}
 			decoration += getSpecificDecoration(link.getType());
+
+//			if (link.getEntity1().getType() == EntityType.BRANCH) {
+//				Integer pos = branchesDeparture.get(link.getEntity1());
+//				if (pos == null) {
+//					pos = 0;
+//				}
+//				final String s = Arrays.asList("e", "w", "s").get(pos);
+//				decoration += ",tailport="+s;
+//				pos++;
+//				branchesDeparture.put(link.getEntity1(), pos);
+//			}
+//			if (link.getEntity2().getType() == EntityType.BRANCH) {
+//				decoration += ",headport=n";
+//			}
+
 			final int len = link.getLenght();
 			final String lenString = len >= 3 ? ",minlen=" + (len - 1) : "";
 			pw
@@ -127,7 +153,7 @@ public class DotMaker {
 		} else if (link == LinkType.ASSOCIED) {
 			return "arrowtail=none,arrowhead=none";
 		} else if (link == LinkType.ASSOCIED_DASHED) {
-			//return "arrowtail=none,arrowhead=none";
+			// return "arrowtail=none,arrowhead=none";
 			return "arrowtail=none,arrowhead=none,style=dashed";
 		} else if (link == LinkType.COMPOSITION_INV) {
 			return "dir=back,arrowtail=diamond,arrowhead=none";
@@ -145,8 +171,8 @@ public class DotMaker {
 		throw new IllegalArgumentException(link.toString());
 	}
 
-	private void printEntities(PrintWriter pw) {
-		for (Entity entity : diagram.entities().values()) {
+	protected void printEntities(PrintWriter pw, Collection<Entity> entities) {
+		for (Entity entity : entities) {
 			final EntityType type = entity.getType();
 			final String label = getLabel(entity);
 			if (type == EntityType.CLASS) {
@@ -173,7 +199,8 @@ public class DotMaker {
 				}
 				final String absolutePath = file.getAbsolutePath().replace('/', '\\');
 				pw.println(entity.getUid() + " [margin=0,pad=0,label=\"\",shape=none,image=\"" + absolutePath + "\"];");
-				//pw.println(entity.getUid() + " [margin=\"0,0\",shape=box," + label + "];");
+				// pw.println(entity.getUid() + " [margin=\"0,0\",shape=box," +
+				// label + "];");
 			} else if (type == EntityType.ACTIVITY) {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=\"rounded,filled\",shape=octagon," + label + "];");
@@ -230,7 +257,9 @@ public class DotMaker {
 		final String absolutePath = file.getAbsolutePath().replace('/', '\\');
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
-		sb.append("<TR BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><TD BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><IMG SRC=\"" + absolutePath + "\"/></TD></TR>");
+		sb
+				.append("<TR BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><TD BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><IMG SRC=\""
+						+ absolutePath + "\"/></TD></TR>");
 		sb.append("</TABLE>>");
 		return sb.toString();
 
@@ -289,6 +318,10 @@ public class DotMaker {
 		s = s.replace("<", "&lt;");
 		s = s.replace(">", "&gt;");
 		return s;
+	}
+
+	protected CucaDiagram getDiagram() {
+		return diagram;
 	}
 
 }

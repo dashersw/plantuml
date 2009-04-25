@@ -1,19 +1,19 @@
 /* ========================================================================
- * Plantuml : a free UML diagram generator
+ * PlantUML : a free UML diagram generator
  * ========================================================================
  *
  * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
  *
  * Project Info:  http://plantuml.sourceforge.net
  * 
- * This file is part of Plantuml.
+ * This file is part of PlantUML.
  *
- * Plantuml is free software; you can redistribute it and/or modify it
+ * PlantUML is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Plantuml distributed in the hope that it will be useful, but
+ * PlantUML distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
@@ -33,7 +33,10 @@ package net.sourceforge.plantuml.activitydiagram;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.classdiagram.AbstractDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -45,6 +48,8 @@ public class ActivityDiagram extends AbstractDiagram {
 	private Entity lastEntityConsulted;
 	private Entity lastEntityBrancheConsulted;
 
+	private Map<String, Partition> partitions = new LinkedHashMap<String, Partition>();
+
 	public Entity getOrCreate(String code, EntityType type) {
 		final Entity result = super.getOrCreateEntity(code, type);
 		if (result.getType() != type) {
@@ -52,6 +57,25 @@ public class ActivityDiagram extends AbstractDiagram {
 		}
 		updateLasts(result);
 		return result;
+	}
+
+	public Partition createPartition(String code, String display) {
+		final Partition p = new Partition(code, display);
+		partitions.put(code, p);
+		return p;
+	}
+
+	public Partition getPartition(String code) {
+		return partitions.get(code);
+	}
+
+	public Partition getPartitionOf(Entity entity) {
+		for (Partition p : partitions.values()) {
+			if (p.contains(entity)) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	private void updateLasts(final Entity result) {
@@ -85,6 +109,10 @@ public class ActivityDiagram extends AbstractDiagram {
 
 	public Entity getLastEntityBrancheConsulted() {
 		return lastEntityBrancheConsulted;
+	}
+
+	public Map<String, Partition> partitions() {
+		return Collections.unmodifiableMap(partitions);
 	}
 
 }

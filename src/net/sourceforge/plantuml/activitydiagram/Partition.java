@@ -29,42 +29,47 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.skin.bluemodern;
+package net.sourceforge.plantuml.activitydiagram;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
-import net.sourceforge.plantuml.skin.AbstractComponent;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.Link;
 
-public class ComponentBlueModernGroupingTail extends AbstractComponent {
+public class Partition {
 
-	private final Color foregroundColor;
+	private final Collection<Entity> entities = new HashSet<Entity>();
+	private final String code;
+	private final String display;
 
-	public ComponentBlueModernGroupingTail(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
+	public Partition(String code, String display) {
+		this.code = code;
+		this.display = display;
 	}
 
-	@Override
-	protected void drawInternal(Graphics2D g2d, Dimension2D dimensionToUse) {
-
-		g2d.setStroke(new BasicStroke(2));
-		g2d.setColor(foregroundColor);
-
-		g2d.drawLine(0, (int) dimensionToUse.getHeight(), (int) (dimensionToUse.getWidth()), (int) dimensionToUse
-				.getHeight());
-
-		g2d.setStroke(new BasicStroke());
-
+	public void addEntity(Entity entity) {
+		entities.add(entity);
 	}
 
-	public double getPreferredWidth(Graphics2D g2d) {
-		return 0;
+	public Collection<Entity> getEntities() {
+		return Collections.unmodifiableCollection(entities);
 	}
 
-	public double getPreferredHeight(Graphics2D g2d) {
-		return 5;
+	public String getCode() {
+		return code;
 	}
 
+	public boolean containsFully(Link link) {
+		return contains(link.getEntity1()) && contains(link.getEntity2());
+	}
+
+	public boolean contains(Entity entity) {
+		return entities.contains(entity);
+	}
+
+	public String getDisplay() {
+		return display;
+	}
 }

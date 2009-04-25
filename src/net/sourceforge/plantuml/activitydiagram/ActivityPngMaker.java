@@ -29,42 +29,20 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.skin.bluemodern;
+package net.sourceforge.plantuml.activitydiagram;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaPngMaker;
+import net.sourceforge.plantuml.cucadiagram.dot.DotMaker;
 
-import net.sourceforge.plantuml.skin.AbstractComponent;
+public class ActivityPngMaker extends CucaPngMaker {
 
-public class ComponentBlueModernGroupingTail extends AbstractComponent {
-
-	private final Color foregroundColor;
-
-	public ComponentBlueModernGroupingTail(Color foregroundColor) {
-		this.foregroundColor = foregroundColor;
+	public ActivityPngMaker(ActivityDiagram diagram) {
+		super(diagram);
 	}
 
 	@Override
-	protected void drawInternal(Graphics2D g2d, Dimension2D dimensionToUse) {
-
-		g2d.setStroke(new BasicStroke(2));
-		g2d.setColor(foregroundColor);
-
-		g2d.drawLine(0, (int) dimensionToUse.getHeight(), (int) (dimensionToUse.getWidth()), (int) dimensionToUse
-				.getHeight());
-
-		g2d.setStroke(new BasicStroke());
-
-	}
-
-	public double getPreferredWidth(Graphics2D g2d) {
-		return 0;
-	}
-
-	public double getPreferredHeight(Graphics2D g2d) {
-		return 5;
+	protected DotMaker createDotMaker(String... dotStrings) {
+		return new DotMakerActivity((ActivityDiagram) this.getDiagram(), dotStrings);
 	}
 
 }

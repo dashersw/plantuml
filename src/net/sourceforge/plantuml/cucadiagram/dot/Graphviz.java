@@ -1,19 +1,19 @@
 /* ========================================================================
- * Plantuml : a free UML diagram generator
+ * PlantUML : a free UML diagram generator
  * ========================================================================
  *
  * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
  *
  * Project Info:  http://plantuml.sourceforge.net
  * 
- * This file is part of Plantuml.
+ * This file is part of PlantUML.
  *
- * Plantuml is free software; you can redistribute it and/or modify it
+ * PlantUML is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Plantuml distributed in the hope that it will be useful, but
+ * PlantUML distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
  * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
  * License for more details.
@@ -74,7 +74,12 @@ public class Graphviz {
 		final String cmd = getCommandLine(pngFile);
 		final Process process = Runtime.getRuntime().exec(cmd);
 		process.waitFor();
+	}
 
+	public void createPositionFile(File positionFile) throws IOException, InterruptedException {
+		final String cmd2 = getCommandLineDotFile(positionFile);
+		final Process process2 = Runtime.getRuntime().exec(cmd2);
+		process2.waitFor();
 	}
 
 	private void createPngNoGraphviz(File pngFile) throws IOException {
@@ -96,6 +101,22 @@ public class Graphviz {
 		sb.append(" -o ");
 		sb.append('\"');
 		sb.append(pngFile.getAbsolutePath());
+		sb.append('\"');
+		return sb.toString();
+	}
+
+	private String getCommandLineDotFile(File out) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append('\"');
+		sb.append(dotExe.getAbsolutePath());
+		sb.append('\"');
+		sb.append(" -Tdot ");
+		sb.append('\"');
+		sb.append(dotFile.getAbsolutePath());
+		sb.append('\"');
+		sb.append(" -o ");
+		sb.append('\"');
+		sb.append(out.getAbsolutePath());
 		sb.append('\"');
 		return sb.toString();
 	}
