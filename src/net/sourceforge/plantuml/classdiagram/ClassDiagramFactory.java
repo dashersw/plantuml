@@ -42,6 +42,8 @@ import net.sourceforge.plantuml.PSystemFactory;
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandLink;
+import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultiple;
 import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 
@@ -82,6 +84,8 @@ public class ClassDiagramFactory implements PSystemFactory {
 		cmds.add(new CommandAddMethod(system));
 
 		cmds.add(new CommandMultiple(system, this));
+		cmds.add(new CommandMultilinesNoteEntity(system));
+		cmds.add(new CommandMultilinesStandaloneNote(system));
 
 	}
 }

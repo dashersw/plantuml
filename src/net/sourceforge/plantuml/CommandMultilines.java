@@ -29,34 +29,45 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.CommandMultilines;
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.sequencediagram.Note;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> {
+public abstract class CommandMultilines<S extends PSystem> implements Command {
 
-	public CommandMultilinesNoteOverSeveral(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+over\\s+(\\w+)\\s*\\,\\s*(\\w+)$", "(?i)^end ?note$");
+	private final S system;
+
+	private final Pattern starting;
+	private final Pattern ending;
+
+	public CommandMultilines(final S system, String patternStart, String patternEnd) {
+		this.system = system;
+		this.starting = Pattern.compile(patternStart);
+		this.ending = Pattern.compile(patternEnd);
 	}
 
-	public boolean execute(List<String> lines) {
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
-
-		final Participant p1 = getSystem().getOrCreateParticipant(line0.get(0));
-		final Participant p2 = getSystem().getOrCreateParticipant(line0.get(1));
-
-		final List<String> strings = lines.subList(1, lines.size() - 1);
-		if (strings.size() > 0) {
-			final Note note = new Note(p1, p2, strings);
-			getSystem().addNote(note);
+	final public CommandControl isValid(List<String> lines) {
+		Matcher m1 = starting.matcher(lines.get(0));
+		if (m1.matches() == false) {
+			return CommandControl.NOT_OK;
 		}
-		return true;
+
+		m1 = ending.matcher(lines.get(lines.size() - 1));
+		if (m1.matches() == false) {
+			return CommandControl.OK_PARTIAL;
+		}
+
+		return CommandControl.OK;
 	}
 
+	protected S getSystem() {
+		return system;
+	}
+
+	protected Pattern getStartingPattern() {
+		return starting;
+	}
 }

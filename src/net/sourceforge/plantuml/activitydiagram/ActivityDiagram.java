@@ -69,6 +69,7 @@ public class ActivityDiagram extends AbstractDiagram {
 	}
 
 	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
+
 		final CucaPngMaker maker = new CucaPngMaker(this);
 		return maker.createPng(pngFile, "nodesep=.20;", "ranksep=0.4;", "edge [fontsize=11,labelfontsize=11];",
 				"node [fontsize=11];");

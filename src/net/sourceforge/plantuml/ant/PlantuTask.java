@@ -61,7 +61,7 @@ public class PlantuTask extends Task {
 	// The method executing the task
 	public void execute() throws BuildException {
 
-		this.log("Starting Plantu");
+		this.log("Starting PlantUML");
 		final File f = new File(dir);
 		if (f.exists() == false) {
 			final String s = "The file " + f.getAbsolutePath() + " does not exists.";

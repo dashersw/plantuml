@@ -34,6 +34,7 @@ package net.sourceforge.plantuml.cucadiagram.dot;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -62,7 +63,7 @@ public class DotMaker {
 
 	private final String[] dotStrings;
 
-	public void generateFile(final File out, File actorFile) throws IOException {
+	public void generateFile(final File out, File actorFile, Map<Entity, File> images) throws IOException {
 
 		final PrintWriter pw = new PrintWriter(out);
 
@@ -74,6 +75,8 @@ public class DotMaker {
 		}
 
 		this.actorFile = actorFile;
+		this.images = images;
+
 		printEntities(pw);
 		printLinks(pw);
 
@@ -82,6 +85,7 @@ public class DotMaker {
 	}
 
 	private File actorFile;
+	private Map<Entity, File> images;
 
 	private void printLinks(PrintWriter pw) {
 		for (Link link : diagram.getLinks()) {
@@ -104,9 +108,7 @@ public class DotMaker {
 			if (len == 1) {
 				pw.println("{rank=same; " + link.getEntity1().getUid() + "; " + link.getEntity2().getUid() + "}");
 			}
-
 		}
-
 	}
 
 	private String getSpecificDecoration(LinkType link) {
@@ -125,6 +127,7 @@ public class DotMaker {
 		} else if (link == LinkType.ASSOCIED) {
 			return "arrowtail=none,arrowhead=none";
 		} else if (link == LinkType.ASSOCIED_DASHED) {
+			//return "arrowtail=none,arrowhead=none";
 			return "arrowtail=none,arrowhead=none,style=dashed";
 		} else if (link == LinkType.COMPOSITION_INV) {
 			return "dir=back,arrowtail=diamond,arrowhead=none";
@@ -153,7 +156,7 @@ public class DotMaker {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED + ",style=filled," + label
 						+ "];");
 			} else if (type == EntityType.ACTOR) {
-				pw.println(entity.getUid() + " [shape=plaintext," + label + "];");
+				pw.println(entity.getUid() + " [margin=0,shape=plaintext," + label + "];");
 			} else if (type == EntityType.INTERFACE) {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED + ",style=filled,shape=circle,"
 						+ label + "];");
@@ -161,8 +164,16 @@ public class DotMaker {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=filled,shape=component," + label + "];");
 			} else if (type == EntityType.NOTE) {
-				pw.println(entity.getUid() + " [fillcolor=" + YELLOW_NOTE + ",color=" + RED
-						+ ",style=filled,shape=note," + label + "];");
+				final File file = images.get(entity);
+				if (file == null) {
+					throw new IllegalStateException();
+				}
+				if (file.exists() == false) {
+					throw new IllegalStateException();
+				}
+				final String absolutePath = file.getAbsolutePath().replace('/', '\\');
+				pw.println(entity.getUid() + " [margin=0,pad=0,label=\"\",shape=none,image=\"" + absolutePath + "\"];");
+				//pw.println(entity.getUid() + " [margin=\"0,0\",shape=box," + label + "];");
 			} else if (type == EntityType.ACTIVITY) {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=\"rounded,filled\",shape=octagon," + label + "];");
@@ -193,6 +204,9 @@ public class DotMaker {
 		if (entity.getType() == EntityType.ACTOR) {
 			return "label=" + getLabelForActor(entity);
 		}
+		if (entity.getType() == EntityType.NOTE) {
+			return "label=" + getLabelForNote(entity);
+		}
 		final String stereotype = entity.getStereotype();
 
 		if (stereotype != null) {
@@ -203,6 +217,23 @@ public class DotMaker {
 
 	private String manageStereotype(String stereotype) {
 		return "<BR ALIGN=\"LEFT\" /><FONT FACE=\"Italic\">" + manageHtml(stereotype) + "</FONT><BR/>";
+	}
+
+	private String getLabelForNote(Entity entity) {
+		final File file = images.get(entity);
+		if (file == null) {
+			throw new IllegalStateException();
+		}
+		if (file.exists() == false) {
+			throw new IllegalStateException();
+		}
+		final String absolutePath = file.getAbsolutePath().replace('/', '\\');
+
+		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
+		sb.append("<TR BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><TD BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\"><IMG SRC=\"" + absolutePath + "\"/></TD></TR>");
+		sb.append("</TABLE>>");
+		return sb.toString();
+
 	}
 
 	private String getLabelForActor(Entity entity) {

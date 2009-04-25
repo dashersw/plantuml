@@ -33,13 +33,14 @@ package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.CommandMultilines;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandMultilinesNote extends CommandMultilines {
+public class CommandMultilinesNote extends CommandMultilines<SequenceDiagram> {
 
 	public CommandMultilinesNote(final SequenceDiagram sequenceDiagram) {
 		super(sequenceDiagram, "(?i)^note\\s+(right|left|over)\\s+(?:of\\s+)?(\\w+)$", "(?i)^end ?note$");

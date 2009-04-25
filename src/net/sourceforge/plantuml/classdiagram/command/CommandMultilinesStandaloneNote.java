@@ -29,33 +29,33 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.classdiagram.command;
 
 import java.util.List;
 
 import net.sourceforge.plantuml.CommandMultilines;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.sequencediagram.Note;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
 
-public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> {
+public class CommandMultilinesStandaloneNote extends CommandMultilines<ClassDiagram> {
 
-	public CommandMultilinesNoteOverSeveral(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+over\\s+(\\w+)\\s*\\,\\s*(\\w+)$", "(?i)^end ?note$");
+	public CommandMultilinesStandaloneNote(final ClassDiagram system) {
+		super(system, "(?i)^(note)\\s+as\\s+(\\w+)$", "(?i)^end ?note$");
 	}
 
 	public boolean execute(List<String> lines) {
+
 		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
 
-		final Participant p1 = getSystem().getOrCreateParticipant(line0.get(0));
-		final Participant p2 = getSystem().getOrCreateParticipant(line0.get(1));
-
 		final List<String> strings = lines.subList(1, lines.size() - 1);
-		if (strings.size() > 0) {
-			final Note note = new Note(p1, p2, strings);
-			getSystem().addNote(note);
-		}
+		final String display = StringUtils.getMergedLines(strings);
+
+		final EntityType type = EntityType.NOTE;
+		final String code = line0.get(1);
+		final String stereotype = null;
+		getSystem().createEntity(code, display, type, stereotype);
+
 		return true;
 	}
 

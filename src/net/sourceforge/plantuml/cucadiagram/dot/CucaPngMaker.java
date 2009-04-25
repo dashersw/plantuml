@@ -32,23 +32,40 @@
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.EmptyImageBuilder;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.skin.Component;
+import net.sourceforge.plantuml.skin.ComponentType;
+import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.StickMan;
+import net.sourceforge.plantuml.skin.rose.Rose;
 
 public class CucaPngMaker {
 
 	private final CucaDiagram diagram;
 	private static final String ACTOR_FILENAME = "actor.png";
+
+	static private final Graphics2D dummyGraphics2D;
+
+	static {
+		final EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, Color.WHITE);
+		dummyGraphics2D = builder.getGraphics2D();
+	}
 
 	public CucaPngMaker(CucaDiagram diagram) {
 		this.diagram = diagram;
@@ -58,17 +75,58 @@ public class CucaPngMaker {
 		final DotMaker dotMaker = new DotMaker(diagram, dotStrings);
 		File tmpFile = null;
 		File actorFile = null;
+		final Map<Entity, File> imageFiles = createImages();
 		try {
 			tmpFile = File.createTempFile("plantuml", ".dot");
 			actorFile = ensurePngActorPresent(tmpFile.getParentFile());
-			dotMaker.generateFile(tmpFile, actorFile);
+			imageFiles.putAll(createImages());
+			dotMaker.generateFile(tmpFile, actorFile, imageFiles);
 			final Graphviz graphviz = new Graphviz(tmpFile);
 			graphviz.createPng(pngFile);
 		} finally {
 			tmpFile.delete();
 			actorFile.delete();
+			for (File f : imageFiles.values()) {
+				f.delete();
+			}
 		}
 		return Arrays.asList(pngFile);
+	}
+
+	private Map<Entity, File> createImages() throws IOException {
+		final Map<Entity, File> result = new HashMap<Entity, File>();
+		for (Entity entity : diagram.entities().values()) {
+			final File f = createImage(entity);
+			if (f != null) {
+				result.put(entity, f);
+			}
+		}
+		return result;
+	}
+
+	File createImage(Entity entity) throws IOException {
+		if (entity.getType() != EntityType.NOTE) {
+			return null;
+		}
+		final File f = File.createTempFile("plantuml", ".png");
+		f.deleteOnExit();
+
+		final Rose skin = new Rose();
+
+		final Component comp = skin.createComponent(ComponentType.NOTE, StringUtils
+				.getWithNewlines(entity.getDisplay()));
+		final int width = (int) comp.getPreferredWidth(dummyGraphics2D);
+		final int height = (int) comp.getPreferredHeight(dummyGraphics2D);
+
+		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, Color.WHITE);
+		final BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2d = builder.getGraphics2D();
+
+		comp.draw(g2d, new Dimension(width, height), new SimpleContext2D(false));
+		ImageIO.write(im, "png", f);
+
+		g2d.dispose();
+		return f;
 	}
 
 	private File ensurePngActorPresent(File dir) throws IOException {
@@ -77,12 +135,11 @@ public class CucaPngMaker {
 		final Color red = new Color(Integer.parseInt("A80036", 16));
 		final StickMan smallMan = new StickMan(yellow, red);
 
-		final BufferedImage im = new BufferedImage((int) smallMan.getPreferredWidth(null), (int) smallMan
-				.getPreferredHeight(null), BufferedImage.TYPE_INT_RGB);
-		final Graphics2D g2d = im.createGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, 640, 320);
+		final EmptyImageBuilder builder = new EmptyImageBuilder((int) smallMan.getPreferredWidth(null), (int) smallMan
+				.getPreferredHeight(null), Color.WHITE);
+
+		final BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2d = builder.getGraphics2D();
 
 		smallMan.draw(g2d);
 

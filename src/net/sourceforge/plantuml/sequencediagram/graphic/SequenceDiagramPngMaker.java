@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
@@ -44,6 +45,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
@@ -108,9 +110,6 @@ public class SequenceDiagramPngMaker {
 	private File writeOneFile(Graphics2D g2d, final Dimension2D fullDimension, final List<Page> pages, final int indice)
 			throws IOException {
 
-		final BufferedImage im = new BufferedImage((int) fullDimension.getWidth(), (int) pages.get(indice).getHeight(),
-				BufferedImage.TYPE_INT_RGB);
-
 		double delta = 0;
 		if (indice > 0) {
 			delta = pages.get(indice).getNewpage1() - pages.get(indice).getHeaderHeight();
@@ -119,7 +118,13 @@ public class SequenceDiagramPngMaker {
 			throw new IllegalArgumentException();
 		}
 		final Component compTitle = indice == 0 ? step1.getCompTitle() : null;
-		final Graphics2D g2dOk = step2.createGraphic2D(compTitle, delta, im, pages.get(indice));
+		
+		final EmptyImageBuilder builder = new EmptyImageBuilder((int) fullDimension.getWidth(), (int) pages.get(indice).getHeight(), Color.WHITE);
+		
+		final BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2dOk = builder.getGraphics2D();
+		
+		step2.draw(g2dOk, compTitle, delta, im, pages.get(indice));
 
 		final File f = computeFilename(pngFile, indice);
 
@@ -128,7 +133,6 @@ public class SequenceDiagramPngMaker {
 		return f;
 
 	}
-
 
 	private void prepareData() {
 

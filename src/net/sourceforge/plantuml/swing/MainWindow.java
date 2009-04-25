@@ -77,7 +77,7 @@ public class MainWindow extends JFrame {
 	private DirWatcher dirWatcher;
 
 	public MainWindow() {
-		super("Plantu");
+		super("PlantUML");
 		scrollPane = new JScrollPane(jList1);
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		setSize(320, 200);

@@ -29,34 +29,32 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml;
 
-import java.util.List;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
-import net.sourceforge.plantuml.CommandMultilines;
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.sequencediagram.Note;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+public class EmptyImageBuilder {
 
-public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> {
+	private final BufferedImage im;
+	private final Graphics2D g2d;
 
-	public CommandMultilinesNoteOverSeveral(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+over\\s+(\\w+)\\s*\\,\\s*(\\w+)$", "(?i)^end ?note$");
+	public EmptyImageBuilder(int width, int height, Color background) {
+		im = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		g2d = im.createGraphics();
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setColor(background);
+		g2d.fillRect(0, 0, width, height);
 	}
 
-	public boolean execute(List<String> lines) {
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
+	public BufferedImage getBufferedImage() {
+		return im;
+	}
 
-		final Participant p1 = getSystem().getOrCreateParticipant(line0.get(0));
-		final Participant p2 = getSystem().getOrCreateParticipant(line0.get(1));
-
-		final List<String> strings = lines.subList(1, lines.size() - 1);
-		if (strings.size() > 0) {
-			final Note note = new Note(p1, p2, strings);
-			getSystem().addNote(note);
-		}
-		return true;
+	public Graphics2D getGraphics2D() {
+		return g2d;
 	}
 
 }

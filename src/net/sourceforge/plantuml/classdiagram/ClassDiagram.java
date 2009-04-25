@@ -33,17 +33,13 @@ package net.sourceforge.plantuml.classdiagram;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaPngMaker;
 
 public class ClassDiagram extends AbstractDiagram {
-
-	private final Map<Entity, List<String>> allMethods = new HashMap<Entity, List<String>>();
 
 	public Entity getOrCreateClass(String code) {
 		return getOrCreateEntity(code, EntityType.CLASS);
@@ -53,7 +49,6 @@ public class ClassDiagram extends AbstractDiagram {
 		final CucaPngMaker maker = new CucaPngMaker(this);
 		return maker.createPng(pngFile, "nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
 				"node [fontsize=11,height=.35,width=.55];");
-
 	}
 
 	public String getDescription() {

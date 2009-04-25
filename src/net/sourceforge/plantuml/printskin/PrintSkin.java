@@ -34,7 +34,6 @@ package net.sourceforge.plantuml.printskin;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -45,6 +44,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.PSystem;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.sequencediagram.graphic.Dimension2DDouble;
@@ -67,12 +67,11 @@ public class PrintSkin implements PSystem {
 
 	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
 		final List<File> result = Arrays.asList(pngFile);
-		final BufferedImage im = new BufferedImage(1000, 600, BufferedImage.TYPE_INT_RGB);
-		g2d = im.createGraphics();
-
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, im.getWidth(), im.getHeight());
+		
+		final EmptyImageBuilder builder = new EmptyImageBuilder(1000, 600, Color.WHITE);
+		
+		final BufferedImage im = builder.getBufferedImage();
+		g2d = builder.getGraphics2D();
 
 		for (ComponentType type : EnumSet.allOf(ComponentType.class)) {
 			printComponent(type);
@@ -85,6 +84,8 @@ public class PrintSkin implements PSystem {
 		}
 
 		ImageIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), "png", pngFile);
+		
+		g2d.dispose();
 
 		return result;
 	}
@@ -125,7 +126,7 @@ public class PrintSkin implements PSystem {
 	}
 
 	public String getDescription() {
-		return "Printing of " + skin;
+		return "Printing of " + skin.getClass().getName();
 	}
 
 	public boolean setSkin(String className, List<String> toPrint) {

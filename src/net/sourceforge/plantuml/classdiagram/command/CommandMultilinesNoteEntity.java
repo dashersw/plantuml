@@ -29,33 +29,53 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.classdiagram.command;
 
 import java.util.List;
 
 import net.sourceforge.plantuml.CommandMultilines;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.sequencediagram.Note;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkType;
 
-public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> {
+public class CommandMultilinesNoteEntity extends CommandMultilines<ClassDiagram> {
 
-	public CommandMultilinesNoteOverSeveral(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+over\\s+(\\w+)\\s*\\,\\s*(\\w+)$", "(?i)^end ?note$");
+	private static int cpt = 1;
+
+	public CommandMultilinesNoteEntity(final ClassDiagram system) {
+		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(\\w+)$", "(?i)^end ?note$");
 	}
 
 	public boolean execute(List<String> lines) {
+		
 		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
+		final String pos = line0.get(0);
 
-		final Participant p1 = getSystem().getOrCreateParticipant(line0.get(0));
-		final Participant p2 = getSystem().getOrCreateParticipant(line0.get(1));
+		final Entity cl1 = getSystem().getOrCreateClass(line0.get(1));
 
 		final List<String> strings = lines.subList(1, lines.size() - 1);
-		if (strings.size() > 0) {
-			final Note note = new Note(p1, p2, strings);
-			getSystem().addNote(note);
+		final String s = StringUtils.getMergedLines(strings);
+		
+		final Entity note = getSystem().createEntity("GMN" + cpt, s, EntityType.NOTE, null);
+		cpt++;
+
+		final Link link;
+
+		if (pos.equals("right")) {
+			link = new Link(cl1, note, LinkType.ASSOCIED_DASHED, null, 1, null, null);
+		} else if (pos.equals("left")) {
+			link = new Link(note, cl1, LinkType.ASSOCIED_DASHED, null, 1, null, null);
+		} else if (pos.equals("bottom")) {
+			link = new Link(cl1, note, LinkType.ASSOCIED_DASHED, null, 2, null, null);
+		} else if (pos.equals("top")) {
+			link = new Link(note, cl1, LinkType.ASSOCIED_DASHED, null, 2, null, null);
+		} else {
+			throw new IllegalArgumentException();
 		}
+		getSystem().addLink(link);
 		return true;
 	}
 

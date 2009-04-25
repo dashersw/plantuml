@@ -31,9 +31,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
@@ -59,13 +57,8 @@ class Step2 {
 		this.groupingMargin = groupingMargin;
 	}
 
-	public Graphics2D createGraphic2D(Component compTitle, final double delta, final BufferedImage im, Page p) {
-		final Graphics2D g2d = im.createGraphics();
-		g2d.setBackground(Color.WHITE);
-		g2d.clearRect(0, 0, im.getWidth(), im.getHeight());
-
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+	public void draw(Graphics2D g2d, Component compTitle, final double delta, final BufferedImage im, Page p) {
+		
 		double deltaY = 0;
 		if (compTitle != null) {
 			this.drawTitle(g2d, compTitle);
@@ -84,7 +77,6 @@ class Step2 {
 
 		clipAndTranslate(delta, im, p, g2d);
 		this.drawPlayground(g2d, im.getHeight(), new SimpleContext2D(false));
-		return g2d;
 	}
 
 	private void clipAndTranslate(final double delta, final BufferedImage im, Page p, final Graphics2D g2d) {

@@ -34,7 +34,6 @@ package net.sourceforge.plantuml;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -59,11 +58,11 @@ public class PngError {
 	}
 
 	public void writeError(File png) throws IOException {
-		BufferedImage im = new BufferedImage(640, 400, BufferedImage.TYPE_INT_RGB);
-		final Graphics2D g2d = im.createGraphics();
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setColor(Color.WHITE);
-
+		
+		final EmptyImageBuilder builder = new EmptyImageBuilder(640, 400, Color.BLACK);
+		
+		BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2d = builder.getGraphics2D();
 		final TextBlock textBlock = new TextBlock(strings, FONT1, green);
 		final Dimension2D size = textBlock.calculateDimension(g2d);
 		textBlock.draw(g2d, 0, 0);

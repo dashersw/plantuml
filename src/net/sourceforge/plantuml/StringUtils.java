@@ -52,7 +52,18 @@ public class StringUtils {
 		}
 		return strings;
 	}
-	
+
+	public static String getMergedLines(List<String> strings) {
+		final StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < strings.size(); i++) {
+			sb.append(strings.get(i));
+			if (i < strings.size() - 1) {
+				sb.append("\\n");
+			}
+		}
+		return sb.toString();
+	}
+
 	final static public List<String> getSplit(Pattern pattern, String line) {
 		final Matcher m = pattern.matcher(line);
 		if (m.find() == false) {
@@ -65,6 +76,5 @@ public class StringUtils {
 		return result;
 
 	}
-
 
 }

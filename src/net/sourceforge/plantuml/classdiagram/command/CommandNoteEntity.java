@@ -49,11 +49,8 @@ public class CommandNoteEntity extends SingleLineCommand<ClassDiagram> {
 	}
 
 	protected boolean executeArg(List<String> arg) {
-
 		final String pos = arg.get(0);
-
 		final Entity cl1 = getSystem().getOrCreateClass(arg.get(1));
-
 		final Entity note = getSystem().createEntity("GN" + cpt, arg.get(2), EntityType.NOTE, null);
 		cpt++;
 
