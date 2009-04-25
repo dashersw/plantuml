@@ -1,0 +1,121 @@
+/* ========================================================================
+ * Plantuml : a free UML diagram generator
+ * ========================================================================
+ *
+ * (C) Copyright 2009, Arnaud Roques (for Atos Origin).
+ *
+ * Project Info:  http://plantuml.sourceforge.net
+ * 
+ * This file is part of Plantuml.
+ *
+ * Plantuml is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Plantuml distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+ * License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+ * USA.
+ *
+ * [Java is a trademark or registered trademark of Sun Microsystems, Inc.
+ * in the United States and other countries.]
+ *
+ * Original Author:  Arnaud Roques (for Atos Origin).
+ *
+ */
+package net.sourceforge.plantuml.skin;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.geom.Dimension2D;
+import java.util.Arrays;
+import java.util.List;
+
+import net.sourceforge.plantuml.graphic.TextBlock;
+
+public abstract class AbstractTextualComponent extends AbstractComponent {
+
+	private final List<String> strings;
+
+	private final int marginX1;
+	private final int marginX2;
+	private final int marginY;
+
+	private final TextBlock textBlock;
+	
+	private final Font font;
+	private final Color fontColor;
+
+	public AbstractTextualComponent(String label, Color fontColor, Font font, int marginX1, int marginX2, int marginY) {
+		this(Arrays.asList(label == null ? "" : label), fontColor, font, marginX1, marginX2, marginY);
+	}
+
+	public AbstractTextualComponent(List<String> strings, Color fontColor, Font font, int marginX1, int marginX2, int marginY) {
+		this.font = font;
+		this.fontColor = fontColor;
+		this.marginX1 = marginX1;
+		this.marginX2 = marginX2;
+		this.marginY = marginY;
+		this.strings = strings;
+
+		textBlock = new TextBlock(strings, font, fontColor);
+	}
+
+	final protected TextBlock getTextBlock() {
+		return textBlock;
+	}
+
+	final public double getTextWidth(Graphics2D g2d) {
+		final TextBlock textBlock = getTextBlock();
+		final Dimension2D size = getSize(g2d, textBlock);
+		return size.getWidth() + marginX1 + marginX2;
+	}
+
+	// For cache
+	private Dimension2D size;
+
+	private Dimension2D getSize(Graphics2D g2d, final TextBlock textBlock) {
+		if (size == null) {
+			size = textBlock.calculateDimension(g2d);
+		}
+		return size;
+	}
+
+	final protected double getTextHeight(Graphics2D g2d) {
+		final TextBlock textBlock = getTextBlock();
+		final Dimension2D size = getSize(g2d, textBlock);
+		return size.getHeight() + 2 * marginY;
+	}
+
+	final protected List<String> getLabels() {
+		return strings;
+	}
+
+	final protected int getMarginX1() {
+		return marginX1;
+	}
+
+	final protected int getMarginX2() {
+		return marginX2;
+	}
+
+	final protected int getMarginY() {
+		return marginY;
+	}
+
+	final protected Font getFont() {
+		return font;
+	}
+
+	protected Color getFontColor() {
+		return fontColor;
+	}
+
+}
