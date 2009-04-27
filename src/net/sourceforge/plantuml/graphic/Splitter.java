@@ -31,82 +31,62 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-enum FontStyle {
-	PLAIN, ITALIC, BOLD, UNDERLINE, STRIKE;
 
-	public Font mutateFont(Font font) {
-		if (this == ITALIC) {
-			return font.deriveFont(Font.ITALIC);
-		}
-		if (this == BOLD) {
-			return font.deriveFont(Font.BOLD);
-		}
-		return font;
-	}
+class Splitter {
 
-	public String getActivationPattern() {
-		if (this == ITALIC) {
-			return "\\<[iI]\\>";
-		}
-		if (this == BOLD) {
-			return "\\<[bB]\\>";
-		}
-		if (this == UNDERLINE) {
-			return "\\<[uU]\\>";
-		}
-		if (this == STRIKE) {
-			return "\\<(?:strike|STRIKE)\\>";
-		}
-		return null;
-	}
+	static final String endFontPattern = "\\</font\\>";
+	static final String fontPattern = "\\<font(\\s+size\\s*=\\s*\"?\\d+\"?|\\s+color\\s*=\\s*\"?(#[0-9a-fA-F]{6}|\\w+)\"?)+\\s*\\>";
+	static final String htmlTag;
+	
+	private static final Pattern tagOrText;
 
-	public String getDeactivationPattern() {
-		if (this == ITALIC) {
-			return "\\</[iI]\\>";
-		}
-		if (this == BOLD) {
-			return "\\</[bB]\\>";
-		}
-		if (this == UNDERLINE) {
-			return "\\</[uU]\\>";
-		}
-		if (this == STRIKE) {
-			return "\\</(?:strike|STRIKE)\\>";
-		}
-		return null;
-	}
+	static {
+		final StringBuilder sb = new StringBuilder("(?i)");
 
-	/**
-	 * @deprecated
-	 */
-	public static FontStyle getStyle(String line) {
-		line = line.toLowerCase();
-		if (line.startsWith("<b>")) {
-			return BOLD;
-		}
-		if (line.startsWith("<i>")) {
-			return ITALIC;
-		}
-		if (line.startsWith("<u>")) {
-			return UNDERLINE;
-		}
-		return PLAIN;
-
-	}
-
-	public static FontStyle getStyle2(String line) {
 		for (FontStyle style : EnumSet.allOf(FontStyle.class)) {
 			if (style == FontStyle.PLAIN) {
 				continue;
 			}
-			if (line.matches(style.getActivationPattern()) || line.matches(style.getDeactivationPattern())) {
-				return style;
-			}
+			sb.append(style.getActivationPattern());
+			sb.append('|');
+			sb.append(style.getDeactivationPattern());
+			sb.append('|');
 		}
-		throw new IllegalArgumentException(line);
+		sb.append(fontPattern);
+		sb.append('|');
+		sb.append(endFontPattern);
+
+		htmlTag = sb.toString();
+		tagOrText = Pattern.compile(htmlTag + "|.+?(?=" + htmlTag + ")|.+$", Pattern.CASE_INSENSITIVE);
+	}
+
+	private final List<String> splitted = new ArrayList<String>();
+
+	public Splitter(String s) {
+		final Matcher matcher = tagOrText.matcher(s);
+		while (matcher.find()) {
+			splitted.add(matcher.group(0));
+		}
+	}
+	
+	List<String> getSplittedInternal() {
+		return splitted;
+	}
+
+	public List<HtmlCommand> getHtmlCommands() {
+		final HtmlCommandFactory factory = new HtmlCommandFactory();
+		final List<HtmlCommand> result = new ArrayList<HtmlCommand>();
+		for (String s : getSplittedInternal()) {
+			result.add(factory.getHtmlCommand(s));
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 }

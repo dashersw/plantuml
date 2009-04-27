@@ -38,7 +38,7 @@ import java.util.Arrays;
 
 import net.sourceforge.plantuml.PngError;
 
-public class Graphviz {
+class Graphviz {
 
 	private static File dotExe;
 

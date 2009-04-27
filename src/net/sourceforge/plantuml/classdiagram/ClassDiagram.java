@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.sourceforge.plantuml.AbstractDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaPngMaker;

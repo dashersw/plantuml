@@ -36,7 +36,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.SingleLineCommand;
 
-public class CommandTestSkin extends SingleLineCommand<PrintSkin> {
+class CommandTestSkin extends SingleLineCommand<PrintSkin> {
 
 	public CommandTestSkin(PrintSkin system) {
 		super(system, "(?i)^testskin\\s+([\\w.]+)\\s*(.*)$");

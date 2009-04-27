@@ -42,7 +42,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
-public class ImageWindow extends JFrame {
+class ImageWindow extends JFrame {
 
 	private final SimpleLine simpleLine;
 	final private JScrollPane scrollPane;

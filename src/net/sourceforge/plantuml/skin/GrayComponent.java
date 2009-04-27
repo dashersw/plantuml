@@ -40,7 +40,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.graphic.TextBlock;
 
-public class GrayComponent extends AbstractComponent {
+class GrayComponent extends AbstractComponent {
 
 	private static final Font NORMAL = new Font("SansSerif", Font.PLAIN, 7);
 	

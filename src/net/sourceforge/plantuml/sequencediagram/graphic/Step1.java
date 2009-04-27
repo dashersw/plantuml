@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.Grouping;
 import net.sourceforge.plantuml.sequencediagram.GroupingType;

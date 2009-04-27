@@ -31,49 +31,51 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.BasicStroke;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 
-class SimpleLine implements Line {
+class MonoConfiguredBlock {
 
-	private final List<MonoConfiguredBlock> blocs = new ArrayList<MonoConfiguredBlock>();
+	private final String text;
+	private final FontConfiguration fontConfiguration;
 
-	public SimpleLine(String text, Font font, Color paint) {
-		final Splitter lineSplitter = new Splitter(text);
-
-		FontConfiguration fontConfiguration = new FontConfiguration(font, paint);
-
-		for (HtmlCommand cmd : lineSplitter.getHtmlCommands()) {
-			if (cmd instanceof Text) {
-				final String s = ((Text) cmd).getText();
-				blocs.add(new MonoConfiguredBlock(s, fontConfiguration));
-			} else if (cmd instanceof FontChange) {
-				fontConfiguration = ((FontChange) cmd).apply(fontConfiguration);
-			}
-		}
+	public MonoConfiguredBlock(String text, FontConfiguration fontConfiguration) {
+		this.fontConfiguration = fontConfiguration;
+		this.text = text;
 	}
 
 	public Dimension2D calculateDimensions(Graphics2D g2d) {
-		double width = 0;
-		double height = 0;
-		for (MonoConfiguredBlock b : blocs) {
-			final Dimension2D size2D = b.calculateDimensions(g2d);
-			width += size2D.getWidth();
-			height = Math.max(height, size2D.getHeight());
-		}
-		return new Dimension2DDouble(width, height);
+		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+		final Rectangle2D rect = fm.getStringBounds(text, g2d);
+		return new Dimension2DDouble(rect.getWidth(), rect.getHeight());
 	}
 
 	public void draw(Graphics2D g2d, double x, double y) {
-		for (MonoConfiguredBlock b : blocs) {
-			b.draw(g2d, x, y);
-			x += b.calculateDimensions(g2d).getWidth();
+		g2d.setFont(fontConfiguration.getFont());
+		g2d.setPaint(fontConfiguration.getColor());
+		final double d = fontConfiguration.getFont().getSize2D();
+		g2d.drawString(text, (float) x, (float) (y + d));
+
+		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
+			final Dimension2D dim = calculateDimensions(g2d);
+			final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+			final int ypos = (int) (y + fm.getAscent() + 1);
+			g2d.setStroke(new BasicStroke((float) 1.3));
+			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
+			g2d.setStroke(new BasicStroke());
+		}
+		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
+			final Dimension2D dim = calculateDimensions(g2d);
+			//final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+			final int ypos = (int) (y + dim.getHeight() / 2 + 1);
+			g2d.setStroke(new BasicStroke((float) 1.5));
+			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
+			g2d.setStroke(new BasicStroke());
 		}
 	}
 }

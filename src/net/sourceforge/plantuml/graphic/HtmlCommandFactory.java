@@ -31,51 +31,57 @@
  */
 package net.sourceforge.plantuml.graphic;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EnumSet;
+import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 
-public class TextBlock {
+class HtmlCommandFactory {
 
-	private final List<Line> lines = new ArrayList<Line>();
+	static final Pattern addStyle;
+	static final Pattern removeStyle;
 
-	enum Mode {
-		COMPLEX, SWING
-	}
+	static {
+		final StringBuilder sbAddStyle = new StringBuilder();
+		final StringBuilder sbRemoveStyle = new StringBuilder();
 
-	private static Mode MODE = Mode.COMPLEX;
-
-	public TextBlock(List<String> texts, Font font, Color paint) {
-		for (String s : texts) {
-			if (MODE == Mode.SWING) {
-				lines.add(new HtmlLine(s, font, paint));
-			} else {
-				lines.add(new SimpleLine(s, font, paint));
+		for (FontStyle style : EnumSet.allOf(FontStyle.class)) {
+			if (style == FontStyle.PLAIN) {
+				continue;
 			}
+			if (sbAddStyle.length() > 0) {
+				sbAddStyle.append('|');
+				sbRemoveStyle.append('|');
+			}
+			sbAddStyle.append(style.getActivationPattern());
+			sbRemoveStyle.append(style.getDeactivationPattern());
 		}
+
+		addStyle = Pattern.compile(sbAddStyle.toString(), Pattern.CASE_INSENSITIVE);
+		removeStyle = Pattern.compile(sbRemoveStyle.toString(), Pattern.CASE_INSENSITIVE);
 	}
 
-	public Dimension2D calculateDimension(Graphics2D g2d) {
-		double width = 0;
-		double height = 0;
-		for (Line line : lines) {
-			final Dimension2D size2D = line.calculateDimensions(g2d);
-			height += size2D.getHeight();
-			width = Math.max(width, size2D.getWidth());
-		}
-		return new Dimension2DDouble(width, height);
-	}
+	private Pattern htmlTag = Pattern.compile(Splitter.htmlTag, Pattern.CASE_INSENSITIVE);
 
-	public void draw(Graphics2D g2d, double x, double y) {
-		for (Line line : lines) {
-			line.draw(g2d, x, y);
-			y += line.calculateDimensions(g2d).getHeight();
+	HtmlCommand getHtmlCommand(String s) {
+		if (htmlTag.matcher(s).matches() == false) {
+			return new Text(s);
 		}
+		if (addStyle.matcher(s).matches()) {
+			return new AddStyle(FontStyle.getStyle2(s));
+		}
+		if (removeStyle.matcher(s).matches()) {
+			return new RemoveStyle(FontStyle.getStyle2(s));
+		}
+
+		if (s.matches(Splitter.fontPattern)) {
+			return new ColorAndSizeChange(s);
+		}
+
+		if (s.matches(Splitter.endFontPattern)) {
+			return new ResetFont();
+		}
+
+		return null;
 	}
 
 }

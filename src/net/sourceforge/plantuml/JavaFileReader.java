@@ -50,7 +50,7 @@ import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.printskin.PrintSkinFactory;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagramFactory;
 
-public class JavaFileReader {
+class JavaFileReader {
 
 	private final File file;
 	private final File outputDirectory;

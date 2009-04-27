@@ -48,8 +48,11 @@ public class Partition {
 		this.code = code;
 		this.display = display;
 	}
-
+	
 	public void addEntity(Entity entity) {
+		if (entities.contains(entity)) {
+			throw new IllegalArgumentException();
+		}
 		entities.add(entity);
 	}
 

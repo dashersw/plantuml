@@ -31,8 +31,10 @@
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -80,10 +82,20 @@ public class DotMaker {
 		pw.close();
 	}
 
+	protected void debugFile(File f) throws IOException {
+		final BufferedReader br = new BufferedReader(new FileReader(f));
+		String s;
+		while ((s = br.readLine()) != null) {
+			System.out.println(s);
+		}
+		br.close();
+	}
+
 	protected PrintWriter initPrintWriter(final File out) throws FileNotFoundException {
 		final PrintWriter pw = new PrintWriter(out);
 
 		pw.println("digraph unix {");
+		printSpecialHeader(pw);
 		if (isJunit == false) {
 			for (String s : dotStrings) {
 				pw.println(s);
@@ -92,12 +104,16 @@ public class DotMaker {
 		return pw;
 	}
 
+	protected void printSpecialHeader(PrintWriter pw) {
+	}
+
 	private File actorFile;
 	private Map<Entity, File> images;
 
 	protected void printLinks(PrintWriter pw, List<Link> links) {
 
-		//Map<Entity, Integer> branchesDeparture = new HashMap<Entity, Integer>();
+		// Map<Entity, Integer> branchesDeparture = new HashMap<Entity,
+		// Integer>();
 
 		for (Link link : links) {
 			String decoration = "[color=" + RED + ",";
@@ -112,19 +128,19 @@ public class DotMaker {
 			}
 			decoration += getSpecificDecoration(link.getType());
 
-//			if (link.getEntity1().getType() == EntityType.BRANCH) {
-//				Integer pos = branchesDeparture.get(link.getEntity1());
-//				if (pos == null) {
-//					pos = 0;
-//				}
-//				final String s = Arrays.asList("e", "w", "s").get(pos);
-//				decoration += ",tailport="+s;
-//				pos++;
-//				branchesDeparture.put(link.getEntity1(), pos);
-//			}
-//			if (link.getEntity2().getType() == EntityType.BRANCH) {
-//				decoration += ",headport=n";
-//			}
+			// if (link.getEntity1().getType() == EntityType.BRANCH) {
+			// Integer pos = branchesDeparture.get(link.getEntity1());
+			// if (pos == null) {
+			// pos = 0;
+			// }
+			// final String s = Arrays.asList("e", "w", "s").get(pos);
+			// decoration += ",tailport="+s;
+			// pos++;
+			// branchesDeparture.put(link.getEntity1(), pos);
+			// }
+			// if (link.getEntity2().getType() == EntityType.BRANCH) {
+			// decoration += ",headport=n";
+			// }
 
 			final int len = link.getLenght();
 			final String lenString = len >= 3 ? ",minlen=" + (len - 1) : "";

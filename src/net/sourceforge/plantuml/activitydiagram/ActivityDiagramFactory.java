@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.PSystemFactory;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivityShort;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivityShortWithLabel;
+import net.sourceforge.plantuml.activitydiagram.command.CommandPartition;
 
 public class ActivityDiagramFactory implements PSystemFactory {
 
@@ -76,6 +77,7 @@ public class ActivityDiagramFactory implements PSystemFactory {
 		cmds.add(new CommandLinkActivity(system));
 		cmds.add(new CommandLinkActivityShort(system));
 		cmds.add(new CommandLinkActivityShortWithLabel(system));
+		cmds.add(new CommandPartition(system));
 
 	}
 }

@@ -41,7 +41,7 @@ import java.awt.geom.Dimension2D;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.plantuml.sequencediagram.graphic.Dimension2DDouble;
+import net.sourceforge.plantuml.Dimension2DDouble;
 
 class HtmlLine implements Line {
 

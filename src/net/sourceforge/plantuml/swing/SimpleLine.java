@@ -33,7 +33,7 @@ package net.sourceforge.plantuml.swing;
 
 import net.sourceforge.plantuml.FilePng;
 
-public class SimpleLine implements Comparable<SimpleLine>{
+class SimpleLine implements Comparable<SimpleLine>{
 
 	private final FilePng fireResult;
 	private String desc;

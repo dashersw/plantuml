@@ -31,54 +31,54 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Map;
+import java.util.TreeMap;
 
-class PSystemError implements PSystem {
+import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Link;
 
-	private final List<String> errors = new ArrayList<String>();
+public abstract class AbstractDiagram implements PSystem, CucaDiagram {
 
-	public PSystemError(String error) {
-		this.errors.add(error);
-	}
+	private final Map<String, Entity> entities = new TreeMap<String, Entity>();
 
-	private PSystemError(Collection<String> errors) {
-		this.errors.addAll(errors);
-	}
+	private final List<Link> links = new ArrayList<Link>();
 
-	static public PSystemError merge(PSystemError... ps) {
-		final Set<String> set = new TreeSet<String>();
-		for (PSystemError system : ps) {
-			if (system != null) {
-				set.addAll(system.errors);
-			}
+	protected Entity getOrCreateEntity(String code, EntityType defaultType) {
+		Entity result = entities.get(code);
+		if (result == null) {
+			result = new Entity(code, code, defaultType, null);
+			entities.put(code, result);
 		}
-		if (set.size() == 0) {
+		return result;
+	}
+
+	public Entity createEntity(String code, String display, EntityType type, String stereotype) {
+		if (entities.containsKey(code)) {
 			throw new IllegalArgumentException();
 		}
-		return new PSystemError(set);
+		if (display == null) {
+			display = code;
+		}
+		final Entity entity = new Entity(code, display, type, stereotype);
+		entities.put(code, entity);
+		return entity;
 	}
 
-	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
-		final List<String> strings = new ArrayList<String>();
-		strings.add("]SYNTAX ERROR?");
-		strings.addAll(errors);
-		new PngError(strings).writeError(pngFile);
-		return Arrays.asList(pngFile);
+	final public Map<String, Entity> entities() {
+		return Collections.unmodifiableMap(entities);
 	}
 
-	public String getDescription() {
-		return "(Error: " + errors.get(0) + ")";
+	final public void addLink(Link link) {
+		links.add(link);
 	}
 
-	List<String> getErrors() {
-		return errors;
+	final public List<Link> getLinks() {
+		return Collections.unmodifiableList(links);
 	}
 
 }

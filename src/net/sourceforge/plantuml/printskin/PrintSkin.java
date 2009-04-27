@@ -44,17 +44,17 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.PSystem;
 import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.sequencediagram.graphic.Dimension2DDouble;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.Skin;
 import net.sourceforge.plantuml.skin.SkinUtils;
 
-public class PrintSkin implements PSystem {
+class PrintSkin implements PSystem {
 
 	private static final Font FONT1 = new Font("SansSerif", Font.PLAIN, 10);
 

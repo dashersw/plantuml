@@ -42,7 +42,7 @@ import javax.swing.JLabel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
-public class ScrollablePicture extends JLabel implements Scrollable, MouseMotionListener {
+class ScrollablePicture extends JLabel implements Scrollable, MouseMotionListener {
 
 	private int maxUnitIncrement = 1;
 	private boolean missingPicture = false;

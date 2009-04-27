@@ -34,6 +34,7 @@ package net.sourceforge.plantuml.sequencediagram.graphic;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.skin.ArrowComponent;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;

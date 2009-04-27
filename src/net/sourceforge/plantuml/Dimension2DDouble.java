@@ -31,54 +31,31 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.awt.geom.Dimension2D;
 
-class PSystemError implements PSystem {
+public class Dimension2DDouble extends Dimension2D {
 
-	private final List<String> errors = new ArrayList<String>();
+	final private double width;
+	final private double height;
 
-	public PSystemError(String error) {
-		this.errors.add(error);
+	public Dimension2DDouble(double width, double height) {
+		this.width = width;
+		this.height = height;
 	}
 
-	private PSystemError(Collection<String> errors) {
-		this.errors.addAll(errors);
+	@Override
+	public double getHeight() {
+		return height;
 	}
 
-	static public PSystemError merge(PSystemError... ps) {
-		final Set<String> set = new TreeSet<String>();
-		for (PSystemError system : ps) {
-			if (system != null) {
-				set.addAll(system.errors);
-			}
-		}
-		if (set.size() == 0) {
-			throw new IllegalArgumentException();
-		}
-		return new PSystemError(set);
+	@Override
+	public double getWidth() {
+		return width;
 	}
 
-	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
-		final List<String> strings = new ArrayList<String>();
-		strings.add("]SYNTAX ERROR?");
-		strings.addAll(errors);
-		new PngError(strings).writeError(pngFile);
-		return Arrays.asList(pngFile);
-	}
-
-	public String getDescription() {
-		return "(Error: " + errors.get(0) + ")";
-	}
-
-	List<String> getErrors() {
-		return errors;
+	@Override
+	public void setSize(double width, double height) {
+		throw new UnsupportedOperationException();
 	}
 
 }

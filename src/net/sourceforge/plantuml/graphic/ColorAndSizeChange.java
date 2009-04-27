@@ -29,56 +29,52 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.graphic;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-class PSystemError implements PSystem {
+class ColorAndSizeChange implements FontChange {
 
-	private final List<String> errors = new ArrayList<String>();
+	static final Pattern colorPattern = Pattern.compile("(?i)color\\s*=\\s*\"?(#[0-9a-fA-F]{6}|\\w+)\"?");
 
-	public PSystemError(String error) {
-		this.errors.add(error);
-	}
+	static final Pattern sizePattern = Pattern.compile("(?i)size\\s*=\\s*\"?(\\d+)\"?");
 
-	private PSystemError(Collection<String> errors) {
-		this.errors.addAll(errors);
-	}
+	private final HtmlColor color;
+	private final Integer size;
 
-	static public PSystemError merge(PSystemError... ps) {
-		final Set<String> set = new TreeSet<String>();
-		for (PSystemError system : ps) {
-			if (system != null) {
-				set.addAll(system.errors);
-			}
+	ColorAndSizeChange(String s) {
+		final Matcher matcherColor = colorPattern.matcher(s);
+		if (matcherColor.find()) {
+			color = new HtmlColor(matcherColor.group(1));
+		} else {
+			color = null;
 		}
-		if (set.size() == 0) {
-			throw new IllegalArgumentException();
+		final Matcher matcherSize = sizePattern.matcher(s);
+		if (matcherSize.find()) {
+			size = new Integer(matcherSize.group(1));
+		} else {
+			size = null;
 		}
-		return new PSystemError(set);
 	}
 
-	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
-		final List<String> strings = new ArrayList<String>();
-		strings.add("]SYNTAX ERROR?");
-		strings.addAll(errors);
-		new PngError(strings).writeError(pngFile);
-		return Arrays.asList(pngFile);
+	HtmlColor getColor() {
+		return color;
 	}
 
-	public String getDescription() {
-		return "(Error: " + errors.get(0) + ")";
+	Integer getSize() {
+		return size;
 	}
 
-	List<String> getErrors() {
-		return errors;
+	public FontConfiguration apply(FontConfiguration initial) {
+		FontConfiguration result = initial;
+		if (color != null) {
+			result = result.changeColor(color);
+		}
+		if (size != null) {
+			result = result.changeSize(size);
+		}
+		return result;
 	}
 
 }

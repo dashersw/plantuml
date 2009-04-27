@@ -58,9 +58,33 @@ public class DotMakerActivity extends DotMaker {
 		final PrintWriter pw = initPrintWriter(out);
 		printPartitions(pw);
 		printTranspartitionsLinks(pw);
+		//printSubgraphLinks(pw);
 
 		pw.println("}");
 		pw.close();
+		debugFile(out);
+	}
+
+	@Override
+	protected void printSpecialHeader(PrintWriter pw) {
+		//pw.println("compound=true;");
+		//pw.println("rankdir=TB;");
+	}
+
+	private void printSubgraphLinks(PrintWriter pw) {
+		final List<Partition> partitions = new ArrayList<Partition>(getActivityDiagram().partitions());
+		for (int i = 0; i < partitions.size() - 1; i++) {
+			final Partition p1 = partitions.get(i);
+			final Partition p2 = partitions.get(i + 1);
+			final Entity ent1 = p1.getEntities().iterator().next();
+			final Entity ent2 = p2.getEntities().iterator().next();
+			pw.println(ent1.getUid() + " -> " + ent2.getUid() + "[ltail=cluster" + i + ",lhead=cluster" + (i + 1)
+					+ "];");
+		}
+		//pw.println("{ rank = same; DUM0; DUM1; DUM2; }");
+		//pw.println("DUM0 -> DUM1 [weight=999999,ltail=cluster0,lhead=cluster1];");
+		//pw.println("DUM1 -> DUM2 [weight=999999,ltail=cluster1,lhead=cluster2];");
+
 	}
 
 	private void printTranspartitionsLinks(PrintWriter pw) {
@@ -85,10 +109,12 @@ public class DotMakerActivity extends DotMaker {
 
 	private void printPartitions(PrintWriter pw) {
 		int nb = 0;
-		for (Partition p : getActivityDiagram().partitions().values()) {
+		for (Partition p : getActivityDiagram().partitions()) {
 			pw.println("subgraph cluster" + nb + " {");
 			pw.println("label=\"" + p.getDisplay() + "\";");
-			pw.println("color=white;");
+			pw.println("color=black;");
+			// pw.println("color=white;");
+			//pw.println("DUM" + nb + ";");
 			this.printEntities(pw, p.getEntities());
 			final List<Link> links = new ArrayList<Link>();
 			for (Link link : getActivityDiagram().getLinks()) {
@@ -102,5 +128,4 @@ public class DotMakerActivity extends DotMaker {
 		}
 
 	}
-
 }

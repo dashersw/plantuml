@@ -29,56 +29,27 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.activitydiagram.command;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
-class PSystemError implements PSystem {
+import net.sourceforge.plantuml.SingleLineCommand;
+import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
+import net.sourceforge.plantuml.activitydiagram.Partition;
 
-	private final List<String> errors = new ArrayList<String>();
+public class CommandPartition extends SingleLineCommand<ActivityDiagram> {
 
-	public PSystemError(String error) {
-		this.errors.add(error);
+	public CommandPartition(ActivityDiagram diagram) {
+		super(diagram, "(?i)^partition\\s+(\\w+)\\s*$");
 	}
 
-	private PSystemError(Collection<String> errors) {
-		this.errors.addAll(errors);
-	}
-
-	static public PSystemError merge(PSystemError... ps) {
-		final Set<String> set = new TreeSet<String>();
-		for (PSystemError system : ps) {
-			if (system != null) {
-				set.addAll(system.errors);
-			}
+	protected boolean executeArg(List<String> arg) {
+		final String code = arg.get(0);
+		Partition p = getSystem().getPartition(code);
+		if (p == null) {
+			p = getSystem().createPartition(code, code);
 		}
-		if (set.size() == 0) {
-			throw new IllegalArgumentException();
-		}
-		return new PSystemError(set);
-	}
-
-	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
-		final List<String> strings = new ArrayList<String>();
-		strings.add("]SYNTAX ERROR?");
-		strings.addAll(errors);
-		new PngError(strings).writeError(pngFile);
-		return Arrays.asList(pngFile);
-	}
-
-	public String getDescription() {
-		return "(Error: " + errors.get(0) + ")";
-	}
-
-	List<String> getErrors() {
-		return errors;
+		return true;
 	}
 
 }

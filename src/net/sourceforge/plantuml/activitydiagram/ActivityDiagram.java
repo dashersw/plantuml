@@ -33,20 +33,21 @@ package net.sourceforge.plantuml.activitydiagram;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.plantuml.classdiagram.AbstractDiagram;
+import net.sourceforge.plantuml.AbstractDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
-import net.sourceforge.plantuml.cucadiagram.dot.CucaPngMaker;
 
 public class ActivityDiagram extends AbstractDiagram {
 
 	private Entity lastEntityConsulted;
 	private Entity lastEntityBrancheConsulted;
+	private Partition lastPartitionConsulted;
 
 	private Map<String, Partition> partitions = new LinkedHashMap<String, Partition>();
 
@@ -62,11 +63,27 @@ public class ActivityDiagram extends AbstractDiagram {
 	public Partition createPartition(String code, String display) {
 		final Partition p = new Partition(code, display);
 		partitions.put(code, p);
+
+		if (lastPartitionConsulted == null) {
+			for (Entity ent : entities().values()) {
+				p.addEntity(ent);
+			}
+		}
+		lastPartitionConsulted = p;
+
 		return p;
 	}
 
 	public Partition getPartition(String code) {
-		return partitions.get(code);
+		final Partition p = partitions.get(code);
+		if (p != null) {
+			lastPartitionConsulted = p;
+		}
+		return p;
+	}
+
+	public Collection<Partition> partitions() {
+		return Collections.unmodifiableCollection(partitions.values());
 	}
 
 	public Partition getPartitionOf(Entity entity) {
@@ -83,6 +100,9 @@ public class ActivityDiagram extends AbstractDiagram {
 		if (result.getType() == EntityType.BRANCH) {
 			lastEntityBrancheConsulted = result;
 		}
+		if (lastPartitionConsulted != null && getPartitionOf(result) == null) {
+			lastPartitionConsulted.addEntity(result);
+		}
 	}
 
 	@Override
@@ -94,7 +114,7 @@ public class ActivityDiagram extends AbstractDiagram {
 
 	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
 
-		final CucaPngMaker maker = new CucaPngMaker(this);
+		final ActivityPngMaker maker = new ActivityPngMaker(this);
 		return maker.createPng(pngFile, "nodesep=.20;", "ranksep=0.4;", "edge [fontsize=11,labelfontsize=11];",
 				"node [fontsize=11];");
 	}
@@ -109,10 +129,6 @@ public class ActivityDiagram extends AbstractDiagram {
 
 	public Entity getLastEntityBrancheConsulted() {
 		return lastEntityBrancheConsulted;
-	}
-
-	public Map<String, Partition> partitions() {
-		return Collections.unmodifiableMap(partitions);
 	}
 
 }

@@ -31,7 +31,7 @@
  */
 package net.sourceforge.plantuml;
 
-public class StartUml {
+class StartUml {
 	
 	private final FilePng png;
 	private final String description;

@@ -36,6 +36,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;

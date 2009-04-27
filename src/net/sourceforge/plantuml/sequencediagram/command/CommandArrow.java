@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram.command;
 
+import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.SingleLineCommand;
@@ -42,7 +43,7 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 public class CommandArrow extends SingleLineCommand<SequenceDiagram> {
 
 	public CommandArrow(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^(\\w+)\\s*(--?[\\>\\]]|[\\<\\[]--?)\\s*(\\w+)\\s*:\\s*(.*)$");
+		super(sequenceDiagram, "(?i)^(\\w+)\\s*(--?[\\>\\]]|[\\<\\[]--?)\\s*(\\w+)\\s*(?::\\s*(.*))?$");
 	}
 
 	protected boolean executeArg(List<String> arg) {
@@ -61,7 +62,12 @@ public class CommandArrow extends SingleLineCommand<SequenceDiagram> {
 
 		final boolean dotted = arg.get(1).length() == 3;
 
-		final List<String> labels = StringUtils.getWithNewlines(arg.get(3));
+		final List<String> labels;
+		if (arg.get(3) == null) {
+			labels = Arrays.asList("");
+		} else {
+			labels = StringUtils.getWithNewlines(arg.get(3));
+		}
 
 		getSystem().addMessage(new Message(p1, p2, labels, dotted));
 		return true;
