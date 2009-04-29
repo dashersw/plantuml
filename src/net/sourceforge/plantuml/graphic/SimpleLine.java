@@ -59,7 +59,7 @@ class SimpleLine implements Line {
 		}
 	}
 
-	public Dimension2D calculateDimensions(Graphics2D g2d) {
+	public Dimension2D calculateDimension(Graphics2D g2d) {
 		double width = 0;
 		double height = 0;
 		for (MonoConfiguredBlock b : blocs) {
@@ -71,8 +71,12 @@ class SimpleLine implements Line {
 	}
 
 	public void draw(Graphics2D g2d, double x, double y) {
+		final Dimension2D dim = calculateDimension(g2d);
 		for (MonoConfiguredBlock b : blocs) {
-			b.draw(g2d, x, y);
+			final Dimension2D dimBloc = b.calculateDimensions(g2d);
+			final double deltaY = dim.getHeight() - dimBloc.getHeight();
+			assert deltaY >= 0;
+			b.draw(g2d, x, y + deltaY);
 			x += b.calculateDimensions(g2d).getWidth();
 		}
 	}

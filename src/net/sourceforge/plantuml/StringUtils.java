@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,6 +40,11 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
 	static private final Pattern multiLines = Pattern.compile("((?:\\\\\\\\|[^\\\\])+)(\\\\n)?");
+
+	public static String getPlateformDependentAbsolutePath(File file) {
+		return file.getAbsolutePath().replace('/', File.separatorChar);
+
+	}
 
 	public static List<String> getWithNewlines(String s) {
 		if (s == null) {

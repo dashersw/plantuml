@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
@@ -213,7 +214,7 @@ public class DotMaker {
 				if (file.exists() == false) {
 					throw new IllegalStateException();
 				}
-				final String absolutePath = file.getAbsolutePath().replace('/', '\\');
+				final String absolutePath = StringUtils.getPlateformDependentAbsolutePath(file);
 				pw.println(entity.getUid() + " [margin=0,pad=0,label=\"\",shape=none,image=\"" + absolutePath + "\"];");
 				// pw.println(entity.getUid() + " [margin=\"0,0\",shape=box," +
 				// label + "];");
@@ -270,7 +271,7 @@ public class DotMaker {
 		if (file.exists() == false) {
 			throw new IllegalStateException();
 		}
-		final String absolutePath = file.getAbsolutePath().replace('/', '\\');
+		final String absolutePath = StringUtils.getPlateformDependentAbsolutePath(file);
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
 		sb
@@ -282,7 +283,7 @@ public class DotMaker {
 	}
 
 	private String getLabelForActor(Entity entity) {
-		final String actorAbsolutePath = actorFile.getAbsolutePath().replace('/', '\\');
+		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(actorFile);
 		final String stereotype = entity.getStereotype();
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");

@@ -33,7 +33,6 @@ package net.sourceforge.plantuml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,6 +56,7 @@ public class DirWatcher {
 				continue;
 			}
 			if (f.getName().toLowerCase().endsWith(".java") == false
+					&& f.getName().toLowerCase().endsWith(".tex") == false
 					&& f.getName().toLowerCase().endsWith(".txt") == false
 					&& f.getName().toLowerCase().endsWith(".htm") == false
 					&& f.getName().toLowerCase().endsWith(".html") == false) {
@@ -75,6 +75,7 @@ public class DirWatcher {
 		return Collections.unmodifiableSortedMap(result);
 	}
 
+	/*
 	static private void list(File dir, boolean recurse, Collection<File> result) {
 		for (File f : dir.listFiles()) {
 			if (f.isDirectory() && recurse) {
@@ -84,6 +85,7 @@ public class DirWatcher {
 				continue;
 			}
 			if (f.getName().toLowerCase().endsWith(".java") == false
+					&& f.getName().toLowerCase().endsWith(".tex") == false
 					&& f.getName().toLowerCase().endsWith(".txt") == false
 					&& f.getName().toLowerCase().endsWith(".htm") == false
 					&& f.getName().toLowerCase().endsWith(".html") == false) {
@@ -93,6 +95,7 @@ public class DirWatcher {
 		}
 
 	}
+	*/
 
 	private SortedMap<FilePng, String> getPngFileCreated(File f) throws IOException, InterruptedException {
 		final SortedMap<FilePng, String> result = new TreeMap<FilePng, String>();

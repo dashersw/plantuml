@@ -64,7 +64,7 @@ public class TextBlock {
 		double width = 0;
 		double height = 0;
 		for (Line line : lines) {
-			final Dimension2D size2D = line.calculateDimensions(g2d);
+			final Dimension2D size2D = line.calculateDimension(g2d);
 			height += size2D.getHeight();
 			width = Math.max(width, size2D.getWidth());
 		}
@@ -74,7 +74,7 @@ public class TextBlock {
 	public void draw(Graphics2D g2d, double x, double y) {
 		for (Line line : lines) {
 			line.draw(g2d, x, y);
-			y += line.calculateDimensions(g2d).getHeight();
+			y += line.calculateDimension(g2d).getHeight();
 		}
 	}
 

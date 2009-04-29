@@ -234,7 +234,7 @@ class JavaFileReader {
 			s = "";
 		}
 		s = s.trim();
-		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t")) {
+		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") || s.startsWith("%")) {
 			s = s.substring(1).trim();
 		}
 		return s;

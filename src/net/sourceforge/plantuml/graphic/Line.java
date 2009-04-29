@@ -36,7 +36,7 @@ import java.awt.geom.Dimension2D;
 
 interface Line {
 
-	Dimension2D calculateDimensions(Graphics2D g2d);
+	Dimension2D calculateDimension(Graphics2D g2d);
 
 	void draw(Graphics2D g2d, double x, double y);
 

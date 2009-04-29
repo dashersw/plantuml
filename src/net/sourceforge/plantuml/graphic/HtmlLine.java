@@ -57,7 +57,7 @@ class HtmlLine implements Line {
 
 	}
 
-	public Dimension2D calculateDimensions(Graphics2D g2d) {
+	public Dimension2D calculateDimension(Graphics2D g2d) {
 		jLabel.setAlignmentX(0);
 		jLabel.setAlignmentY(0);
 		// System.err.println("dim=" + dim);
@@ -80,7 +80,7 @@ class HtmlLine implements Line {
 	}
 
 	public void draw(Graphics2D g2d, double x, double y) {
-		final Dimension2D dim = calculateDimensions(g2d);
+		final Dimension2D dim = calculateDimension(g2d);
 		final AffineTransform at = g2d.getTransform();
 		g2d.translate(x, y);
 		jLabel.setBounds(0, 0, (int) dim.getWidth(), (int) dim.getHeight());

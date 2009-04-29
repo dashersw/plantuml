@@ -55,7 +55,7 @@ class MonoConfiguredBlock {
 		return new Dimension2DDouble(rect.getWidth(), rect.getHeight());
 	}
 
-	public void draw(Graphics2D g2d, double x, double y) {
+	void draw(Graphics2D g2d, double x, double y) {
 		g2d.setFont(fontConfiguration.getFont());
 		g2d.setPaint(fontConfiguration.getColor());
 		final double d = fontConfiguration.getFont().getSize2D();
@@ -71,11 +71,22 @@ class MonoConfiguredBlock {
 		}
 		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
 			final Dimension2D dim = calculateDimensions(g2d);
-			//final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+			// final FontMetrics fm =
+			// g2d.getFontMetrics(fontConfiguration.getFont());
 			final int ypos = (int) (y + dim.getHeight() / 2 + 1);
 			g2d.setStroke(new BasicStroke((float) 1.5));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
 			g2d.setStroke(new BasicStroke());
 		}
+	}
+
+	public double getAscent(Graphics2D g2d) {
+		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+		return fm.getAscent();
+	}
+
+	public double getDescent(Graphics2D g2d) {
+		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+		return fm.getDescent();
 	}
 }
