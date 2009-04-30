@@ -46,15 +46,19 @@ class Graphviz {
 		final String getenv = System.getenv("GRAPHVIZ_DOT");
 
 		if (getenv == null) {
-			final File programFile = new File("c:/Program Files");
-			if (programFile.exists()) {
-				for (File f : programFile.listFiles(new FileFilter() {
-					public boolean accept(File pathname) {
-						return pathname.isDirectory() && pathname.getName().startsWith("Graphviz");
+			if (File.separatorChar == '/') {
+				dotExe = new File("/usr/bin/dot");
+			} else {
+				final File programFile = new File("c:/Program Files");
+				if (programFile.exists()) {
+					for (File f : programFile.listFiles(new FileFilter() {
+						public boolean accept(File pathname) {
+							return pathname.isDirectory() && pathname.getName().startsWith("Graphviz");
+						}
+					})) {
+						final File binDir = new File(f, "bin");
+						dotExe = new File(binDir, "dot.exe");
 					}
-				})) {
-					final File binDir = new File(f, "bin");
-					dotExe = new File(binDir, "dot.exe");
 				}
 			}
 		} else {
