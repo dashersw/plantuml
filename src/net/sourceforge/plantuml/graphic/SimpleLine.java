@@ -70,12 +70,24 @@ class SimpleLine implements Line {
 		return new Dimension2DDouble(width, height);
 	}
 
-	public void draw(Graphics2D g2d, double x, double y) {
+	private double maxDeltaY(Graphics2D g2d) {
+		double result = 0;
 		final Dimension2D dim = calculateDimension(g2d);
 		for (MonoConfiguredBlock b : blocs) {
 			final Dimension2D dimBloc = b.calculateDimensions(g2d);
-			final double deltaY = dim.getHeight() - dimBloc.getHeight();
-			assert deltaY >= 0;
+			final double deltaY = dim.getHeight() - dimBloc.getHeight() + b.getFontSize2D();
+			result = Math.max(result, deltaY);
+		}
+		return result;
+	}
+
+	public void draw(Graphics2D g2d, double x, double y) {
+		//final Dimension2D dim = calculateDimension(g2d);
+		final double deltaY = maxDeltaY(g2d);
+		for (MonoConfiguredBlock b : blocs) {
+			//final Dimension2D dimBloc = b.calculateDimensions(g2d);
+			//final double deltaY = dim.getHeight() - dimBloc.getHeight() + b.getFontSize2D();
+			//assert deltaY >= 0;
 			b.draw(g2d, x, y + deltaY);
 			x += b.calculateDimensions(g2d).getWidth();
 		}

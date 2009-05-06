@@ -56,12 +56,15 @@ class JavaFileReader {
 	private final File outputDirectory;
 
 	public JavaFileReader(File file) {
-		this(file, file.getParentFile());
+		this(file, file.getAbsoluteFile().getParentFile());
 	}
 
 	public JavaFileReader(File file, File outputDirectory) {
 		if (file.exists() == false) {
 			throw new IllegalArgumentException();
+		}
+		if (outputDirectory == null) {
+			throw new IllegalArgumentException("outputDirectory null");
 		}
 		if (outputDirectory.exists() == false) {
 			throw new IllegalArgumentException();

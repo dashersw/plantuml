@@ -55,6 +55,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -84,16 +85,20 @@ public class MainWindow extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		init();
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				init();
 
-		tick();
-		final Timer timer = new Timer(3000, new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
 				tick();
+				final Timer timer = new Timer(3000, new ActionListener() {
+
+					public void actionPerformed(ActionEvent e) {
+						tick();
+					}
+				});
+				timer.start();
 			}
 		});
-		timer.start();
 
 		final MouseListener mouseListener = new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -120,6 +125,7 @@ public class MainWindow extends JFrame {
 		} else {
 			System.exit(0);
 		}
+
 		setTitle(dir.getAbsolutePath());
 		prefs.put(KEY_DIR, dir.getAbsolutePath());
 		dirWatcher = new DirWatcher(dir);
@@ -137,18 +143,20 @@ public class MainWindow extends JFrame {
 	}
 
 	private void tick() {
-		try {
-			final boolean changed = refreshDir();
-			if (changed) {
-				jList1.setListData(new Vector<SimpleLine>(currentDirectoryListing));
-				jList1.setVisible(true);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					final boolean changed = refreshDir();
+					if (changed) {
+						jList1.setListData(new Vector<SimpleLine>(currentDirectoryListing));
+						jList1.setVisible(true);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}});
 	}
 
 	private boolean refreshDir() throws IOException, InterruptedException {
@@ -204,7 +212,10 @@ public class MainWindow extends JFrame {
 	public static void main(String[] args) throws ClassNotFoundException, InstantiationException,
 			IllegalAccessException, UnsupportedLookAndFeelException {
 
-		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} catch (Exception e) {
+		}
 
 		new MainWindow();
 

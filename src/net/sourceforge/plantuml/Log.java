@@ -31,46 +31,10 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
+public abstract class Log {
 
-public class Run {
+	public static void debug(String s) {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		if (args.length == 0) {
-			manageDir(new File("."));
-		} else {
-			manageFiles(args);
-		}
-	}
-
-	private static void manageDir(File dir) throws IOException, InterruptedException {
-		File lockFile = null;
-		try {
-			lockFile = new File(dir, "javaumllock.tmp");
-			final DirWatcher dirWatcher = new DirWatcher(dir);
-			dirWatcher.buildCreatedFiles();
-		} finally {
-			if (lockFile != null) {
-				lockFile.delete();
-			}
-		}
-	}
-
-	private static void manageFile(File f) throws IOException, InterruptedException {
-		new JavaFileReader(f).execute();
-	}
-
-	private static void manageFiles(String[] args) throws IOException, InterruptedException {
-		for (String s : args) {
-			final File f = new File(s);
-			if (f.isDirectory()) {
-				manageDir(f);
-			} else if (f.isFile()) {
-				manageFile(f);
-			}
-
-		}
 	}
 
 }

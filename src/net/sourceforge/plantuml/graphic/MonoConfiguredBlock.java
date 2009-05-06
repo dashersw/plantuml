@@ -38,6 +38,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.Log;
 
 class MonoConfiguredBlock {
 
@@ -52,28 +53,38 @@ class MonoConfiguredBlock {
 	public Dimension2D calculateDimensions(Graphics2D g2d) {
 		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
 		final Rectangle2D rect = fm.getStringBounds(text, g2d);
-		return new Dimension2DDouble(rect.getWidth(), rect.getHeight());
+		Log.debug("g2d="+g2d);
+		Log.debug("Size for " + text + " is " + rect);
+		double h = rect.getHeight();
+		if (h < 10) {
+			h = 10;
+		}
+		return new Dimension2DDouble(rect.getWidth(), h);
+	}
+
+	public double getFontSize2D() {
+		return fontConfiguration.getFont().getSize2D();
 	}
 
 	void draw(Graphics2D g2d, double x, double y) {
 		g2d.setFont(fontConfiguration.getFont());
 		g2d.setPaint(fontConfiguration.getColor());
-		final double d = fontConfiguration.getFont().getSize2D();
-		g2d.drawString(text, (float) x, (float) (y + d));
+		g2d.drawString(text, (float) x, (float) y);
 
+		// final double d = fontConfiguration.getFont().getSize2D();
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
 			final Dimension2D dim = calculateDimensions(g2d);
 			final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
-			final int ypos = (int) (y + fm.getAscent() + 1);
+			//final int ypos = (int) (y + fm.getDescent());
+			final int ypos = (int) (y + 2.5);
 			g2d.setStroke(new BasicStroke((float) 1.3));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
 			g2d.setStroke(new BasicStroke());
 		}
 		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
 			final Dimension2D dim = calculateDimensions(g2d);
-			// final FontMetrics fm =
-			// g2d.getFontMetrics(fontConfiguration.getFont());
-			final int ypos = (int) (y + dim.getHeight() / 2 + 1);
+			final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+			final int ypos = (int) (y - fm.getDescent() - 0.5);
 			g2d.setStroke(new BasicStroke((float) 1.5));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
 			g2d.setStroke(new BasicStroke());

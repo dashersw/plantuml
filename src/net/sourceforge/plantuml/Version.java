@@ -31,46 +31,22 @@
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.Properties;
 
-public class Run {
+public class Version {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		if (args.length == 0) {
-			manageDir(new File("."));
-		} else {
-			manageFiles(args);
-		}
+	public static int version() {
+		return 1178;
 	}
 
-	private static void manageDir(File dir) throws IOException, InterruptedException {
-		File lockFile = null;
-		try {
-			lockFile = new File(dir, "javaumllock.tmp");
-			final DirWatcher dirWatcher = new DirWatcher(dir);
-			dirWatcher.buildCreatedFiles();
-		} finally {
-			if (lockFile != null) {
-				lockFile.delete();
-			}
-		}
-	}
+	public static void main(String[] args) {
+		System.out.println("PlantUML version " + version());
+		final Properties p = System.getProperties();
+		System.out.println(p.getProperty("java.runtime.name"));
+		System.out.println(p.getProperty("java.vm.name"));
+		System.out.println(p.getProperty("java.runtime.version"));
+		System.out.println(p.getProperty("os.name"));
 
-	private static void manageFile(File f) throws IOException, InterruptedException {
-		new JavaFileReader(f).execute();
-	}
-
-	private static void manageFiles(String[] args) throws IOException, InterruptedException {
-		for (String s : args) {
-			final File f = new File(s);
-			if (f.isDirectory()) {
-				manageDir(f);
-			} else if (f.isFile()) {
-				manageFile(f);
-			}
-
-		}
 	}
 
 }
