@@ -33,12 +33,22 @@ package net.sourceforge.plantuml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
+import javax.swing.UIManager;
+
+import net.sourceforge.plantuml.swing.MainWindow;
 
 public class Run {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
-		if (args.length == 0) {
-			manageDir(new File("."));
+	public static void main(String[] argsArray) throws IOException, InterruptedException {
+		final List<String> args = Option.getInstance().manageOption(argsArray);
+		if (args.size() == 0) {
+			try {
+				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			} catch (Exception e) {
+			}
+			new MainWindow();
 		} else {
 			manageFiles(args);
 		}
@@ -61,7 +71,7 @@ public class Run {
 		new JavaFileReader(f).execute();
 	}
 
-	private static void manageFiles(String[] args) throws IOException, InterruptedException {
+	private static void manageFiles(List<String> args) throws IOException, InterruptedException {
 		for (String s : args) {
 			final File f = new File(s);
 			if (f.isDirectory()) {

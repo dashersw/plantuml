@@ -45,6 +45,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.EmptyImageBuilder;
+import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -84,10 +85,12 @@ public class CucaPngMaker {
 			final Graphviz graphviz = new Graphviz(tmpFile);
 			graphviz.createPng(pngFile);
 		} finally {
-			tmpFile.delete();
-			actorFile.delete();
-			for (File f : imageFiles.values()) {
-				f.delete();
+			if (Option.getInstance().isKeepTmpFiles() == false) {
+				tmpFile.delete();
+				actorFile.delete();
+				for (File f : imageFiles.values()) {
+					f.delete();
+				}
 			}
 		}
 		return Arrays.asList(pngFile);
@@ -113,7 +116,9 @@ public class CucaPngMaker {
 			return null;
 		}
 		final File f = File.createTempFile("plantuml", ".png");
-		f.deleteOnExit();
+		if (Option.getInstance().isKeepTmpFiles() == false) {
+			f.deleteOnExit();
+		}
 
 		final Rose skin = new Rose();
 

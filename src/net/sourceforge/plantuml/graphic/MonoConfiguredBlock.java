@@ -74,7 +74,7 @@ class MonoConfiguredBlock {
 		// final double d = fontConfiguration.getFont().getSize2D();
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
 			final Dimension2D dim = calculateDimensions(g2d);
-			final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
+			// final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
 			//final int ypos = (int) (y + fm.getDescent());
 			final int ypos = (int) (y + 2.5);
 			g2d.setStroke(new BasicStroke((float) 1.3));

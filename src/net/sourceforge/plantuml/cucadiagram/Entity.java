@@ -47,6 +47,8 @@ public class Entity {
 
 	private final String stereotype;
 
+	private boolean italic = false;
+
 	private final List<String> fields = new ArrayList<String>();
 	private final List<String> methods = new ArrayList<String>();
 
@@ -105,6 +107,14 @@ public class Entity {
 
 	public String getStereotype() {
 		return stereotype;
+	}
+
+	public final void goItalic() {
+		this.italic = true;
+	}
+
+	public final boolean isItalic() {
+		return italic;
 	}
 
 }

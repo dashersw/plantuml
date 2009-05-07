@@ -34,7 +34,13 @@ package net.sourceforge.plantuml;
 public abstract class Log {
 
 	public static void debug(String s) {
+		if (Option.getInstance().isVerbose()) {
+			System.err.println(s);
+		}
+	}
 
+	public static void error(String s) {
+		System.err.println(s);
 	}
 
 }

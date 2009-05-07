@@ -306,7 +306,14 @@ public class DotMaker {
 		if (stereotype != null) {
 			sb.append(manageStereotype(stereotype));
 		}
+		final boolean italic = entity.isItalic();
+		if (italic) {
+			sb.append("<FONT FACE=\"italic\">");
+		}
 		sb.append(manageHtml(entity.getDisplay()));
+		if (italic) {
+			sb.append("</FONT>");
+		}
 		sb.append("</TD></TR>");
 		sb.append("<TR><TD WIDTH=\"55\">");
 		for (String s : entity.fields()) {

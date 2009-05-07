@@ -36,14 +36,16 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.PngError;
 
-class Graphviz {
+public class Graphviz {
 
 	private static File dotExe;
+	private static final boolean isWindows = File.separatorChar == '\\';
 
 	static {
-		final String getenv = System.getenv("GRAPHVIZ_DOT");
+		final String getenv = getenvGraphvizDot();
 
 		if (getenv == null) {
 			if (File.separatorChar == '/') {
@@ -66,7 +68,11 @@ class Graphviz {
 		}
 	}
 
-	static File getDotExe() {
+	public static String getenvGraphvizDot() {
+		return System.getenv("GRAPHVIZ_DOT");
+	}
+
+	static public File getDotExe() {
 		return dotExe;
 	}
 
@@ -82,8 +88,25 @@ class Graphviz {
 			return;
 		}
 		final String cmd = getCommandLine(pngFile);
-		final Process process = Runtime.getRuntime().exec(cmd);
-		process.waitFor();
+		Log.debug(cmd);
+		try {
+			final Process process = Runtime.getRuntime().exec(cmd);
+			process.waitFor();
+		} catch (Throwable e) {
+			e.printStackTrace();
+			Log.error("Error: " + e);
+			Log.error("The command was " + cmd);
+			Log.error("");
+			Log.error("Try java -jar plantuml.jar -testdot to figure out the issue");
+			Log.error("");
+		}
+		if (pngFile.exists() == false) {
+			Log.error("Error: The file .png " + pngFile + " was not created by dot.");
+			Log.error("The command was " + cmd);
+			Log.error("");
+			Log.error("Try java -jar plantuml.jar -testdot to figure out the issue");
+			Log.error("");
+		}
 	}
 
 	public void createPositionFile(File positionFile) throws IOException, InterruptedException {
@@ -93,41 +116,46 @@ class Graphviz {
 	}
 
 	private void createPngNoGraphviz(File pngFile) throws IOException {
-		final PngError errorResult = new PngError(Arrays.asList("Cannot find Graphviz in \"C:\\Program Files\""));
+		final PngError errorResult = new PngError(Arrays
+				.asList("Cannot find Graphviz: try 'java -jar plantuml.jar -testdot'"));
 		errorResult.writeError(pngFile);
 	}
 
 	String getCommandLine(File pngFile) {
-		// String exp = "\"C:/Program Files/Graphviz2.18/bin/dot\" -Tgif
-		// c:/fileDot1.dot -o c:/fileDot1.gif";
 		final StringBuilder sb = new StringBuilder();
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(dotExe.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(" -Tpng ");
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(dotFile.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(" -o ");
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(pngFile.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		return sb.toString();
+	}
+
+	private void appendDoubleQuoteOnWindows(final StringBuilder sb) {
+		if (isWindows) {
+			sb.append('\"');
+		}
 	}
 
 	private String getCommandLineDotFile(File out) {
 		final StringBuilder sb = new StringBuilder();
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(dotExe.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(" -Tdot ");
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(dotFile.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(" -o ");
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		sb.append(out.getAbsolutePath());
-		sb.append('\"');
+		appendDoubleQuoteOnWindows(sb);
 		return sb.toString();
 	}
 }

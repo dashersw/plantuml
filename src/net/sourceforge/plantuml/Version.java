@@ -31,22 +31,11 @@
  */
 package net.sourceforge.plantuml;
 
-import java.util.Properties;
 
 public class Version {
-
+	
 	public static int version() {
-		return 1178;
-	}
-
-	public static void main(String[] args) {
-		System.out.println("PlantUML version " + version());
-		final Properties p = System.getProperties();
-		System.out.println(p.getProperty("java.runtime.name"));
-		System.out.println(p.getProperty("java.vm.name"));
-		System.out.println(p.getProperty("java.runtime.version"));
-		System.out.println(p.getProperty("os.name"));
-
+		return 1898;
 	}
 
 }
