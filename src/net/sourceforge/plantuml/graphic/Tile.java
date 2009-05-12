@@ -29,13 +29,14 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.graphic;
 
+import java.awt.Graphics2D;
+import java.awt.geom.Dimension2D;
 
-public class Version {
-	
-	public static int version() {
-		return 1936;
-	}
+interface Tile {
+
+	Dimension2D calculateDimensions(Graphics2D g2d);
+	void draw(Graphics2D g2d, double x, double y);
 
 }

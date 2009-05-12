@@ -31,11 +31,32 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
 
-public class Version {
-	
-	public static int version() {
-		return 1936;
+public class FileSystem {
+
+	private final static FileSystem singleton = new FileSystem();
+
+	private File currentDir;
+
+	private FileSystem() {
+		reset();
+	}
+
+	public static FileSystem getInstance() {
+		return singleton;
+	}
+
+	public void setCurrentDir(File f) {
+		this.currentDir = f;
+	}
+
+	public File getFile(String nameOrPath) {
+		return new File(currentDir, nameOrPath);
+	}
+
+	public void reset() {
+		currentDir = new File(".");
 	}
 
 }

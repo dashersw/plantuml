@@ -29,13 +29,8 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.graphic;
 
-
-public class Version {
-	
-	public static int version() {
-		return 1936;
-	}
-
+enum ImgValign {
+	TOP, BOTTOM, MIDDLE
 }

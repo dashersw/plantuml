@@ -34,7 +34,6 @@ package net.sourceforge.plantuml.sequencediagram.graphic;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
-import java.awt.image.BufferedImage;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -58,17 +57,16 @@ class Step2 {
 		this.groupingMargin = groupingMargin;
 	}
 
-	public void draw(Graphics2D g2d, Component compTitle, final double delta, final BufferedImage im, Page p) {
+	public void draw(Graphics2D g2d, Component compTitle, final double delta, int width, int height, Page p) {
 		
 		double deltaY = 0;
 		if (compTitle != null) {
 			this.drawTitle(g2d, compTitle);
 			deltaY = compTitle.getPreferredHeight(g2d);
 		}
-		final double height = im.getHeight();
 
-		clipAndTranslate(delta, im, p, g2d);
-		this.drawPlayground(g2d, im.getHeight(), new SimpleContext2D(true));
+		clipAndTranslate(delta, width, p, g2d);
+		this.drawPlayground(g2d, height, new SimpleContext2D(true));
 
 		g2d.setClip(null);
 		g2d.setTransform(new AffineTransform());
@@ -76,12 +74,12 @@ class Step2 {
 		this.drawLine(g2d, height, deltaY);
 		this.drawHeadTail(g2d, height, deltaY);
 
-		clipAndTranslate(delta, im, p, g2d);
-		this.drawPlayground(g2d, im.getHeight(), new SimpleContext2D(false));
+		clipAndTranslate(delta, width, p, g2d);
+		this.drawPlayground(g2d, height, new SimpleContext2D(false));
 	}
 
-	private void clipAndTranslate(final double delta, final BufferedImage im, Page p, final Graphics2D g2d) {
-		g2d.setClip(0, (int) p.getBodyRelativePosition(), im.getWidth(), (int) (p.getBodyHeight() + 1));
+	private void clipAndTranslate(final double delta, int width, Page p, final Graphics2D g2d) {
+		g2d.setClip(0, (int) p.getBodyRelativePosition(), width, (int) (p.getBodyHeight() + 1));
 		if (delta > 0) {
 			g2d.translate(0, -delta);
 		}

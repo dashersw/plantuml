@@ -124,7 +124,7 @@ public class SequenceDiagramPngMaker {
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2dOk = builder.getGraphics2D();
 		
-		step2.draw(g2dOk, compTitle, delta, im, pages.get(indice));
+		step2.draw(g2dOk, compTitle, delta, im.getWidth(), im.getHeight(), pages.get(indice));
 
 		final File f = computeFilename(pngFile, indice);
 

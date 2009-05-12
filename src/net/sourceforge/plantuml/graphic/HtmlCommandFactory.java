@@ -34,7 +34,6 @@ package net.sourceforge.plantuml.graphic;
 import java.util.EnumSet;
 import java.util.regex.Pattern;
 
-
 class HtmlCommandFactory {
 
 	static final Pattern addStyle;
@@ -66,11 +65,14 @@ class HtmlCommandFactory {
 		if (htmlTag.matcher(s).matches() == false) {
 			return new Text(s);
 		}
+		if (s.matches(Splitter.imgPattern)) {
+			return Img.getInstance(s);
+		}
 		if (addStyle.matcher(s).matches()) {
-			return new AddStyle(FontStyle.getStyle2(s));
+			return new AddStyle(FontStyle.getStyle(s));
 		}
 		if (removeStyle.matcher(s).matches()) {
-			return new RemoveStyle(FontStyle.getStyle2(s));
+			return new RemoveStyle(FontStyle.getStyle(s));
 		}
 
 		if (s.matches(Splitter.fontPattern)) {

@@ -40,12 +40,12 @@ import java.awt.geom.Rectangle2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Log;
 
-class MonoConfiguredBlock {
+class TileText implements Tile {
 
 	private final String text;
 	private final FontConfiguration fontConfiguration;
 
-	public MonoConfiguredBlock(String text, FontConfiguration fontConfiguration) {
+	public TileText(String text, FontConfiguration fontConfiguration) {
 		this.fontConfiguration = fontConfiguration;
 		this.text = text;
 	}
@@ -66,16 +66,13 @@ class MonoConfiguredBlock {
 		return fontConfiguration.getFont().getSize2D();
 	}
 
-	void draw(Graphics2D g2d, double x, double y) {
+	public void draw(Graphics2D g2d, double x, double y) {
 		g2d.setFont(fontConfiguration.getFont());
 		g2d.setPaint(fontConfiguration.getColor());
 		g2d.drawString(text, (float) x, (float) y);
 
-		// final double d = fontConfiguration.getFont().getSize2D();
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
 			final Dimension2D dim = calculateDimensions(g2d);
-			// final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
-			//final int ypos = (int) (y + fm.getDescent());
 			final int ypos = (int) (y + 2.5);
 			g2d.setStroke(new BasicStroke((float) 1.3));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
@@ -91,13 +88,4 @@ class MonoConfiguredBlock {
 		}
 	}
 
-	public double getAscent(Graphics2D g2d) {
-		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
-		return fm.getAscent();
-	}
-
-	public double getDescent(Graphics2D g2d) {
-		final FontMetrics fm = g2d.getFontMetrics(fontConfiguration.getFont());
-		return fm.getDescent();
-	}
 }

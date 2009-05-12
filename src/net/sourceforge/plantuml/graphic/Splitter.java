@@ -43,6 +43,7 @@ class Splitter {
 
 	static final String endFontPattern = "\\</font\\>";
 	static final String fontPattern = "\\<font(\\s+size\\s*=\\s*\"?\\d+\"?|\\s+color\\s*=\\s*\"?(#[0-9a-fA-F]{6}|\\w+)\"?)+\\s*\\>";
+	static final String imgPattern = "<img\\s+(src\\s*=\\s*['\"]?[^\\s\">]+['\"]?\\s*|vspace\\s*=\\s*['\"]?\\d+['\"]?\\s*|valign\\s*=\\s*['\"]?(top|middle|bottom)['\"]?\\s*)+>";
 	static final String htmlTag;
 	
 	private static final Pattern tagOrText;
@@ -62,6 +63,8 @@ class Splitter {
 		sb.append(fontPattern);
 		sb.append('|');
 		sb.append(endFontPattern);
+		sb.append('|');
+		sb.append(imgPattern);
 
 		htmlTag = sb.toString();
 		tagOrText = Pattern.compile(htmlTag + "|.+?(?=" + htmlTag + ")|.+$", Pattern.CASE_INSENSITIVE);

@@ -79,25 +79,7 @@ enum FontStyle {
 		return null;
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public static FontStyle getStyle(String line) {
-		line = line.toLowerCase();
-		if (line.startsWith("<b>")) {
-			return BOLD;
-		}
-		if (line.startsWith("<i>")) {
-			return ITALIC;
-		}
-		if (line.startsWith("<u>")) {
-			return UNDERLINE;
-		}
-		return PLAIN;
-
-	}
-
-	public static FontStyle getStyle2(String line) {
 		for (FontStyle style : EnumSet.allOf(FontStyle.class)) {
 			if (style == FontStyle.PLAIN) {
 				continue;

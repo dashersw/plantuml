@@ -83,4 +83,8 @@ public class StringUtils {
 
 	}
 
+	public static boolean isNotEmpty(String input) {
+		return input != null && input.trim().length() > 0;
+	}
+
 }

@@ -63,13 +63,18 @@ public class PngError {
 		
 		BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
-		final TextBlock textBlock = new TextBlock(strings, FONT1, green);
-		final Dimension2D size = textBlock.calculateDimension(g2d);
-		textBlock.draw(g2d, 0, 0);
+		final Dimension2D size = draw(g2d);
 		im = im.getSubimage(0, 0, (int) size.getWidth(), (int) size.getHeight());
 
 		ImageIO.write(im, "png", png);
 		g2d.dispose();
+	}
+
+	public Dimension2D draw(final Graphics2D g2d) {
+		final TextBlock textBlock = new TextBlock(strings, FONT1, green);
+		final Dimension2D size = textBlock.calculateDimension(g2d);
+		textBlock.draw(g2d, 0, 0);
+		return size;
 	}
 
 }

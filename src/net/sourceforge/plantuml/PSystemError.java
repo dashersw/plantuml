@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-class PSystemError implements PSystem {
+public class PSystemError implements PSystem {
 
 	private final List<String> errors = new ArrayList<String>();
 
@@ -66,11 +66,15 @@ class PSystemError implements PSystem {
 	}
 
 	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
+		getPngError().writeError(pngFile);
+		return Arrays.asList(pngFile);
+	}
+
+	public PngError getPngError() throws IOException, InterruptedException {
 		final List<String> strings = new ArrayList<String>();
 		strings.add("]SYNTAX ERROR?");
 		strings.addAll(errors);
-		new PngError(strings).writeError(pngFile);
-		return Arrays.asList(pngFile);
+		return new PngError(strings);
 	}
 
 	public String getDescription() {

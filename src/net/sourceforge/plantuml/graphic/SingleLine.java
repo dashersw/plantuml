@@ -40,11 +40,11 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 
-class SimpleLine implements Line {
+class SingleLine implements Line {
 
-	private final List<MonoConfiguredBlock> blocs = new ArrayList<MonoConfiguredBlock>();
+	private final List<Tile> blocs = new ArrayList<Tile>();
 
-	public SimpleLine(String text, Font font, Color paint) {
+	public SingleLine(String text, Font font, Color paint) {
 		final Splitter lineSplitter = new Splitter(text);
 
 		FontConfiguration fontConfiguration = new FontConfiguration(font, paint);
@@ -52,7 +52,9 @@ class SimpleLine implements Line {
 		for (HtmlCommand cmd : lineSplitter.getHtmlCommands()) {
 			if (cmd instanceof Text) {
 				final String s = ((Text) cmd).getText();
-				blocs.add(new MonoConfiguredBlock(s, fontConfiguration));
+				blocs.add(new TileText(s, fontConfiguration));
+			} else if (cmd instanceof Img) {
+				blocs.add(((Img) cmd).createMonoImage());
 			} else if (cmd instanceof FontChange) {
 				fontConfiguration = ((FontChange) cmd).apply(fontConfiguration);
 			}
@@ -62,7 +64,7 @@ class SimpleLine implements Line {
 	public Dimension2D calculateDimension(Graphics2D g2d) {
 		double width = 0;
 		double height = 0;
-		for (MonoConfiguredBlock b : blocs) {
+		for (Tile b : blocs) {
 			final Dimension2D size2D = b.calculateDimensions(g2d);
 			width += size2D.getWidth();
 			height = Math.max(height, size2D.getHeight());
@@ -73,22 +75,25 @@ class SimpleLine implements Line {
 	private double maxDeltaY(Graphics2D g2d) {
 		double result = 0;
 		final Dimension2D dim = calculateDimension(g2d);
-		for (MonoConfiguredBlock b : blocs) {
+		for (Tile b : blocs) {
+			if (b instanceof TileText == false) {
+				continue;
+			}
 			final Dimension2D dimBloc = b.calculateDimensions(g2d);
-			final double deltaY = dim.getHeight() - dimBloc.getHeight() + b.getFontSize2D();
+			final double deltaY = dim.getHeight() - dimBloc.getHeight() + ((TileText) b).getFontSize2D();
 			result = Math.max(result, deltaY);
 		}
 		return result;
 	}
 
 	public void draw(Graphics2D g2d, double x, double y) {
-		//final Dimension2D dim = calculateDimension(g2d);
 		final double deltaY = maxDeltaY(g2d);
-		for (MonoConfiguredBlock b : blocs) {
-			//final Dimension2D dimBloc = b.calculateDimensions(g2d);
-			//final double deltaY = dim.getHeight() - dimBloc.getHeight() + b.getFontSize2D();
-			//assert deltaY >= 0;
-			b.draw(g2d, x, y + deltaY);
+		for (Tile b : blocs) {
+			if (b instanceof TileImage) {
+				b.draw(g2d, x, y);
+			} else {
+				b.draw(g2d, x, y + deltaY);
+			}
 			x += b.calculateDimensions(g2d).getWidth();
 		}
 	}

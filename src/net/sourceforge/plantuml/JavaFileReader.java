@@ -34,15 +34,12 @@ package net.sourceforge.plantuml;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagramFactory;
@@ -136,36 +133,8 @@ class JavaFileReader {
 
 	private SortedMap<Integer, PSystemParameter> execute1(PSystemFactory systemFactory, Collection<Integer> toSkip)
 			throws IOException, InterruptedException {
-
-		final SortedMap<Integer, PSystemParameter> result = new TreeMap<Integer, PSystemParameter>();
-		LineNumberReader br = null;
-		try {
-			br = new LineNumberReader(new FileReader(file));
-			String s;
-			while ((s = br.readLine()) != null) {
-				s = cleanLine(s);
-				if (s.length() == 0 || s.startsWith("#")) {
-					continue;
-				}
-				if (s.equals("@startuml") || s.startsWith("@startuml ")) {
-					final int line = br.getLineNumber();
-					if (toSkip.contains(line)) {
-						continue;
-					}
-					final PSystem system = executeUml(br, systemFactory);
-					if (system != null) {
-						result.put(line, new PSystemParameter(system, s));
-					}
-				}
-			}
-
-		} finally {
-			if (br != null) {
-				br.close();
-			}
-		}
-
-		return Collections.unmodifiableSortedMap(result);
+		
+		return new DataReader(new FileReader(file), systemFactory, toSkip).getPSystems();
 	}
 
 	static String changeName(String name, int cpt) {
@@ -173,74 +142,6 @@ class JavaFileReader {
 			return name.replaceAll("\\.\\w+$", ".png");
 		}
 		return name.replaceAll("\\.\\w+$", "_" + String.format("%03d", cpt) + ".png");
-	}
-
-	private PSystem executeUml(LineNumberReader br, PSystemFactory systemFactory) throws IOException {
-
-		systemFactory.reset();
-		String s;
-		while ((s = br.readLine()) != null) {
-			s = cleanLine(s);
-			if (s.length() == 0 || s.startsWith("#")) {
-				continue;
-			}
-			if (s.equals("@enduml")) {
-				return systemFactory.getSystem();
-			}
-			final List<Command> cmd = systemFactory.create(Arrays.asList(s));
-			if (cmd == null) {
-				return new PSystemError(s);
-			}
-			if (cmd.size() == 0) {
-				final boolean ok = manageMultiline(br, systemFactory, s);
-				if (ok == false) {
-					return new PSystemError(s);
-				}
-			} else if (cmd.size() == 1) {
-				final boolean ok = cmd.get(0).execute(Arrays.asList(s));
-				if (ok == false) {
-					return new PSystemError(s);
-				}
-			}
-		}
-		return systemFactory.getSystem();
-	}
-
-	private boolean manageMultiline(LineNumberReader br, PSystemFactory systemFactory, final String init)
-			throws IOException {
-		final List<String> lines = new ArrayList<String>();
-		lines.add(init);
-		String s;
-		while ((s = br.readLine()) != null) {
-			s = cleanLine(s);
-			if (s.length() == 0 || s.startsWith("#")) {
-				continue;
-			}
-			if (s.equals("@enduml")) {
-				return false;
-			}
-			lines.add(s);
-			final List<Command> cmd = systemFactory.create(lines);
-			if (cmd.size() == 1) {
-				return cmd.get(0).execute(lines);
-			}
-		}
-		return false;
-
-	}
-
-	private String cleanLine(String s) {
-		if (s.startsWith(" * ")) {
-			s = s.substring(" * ".length());
-		}
-		if (s.equals(" *")) {
-			s = "";
-		}
-		s = s.trim();
-		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") || s.startsWith("%")) {
-			s = s.substring(1).trim();
-		}
-		return s;
 	}
 
 }

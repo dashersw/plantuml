@@ -56,15 +56,15 @@ public class Option {
 	public List<String> manageOption(String arg[]) {
 		final List<String> result = new ArrayList<String>();
 		for (String s : arg) {
-			if (s.equalsIgnoreCase("-verbose")) {
+			if (s.equalsIgnoreCase("-verbose") || s.equalsIgnoreCase("-v")) {
 				verbose = true;
-			} else if (s.equalsIgnoreCase("-keepFiles") || s.equalsIgnoreCase("-keepFile")) {
+			} else if (s.equalsIgnoreCase("-keepfiles") || s.equalsIgnoreCase("-keepfile")) {
 				keepTmpFiles = true;
 			} else if (s.equalsIgnoreCase("-version")) {
 				displayVersion();
 			} else if (s.equalsIgnoreCase("-testdot")) {
 				testDot();
-			} else if (s.equalsIgnoreCase("-help")) {
+			} else if (s.equalsIgnoreCase("-help") || s.equalsIgnoreCase("-h")) {
 				System.err.println("Usage: java -jar plantuml.jar [options]");
 				System.err.println("\t(to execute the GUI)");
 				System.err.println("    or java -jar plantuml.jar [options] [files/dirs]");
@@ -72,9 +72,9 @@ public class Option {
 				System.err.println();
 				System.err.println("where options include:");
 				System.err.println("    -version\tTo display information about PlantUML and Java versions");
-				System.err.println("    -verbose\tTo have log information");
-				System.err.println("    -keepFiles\tTo NOT delete temporary files after process");
-				System.err.println("    -help\tTo display this help message");
+				System.err.println("    -v[erbose]\tTo have log information");
+				System.err.println("    -keepfiles\tTo NOT delete temporary files after process");
+				System.err.println("    -h[elp]\tTo display this help message");
 				System.err.println("    -testdot\tTo test the installation of graphviz");
 				System.err.println();
 				System.err.println("If needed, you can setup the environment variable GRAPHVIZ_DOT.");
@@ -93,7 +93,7 @@ public class Option {
 		} else {
 			System.err.println("The environment variable GRAPHVIZ_DOT has been set to " + ent);
 		}
-		System.err.println("Dot executable is set to " + Graphviz.getDotExe());
+		System.err.println("Dot executable is " + Graphviz.getDotExe());
 
 		boolean ok = true;
 		if (Graphviz.getDotExe() == null) {
@@ -106,10 +106,16 @@ public class Option {
 
 		if (ok) {
 			System.err.println("Installation seems OK");
+			try {
+				final String version = Graphviz.dotVersion();
+				System.err.println("Dot version: " + version);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} else {
 			System.err.println("Error: only sequence diagrams will be generated");
 		}
-		
+
 		System.exit(0);
 	}
 
@@ -128,7 +134,7 @@ public class Option {
 		verbose = false;
 	}
 
-	public boolean isKeepTmpFiles() {
+	public boolean isKeepFiles() {
 		return keepTmpFiles;
 	}
 

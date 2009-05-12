@@ -38,19 +38,16 @@ import java.util.Arrays;
 
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.PngError;
+import net.sourceforge.plantuml.StringUtils;
 
 public class Graphviz {
 
 	private static File dotExe;
-	private static final boolean isWindows = File.separatorChar == '\\';
-
 	static {
 		final String getenv = getenvGraphvizDot();
 
 		if (getenv == null) {
-			if (File.separatorChar == '/') {
-				dotExe = new File("/usr/bin/dot");
-			} else {
+			if (isWindows()) {
 				final File programFile = new File("c:/Program Files");
 				if (programFile.exists()) {
 					for (File f : programFile.listFiles(new FileFilter() {
@@ -62,10 +59,16 @@ public class Graphviz {
 						dotExe = new File(binDir, "dot.exe");
 					}
 				}
+			} else {
+				dotExe = new File("/usr/bin/dot");
 			}
 		} else {
 			dotExe = new File(getenv);
 		}
+	}
+
+	private static boolean isWindows() {
+		return File.separatorChar == '\\';
 	}
 
 	public static String getenvGraphvizDot() {
@@ -115,10 +118,36 @@ public class Graphviz {
 		process2.waitFor();
 	}
 
+	public static String dotVersion() throws IOException, InterruptedException {
+		final String cmd = getCommandLineVersion();
+		final ProcessRunner p = new ProcessRunner(cmd);
+		p.run();
+		final StringBuilder sb = new StringBuilder();
+		if (StringUtils.isNotEmpty(p.getInput())) {
+			sb.append(p.getInput());
+		}
+		if (StringUtils.isNotEmpty(p.getError())) {
+			if (sb.length() > 0) {
+				sb.append(' ');
+			}
+			sb.append(p.getError());
+		}
+		return sb.toString().replace('\n', ' ').trim();
+	}
+
 	private void createPngNoGraphviz(File pngFile) throws IOException {
 		final PngError errorResult = new PngError(Arrays
 				.asList("Cannot find Graphviz: try 'java -jar plantuml.jar -testdot'"));
 		errorResult.writeError(pngFile);
+	}
+
+	static String getCommandLineVersion() {
+		final StringBuilder sb = new StringBuilder();
+		appendDoubleQuoteOnWindows(sb);
+		sb.append(dotExe.getAbsolutePath());
+		appendDoubleQuoteOnWindows(sb);
+		sb.append(" -V");
+		return sb.toString();
 	}
 
 	String getCommandLine(File pngFile) {
@@ -137,8 +166,8 @@ public class Graphviz {
 		return sb.toString();
 	}
 
-	private void appendDoubleQuoteOnWindows(final StringBuilder sb) {
-		if (isWindows) {
+	private static void appendDoubleQuoteOnWindows(final StringBuilder sb) {
+		if (isWindows()) {
 			sb.append('\"');
 		}
 	}

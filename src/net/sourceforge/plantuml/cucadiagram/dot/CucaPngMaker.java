@@ -85,7 +85,7 @@ public class CucaPngMaker {
 			final Graphviz graphviz = new Graphviz(tmpFile);
 			graphviz.createPng(pngFile);
 		} finally {
-			if (Option.getInstance().isKeepTmpFiles() == false) {
+			if (Option.getInstance().isKeepFiles() == false) {
 				tmpFile.delete();
 				actorFile.delete();
 				for (File f : imageFiles.values()) {
@@ -116,7 +116,7 @@ public class CucaPngMaker {
 			return null;
 		}
 		final File f = File.createTempFile("plantuml", ".png");
-		if (Option.getInstance().isKeepTmpFiles() == false) {
+		if (Option.getInstance().isKeepFiles() == false) {
 			f.deleteOnExit();
 		}
 

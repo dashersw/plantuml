@@ -34,7 +34,7 @@ package net.sourceforge.plantuml;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class PSystemParameter {
+public class PSystemParameter {
 
 	private final PSystem system;
 	private final String startuml;

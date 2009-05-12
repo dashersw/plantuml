@@ -55,7 +55,7 @@ public class TextBlock {
 			if (MODE == Mode.SWING) {
 				lines.add(new HtmlLine(s, font, paint));
 			} else {
-				lines.add(new SimpleLine(s, font, paint));
+				lines.add(new SingleLine(s, font, paint));
 			}
 		}
 	}
