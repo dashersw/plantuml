@@ -106,8 +106,8 @@ public class ActivityDiagram extends AbstractDiagram {
 	}
 
 	@Override
-	public Entity createEntity(String code, String display, EntityType type, String stereotype) {
-		final Entity result = super.createEntity(code, display, type, stereotype);
+	public Entity createEntity(String code, String display, EntityType type) {
+		final Entity result = super.createEntity(code, display, type);
 		updateLasts(result);
 		return result;
 	}

@@ -41,5 +41,10 @@ public interface CucaDiagram {
 	List<Link> getLinks();
 
 	String getDescription();
+	
+	int getHorizontalPages();
+	
+	int getVerticalPages();
+
 
 }

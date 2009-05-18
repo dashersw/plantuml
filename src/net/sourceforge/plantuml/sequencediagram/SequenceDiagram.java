@@ -157,4 +157,8 @@ public class SequenceDiagram implements PSystem {
 		}
 		return false;
 	}
+
+	public Skin getSkin() {
+		return skin;
+	}
 }

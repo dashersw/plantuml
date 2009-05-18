@@ -29,81 +29,49 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.classdiagram.command;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 
-public class Entity {
+import net.sourceforge.plantuml.cucadiagram.EntityType;
 
-	private static int CPT = 0;
+public class JavaClass {
 
-	private final String code;
-	private final String display;
-
-	private final int cpt = CPT++;
+	private final String name;
+	private final List<String> parents = new ArrayList<String>();
 	private final EntityType type;
+	private final EntityType parentType;
 
-	private Stereotype stereotype;
-
-	private final List<String> fields = new ArrayList<String>();
-	private final List<String> methods = new ArrayList<String>();
-
-	public Entity(String code, String display, EntityType type) {
-		if (code == null || code.length() == 0) {
-			throw new IllegalArgumentException();
+	public JavaClass(String name, String p, EntityType type, EntityType parentType) {
+		this.name = name;
+		if (p == null) {
+			p = "";
 		}
-		if (display == null || display.length() == 0) {
-			throw new IllegalArgumentException();
+		final StringTokenizer st = new StringTokenizer(p.trim(), ",");
+		while (st.hasMoreTokens()) {
+			this.parents.add(st.nextToken().trim().replaceAll("\\<.*", ""));
 		}
 		this.type = type;
-		this.code = code;
-		this.display = display;
+		this.parentType = parentType;
 	}
 
-	public void addFieldOrMethod(String s) {
-		if (isMethod(s)) {
-			methods.add(s);
-		} else {
-			fields.add(s);
-		}
+	public final String getName() {
+		return name;
 	}
 
-	private boolean isMethod(String s) {
-		return s.contains("(") || s.contains(")");
-	}
-
-	public List<String> methods() {
-		return Collections.unmodifiableList(methods);
-	}
-
-	public List<String> fields() {
-		return Collections.unmodifiableList(fields);
-	}
-
-	public EntityType getType() {
+	public final EntityType getType() {
 		return type;
 	}
 
-	public String getCode() {
-		return code;
+	public final List<String> getParents() {
+		return Collections.unmodifiableList(parents);
 	}
 
-	public String getDisplay() {
-		return display;
-	}
-
-	public String getUid() {
-		return "cl" + cpt;
-	}
-
-	public Stereotype getStereotype() {
-		return stereotype;
-	}
-
-	public final void setStereotype(Stereotype stereotype) {
-		this.stereotype = stereotype;
+	public final EntityType getParentType() {
+		return parentType;
 	}
 
 }

@@ -53,8 +53,7 @@ public class CommandMultilinesStandaloneNote extends CommandMultilines<ClassDiag
 
 		final EntityType type = EntityType.NOTE;
 		final String code = line0.get(1);
-		final String stereotype = null;
-		getSystem().createEntity(code, display, type, stereotype);
+		getSystem().createEntity(code, display, type);
 
 		return true;
 	}

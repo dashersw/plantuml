@@ -33,11 +33,12 @@ package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,6 +61,10 @@ public class CucaPngMaker {
 
 	private final CucaDiagram diagram;
 	private static final String ACTOR_FILENAME = "actor.png";
+	private static final String C_FILENAME = "stereotypec.png";
+	private static final String I_FILENAME = "stereotypei.png";
+	private static final String A_FILENAME = "stereotypea.png";
+	private static final String E_FILENAME = "stereotypee.png";
 
 	static private final Graphics2D dummyGraphics2D;
 
@@ -75,25 +80,31 @@ public class CucaPngMaker {
 	public List<File> createPng(File pngFile, String... dotStrings) throws IOException, InterruptedException {
 		final DotMaker dotMaker = createDotMaker(dotStrings);
 		File tmpFile = null;
-		File actorFile = null;
+		final Map<EntityType, File> staticImages = new EnumMap<EntityType, File>(EntityType.class);
 		final Map<Entity, File> imageFiles = createImages();
 		try {
 			tmpFile = File.createTempFile("plantuml", ".dot");
-			actorFile = ensurePngActorPresent(tmpFile.getParentFile());
 			imageFiles.putAll(createImages());
-			dotMaker.generateFile(tmpFile, actorFile, imageFiles);
+			staticImages.put(EntityType.ACTOR, ensurePngActorPresent(tmpFile.getParentFile()));
+			staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(tmpFile.getParentFile()));
+			staticImages.put(EntityType.CLASS, ensurePngCPresent(tmpFile.getParentFile()));
+			staticImages.put(EntityType.INTERFACE, ensurePngIPresent(tmpFile.getParentFile()));
+			staticImages.put(EntityType.ENUM, ensurePngEPresent(tmpFile.getParentFile()));
+			dotMaker.generateFile(tmpFile, staticImages, imageFiles);
 			final Graphviz graphviz = new Graphviz(tmpFile);
 			graphviz.createPng(pngFile);
 		} finally {
 			if (Option.getInstance().isKeepFiles() == false) {
 				tmpFile.delete();
-				actorFile.delete();
+				for (File f : staticImages.values()) {
+					f.delete();
+				}
 				for (File f : imageFiles.values()) {
 					f.delete();
 				}
 			}
 		}
-		return Arrays.asList(pngFile);
+		return new PngSplitter(pngFile, diagram.getHorizontalPages(), diagram.getVerticalPages()).getFiles();
 	}
 
 	protected DotMaker createDotMaker(String... dotStrings) {
@@ -157,6 +168,51 @@ public class CucaPngMaker {
 		return result;
 
 	}
+
+	private File ensurePngCPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('C', font, green, red, Color.BLACK);
+		return generateCircleCharacterFile(dir, C_FILENAME, circledCharacter);
+	}
+
+	private File ensurePngAPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('A', font, blue, red, Color.BLACK);
+		return generateCircleCharacterFile(dir, A_FILENAME, circledCharacter);
+	}
+
+	private File ensurePngIPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('I', font, violet, red, Color.BLACK);
+		return generateCircleCharacterFile(dir, I_FILENAME, circledCharacter);
+	}
+
+	private File ensurePngEPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('E', font, rose, red, Color.BLACK);
+		return generateCircleCharacterFile(dir, E_FILENAME, circledCharacter);
+	}
+
+	private File generateCircleCharacterFile(File dir, String filename, final CircledCharacter circledCharacter)
+			throws IOException {
+		final EmptyImageBuilder builder = new EmptyImageBuilder(30, 30, yellow);
+
+		BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2d = builder.getGraphics2D();
+
+		circledCharacter.draw(g2d);
+		im = im.getSubimage(0, 0, (int) circledCharacter.getPreferredWidth(g2d) + 5, (int) circledCharacter
+				.getPreferredHeight(g2d) + 1);
+
+		final File result = new File(dir, filename);
+		ImageIO.write(im, "png", result);
+		return result;
+	}
+
+	final private Color yellow = new Color(Integer.parseInt("FEFECE", 16));
+	final private Color green = new Color(Integer.parseInt("ADD1B2", 16));
+	final private Color violet = new Color(Integer.parseInt("B4A7E5", 16));
+	final private Color blue = new Color(Integer.parseInt("A9DCDF", 16));
+	final private Color rose = new Color(Integer.parseInt("EB937F", 16));
+
+	final private Color red = new Color(Integer.parseInt("A80036", 16));
+	final private Font font = new Font("Courier", Font.BOLD, 17);
 
 	protected CucaDiagram getDiagram() {
 		return diagram;

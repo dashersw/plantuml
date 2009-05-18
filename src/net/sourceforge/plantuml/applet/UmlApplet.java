@@ -50,7 +50,6 @@ import net.sourceforge.plantuml.PngError;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagramFactory;
 import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramPngMaker2;
-import net.sourceforge.plantuml.skin.rose.Rose;
 
 public class UmlApplet extends Applet {
 
@@ -87,7 +86,7 @@ public class UmlApplet extends Applet {
 
 	private void computeSource(String source) throws IOException, InterruptedException {
 		source = source.replaceAll("@startuml.*", "");
-		source = source.replaceAll("@enduml.*", "");
+		source = source.replaceAll("@enduml", "");
 		source = "@startuml\n" + source + "\n@enduml";
 
 		final DataReader dataReader = new DataReader(new StringReader(source), new SequenceDiagramFactory(),
@@ -95,13 +94,12 @@ public class UmlApplet extends Applet {
 		final SortedMap<Integer, PSystemParameter> r = dataReader.getPSystems();
 		if (r.size() > 0) {
 			final PSystem system = r.values().iterator().next().getSystem();
-
 			pngMaker2 = null;
 			pngError = null;
 			image = null;
 			if (system instanceof SequenceDiagram) {
 				final SequenceDiagram seq = (SequenceDiagram) system;
-				pngMaker2 = new SequenceDiagramPngMaker2(seq, new Rose());
+				pngMaker2 = new SequenceDiagramPngMaker2(seq);
 			} else if (system instanceof PSystemError) {
 				pngError = ((PSystemError) system).getPngError();
 			}

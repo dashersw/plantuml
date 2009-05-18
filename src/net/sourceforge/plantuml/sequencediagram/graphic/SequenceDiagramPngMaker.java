@@ -160,7 +160,7 @@ public class SequenceDiagramPngMaker {
 		}
 	}
 
-	File computeFilename(File pngFile, int i) {
+	static public File computeFilename(File pngFile, int i) {
 		if (i == 0) {
 			return pngFile;
 		}

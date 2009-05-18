@@ -29,10 +29,30 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-public enum EntityType {
-	ABSTRACT_CLASS, CLASS, INTERFACE, ENUM, ACTOR, USECASE, COMPONENT, NOTE,
-	ACTIVITY, BRANCH, SYNCHRO_BAR, START, CIRCLE_START, CIRCLE_END
+class PngSegment {
+
+	private final int totalSize;
+	private final int nbPiece;
+
+	public PngSegment(int totalSize, int nbPiece) {
+		this.nbPiece = nbPiece;
+		this.totalSize = totalSize;
+	}
+
+	public int getStart(int idx) {
+		if (idx < 0 || idx > nbPiece - 1) {
+			throw new IllegalArgumentException();
+		}
+		return (int) (1.0 * totalSize / nbPiece * idx);
+	}
+
+	public int getLen(int idx) {
+		if (idx < 0 || idx > nbPiece - 1) {
+			throw new IllegalArgumentException();
+		}
+		return (int) (1.0 * totalSize / nbPiece);
+	}
 
 }

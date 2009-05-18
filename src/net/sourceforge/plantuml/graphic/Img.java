@@ -38,6 +38,8 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.FileSystem;
+
 class Img implements HtmlCommand {
 
 	final static private Pattern srcPattern = Pattern.compile("(?i)src\\s*=\\s*[\"']?([^ \">]+)[\"']?");
@@ -72,13 +74,17 @@ class Img implements HtmlCommand {
 			return new Text("(SYNTAX ERROR)");
 		}
 		final String src = m.group(1);
-		final File f = new File(src);
-		if (f.exists() == false) {
-			return new Text("(File not found: " + f + ")");
-		}
-		final int vspace = getVspace(html);
-		final ImgValign valign = getValign(html);
+		//final File f = new File(src);
 		try {
+			final File f = FileSystem.getInstance().getFile(src);
+			//final File f = new File(src);
+			//System.err.println("f=" + f.getAbsolutePath() + " f2=" + f2.getAbsolutePath());
+			if (f.exists() == false) {
+				return new Text("(File not found: " + f + ")");
+			}
+
+			final int vspace = getVspace(html);
+			final ImgValign valign = getValign(html);
 			return new Img(new TileImage(ImageIO.read(f), valign, vspace));
 		} catch (IOException e) {
 			return new Text("ERROR " + e.toString());

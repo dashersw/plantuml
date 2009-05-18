@@ -35,7 +35,7 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-class HtmlColor {
+public class HtmlColor {
 
 	private static final Map<String, String> htmlNames;
 

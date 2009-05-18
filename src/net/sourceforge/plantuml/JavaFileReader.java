@@ -71,6 +71,7 @@ class JavaFileReader {
 	}
 
 	public List<StartUml> execute() throws IOException, InterruptedException {
+		FileSystem.getInstance().setCurrentDir(file.getParentFile());
 		final SortedMap<Integer, PSystemParameter> r1 = execute1(new SequenceDiagramFactory(), Collections
 				.<Integer> emptyList());
 		final SortedMap<Integer, PSystemParameter> r2 = execute1(new ClassDiagramFactory(), Collections

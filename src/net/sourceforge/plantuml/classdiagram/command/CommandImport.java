@@ -31,52 +31,61 @@
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
-import net.sourceforge.plantuml.CommandMultilines;
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.FileSystem;
+import net.sourceforge.plantuml.SingleLineCommand;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 
-public class CommandMultilinesNoteEntity extends CommandMultilines<ClassDiagram> {
+public class CommandImport extends SingleLineCommand<ClassDiagram> {
 
-	private static int cpt = 1;
-
-	public CommandMultilinesNoteEntity(final ClassDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(\\w+)$", "(?i)^end ?note$");
+	public CommandImport(ClassDiagram classDiagram) {
+		super(classDiagram, "(?i)^import\\s+\"?([^\"]+)\"?$");
 	}
 
-	public boolean execute(List<String> lines) {
-		
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
-		final String pos = line0.get(0);
+	protected boolean executeArg(List<String> arg) {
+		final String arg0 = arg.get(0);
+		try {
+			final File f = FileSystem.getInstance().getFile(arg0);
 
-		final Entity cl1 = getSystem().getOrCreateClass(line0.get(1));
-
-		final List<String> strings = lines.subList(1, lines.size() - 1);
-		final String s = StringUtils.getMergedLines(strings);
-		
-		final Entity note = getSystem().createEntity("GMN" + cpt, s, EntityType.NOTE);
-		cpt++;
-
-		final Link link;
-
-		if (pos.equals("right")) {
-			link = new Link(cl1, note, LinkType.ASSOCIED_DASHED, null, 1, null, null);
-		} else if (pos.equals("left")) {
-			link = new Link(note, cl1, LinkType.ASSOCIED_DASHED, null, 1, null, null);
-		} else if (pos.equals("bottom")) {
-			link = new Link(cl1, note, LinkType.ASSOCIED_DASHED, null, 2, null, null);
-		} else if (pos.equals("top")) {
-			link = new Link(note, cl1, LinkType.ASSOCIED_DASHED, null, 2, null, null);
-		} else {
-			throw new IllegalArgumentException();
+			if (f.isFile()) {
+				includeFile(f);
+			} else if (f.isDirectory()) {
+				includeDirectory(f);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
-		getSystem().addLink(link);
 		return true;
+	}
+
+	private void includeDirectory(File dir) throws IOException {
+		for (File f : dir.listFiles()) {
+			if (f.getName().toLowerCase().endsWith(".java")) {
+				includeFile(f);
+			}
+		}
+
+	}
+
+	private void includeFile(final File f) throws IOException {
+		final JavaFile javaFile = new JavaFile(f);
+		for (JavaClass cl : javaFile.getJavaClasses()) {
+			final String name = cl.getName();
+			final Entity ent1 = getSystem().getOrCreateClass(name, cl.getType());
+
+			for (String p : cl.getParents()) {
+				final Entity ent2 = getSystem().getOrCreateClass(p, cl.getParentType());
+				final Link link = new Link(ent2, ent1, LinkType.EXTENDS_INV, null, 2, null, null);
+				getSystem().addLink(link);
+			}
+		}
 	}
 
 }

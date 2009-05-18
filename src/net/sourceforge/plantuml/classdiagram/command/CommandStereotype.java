@@ -29,10 +29,27 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.classdiagram.command;
 
-public enum EntityType {
-	ABSTRACT_CLASS, CLASS, INTERFACE, ENUM, ACTOR, USECASE, COMPONENT, NOTE,
-	ACTIVITY, BRANCH, SYNCHRO_BAR, START, CIRCLE_START, CIRCLE_END
+import java.util.List;
+
+import net.sourceforge.plantuml.SingleLineCommand;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
+
+public class CommandStereotype extends SingleLineCommand<ClassDiagram> {
+
+	public CommandStereotype(ClassDiagram classDiagram) {
+		super(classDiagram, "(?i)^(\\w+)\\s*(\\<\\<.*\\>\\>)$");
+	}
+
+	protected boolean executeArg(List<String> arg) {
+		final String code = arg.get(0);
+		final String stereotype = arg.get(1);
+		final Entity entity = getSystem().getOrCreateClass(code);
+		entity.setStereotype(new Stereotype(stereotype));
+		return true;
+	}
 
 }

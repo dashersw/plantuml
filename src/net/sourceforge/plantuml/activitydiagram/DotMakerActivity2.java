@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.dot.DotMaker;
 
@@ -49,9 +50,9 @@ public class DotMakerActivity2 extends DotMaker {
 	}
 
 	@Override
-	public void generateFile(File out, File actorFile, Map<Entity, File> images) throws IOException {
+	public void generateFile(File out, Map<EntityType, File> staticImages, Map<Entity, File> images) throws IOException {
 		if (getActivityDiagram().partitions().size() == 0) {
-			super.generateFile(out, actorFile, images);
+			super.generateFile(out, staticImages, images);
 			return;
 		}
 

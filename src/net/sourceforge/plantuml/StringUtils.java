@@ -42,7 +42,9 @@ public class StringUtils {
 	static private final Pattern multiLines = Pattern.compile("((?:\\\\\\\\|[^\\\\])+)(\\\\n)?");
 
 	public static String getPlateformDependentAbsolutePath(File file) {
-		return file.getAbsolutePath().replace('/', File.separatorChar);
+//		assert file.getAbsolutePath().replace('/', File.separatorChar).equals(file.getAbsolutePath());
+//		return file.getAbsolutePath().replace('/', File.separatorChar);
+		return file.getAbsolutePath();
 
 	}
 
@@ -85,6 +87,12 @@ public class StringUtils {
 
 	public static boolean isNotEmpty(String input) {
 		return input != null && input.trim().length() > 0;
+	}
+
+	public static String manageHtml(String s) {
+		s = s.replace("<", "&lt;");
+		s = s.replace(">", "&gt;");
+		return s;
 	}
 
 }

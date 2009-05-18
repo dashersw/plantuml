@@ -29,10 +29,29 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.classdiagram.command;
 
-public enum EntityType {
-	ABSTRACT_CLASS, CLASS, INTERFACE, ENUM, ACTOR, USECASE, COMPONENT, NOTE,
-	ACTIVITY, BRANCH, SYNCHRO_BAR, START, CIRCLE_START, CIRCLE_END
+import java.util.List;
+
+import net.sourceforge.plantuml.SingleLineCommand;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+
+public class CommandPage extends SingleLineCommand<ClassDiagram> {
+
+	public CommandPage(ClassDiagram classDiagram) {
+		super(classDiagram, "(?i)^page\\s+(\\d+)\\s*x\\s*(\\d+)$");
+	}
+
+	protected boolean executeArg(List<String> arg) {
+
+		final int horizontal = Integer.parseInt(arg.get(0));
+		final int vertical = Integer.parseInt(arg.get(1));
+		if (horizontal <= 0 || vertical <= 0) {
+			return false;
+		}
+		getSystem().setHorizontalPages(horizontal);
+		getSystem().setVerticalPages(vertical);
+		return true;
+	}
 
 }

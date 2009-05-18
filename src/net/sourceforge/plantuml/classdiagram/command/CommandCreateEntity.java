@@ -37,30 +37,30 @@ import net.sourceforge.plantuml.SingleLineCommand;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
 public class CommandCreateEntity extends SingleLineCommand<ClassDiagram> {
 
 	public CommandCreateEntity(ClassDiagram classDiagram) {
-		super(classDiagram, "(?i)^(usecase|interface|actor|component|note|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)(?:\\s*(\\<\\<.*\\>\\>))?$");
+		super(
+				classDiagram,
+				"(?i)^(usecase|interface|actor|enum|component|note|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)(?:\\s*(\\<\\<.*\\>\\>))?$");
 	}
 
 	protected boolean executeArg(List<String> arg) {
 		final String arg0 = arg.get(0).toUpperCase();
 		final EntityType type;
-		final boolean italic;
 		if (arg0.startsWith("ABSTRACT")) {
-			type = EntityType.CLASS;
-			italic = true;
+			type = EntityType.ABSTRACT_CLASS;
 		} else {
 			type = EntityType.valueOf(arg0);
-			italic = false;
 		}
 		final String code = arg.get(2);
 		final String display = arg.get(1);
 		final String stereotype = arg.get(3);
-		final Entity entity = getSystem().createEntity(code, display, type, stereotype);
-		if (italic) {
-			entity.goItalic();
+		final Entity entity = getSystem().createEntity(code, display, type);
+		if (stereotype != null) {
+			entity.setStereotype(new Stereotype(stereotype));
 		}
 		return true;
 	}

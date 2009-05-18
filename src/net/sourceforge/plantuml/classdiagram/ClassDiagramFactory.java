@@ -41,11 +41,14 @@ import net.sourceforge.plantuml.CommandControl;
 import net.sourceforge.plantuml.PSystemFactory;
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntity;
+import net.sourceforge.plantuml.classdiagram.command.CommandImport;
 import net.sourceforge.plantuml.classdiagram.command.CommandLink;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultiple;
 import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
+import net.sourceforge.plantuml.classdiagram.command.CommandPage;
+import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
 
 public class ClassDiagramFactory implements PSystemFactory {
 
@@ -77,9 +80,12 @@ public class ClassDiagramFactory implements PSystemFactory {
 		system = new ClassDiagram();
 		cmds = new ArrayList<Command>();
 
+		cmds.add(new CommandPage(system));
 		cmds.add(new CommandLink(system));
 
 		cmds.add(new CommandCreateEntity(system));
+		cmds.add(new CommandStereotype(system));
+		cmds.add(new CommandImport(system));
 		cmds.add(new CommandNoteEntity(system));
 		cmds.add(new CommandAddMethod(system));
 

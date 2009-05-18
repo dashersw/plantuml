@@ -35,7 +35,7 @@ package net.sourceforge.plantuml;
 public class Version {
 	
 	public static int version() {
-		return 1936;
+		return 2000;
 	}
 
 }

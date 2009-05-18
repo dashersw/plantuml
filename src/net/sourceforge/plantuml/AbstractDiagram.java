@@ -43,6 +43,9 @@ import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
 public abstract class AbstractDiagram implements PSystem, CucaDiagram {
+	
+	private int horizontalPages = 1;
+	private int verticalPages = 1;
 
 	private final Map<String, Entity> entities = new TreeMap<String, Entity>();
 
@@ -51,20 +54,20 @@ public abstract class AbstractDiagram implements PSystem, CucaDiagram {
 	protected Entity getOrCreateEntity(String code, EntityType defaultType) {
 		Entity result = entities.get(code);
 		if (result == null) {
-			result = new Entity(code, code, defaultType, null);
+			result = new Entity(code, code, defaultType);
 			entities.put(code, result);
 		}
 		return result;
 	}
 
-	public Entity createEntity(String code, String display, EntityType type, String stereotype) {
+	public Entity createEntity(String code, String display, EntityType type) {
 		if (entities.containsKey(code)) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Already known: " + code);
 		}
 		if (display == null) {
 			display = code;
 		}
-		final Entity entity = new Entity(code, display, type, stereotype);
+		final Entity entity = new Entity(code, display, type);
 		entities.put(code, entity);
 		return entity;
 	}
@@ -79,6 +82,22 @@ public abstract class AbstractDiagram implements PSystem, CucaDiagram {
 
 	final public List<Link> getLinks() {
 		return Collections.unmodifiableList(links);
+	}
+
+	final public int getHorizontalPages() {
+		return horizontalPages;
+	}
+
+	final public void setHorizontalPages(int horizontalPages) {
+		this.horizontalPages = horizontalPages;
+	}
+
+	final public int getVerticalPages() {
+		return verticalPages;
+	}
+
+	final public void setVerticalPages(int verticalPages) {
+		this.verticalPages = verticalPages;
 	}
 
 }

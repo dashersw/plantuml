@@ -32,6 +32,7 @@
 package net.sourceforge.plantuml;
 
 import java.io.File;
+import java.io.IOException;
 
 public class FileSystem {
 
@@ -51,8 +52,8 @@ public class FileSystem {
 		this.currentDir = f;
 	}
 
-	public File getFile(String nameOrPath) {
-		return new File(currentDir, nameOrPath);
+	public File getFile(String nameOrPath) throws IOException {
+		return new File(currentDir.getAbsoluteFile(), nameOrPath).getCanonicalFile();
 	}
 
 	public void reset() {

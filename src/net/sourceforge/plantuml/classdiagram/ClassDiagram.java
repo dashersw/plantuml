@@ -46,6 +46,14 @@ public class ClassDiagram extends AbstractDiagram {
 		return getOrCreateEntity(code, EntityType.CLASS);
 	}
 
+	public Entity getOrCreateClass(String name, EntityType type) {
+		if (type != EntityType.ABSTRACT_CLASS && type != EntityType.CLASS && type != EntityType.INTERFACE
+				&& type != EntityType.ENUM) {
+			throw new IllegalArgumentException();
+		}
+		return getOrCreateEntity(name, type);
+	}
+
 	public List<File> createPng(File pngFile) throws IOException, InterruptedException {
 		final CucaPngMaker maker = new CucaPngMaker(this);
 		return maker.createPng(pngFile, "nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",

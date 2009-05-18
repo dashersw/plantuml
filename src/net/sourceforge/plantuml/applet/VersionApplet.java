@@ -29,10 +29,27 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.applet;
 
-public enum EntityType {
-	ABSTRACT_CLASS, CLASS, INTERFACE, ENUM, ACTOR, USECASE, COMPONENT, NOTE,
-	ACTIVITY, BRANCH, SYNCHRO_BAR, START, CIRCLE_START, CIRCLE_END
+import java.applet.Applet;
+import java.awt.Graphics;
 
+import net.sourceforge.plantuml.Version;
+
+public class VersionApplet extends Applet {
+
+	@Override
+	public void init() {
+		super.init();
+	}
+
+	@Override
+	public void start() {
+		super.start();
+	}
+
+	@Override
+	public void paint(Graphics g) {
+		g.drawString("" + Version.version(), 0, 10);
+	}
 }

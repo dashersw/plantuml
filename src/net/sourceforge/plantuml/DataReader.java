@@ -32,7 +32,6 @@
 package net.sourceforge.plantuml;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,9 +48,9 @@ public class DataReader {
 	public DataReader(Reader reader, PSystemFactory systemFactory, Collection<Integer> toSkip)
 			throws IOException, InterruptedException {
 
-		LineNumberReader br = null;
+		LineNumberReaderIncluder br = null;
 		try {
-			br = new LineNumberReader(reader);
+			br = new LineNumberReaderIncluder(reader);
 			String s;
 			while ((s = br.readLine()) != null) {
 				s = cleanLine(s);
@@ -81,7 +80,7 @@ public class DataReader {
 		return Collections.unmodifiableSortedMap(result);
 	}
 
-	private PSystem executeUml(LineNumberReader br, PSystemFactory systemFactory) throws IOException {
+	private PSystem executeUml(LineNumberReaderIncluder br, PSystemFactory systemFactory) throws IOException {
 
 		systemFactory.reset();
 		String s;
@@ -112,7 +111,7 @@ public class DataReader {
 		return systemFactory.getSystem();
 	}
 
-	private boolean manageMultiline(LineNumberReader br, PSystemFactory systemFactory, final String init)
+	private boolean manageMultiline(LineNumberReaderIncluder br, PSystemFactory systemFactory, final String init)
 			throws IOException {
 		final List<String> lines = new ArrayList<String>();
 		lines.add(init);

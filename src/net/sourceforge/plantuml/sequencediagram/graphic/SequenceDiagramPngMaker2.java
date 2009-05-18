@@ -48,7 +48,6 @@ import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
-import net.sourceforge.plantuml.skin.Skin;
 
 public class SequenceDiagramPngMaker2 {
 	private final Step1 step1;
@@ -58,8 +57,8 @@ public class SequenceDiagramPngMaker2 {
 	private Component compTitle;
 	private List<Page> pages;
 
-	public SequenceDiagramPngMaker2(SequenceDiagram sequenceDiagram, Skin skin) {
-		this.step1 = new Step1(skin);
+	public SequenceDiagramPngMaker2(SequenceDiagram sequenceDiagram) {
+		this.step1 = new Step1(sequenceDiagram.getSkin());
 		step1.setTitle(sequenceDiagram.getTitle());
 
 		for (Participant p : sequenceDiagram.participants().values()) {

@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
 public class DotMaker {
 
@@ -54,7 +55,7 @@ public class DotMaker {
 
 	private static final String RED = "\"#A80036\"";
 	private static final String YELLOW = "\"#FEFECE\"";
-	private static final String YELLOW_NOTE = "\"#FBFB77\"";
+	// private static final String YELLOW_NOTE = "\"#FBFB77\"";
 
 	private static boolean isJunit = false;
 
@@ -68,12 +69,15 @@ public class DotMaker {
 	}
 
 	private final String[] dotStrings;
+	private Map<EntityType, File> staticImages;
+	private Map<Entity, File> images;
 
-	public void generateFile(final File out, File actorFile, Map<Entity, File> images) throws IOException {
+	public void generateFile(final File out, Map<EntityType, File> staticImages, Map<Entity, File> images)
+			throws IOException {
 
 		final PrintWriter pw = initPrintWriter(out);
 
-		this.actorFile = actorFile;
+		this.staticImages = staticImages;
 		this.images = images;
 
 		printEntities(pw, diagram.entities().values());
@@ -107,9 +111,6 @@ public class DotMaker {
 
 	protected void printSpecialHeader(PrintWriter pw) {
 	}
-
-	private File actorFile;
-	private Map<Entity, File> images;
 
 	protected void printLinks(PrintWriter pw, List<Link> links) {
 
@@ -192,7 +193,8 @@ public class DotMaker {
 		for (Entity entity : entities) {
 			final EntityType type = entity.getType();
 			final String label = getLabel(entity);
-			if (type == EntityType.CLASS) {
+			if (type == EntityType.ABSTRACT_CLASS || type == EntityType.CLASS || type == EntityType.INTERFACE
+					|| type == EntityType.ENUM) {
 				pw.println(entity.getUid() + " [margin=0,fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=filled,shape=box," + label + "];");
 			} else if (type == EntityType.USECASE) {
@@ -200,9 +202,6 @@ public class DotMaker {
 						+ "];");
 			} else if (type == EntityType.ACTOR) {
 				pw.println(entity.getUid() + " [margin=0,shape=plaintext," + label + "];");
-			} else if (type == EntityType.INTERFACE) {
-				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED + ",style=filled,shape=circle,"
-						+ label + "];");
 			} else if (type == EntityType.COMPONENT) {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=filled,shape=component," + label + "];");
@@ -216,8 +215,6 @@ public class DotMaker {
 				}
 				final String absolutePath = StringUtils.getPlateformDependentAbsolutePath(file);
 				pw.println(entity.getUid() + " [margin=0,pad=0,label=\"\",shape=none,image=\"" + absolutePath + "\"];");
-				// pw.println(entity.getUid() + " [margin=\"0,0\",shape=box," +
-				// label + "];");
 			} else if (type == EntityType.ACTIVITY) {
 				pw.println(entity.getUid() + " [fillcolor=" + YELLOW + ",color=" + RED
 						+ ",style=\"rounded,filled\",shape=octagon," + label + "];");
@@ -242,25 +239,20 @@ public class DotMaker {
 	}
 
 	private String getLabel(Entity entity) {
-		if (entity.getType() == EntityType.CLASS) {
-			return "label=" + getLabelForClass(entity);
-		}
-		if (entity.getType() == EntityType.ACTOR) {
+		if (entity.getType() == EntityType.ABSTRACT_CLASS || entity.getType() == EntityType.CLASS
+				|| entity.getType() == EntityType.INTERFACE || entity.getType() == EntityType.ENUM) {
+			return "label=" + getLabelForClassOrInterfaceOrEnum(entity);
+		} else if (entity.getType() == EntityType.ACTOR) {
 			return "label=" + getLabelForActor(entity);
-		}
-		if (entity.getType() == EntityType.NOTE) {
+		} else if (entity.getType() == EntityType.NOTE) {
 			return "label=" + getLabelForNote(entity);
 		}
-		final String stereotype = entity.getStereotype();
-
-		if (stereotype != null) {
-			return "label=<" + manageStereotype(stereotype) + manageHtml(entity.getDisplay()) + ">";
-		}
+		// final Stereotype stereotype = entity.getStereotype();
+		// if (stereotype != null) {
+		// return "label=<" + stereotype.getHtmlCodeForDot() +
+		// StringUtils.manageHtml(entity.getDisplay()) + ">";
+		// }
 		return "label=\"" + entity.getDisplay() + "\"";
-	}
-
-	private String manageStereotype(String stereotype) {
-		return "<BR ALIGN=\"LEFT\" /><FONT FACE=\"Italic\">" + manageHtml(stereotype) + "</FONT><BR/>";
 	}
 
 	private String getLabelForNote(Entity entity) {
@@ -283,12 +275,13 @@ public class DotMaker {
 	}
 
 	private String getLabelForActor(Entity entity) {
-		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(actorFile);
-		final String stereotype = entity.getStereotype();
+		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(staticImages
+				.get(EntityType.ACTOR));
+		final Stereotype stereotype = entity.getStereotype();
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
 		if (stereotype != null) {
-			sb.append("<TR><TD>" + manageStereotype(stereotype) + "</TD></TR>");
+			sb.append("<TR><TD>" + stereotype.getHtmlCodeForDot() + "</TD></TR>");
 		}
 		sb.append("<TR><TD><IMG SRC=\"" + actorAbsolutePath + "\"/></TD></TR>");
 		sb.append("<TR><TD>" + entity.getDisplay() + "</TD></TR>");
@@ -297,40 +290,30 @@ public class DotMaker {
 
 	}
 
-	private String getLabelForClass(Entity entity) {
-		final String stereotype = entity.getStereotype();
+	private String getLabelForClassOrInterfaceOrEnum(Entity entity) {
+		final File cFile = staticImages.get(entity.getType());
+		if (cFile == null) {
+			throw new IllegalStateException();
+		}
+		final String circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile);
 
 		final StringBuilder sb = new StringBuilder("<<FONT POINT-SIZE=\"12\"><TABLE BGCOLOR=" + YELLOW
 				+ " BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">");
 		sb.append("<TR><TD>");
-		if (stereotype != null) {
-			sb.append(manageStereotype(stereotype));
-		}
-		final boolean italic = entity.isItalic();
-		if (italic) {
-			sb.append("<FONT FACE=\"italic\">");
-		}
-		sb.append(manageHtml(entity.getDisplay()));
-		if (italic) {
-			sb.append("</FONT>");
-		}
+		
+		sb.append(getHtmlHeaderTableForClassOrInterfaceOrEnum(entity, circleAbsolutePath));
+		
 		sb.append("</TD></TR>");
 		sb.append("<TR><TD WIDTH=\"55\">");
 		for (String s : entity.fields()) {
 			sb.append("<BR ALIGN=\"LEFT\"/>");
-			sb.append("<FONT POINT-SIZE=\"10\">" + manageHtml(s) + "</FONT>");
+			sb.append("<FONT POINT-SIZE=\"10\">" + StringUtils.manageHtml(s) + "</FONT>");
 		}
 		sb.append("</TD></TR>");
 		sb.append("<TR><TD>");
 		for (String s : entity.methods()) {
 			sb.append("<BR ALIGN=\"LEFT\"/>");
-			sb.append("<FONT POINT-SIZE=\"10\">" + manageHtml(s) + "</FONT>");
-			// sb.append("<FONT FACE=\"bold\" POINT-SIZE=\"12\">" +
-			// manageHtml(s) + "</FONT>");
-			// sb.append("<FONT FACE=\"italic\" POINT-SIZE=\"12\">" +
-			// manageHtml(s) + "</FONT>");
-			// sb.append("<FONT FACE=\"line\" POINT-SIZE=\"12\">" +
-			// manageHtml(s) + "</FONT>");
+			sb.append("<FONT POINT-SIZE=\"10\">" + StringUtils.manageHtml(s) + "</FONT>");
 		}
 		sb.append("</TD></TR>");
 		sb.append("</TABLE></FONT>>");
@@ -338,10 +321,26 @@ public class DotMaker {
 		return sb.toString();
 	}
 
-	private String manageHtml(String s) {
-		s = s.replace("<", "&lt;");
-		s = s.replace(">", "&gt;");
-		return s;
+	private String getHtmlHeaderTableForClassOrInterfaceOrEnum(Entity entity, final String circleAbsolutePath) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
+		sb.append("<TR><TD ALIGN=\"RIGHT\"><IMG SRC=\"" + circleAbsolutePath + "\"/></TD><TD ALIGN=\"LEFT\">");
+
+		final Stereotype stereotype = entity.getStereotype();
+		if (stereotype != null) {
+			sb.append(stereotype.getHtmlCodeForDot());
+		}
+		final boolean italic = entity.getType() == EntityType.ABSTRACT_CLASS
+				|| entity.getType() == EntityType.INTERFACE;
+		if (italic) {
+			sb.append("<FONT FACE=\"italic\">");
+		} else {
+			sb.append("<FONT FACE=\"normal\">");
+		}
+		sb.append(StringUtils.manageHtml(entity.getDisplay()));
+		sb.append("</FONT>");
+		sb.append("</TD></TR></TABLE>");
+		return sb.toString();
 	}
 
 	protected CucaDiagram getDiagram() {

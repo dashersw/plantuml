@@ -31,79 +31,58 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.awt.Color;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class Entity {
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-	private static int CPT = 0;
+public class Stereotype {
 
-	private final String code;
-	private final String display;
+	private final static Pattern circle = Pattern
+			.compile("\\<\\<\\s*(\\S)\\s*,\\s*(#[0-9a-fA-F]{6}|\\w+)\\s*,(.*?)\\>\\>");
 
-	private final int cpt = CPT++;
-	private final EntityType type;
+	private final String stereotype;
+	private final HtmlColor htmlColor;
+	private final char character;
 
-	private Stereotype stereotype;
-
-	private final List<String> fields = new ArrayList<String>();
-	private final List<String> methods = new ArrayList<String>();
-
-	public Entity(String code, String display, EntityType type) {
-		if (code == null || code.length() == 0) {
+	public Stereotype(String stereotype) {
+		if (stereotype == null) {
 			throw new IllegalArgumentException();
 		}
-		if (display == null || display.length() == 0) {
-			throw new IllegalArgumentException();
+		if (stereotype.startsWith("<<") == false || stereotype.endsWith(">>") == false) {
+			throw new IllegalArgumentException(stereotype);
 		}
-		this.type = type;
-		this.code = code;
-		this.display = display;
-	}
-
-	public void addFieldOrMethod(String s) {
-		if (isMethod(s)) {
-			methods.add(s);
+		final Matcher m = circle.matcher(stereotype);
+		if (m.find()) {
+			this.stereotype = "<<" + m.group(3) + ">>";
+			this.htmlColor = new HtmlColor(m.group(2));
+			this.character = m.group(1).charAt(0);
 		} else {
-			fields.add(s);
+			this.stereotype = stereotype;
+			this.character = '\0';
+			this.htmlColor = null;
 		}
 	}
 
-	private boolean isMethod(String s) {
-		return s.contains("(") || s.contains(")");
+	Color getColor() {
+		if (htmlColor == null) {
+			return null;
+		}
+		return htmlColor.getColor();
 	}
 
-	public List<String> methods() {
-		return Collections.unmodifiableList(methods);
+	char getCharacter() {
+		return character;
 	}
 
-	public List<String> fields() {
-		return Collections.unmodifiableList(fields);
-	}
-
-	public EntityType getType() {
-		return type;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public String getDisplay() {
-		return display;
-	}
-
-	public String getUid() {
-		return "cl" + cpt;
-	}
-
-	public Stereotype getStereotype() {
+	String getStereotype() {
 		return stereotype;
 	}
 
-	public final void setStereotype(Stereotype stereotype) {
-		this.stereotype = stereotype;
+	public String getHtmlCodeForDot() {
+		return "<BR ALIGN=\"LEFT\" /><FONT FACE=\"Italic\">" + StringUtils.manageHtml(stereotype) + "</FONT><BR/>";
 	}
 
 }
