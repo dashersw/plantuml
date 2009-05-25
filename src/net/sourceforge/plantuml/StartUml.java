@@ -31,28 +31,36 @@
  */
 package net.sourceforge.plantuml;
 
-class StartUml {
-	
-	private final FilePng png;
-	private final String description;
-	private final int numLine;
-	
-	public StartUml(FilePng png, String description, int numLine) {
-		this.png = png;
-		this.description = description;
-		this.numLine = numLine;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class StartUml {
+
+	private final PSystem system;
+	private final String startuml;
+
+	private static final Pattern pattern1 = Pattern.compile("^@startuml\\s+\"?(.*?)\"?$");
+
+	StartUml(PSystem system, String startuml) {
+		this.system = system;
+		this.startuml = startuml;
 	}
 
-	public FilePng getPng() {
-		return png;
+	public PSystem getSystem() {
+		return system;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getFilename() {
+		final Matcher m = pattern1.matcher(startuml);
+		final boolean ok = m.find();
+		if (ok == false) {
+			return null;
+		}
+		return m.group(1);
 	}
 
-	public int getNumLine() {
-		return numLine;
+	public String getStartuml() {
+		return startuml;
 	}
 
 }

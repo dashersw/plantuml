@@ -73,14 +73,17 @@ class MessageArrow extends SimpleArrow {
 		return getParticipantAt(g2d, NotePosition.RIGHT).getLiveThicknessAt(g2d, getArrowYStartLevel(g2d)).getPos1();
 	}
 
+	@Override
 	public double getPreferredHeight(Graphics2D g2d) {
 		return getArrow().getPreferredHeight(g2d);
 	}
 
+	@Override
 	public double getStartingX(Graphics2D g2d) {
 		return getLeftStartInternal(g2d);
 	}
 
+	@Override
 	public int getDirection(Graphics2D g2d) {
 		final double x1 = p1.getParticipantBox().getCenterX(g2d);
 		final double x2 = p2.getParticipantBox().getCenterX(g2d);

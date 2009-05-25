@@ -49,10 +49,12 @@ class MessageSelfArrow extends SimpleArrow {
 		this.p1 = p1;
 	}
 
+	@Override
 	public double getPreferredHeight(Graphics2D g2d) {
 		return getArrow().getPreferredHeight(g2d);
 	}
 
+	@Override
 	public double getPreferredWidth(Graphics2D g2d) {
 		return getArrow().getPreferredWidth(g2d);
 	}

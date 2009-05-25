@@ -43,32 +43,44 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 
-public class JavaFile {
+class JavaFile {
 
 	private static final Pattern classDefinition = Pattern
 			.compile("^(?:public\\s+|abstract\\s+|final\\s+)*(class|interface|enum)\\s+(\\w+)(?:.*\\b(extends|implements)\\s+([\\w\\s,]+))?");
 
-	private List<JavaClass> all = new ArrayList<JavaClass>();
+	private static final Pattern pacakgeDefinition = Pattern.compile("^package\\s+([\\w+.]+)\\s*;");
+
+	private final List<JavaClass> all = new ArrayList<JavaClass>();
 
 	public JavaFile(File f) throws IOException {
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(f));
-			String s;
-			while ((s = br.readLine()) != null) {
-				s = s.trim();
-				final Matcher m = classDefinition.matcher(s);
-				if (m.find()) {
-					final String n = m.group(2);
-					final String p = m.group(4);
-					final EntityType type = EntityType.valueOf(m.group(1).toUpperCase());
-					final EntityType parentType = getParentType(type, m.group(3));
-					all.add(new JavaClass(n, p, type, parentType));
-				}
-			}
+			initFromReader(br);
 		} finally {
 			if (br != null) {
 				br.close();
+			}
+		}
+	}
+
+	private void initFromReader(BufferedReader br) throws IOException {
+		String javaPackage = null;
+		String s;
+		while ((s = br.readLine()) != null) {
+			s = s.trim();
+			final Matcher matchPackage = pacakgeDefinition.matcher(s);
+			if (matchPackage.find()) {
+				javaPackage = matchPackage.group(1);
+			} else {
+				final Matcher matchClassDefinition = classDefinition.matcher(s);
+				if (matchClassDefinition.find()) {
+					final String n = matchClassDefinition.group(2);
+					final String p = matchClassDefinition.group(4);
+					final EntityType type = EntityType.valueOf(matchClassDefinition.group(1).toUpperCase());
+					final EntityType parentType = getParentType(type, matchClassDefinition.group(3));
+					all.add(new JavaClass(javaPackage, n, p, type, parentType));
+				}
 			}
 		}
 	}

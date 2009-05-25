@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
@@ -43,9 +42,9 @@ import java.util.TreeMap;
 
 public class DataReader {
 
-	final private SortedMap<Integer, PSystemParameter> result = new TreeMap<Integer, PSystemParameter>();
+	final private SortedMap<Integer, StartUml> result = new TreeMap<Integer, StartUml>();
 	
-	public DataReader(Reader reader, PSystemFactory systemFactory, Collection<Integer> toSkip)
+	public DataReader(Reader reader, PSystemFactory systemFactory)
 			throws IOException, InterruptedException {
 
 		LineNumberReaderIncluder br = null;
@@ -59,12 +58,9 @@ public class DataReader {
 				}
 				if (s.equals("@startuml") || s.startsWith("@startuml ")) {
 					final int line = br.getLineNumber();
-					if (toSkip.contains(line)) {
-						continue;
-					}
 					final PSystem system = executeUml(br, systemFactory);
 					if (system != null) {
-						result.put(line, new PSystemParameter(system, s));
+						result.put(line, new StartUml(system, s));
 					}
 				}
 			}
@@ -76,7 +72,7 @@ public class DataReader {
 		}
 	}
 	
-	public SortedMap<Integer, PSystemParameter> getPSystems() {
+	public SortedMap<Integer, StartUml> getAllStartUml() {
 		return Collections.unmodifiableSortedMap(result);
 	}
 

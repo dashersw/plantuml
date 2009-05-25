@@ -56,6 +56,7 @@ class GroupingTail extends GraphicalElement {
 		this.xpos = xpos;
 	}
 
+	@Override
 	public double getStartingX(Graphics2D g2d) {
 		return xpos;
 	}

@@ -44,7 +44,7 @@ import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 
 public class CommandMultiple extends SingleLineCommand<ClassDiagram> {
 
-	private final static Pattern p = Pattern.compile("((?:\"[^\"]+\"\\s*)?[-|*<.>o]{2,}(?:\\s*\"[^\"]+\")?|\\w+)");
+	private final static Pattern p = Pattern.compile("((?:\"[^\"]+\"\\s*){0,1}[-|*<.>o]{2,}(?:\\s*\"[^\"]+\")?|\\w+)");
 
 	private final ClassDiagramFactory factory;
 
@@ -53,6 +53,7 @@ public class CommandMultiple extends SingleLineCommand<ClassDiagram> {
 		this.factory = classDiagramFactory;
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		if (arg.size() != 1) {
 			throw new IllegalArgumentException();

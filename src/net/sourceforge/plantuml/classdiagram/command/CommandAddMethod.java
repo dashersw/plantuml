@@ -43,6 +43,7 @@ public class CommandAddMethod extends SingleLineCommand<ClassDiagram> {
 		super(classDiagram, "(?i)^(\\w+)\\s*:\\s*(.*)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final Entity entity = getSystem().getOrCreateClass(arg.get(0));
 		

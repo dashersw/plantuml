@@ -42,6 +42,7 @@ public class CommandPage extends SingleLineCommand<ClassDiagram> {
 		super(classDiagram, "(?i)^page\\s+(\\d+)\\s*x\\s*(\\d+)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 
 		final int horizontal = Integer.parseInt(arg.get(0));

@@ -29,22 +29,34 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.printskin;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
-import net.sourceforge.plantuml.SingleLineCommand;
+public class GraphvizUtils {
 
-class CommandTestSkin extends SingleLineCommand<PrintSkin> {
-
-	public CommandTestSkin(PrintSkin system) {
-		super(system, "(?i)^testskin\\s+([\\w.]+)\\s*(.*)$");
+	private static boolean isWindows() {
+		return File.separatorChar == '\\';
 	}
 
-	@Override
-	protected boolean executeArg(List<String> arg) {
-		return getSystem().setSkin(arg.get(0), Arrays.asList(arg.get(1)));
+	public static IGraphviz create(File dotFile) {
+		if (isWindows()) {
+			return new GraphvizWindows(dotFile);
+		}
+		return new GraphvizLinux(dotFile);
+	}
+
+	static public File getDotExe() {
+		return create(null).getDotExe();
+	}
+
+	public static String getenvGraphvizDot() {
+		return System.getenv("GRAPHVIZ_DOT");
+	}
+
+	public static String dotVersion() throws IOException, InterruptedException {
+		return create(null).dotVersion();
 	}
 
 }

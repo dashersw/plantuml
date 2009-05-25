@@ -51,7 +51,7 @@ public class ComponentRoseTitle extends AbstractTextualComponent {
 	@Override
 	protected void drawInternal(Graphics2D g2d, Dimension2D dimensionToUse) {
 		final TextBlock textBlock = getTextBlock();
-		textBlock.draw(g2d, (int) (outMargin + getMarginX1()), getMarginY());
+		textBlock.draw(g2d, outMargin + getMarginX1(), getMarginY());
 	}
 
 	@Override

@@ -44,6 +44,7 @@ public class CommandParticipant extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^(participant|actor)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String code = arg.get(2);
 

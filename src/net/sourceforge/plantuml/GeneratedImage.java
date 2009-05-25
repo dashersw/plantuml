@@ -29,47 +29,67 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.swing;
+package net.sourceforge.plantuml;
 
-import net.sourceforge.plantuml.GeneratedImage;
+import java.io.File;
 
-class SimpleLine implements Comparable<SimpleLine>{
+public class GeneratedImage implements Comparable<GeneratedImage> {
 
-	private final GeneratedImage generatedImage;
+	private final File sourceFile;
+	private final File pngFile;
+	private final String description;
 
-	public SimpleLine(GeneratedImage generatedImage) {
-		this.generatedImage = generatedImage;
+	public GeneratedImage(File sourceFile, File pngFile, String description) {
+		if (sourceFile == null || pngFile == null) {
+			throw new IllegalArgumentException();
+		}
+		this.sourceFile = sourceFile;
+		this.pngFile = pngFile;
+		this.description = description;
+	}
+
+	public File getSourceFile() {
+		return sourceFile;
+	}
+
+	public File getPngFile() {
+		return pngFile;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder(generatedImage.getPngFile().getName());
-		sb.append(" ");
-		sb.append(generatedImage.getDescription());
-		return sb.toString();
+		return sourceFile.getAbsolutePath() + " " + pngFile.getAbsolutePath()
+				+ " " + description;
+	}
+
+	public int compareTo(GeneratedImage this2) {
+		int cmp = this.sourceFile.compareTo(this2.sourceFile);
+		if (cmp != 0) {
+			return cmp;
+		}
+		cmp = this.pngFile.compareTo(this2.pngFile);
+		if (cmp != 0) {
+			return cmp;
+		}
+		return this.description.compareTo(this2.description);
 	}
 
 	@Override
 	public int hashCode() {
-		return generatedImage.hashCode();
+		return sourceFile.hashCode() + pngFile.hashCode()
+				+ description.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		final SimpleLine this2 = (SimpleLine) obj;
-		return this2.generatedImage.equals(this.generatedImage);
-	}
-
-	public boolean exists() {
-		return generatedImage.getPngFile().exists();
-	}
-
-	public int compareTo(SimpleLine this2) {
-		return this.generatedImage.compareTo(this2.generatedImage);
-	}
-
-	public GeneratedImage getGeneratedImage() {
-		return generatedImage;
+		final GeneratedImage this2 = (GeneratedImage) obj;
+		return this2.sourceFile.equals(this.sourceFile)
+				&& this2.pngFile.equals(this.pngFile)
+				&& this2.description.equals(this.description);
 	}
 
 }

@@ -65,9 +65,9 @@ public class CircledCharacter {
 		final double deltaX = (getPreferredWidth(g2d) - stringDimension.getWidth()) / 2;
 		final double deltaY = getPreferredHeight(g2d) - (getPreferredHeight(g2d) - stringDimension.getHeight()) / 2
 				- descent;
-		g2d.drawString(c, (float) deltaX, (float) deltaY);
-		//g2d.drawString(c, (float) (deltaX + 0.5), (float) deltaY);
-		//g2d.drawString(c, (float) (deltaX - 0.5), (float) deltaY);
+		g2d.drawString(c, (float) (deltaX + 0.5), (float) deltaY);
+		// g2d.drawString(c, (float) (deltaX + 0.5), (float) deltaY);
+		// g2d.drawString(c, (float) (deltaX - 0.5), (float) deltaY);
 	}
 
 	private Rectangle2D getStringDimension(Graphics2D g2d) {

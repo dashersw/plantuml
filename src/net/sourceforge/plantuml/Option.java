@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
+import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 
 public class Option {
 
@@ -87,19 +87,19 @@ public class Option {
 	}
 
 	private void testDot() {
-		final String ent = Graphviz.getenvGraphvizDot();
+		final String ent = GraphvizUtils.getenvGraphvizDot();
 		if (ent == null) {
 			System.err.println("The environment variable GRAPHVIZ_DOT has not been set");
 		} else {
 			System.err.println("The environment variable GRAPHVIZ_DOT has been set to " + ent);
 		}
-		System.err.println("Dot executable is " + Graphviz.getDotExe());
+		System.err.println("Dot executable is " + GraphvizUtils.getDotExe());
 
 		boolean ok = true;
-		if (Graphviz.getDotExe() == null) {
+		if (GraphvizUtils.getDotExe() == null) {
 			System.err.println("Error: Not dot executable");
 			ok = false;
-		} else if (Graphviz.getDotExe() != null && Graphviz.getDotExe().exists() == false) {
+		} else if (GraphvizUtils.getDotExe() != null && GraphvizUtils.getDotExe().exists() == false) {
 			System.err.println("Error: the dot executable does not exists at specified location");
 			ok = false;
 		}
@@ -107,7 +107,7 @@ public class Option {
 		if (ok) {
 			System.err.println("Installation seems OK");
 			try {
-				final String version = Graphviz.dotVersion();
+				final String version = GraphvizUtils.dotVersion();
 				System.err.println("Dot version: " + version);
 			} catch (Exception e) {
 				e.printStackTrace();

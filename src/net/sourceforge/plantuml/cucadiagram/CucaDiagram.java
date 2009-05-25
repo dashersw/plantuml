@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,8 @@ public interface CucaDiagram {
 	Map<String, Entity> entities();
 
 	List<Link> getLinks();
+	
+	Collection<EntityPackage> getPackages();
 
 	String getDescription();
 	

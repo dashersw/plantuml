@@ -41,48 +41,48 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 public class Stereotype {
 
 	private final static Pattern circle = Pattern
-			.compile("\\<\\<\\s*(\\S)\\s*,\\s*(#[0-9a-fA-F]{6}|\\w+)\\s*,(.*?)\\>\\>");
+			.compile("\\<\\<\\s*\\(?(\\S)\\s*,\\s*(#[0-9a-fA-F]{6}|\\w+)\\s*(?:[),](.*?))?\\>\\>");
 
-	private final String stereotype;
+	private final String label;
 	private final HtmlColor htmlColor;
 	private final char character;
 
-	public Stereotype(String stereotype) {
-		if (stereotype == null) {
+	public Stereotype(String label) {
+		if (label == null) {
 			throw new IllegalArgumentException();
 		}
-		if (stereotype.startsWith("<<") == false || stereotype.endsWith(">>") == false) {
-			throw new IllegalArgumentException(stereotype);
+		if (label.startsWith("<<") == false || label.endsWith(">>") == false) {
+			throw new IllegalArgumentException(label);
 		}
-		final Matcher m = circle.matcher(stereotype);
+		final Matcher m = circle.matcher(label);
 		if (m.find()) {
-			this.stereotype = "<<" + m.group(3) + ">>";
+			if (StringUtils.isNotEmpty(m.group(3))) {
+				this.label = "<<" + m.group(3) + ">>";
+			} else {
+				this.label = null;
+			}
 			this.htmlColor = new HtmlColor(m.group(2));
 			this.character = m.group(1).charAt(0);
 		} else {
-			this.stereotype = stereotype;
+			this.label = label;
 			this.character = '\0';
 			this.htmlColor = null;
 		}
 	}
 
-	Color getColor() {
+	public Color getColor() {
 		if (htmlColor == null) {
 			return null;
 		}
 		return htmlColor.getColor();
 	}
 
-	char getCharacter() {
+	public char getCharacter() {
 		return character;
 	}
 
-	String getStereotype() {
-		return stereotype;
-	}
-
-	public String getHtmlCodeForDot() {
-		return "<BR ALIGN=\"LEFT\" /><FONT FACE=\"Italic\">" + StringUtils.manageHtml(stereotype) + "</FONT><BR/>";
+	public String getLabel() {
+		return label;
 	}
 
 }

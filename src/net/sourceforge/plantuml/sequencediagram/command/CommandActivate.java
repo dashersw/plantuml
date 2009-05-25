@@ -44,6 +44,7 @@ public class CommandActivate extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^(activate|deactivate|destroy)\\s+(\\w+)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final LifeEventType type = LifeEventType.valueOf(arg.get(0).toUpperCase());
 		final Participant p = getSystem().getOrCreateParticipant(arg.get(1));

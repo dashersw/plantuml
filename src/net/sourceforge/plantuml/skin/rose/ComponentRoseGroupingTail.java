@@ -59,10 +59,12 @@ public class ComponentRoseGroupingTail extends AbstractComponent {
 
 	}
 
+	@Override
 	public double getPreferredWidth(Graphics2D g2d) {
 		return 0;
 	}
 
+	@Override
 	public double getPreferredHeight(Graphics2D g2d) {
 		return 5;
 	}

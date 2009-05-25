@@ -38,15 +38,17 @@ import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 
-public class JavaClass {
+class JavaClass {
 
 	private final String name;
+	private final String javaPackage;
 	private final List<String> parents = new ArrayList<String>();
 	private final EntityType type;
 	private final EntityType parentType;
 
-	public JavaClass(String name, String p, EntityType type, EntityType parentType) {
+	public JavaClass(String javaPackage, String name, String p, EntityType type, EntityType parentType) {
 		this.name = name;
+		this.javaPackage = javaPackage;
 		if (p == null) {
 			p = "";
 		}
@@ -72,6 +74,10 @@ public class JavaClass {
 
 	public final EntityType getParentType() {
 		return parentType;
+	}
+
+	public final String getJavaPackage() {
+		return javaPackage;
 	}
 
 }

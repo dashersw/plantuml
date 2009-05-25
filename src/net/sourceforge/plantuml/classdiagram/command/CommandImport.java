@@ -48,13 +48,14 @@ public class CommandImport extends SingleLineCommand<ClassDiagram> {
 		super(classDiagram, "(?i)^import\\s+\"?([^\"]+)\"?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String arg0 = arg.get(0);
 		try {
 			final File f = FileSystem.getInstance().getFile(arg0);
 
 			if (f.isFile()) {
-				includeFile(f);
+				includeSimpleFile(f);
 			} else if (f.isDirectory()) {
 				includeDirectory(f);
 			}
@@ -67,14 +68,21 @@ public class CommandImport extends SingleLineCommand<ClassDiagram> {
 
 	private void includeDirectory(File dir) throws IOException {
 		for (File f : dir.listFiles()) {
-			if (f.getName().toLowerCase().endsWith(".java")) {
-				includeFile(f);
-			}
+			includeSimpleFile(f);
 		}
 
 	}
 
-	private void includeFile(final File f) throws IOException {
+	private void includeSimpleFile(File f) throws IOException {
+		if (f.getName().toLowerCase().endsWith(".java")) {
+			includeFileJava(f);
+		}
+		if (f.getName().toLowerCase().endsWith(".sql")) {
+			includeFileSql(f);
+		}
+	}
+
+	private void includeFileJava(final File f) throws IOException {
 		final JavaFile javaFile = new JavaFile(f);
 		for (JavaClass cl : javaFile.getJavaClasses()) {
 			final String name = cl.getName();
@@ -86,6 +94,10 @@ public class CommandImport extends SingleLineCommand<ClassDiagram> {
 				getSystem().addLink(link);
 			}
 		}
+	}
+
+	private void includeFileSql(final File f) {
+		new SqlImporter(getSystem(), f).process();
 	}
 
 }

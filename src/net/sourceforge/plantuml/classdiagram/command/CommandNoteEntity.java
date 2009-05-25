@@ -48,6 +48,7 @@ public class CommandNoteEntity extends SingleLineCommand<ClassDiagram> {
 		super(classDiagram, "(?i)^note\\s+(right|left|top|bottom)\\s+of\\s+(\\w+)\\s*:\\s*(.*)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String pos = arg.get(0);
 		final Entity cl1 = getSystem().getOrCreateClass(arg.get(1));

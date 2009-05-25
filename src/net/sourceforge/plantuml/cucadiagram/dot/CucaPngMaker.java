@@ -51,6 +51,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -91,7 +92,7 @@ public class CucaPngMaker {
 			staticImages.put(EntityType.INTERFACE, ensurePngIPresent(tmpFile.getParentFile()));
 			staticImages.put(EntityType.ENUM, ensurePngEPresent(tmpFile.getParentFile()));
 			dotMaker.generateFile(tmpFile, staticImages, imageFiles);
-			final Graphviz graphviz = new Graphviz(tmpFile);
+			final IGraphviz graphviz = GraphvizUtils.create(tmpFile);
 			graphviz.createPng(pngFile);
 		} finally {
 			if (Option.getInstance().isKeepFiles() == false) {
@@ -123,9 +124,17 @@ public class CucaPngMaker {
 	}
 
 	File createImage(Entity entity) throws IOException {
-		if (entity.getType() != EntityType.NOTE) {
-			return null;
+		if (entity.getType() == EntityType.NOTE) {
+			return createImageForNote(entity);
 		}
+		if (entity.getType() == EntityType.ABSTRACT_CLASS || entity.getType() == EntityType.CLASS
+				|| entity.getType() == EntityType.ENUM || entity.getType() == EntityType.INTERFACE) {
+			return createImageForCircleCharacter(entity);
+		}
+		return null;
+	}
+
+	private File createImageForNote(Entity entity) throws IOException {
 		final File f = File.createTempFile("plantuml", ".png");
 		if (Option.getInstance().isKeepFiles() == false) {
 			f.deleteOnExit();
@@ -147,6 +156,21 @@ public class CucaPngMaker {
 
 		g2d.dispose();
 		return f;
+	}
+
+	private File createImageForCircleCharacter(Entity entity) throws IOException {
+		final File f = File.createTempFile("plantuml", ".png");
+		final Stereotype stereotype = entity.getStereotype();
+
+		if (stereotype == null || stereotype.getColor() == null) {
+			return null;
+		}
+
+		final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), font, stereotype
+				.getColor(), red, Color.BLACK);
+		generateCircleCharacterFile(f, circledCharacter);
+		return f;
+
 	}
 
 	private File ensurePngActorPresent(File dir) throws IOException {
@@ -191,6 +215,12 @@ public class CucaPngMaker {
 
 	private File generateCircleCharacterFile(File dir, String filename, final CircledCharacter circledCharacter)
 			throws IOException {
+		final File result = new File(dir, filename);
+		generateCircleCharacterFile(result, circledCharacter);
+		return result;
+	}
+
+	private void generateCircleCharacterFile(File file, final CircledCharacter circledCharacter) throws IOException {
 		final EmptyImageBuilder builder = new EmptyImageBuilder(30, 30, yellow);
 
 		BufferedImage im = builder.getBufferedImage();
@@ -200,9 +230,7 @@ public class CucaPngMaker {
 		im = im.getSubimage(0, 0, (int) circledCharacter.getPreferredWidth(g2d) + 5, (int) circledCharacter
 				.getPreferredHeight(g2d) + 1);
 
-		final File result = new File(dir, filename);
-		ImageIO.write(im, "png", result);
-		return result;
+		ImageIO.write(im, "png", file);
 	}
 
 	final private Color yellow = new Color(Integer.parseInt("FEFECE", 16));

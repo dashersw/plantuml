@@ -41,13 +41,12 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.Vector;
 import java.util.prefs.Preferences;
 
@@ -61,11 +60,12 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import net.sourceforge.plantuml.DirWatcher;
-import net.sourceforge.plantuml.FilePng;
+import net.sourceforge.plantuml.GeneratedImage;
 
 public class MainWindow extends JFrame {
 
-	final private static Preferences prefs = Preferences.userNodeForPackage(MainWindow.class);
+	final private static Preferences prefs = Preferences
+			.userNodeForPackage(MainWindow.class);
 	final private static String KEY_DIR = "cur";
 
 	private final JList jList1 = new JList();
@@ -101,10 +101,12 @@ public class MainWindow extends JFrame {
 		});
 
 		final MouseListener mouseListener = new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					final int index = jList1.locationToIndex(e.getPoint());
-					doubleClick((SimpleLine) jList1.getModel().getElementAt(index));
+					doubleClick((SimpleLine) jList1.getModel().getElementAt(
+							index));
 				}
 			}
 		};
@@ -148,7 +150,8 @@ public class MainWindow extends JFrame {
 				try {
 					final boolean changed = refreshDir();
 					if (changed) {
-						jList1.setListData(new Vector<SimpleLine>(currentDirectoryListing));
+						jList1.setListData(new Vector<SimpleLine>(
+								currentDirectoryListing));
 						jList1.setVisible(true);
 					}
 				} catch (IOException e) {
@@ -156,32 +159,36 @@ public class MainWindow extends JFrame {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-			}});
+			}
+		});
 	}
 
 	private boolean refreshDir() throws IOException, InterruptedException {
-		final SortedMap<FilePng, String> createdFiles = dirWatcher.buildCreatedFiles();
+		final Collection<GeneratedImage> createdFiles2 = dirWatcher
+				.buildCreatedFiles();
 
 		boolean changed = false;
 
-		for (Map.Entry<FilePng, String> ent : createdFiles.entrySet()) {
-			final SimpleLine simpleLine = new SimpleLine(ent.getKey(), ent.getValue());
+		for (GeneratedImage g : createdFiles2) {
+			final SimpleLine simpleLine = new SimpleLine(g);
+			mayRefreshImageWindow(g.getPngFile());
 			if (currentDirectoryListing.contains(simpleLine) == false) {
+				removeAllThatUseThisFile(g.getPngFile());
 				currentDirectoryListing.add(simpleLine);
 				changed = true;
-				mayRefreshImageWindow(simpleLine);
 			}
 		}
-		for (SimpleLine simpleLine : currentDirectoryListing) {
-			final String newDesc = createdFiles.get(simpleLine.getFireResult());
-			if (newDesc != null) {
-				simpleLine.setDesc(newDesc);
-				mayRefreshImageWindow(simpleLine);
-				changed = true;
-			}
-
-		}
-		for (final Iterator<SimpleLine> it = currentDirectoryListing.iterator(); it.hasNext();) {
+		// for (SimpleLine simpleLine : currentDirectoryListing) {
+		// final String newDesc = createdFiles.get(simpleLine.getFireResult());
+		// if (newDesc != null) {
+		// simpleLine.setDesc(newDesc);
+		// mayRefreshImageWindow(simpleLine);
+		// changed = true;
+		// }
+		//
+		// }
+		for (final Iterator<SimpleLine> it = currentDirectoryListing.iterator(); it
+				.hasNext();) {
 			final SimpleLine s = it.next();
 			if (s.exists() == false) {
 				it.remove();
@@ -193,9 +200,22 @@ public class MainWindow extends JFrame {
 		return changed;
 	}
 
-	private void mayRefreshImageWindow(SimpleLine simpleLine) {
+	private void removeAllThatUseThisFile(File pngFile) {
+		for (final Iterator<SimpleLine> it = currentDirectoryListing.iterator(); it
+				.hasNext();) {
+			final SimpleLine line = it.next();
+			if (line.getGeneratedImage().getPngFile().equals(pngFile)) {
+				it.remove();
+			}
+
+		}
+
+	}
+
+	private void mayRefreshImageWindow(File pngFile) {
 		for (ImageWindow win : openWindows) {
-			if (simpleLine.equals(win.getSimpleLine())) {
+			if (pngFile.equals(win.getSimpleLine().getGeneratedImage()
+					.getPngFile())) {
 				win.refreshImage();
 			}
 		}
@@ -209,11 +229,13 @@ public class MainWindow extends JFrame {
 		}
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException, UnsupportedLookAndFeelException {
+	public static void main(String[] args) throws ClassNotFoundException,
+			InstantiationException, IllegalAccessException,
+			UnsupportedLookAndFeelException {
 
 		try {
-			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+			UIManager
+					.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 		}
 

@@ -29,22 +29,19 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.printskin;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
 
-import net.sourceforge.plantuml.SingleLineCommand;
+public interface IGraphviz {
 
-class CommandTestSkin extends SingleLineCommand<PrintSkin> {
+	void createPng(File pngFile) throws IOException, InterruptedException;
 
-	public CommandTestSkin(PrintSkin system) {
-		super(system, "(?i)^testskin\\s+([\\w.]+)\\s*(.*)$");
-	}
+	File getDotExe();
 
-	@Override
-	protected boolean executeArg(List<String> arg) {
-		return getSystem().setSkin(arg.get(0), Arrays.asList(arg.get(1)));
-	}
+	String dotVersion() throws IOException, InterruptedException;
+
+	//void createPositionFile(File positionFile) throws IOException, InterruptedException;
 
 }

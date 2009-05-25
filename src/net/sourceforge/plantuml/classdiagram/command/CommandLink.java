@@ -47,6 +47,7 @@ public class CommandLink extends SingleLineCommand<ClassDiagram> {
 				"(?i)^(\\w+)\\s*(?:\"([^\"]+)\")?\\s*(?:((-+|\\.+(?!o)(?!\\*))(\\>|o|\\*|\\|\\>)?)|((\\<|o|\\*|\\<\\|)?(-+|(?<!o)(?<!\\*)\\.+)))\\s*(?:\"([^\"]+)\")?\\s*(\\w+)\\s*(?::\\s*([^\"]*))?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 
 		final Entity cl1 = getSystem().getOrCreateClass(arg.get(0));

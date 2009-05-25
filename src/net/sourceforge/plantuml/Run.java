@@ -68,7 +68,7 @@ public class Run {
 	}
 
 	private static void manageFile(File f) throws IOException, InterruptedException {
-		new JavaFileReader(f).execute();
+		new JavaFileReader(f).getGeneratedImages();
 	}
 
 	private static void manageFiles(List<String> args) throws IOException, InterruptedException {

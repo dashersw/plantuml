@@ -42,6 +42,7 @@ public class CommandNewpage extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^(@?newpage)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		getSystem().newpage();
 		return true;

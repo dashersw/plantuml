@@ -38,6 +38,7 @@ import java.util.HashSet;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
+@Deprecated
 public class Partition {
 
 	private final Collection<Entity> entities = new HashSet<Entity>();

@@ -60,7 +60,8 @@ public class SequenceDiagram implements PSystem {
 	public Participant getOrCreateParticipant(String code) {
 		Participant result = participants.get(code);
 		if (result == null) {
-			result = new Participant(ParticipantType.PARTICIPANT, code, Arrays.asList(code));
+			result = new Participant(ParticipantType.PARTICIPANT, code, Arrays
+					.asList(code));
 			participants.put(code, result);
 		}
 		return result;
@@ -72,7 +73,8 @@ public class SequenceDiagram implements PSystem {
 		return lastMessage;
 	}
 
-	public Participant createNewParticipant(ParticipantType type, String code, List<String> display) {
+	public Participant createNewParticipant(ParticipantType type, String code,
+			List<String> display) {
 		if (participants.containsKey(code)) {
 			throw new IllegalArgumentException();
 		}
@@ -106,7 +108,8 @@ public class SequenceDiagram implements PSystem {
 	}
 
 	public List<File> createPng(File pngFile) throws IOException {
-		final SequenceDiagramPngMaker maker = new SequenceDiagramPngMaker(this, skin, pngFile);
+		final SequenceDiagramPngMaker maker = new SequenceDiagramPngMaker(this,
+				skin, pngFile);
 		return maker.createPng();
 	}
 

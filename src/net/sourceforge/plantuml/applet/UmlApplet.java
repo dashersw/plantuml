@@ -45,7 +45,7 @@ import java.util.SortedMap;
 import net.sourceforge.plantuml.DataReader;
 import net.sourceforge.plantuml.PSystem;
 import net.sourceforge.plantuml.PSystemError;
-import net.sourceforge.plantuml.PSystemParameter;
+import net.sourceforge.plantuml.StartUml;
 import net.sourceforge.plantuml.PngError;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagramFactory;
@@ -89,9 +89,8 @@ public class UmlApplet extends Applet {
 		source = source.replaceAll("@enduml", "");
 		source = "@startuml\n" + source + "\n@enduml";
 
-		final DataReader dataReader = new DataReader(new StringReader(source), new SequenceDiagramFactory(),
-				Collections.<Integer> emptyList());
-		final SortedMap<Integer, PSystemParameter> r = dataReader.getPSystems();
+		final DataReader dataReader = new DataReader(new StringReader(source), new SequenceDiagramFactory());
+		final SortedMap<Integer, StartUml> r = dataReader.getAllStartUml();
 		if (r.size() > 0) {
 			final PSystem system = r.values().iterator().next().getSystem();
 			pngMaker2 = null;

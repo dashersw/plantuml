@@ -53,11 +53,13 @@ final public class ComponentBlueModernNote extends AbstractTextualComponent {
 		this.foregroundColor = foregroundColor;
 	}
 
+	@Override
 	final public double getPreferredWidth(Graphics2D g2d) {
 		final double result = getTextWidth(g2d) + 2 * getPaddingX();
 		return result;
 	}
 
+	@Override
 	final public double getPreferredHeight(Graphics2D g2d) {
 		return getTextHeight(g2d) + 2 * getPaddingY();
 	}

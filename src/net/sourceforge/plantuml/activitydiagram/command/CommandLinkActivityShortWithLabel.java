@@ -46,6 +46,7 @@ public class CommandLinkActivityShortWithLabel extends SingleLineCommand<Activit
 		super(diagram, "(?i)^(\\[[^\\]]+\\])?\\s*(-+)\\>\\s*(\\[[^\\]]+\\])?\\s*(\\*|\\<\\>|==+)?\\s*(\\w+)(?:\\s*=+)?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 
 		final Entity entity1 = getSystem().getLastEntityBrancheConsulted();

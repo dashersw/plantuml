@@ -32,7 +32,6 @@
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -40,34 +39,12 @@ import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.PngError;
 import net.sourceforge.plantuml.StringUtils;
 
-public class Graphviz {
+abstract class AbstractGraphviz implements IGraphviz {
 
-	private static File dotExe;
-	static {
-		final String getenv = getenvGraphvizDot();
-
-		if (getenv == null) {
-			if (isWindows()) {
-				final File programFile = new File("c:/Program Files");
-				if (programFile.exists()) {
-					for (File f : programFile.listFiles(new FileFilter() {
-						public boolean accept(File pathname) {
-							return pathname.isDirectory() && pathname.getName().startsWith("Graphviz");
-						}
-					})) {
-						final File binDir = new File(f, "bin");
-						dotExe = new File(binDir, "dot.exe");
-					}
-				}
-			} else {
-				dotExe = new File("/usr/bin/dot");
-			}
-		} else {
-			dotExe = new File(getenv);
-		}
-	}
-
-	private static boolean isWindows() {
+	private final File dotExe;
+	private final File dotFile;
+	
+	static boolean isWindows() {
 		return File.separatorChar == '\\';
 	}
 
@@ -75,17 +52,12 @@ public class Graphviz {
 		return System.getenv("GRAPHVIZ_DOT");
 	}
 
-	static public File getDotExe() {
-		return dotExe;
-	}
-
-	private final File dotFile;
-
-	public Graphviz(File dotFile) {
+	AbstractGraphviz(File dotExe, File dotFile) {
 		this.dotFile = dotFile;
+		this.dotExe = dotExe;
 	}
 
-	public void createPng(File pngFile) throws IOException, InterruptedException {
+	final public void createPng(File pngFile) throws IOException, InterruptedException {
 		if (dotExe == null) {
 			createPngNoGraphviz(pngFile);
 			return;
@@ -112,13 +84,7 @@ public class Graphviz {
 		}
 	}
 
-	public void createPositionFile(File positionFile) throws IOException, InterruptedException {
-		final String cmd2 = getCommandLineDotFile(positionFile);
-		final Process process2 = Runtime.getRuntime().exec(cmd2);
-		process2.waitFor();
-	}
-
-	public static String dotVersion() throws IOException, InterruptedException {
+	final public String dotVersion() throws IOException, InterruptedException {
 		final String cmd = getCommandLineVersion();
 		final ProcessRunner p = new ProcessRunner(cmd);
 		p.run();
@@ -135,56 +101,22 @@ public class Graphviz {
 		return sb.toString().replace('\n', ' ').trim();
 	}
 
-	private void createPngNoGraphviz(File pngFile) throws IOException {
+	final private void createPngNoGraphviz(File pngFile) throws IOException {
 		final PngError errorResult = new PngError(Arrays
 				.asList("Cannot find Graphviz: try 'java -jar plantuml.jar -testdot'"));
 		errorResult.writeError(pngFile);
 	}
 
-	static String getCommandLineVersion() {
-		final StringBuilder sb = new StringBuilder();
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(dotExe.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(" -V");
-		return sb.toString();
+	abstract String getCommandLine(File pngFile);
+	abstract String getCommandLineVersion();
+
+	public final File getDotExe() {
+		return dotExe;
 	}
 
-	String getCommandLine(File pngFile) {
-		final StringBuilder sb = new StringBuilder();
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(dotExe.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(" -Tpng ");
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(dotFile.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(" -o ");
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(pngFile.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		return sb.toString();
+	protected final File getDotFile() {
+		return dotFile;
 	}
 
-	private static void appendDoubleQuoteOnWindows(final StringBuilder sb) {
-		if (isWindows()) {
-			sb.append('\"');
-		}
-	}
 
-	private String getCommandLineDotFile(File out) {
-		final StringBuilder sb = new StringBuilder();
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(dotExe.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(" -Tdot ");
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(dotFile.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(" -o ");
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(out.getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		return sb.toString();
-	}
 }

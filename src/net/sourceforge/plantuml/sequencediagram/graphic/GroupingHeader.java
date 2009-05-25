@@ -49,14 +49,17 @@ class GroupingHeader extends GraphicalElement {
 		this.comp = comp;
 	}
 
+	@Override
 	final public double getPreferredWidth(Graphics2D g2d) {
 		return comp.getPreferredWidth(g2d);
 	}
 
+	@Override
 	final public double getPreferredHeight(Graphics2D g2d) {
 		return comp.getPreferredHeight(g2d);
 	}
 	
+	@Override
 	public double getStartingX(Graphics2D g2d) {
 		return xpos;
 	}

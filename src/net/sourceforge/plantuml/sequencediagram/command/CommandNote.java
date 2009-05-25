@@ -46,6 +46,7 @@ public class CommandNote extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^note\\s+(right|left|over)\\s+(?:of\\s+)?(\\w+)\\s*:\\s*(.*)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final Participant p = getSystem().getOrCreateParticipant(arg.get(1));
 

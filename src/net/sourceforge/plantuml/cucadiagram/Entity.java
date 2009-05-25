@@ -49,8 +49,10 @@ public class Entity {
 
 	private final List<String> fields = new ArrayList<String>();
 	private final List<String> methods = new ArrayList<String>();
+	
+	private final EntityPackage entityPackage;
 
-	public Entity(String code, String display, EntityType type) {
+	public Entity(String code, String display, EntityType type, EntityPackage entityPackage) {
 		if (code == null || code.length() == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -60,6 +62,10 @@ public class Entity {
 		this.type = type;
 		this.code = code;
 		this.display = display;
+		this.entityPackage = entityPackage;
+		if (entityPackage != null) {
+			entityPackage.addEntity(this);
+		}
 	}
 
 	public void addFieldOrMethod(String s) {
@@ -104,6 +110,10 @@ public class Entity {
 
 	public final void setStereotype(Stereotype stereotype) {
 		this.stereotype = stereotype;
+	}
+
+	public final EntityPackage getEntityPackage() {
+		return entityPackage;
 	}
 
 }

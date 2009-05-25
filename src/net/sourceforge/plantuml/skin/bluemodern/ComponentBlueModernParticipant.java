@@ -66,7 +66,7 @@ public class ComponentBlueModernParticipant extends AbstractTextualComponent {
 		shape.draw(g2d);
 		g2d.translate(-outMargin, 0);
 
-		getTextBlock().draw(g2d, (int) (outMargin + getMarginX1()), getMarginY());
+		getTextBlock().draw(g2d, outMargin + getMarginX1(), getMarginY());
 	}
 
 	@Override

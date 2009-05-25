@@ -42,6 +42,7 @@ public class CommandTitle extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^title(?:\\s*:\\s*|\\s+)(.*)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		getSystem().setTitle(arg.get(0));
 		return true;

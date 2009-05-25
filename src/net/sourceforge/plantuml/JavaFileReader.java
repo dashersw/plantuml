@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.SortedMap;
@@ -70,30 +69,26 @@ class JavaFileReader {
 		this.outputDirectory = outputDirectory;
 	}
 
-	public List<StartUml> execute() throws IOException, InterruptedException {
+	public List<GeneratedImage> getGeneratedImages() throws IOException, InterruptedException {
 		FileSystem.getInstance().setCurrentDir(file.getParentFile());
-		final SortedMap<Integer, PSystemParameter> r1 = execute1(new SequenceDiagramFactory(), Collections
-				.<Integer> emptyList());
-		final SortedMap<Integer, PSystemParameter> r2 = execute1(new ClassDiagramFactory(), Collections
-				.<Integer> emptyList());
-		final SortedMap<Integer, PSystemParameter> r3 = execute1(new ActivityDiagramFactory(), Collections
-				.<Integer> emptyList());
-		final SortedMap<Integer, PSystemParameter> r4 = execute1(new PrintSkinFactory(), Collections
-				.<Integer> emptyList());
+		final SortedMap<Integer, StartUml> r1 = tryThisFactory(new SequenceDiagramFactory());
+		final SortedMap<Integer, StartUml> r2 = tryThisFactory(new ClassDiagramFactory());
+		final SortedMap<Integer, StartUml> r3 = tryThisFactory(new ActivityDiagramFactory());
+		final SortedMap<Integer, StartUml> r4 = tryThisFactory(new PrintSkinFactory());
 
 		final SortedSet<Integer> lines = new TreeSet<Integer>(r1.keySet());
 		lines.addAll(r2.keySet());
 
-		final List<StartUml> result = new ArrayList<StartUml>();
+		final List<GeneratedImage> result = new ArrayList<GeneratedImage>();
 
 		int cpt = 0;
 		for (Integer i : lines) {
-			final PSystemParameter s1 = r1.get(i);
-			final PSystemParameter s2 = r2.get(i);
-			final PSystemParameter s3 = r3.get(i);
-			final PSystemParameter s4 = r4.get(i);
+			final StartUml s1 = r1.get(i);
+			final StartUml s2 = r2.get(i);
+			final StartUml s3 = r3.get(i);
+			final StartUml s4 = r4.get(i);
 
-			final PSystemParameter system;
+			final StartUml system;
 			if (isOk(s1.getSystem())) {
 				system = s1;
 			} else if (isOk(s2.getSystem())) {
@@ -105,7 +100,7 @@ class JavaFileReader {
 			} else {
 				final PSystemError merge = PSystemError.merge((PSystemError) s1.getSystem(), (PSystemError) s2
 						.getSystem(), (PSystemError) s3.getSystem());
-				system = new PSystemParameter(merge, s1.getStartuml());
+				system = new StartUml(merge, s1.getStartuml());
 			}
 
 			String newName = s1.getFilename();
@@ -115,11 +110,11 @@ class JavaFileReader {
 			}
 
 			final File png = new File(outputDirectory, newName);
-			final FilePng filePng = new FilePng(file, png);
 			png.getParentFile().mkdirs();
 
 			system.getSystem().createPng(png);
-			result.add(new StartUml(filePng, system.getSystem().getDescription(), i));
+			final GeneratedImage generatedImage = new GeneratedImage(file, png, system.getSystem().getDescription());
+			result.add(generatedImage);
 		}
 
 		return Collections.unmodifiableList(result);
@@ -132,10 +127,10 @@ class JavaFileReader {
 		return true;
 	}
 
-	private SortedMap<Integer, PSystemParameter> execute1(PSystemFactory systemFactory, Collection<Integer> toSkip)
+	private SortedMap<Integer, StartUml> tryThisFactory(PSystemFactory systemFactory)
 			throws IOException, InterruptedException {
 		
-		return new DataReader(new FileReader(file), systemFactory, toSkip).getPSystems();
+		return new DataReader(new FileReader(file), systemFactory).getAllStartUml();
 	}
 
 	static String changeName(String name, int cpt) {

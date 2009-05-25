@@ -45,6 +45,7 @@ public class CommandNoteOnArrow extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^note\\s+(right|left)\\s*:\\s*(.*)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 
 		final Message m = getSystem().getLastMessage();

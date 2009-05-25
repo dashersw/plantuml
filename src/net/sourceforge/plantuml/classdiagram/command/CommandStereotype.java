@@ -44,6 +44,7 @@ public class CommandStereotype extends SingleLineCommand<ClassDiagram> {
 		super(classDiagram, "(?i)^(\\w+)\\s*(\\<\\<.*\\>\\>)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String code = arg.get(0);
 		final String stereotype = arg.get(1);

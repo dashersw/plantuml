@@ -29,47 +29,44 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.skin.rose;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
-import java.util.List;
+import java.io.File;
 
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.skin.AbstractTextualComponent;
+class GraphvizLinux extends AbstractGraphviz {
 
-public class ComponentRoseParticipant extends AbstractTextualComponent {
+	private static File exeOnLinux;
+	static {
+		final String getenv = getenvGraphvizDot();
 
-	private final int outMargin = 5;
-	private final Color back;
-	private final Color foregroundColor;
+		if (getenv == null) {
+			exeOnLinux = new File("/usr/bin/dot");
+		} else {
+			exeOnLinux = new File(getenv);
+		}
+	}
 
-	public ComponentRoseParticipant(Color back, Color foregroundColor, Color fontColor, Font font, List<String> stringsToDisplay) {
-		super(stringsToDisplay, fontColor, font, 7, 7, 7);
-		this.back = back;
-		this.foregroundColor = foregroundColor;
+	GraphvizLinux(File dotFile) {
+		super(exeOnLinux, dotFile);
 	}
 
 	@Override
-	protected void drawInternal(Graphics2D g2d, Dimension2D dimensionToUse) {
-		g2d.setColor(back);
-		g2d.fillRect(outMargin, 0, (int) getTextWidth(g2d), (int) getTextHeight(g2d));
-		g2d.setColor(foregroundColor);
-		g2d.drawRect(outMargin, 0, (int) getTextWidth(g2d), (int) getTextHeight(g2d));
-		final TextBlock textBlock = getTextBlock();
-		textBlock.draw(g2d, outMargin + getMarginX1(), getMarginY());
+	String getCommandLine(File pngFile) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getDotExe().getAbsolutePath());
+		sb.append(" -Tpng ");
+		sb.append(getDotFile().getAbsolutePath());
+		sb.append(" -o ");
+		sb.append(pngFile.getAbsolutePath());
+		return sb.toString();
 	}
 
 	@Override
-	public double getPreferredHeight(Graphics2D g2d) {
-		return getTextHeight(g2d);
-	}
-
-	@Override
-	public double getPreferredWidth(Graphics2D g2d) {
-		return getTextWidth(g2d) + outMargin * 2;
+	String getCommandLineVersion() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getDotExe().getAbsolutePath());
+		sb.append(" -V");
+		return sb.toString();
 	}
 
 }

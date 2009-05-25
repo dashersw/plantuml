@@ -32,18 +32,21 @@
 package net.sourceforge.plantuml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityPackage;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
 public abstract class AbstractDiagram implements PSystem, CucaDiagram {
-	
+
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
@@ -51,13 +54,30 @@ public abstract class AbstractDiagram implements PSystem, CucaDiagram {
 
 	private final List<Link> links = new ArrayList<Link>();
 
+	private Map<String, EntityPackage> packages = new LinkedHashMap<String, EntityPackage>();
+	private EntityPackage currentPackage = null;
+
 	protected Entity getOrCreateEntity(String code, EntityType defaultType) {
 		Entity result = entities.get(code);
 		if (result == null) {
-			result = new Entity(code, code, defaultType);
+			result = new Entity(code, code, defaultType, currentPackage);
 			entities.put(code, result);
 		}
 		return result;
+	}
+	
+	final public Collection<EntityPackage> getPackages() {
+		return Collections.unmodifiableCollection(packages.values());
+	}
+
+	public EntityPackage getOrCreatePackage(String code) {
+		EntityPackage p = packages.get(code);
+		if (p == null) {
+			p = new EntityPackage(code);
+			packages.put(code, p);
+		}
+		currentPackage = p;
+		return p;
 	}
 
 	public Entity createEntity(String code, String display, EntityType type) {
@@ -67,7 +87,7 @@ public abstract class AbstractDiagram implements PSystem, CucaDiagram {
 		if (display == null) {
 			display = code;
 		}
-		final Entity entity = new Entity(code, display, type);
+		final Entity entity = new Entity(code, display, type, currentPackage);
 		entities.put(code, entity);
 		return entity;
 	}

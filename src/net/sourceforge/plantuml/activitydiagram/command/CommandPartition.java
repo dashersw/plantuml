@@ -43,6 +43,7 @@ public class CommandPartition extends SingleLineCommand<ActivityDiagram> {
 		super(diagram, "(?i)^partition\\s+(\\w+)\\s*$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String code = arg.get(0);
 		Partition p = getSystem().getPartition(code);

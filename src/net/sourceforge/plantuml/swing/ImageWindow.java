@@ -41,6 +41,7 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.WindowConstants;
 
 class ImageWindow extends JFrame {
 
@@ -56,8 +57,9 @@ class ImageWindow extends JFrame {
 		getContentPane().add(scrollPane, BorderLayout.CENTER);
 		setSize(640, 400);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				main.closing(ImageWindow.this);
@@ -66,7 +68,7 @@ class ImageWindow extends JFrame {
 	}
 
 	private ScrollablePicture buildScrollablePicture() {
-		final File png = simpleLine.getFireResult().getPngFile();
+		final File png = simpleLine.getGeneratedImage().getPngFile();
 		final Image image = Toolkit.getDefaultToolkit().createImage(png.getAbsolutePath());
 		final ImageIcon imageIcon = new ImageIcon(image, simpleLine.toString());
 		final ScrollablePicture scrollablePicture = new ScrollablePicture(imageIcon, 1);

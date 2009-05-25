@@ -29,38 +29,24 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.classdiagram.command;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
-public class PSystemParameter {
+import net.sourceforge.plantuml.SingleLineCommand;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 
-	private final PSystem system;
-	private final String startuml;
+public class CommandPackage extends SingleLineCommand<ClassDiagram> {
 
-	private static final Pattern pattern1 = Pattern.compile("^@startuml\\s+\"?(.*?)\"?$");
-
-	PSystemParameter(PSystem system, String startuml) {
-		this.system = system;
-		this.startuml = startuml;
+	public CommandPackage(ClassDiagram diagram) {
+		super(diagram, "(?i)^package\\s+([\\w.]+)\\s*$");
 	}
 
-	public PSystem getSystem() {
-		return system;
-	}
-
-	public String getFilename() {
-		final Matcher m = pattern1.matcher(startuml);
-		final boolean ok = m.find();
-		if (ok == false) {
-			return null;
-		}
-		return m.group(1);
-	}
-
-	public String getStartuml() {
-		return startuml;
+	@Override
+	protected boolean executeArg(List<String> arg) {
+		final String code = arg.get(0);
+		getSystem().getOrCreatePackage(code);
+		return true;
 	}
 
 }

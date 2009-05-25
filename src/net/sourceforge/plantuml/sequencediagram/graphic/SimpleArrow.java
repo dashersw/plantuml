@@ -45,6 +45,7 @@ abstract class SimpleArrow extends Arrow {
 		this.arrow = arrow;
 	}
 
+	@Override
 	public abstract int getDirection(Graphics2D g2d);
 
 	protected final Component getArrow() {

@@ -73,6 +73,7 @@ class ScrollablePicture extends JLabel implements Scrollable, MouseMotionListene
 		scrollRectToVisible(r);
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		if (missingPicture) {
 			return new Dimension(320, 480);

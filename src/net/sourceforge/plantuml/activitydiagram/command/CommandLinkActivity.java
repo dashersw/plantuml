@@ -48,6 +48,7 @@ public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 				"(?i)^(\\*|\\<\\>|==+)?\\s*(\\w+)(?:\\s*=+)?\\s*(\\[[^\\]]+\\])?\\s*(-+)\\>\\s*(\\[[^\\]]+\\])?\\s*(\\*|\\<\\>|==+)?\\s*(\\w+)(?:\\s*=+)?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 
 		final EntityType type1 = getTypeFromString(arg.get(0), EntityType.CIRCLE_START);

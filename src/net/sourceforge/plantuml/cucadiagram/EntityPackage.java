@@ -29,53 +29,58 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.cucadiagram;
 
-import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
-public class FilePng implements Comparable<FilePng> {
 
-	private final File sourceFile;
-	private final File pngFile;
+public class EntityPackage {
 
-	public FilePng(File sourceFile, File pngFile) {
-		if (sourceFile == null || pngFile == null) {
+	private static int CPT = 0;
+
+	private final Collection<Entity> entities = new HashSet<Entity>();
+	private final String code;
+
+	private final int cpt = CPT++;
+
+	public EntityPackage(String code) {
+		if (code == null || code.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-		this.sourceFile = sourceFile;
-		this.pngFile = pngFile;
+		this.code = code;
 	}
-
-	public File getSourceFile() {
-		return sourceFile;
-	}
-
-	public File getPngFile() {
-		return pngFile;
-	}
-
-	@Override
-	public String toString() {
-		return sourceFile.getAbsolutePath() + " " + pngFile.getAbsolutePath();
-	}
-
-	public int compareTo(FilePng this2) {
-		final int cmp = this.sourceFile.compareTo(this2.sourceFile);
-		if (cmp != 0) {
-			return cmp;
+	
+	public void addEntity(Entity entity) {
+		if (entities.contains(entity)) {
+			throw new IllegalArgumentException();
 		}
-		return this.pngFile.compareTo(this2.pngFile);
+		entities.add(entity);
+	}
+	
+	public boolean containsFully(Link link) {
+		return contains(link.getEntity1()) && contains(link.getEntity2());
 	}
 
-	@Override
-	public int hashCode() {
-		return sourceFile.hashCode() + pngFile.hashCode();
+	public boolean contains(Entity entity) {
+		return entities.contains(entity);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		final FilePng this2 = (FilePng) obj;
-		return this2.sourceFile.equals(this.sourceFile) && this2.pngFile.equals(this.pngFile);
+
+
+	public Collection<Entity> getEntities() {
+		return Collections.unmodifiableCollection(entities);
+	}
+
+
+
+	public String getCode() {
+		return code;
+	}
+
+	public String getUid() {
+		return "cluster" + cpt;
 	}
 
 }

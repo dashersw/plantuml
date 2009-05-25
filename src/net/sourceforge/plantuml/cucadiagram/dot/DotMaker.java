@@ -37,6 +37,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import java.util.Map;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityPackage;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -80,11 +82,36 @@ public class DotMaker {
 		this.staticImages = staticImages;
 		this.images = images;
 
-		printEntities(pw, diagram.entities().values());
+		printPackages(pw);
+		printEntities(pw, getUnpackagedEntities());
 		printLinks(pw, diagram.getLinks());
 
 		pw.println("}");
 		pw.close();
+	}
+
+	private Collection<Entity> getUnpackagedEntities() {
+		final List<Entity> result = new ArrayList<Entity>();
+		for (Entity ent : diagram.entities().values()) {
+			if (ent.getEntityPackage() == null) {
+				result.add(ent);
+			}
+		}
+		return result;
+	}
+
+	private void printPackages(PrintWriter pw) {
+		for (EntityPackage p : diagram.getPackages()) {
+			pw.println("subgraph " + p.getUid() + " {");
+			pw.println("label=\"" + p.getCode() + "\";");
+			pw.println("color=black;");
+			this.printEntities(pw, p.getEntities());
+			for (Link link : diagram.getLinks()) {
+				eventuallySameRank(pw, p, link);
+			}
+			pw.println("}");
+		}
+
 	}
 
 	protected void debugFile(File f) throws IOException {
@@ -149,10 +176,17 @@ public class DotMaker {
 			pw
 					.println(link.getEntity1().getUid() + " -> " + link.getEntity2().getUid() + decoration + lenString
 							+ "];");
-			if (len == 1) {
-				pw.println("{rank=same; " + link.getEntity1().getUid() + "; " + link.getEntity2().getUid() + "}");
-			}
+			eventuallySameRank(pw, null, link);
 		}
+	}
+
+	private void eventuallySameRank(PrintWriter pw, EntityPackage entityPackage, Link link) {
+		final int len = link.getLenght();
+		if (len == 1 && link.getEntity1().getEntityPackage() == entityPackage
+				&& link.getEntity2().getEntityPackage() == entityPackage) {
+			pw.println("{rank=same; " + link.getEntity1().getUid() + "; " + link.getEntity2().getUid() + "}");
+		}
+
 	}
 
 	private String getSpecificDecoration(LinkType link) {
@@ -280,8 +314,8 @@ public class DotMaker {
 		final Stereotype stereotype = entity.getStereotype();
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
-		if (stereotype != null) {
-			sb.append("<TR><TD>" + stereotype.getHtmlCodeForDot() + "</TD></TR>");
+		if (isThereLabel(stereotype)) {
+			sb.append("<TR><TD>" + getHtmlCodeForDot(stereotype) + "</TD></TR>");
 		}
 		sb.append("<TR><TD><IMG SRC=\"" + actorAbsolutePath + "\"/></TD></TR>");
 		sb.append("<TR><TD>" + entity.getDisplay() + "</TD></TR>");
@@ -291,18 +325,24 @@ public class DotMaker {
 	}
 
 	private String getLabelForClassOrInterfaceOrEnum(Entity entity) {
-		final File cFile = staticImages.get(entity.getType());
+		File cFile = images.get(entity);
+		if (cFile == null) {
+			cFile = staticImages.get(entity.getType());
+		}
 		if (cFile == null) {
 			throw new IllegalStateException();
 		}
+		// if (cFile.exists() == false) {
+		// throw new IllegalStateException("" + cFile);
+		// }
 		final String circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile);
 
 		final StringBuilder sb = new StringBuilder("<<FONT POINT-SIZE=\"12\"><TABLE BGCOLOR=" + YELLOW
 				+ " BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">");
 		sb.append("<TR><TD>");
-		
+
 		sb.append(getHtmlHeaderTableForClassOrInterfaceOrEnum(entity, circleAbsolutePath));
-		
+
 		sb.append("</TD></TR>");
 		sb.append("<TR><TD WIDTH=\"55\">");
 		for (String s : entity.fields()) {
@@ -327,8 +367,8 @@ public class DotMaker {
 		sb.append("<TR><TD ALIGN=\"RIGHT\"><IMG SRC=\"" + circleAbsolutePath + "\"/></TD><TD ALIGN=\"LEFT\">");
 
 		final Stereotype stereotype = entity.getStereotype();
-		if (stereotype != null) {
-			sb.append(stereotype.getHtmlCodeForDot());
+		if (isThereLabel(stereotype)) {
+			sb.append(getHtmlCodeForDot(stereotype));
 		}
 		final boolean italic = entity.getType() == EntityType.ABSTRACT_CLASS
 				|| entity.getType() == EntityType.INTERFACE;
@@ -341,6 +381,15 @@ public class DotMaker {
 		sb.append("</FONT>");
 		sb.append("</TD></TR></TABLE>");
 		return sb.toString();
+	}
+
+	private boolean isThereLabel(final Stereotype stereotype) {
+		return stereotype != null && stereotype.getLabel() != null;
+	}
+
+	private String getHtmlCodeForDot(Stereotype stereotype) {
+		return "<BR ALIGN=\"LEFT\" /><FONT FACE=\"Italic\">" + StringUtils.manageHtml(stereotype.getLabel())
+				+ "</FONT><BR/>";
 	}
 
 	protected CucaDiagram getDiagram() {

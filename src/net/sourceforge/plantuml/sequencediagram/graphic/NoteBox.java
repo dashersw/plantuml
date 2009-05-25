@@ -65,10 +65,12 @@ class NoteBox extends GraphicalElement {
 		this.comp = comp;
 	}
 
+	@Override
 	final public double getPreferredWidth(Graphics2D g2d) {
 		return comp.getPreferredWidth(g2d);
 	}
 
+	@Override
 	final public double getPreferredHeight(Graphics2D g2d) {
 		return comp.getPreferredHeight(g2d);
 	}
@@ -82,6 +84,7 @@ class NoteBox extends GraphicalElement {
 		comp.draw(g2d, dimensionToUse, context);
 	}
 
+	@Override
 	public double getStartingX(Graphics2D g2d) {
 		final Segment segment = getSegment(g2d);
 		final int xStart;

@@ -47,6 +47,7 @@ public class CommandCreateEntity extends SingleLineCommand<ClassDiagram> {
 				"(?i)^(usecase|interface|actor|enum|component|note|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)(?:\\s*(\\<\\<.*\\>\\>))?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String arg0 = arg.get(0).toUpperCase();
 		final EntityType type;

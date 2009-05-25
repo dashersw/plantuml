@@ -33,46 +33,48 @@ package net.sourceforge.plantuml.ant;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.Collection;
+
+import net.sourceforge.plantuml.DirWatcher;
+import net.sourceforge.plantuml.GeneratedImage;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import net.sourceforge.plantuml.DirWatcher;
-import net.sourceforge.plantuml.FilePng;
-
-//<?xml version="1.0"?>
+// <?xml version="1.0"?>
 //
-//<project name="OwnTaskExample" default="main" basedir=".">
-//  <taskdef name="plot" classname="plot.PlotTask" classpath="build"/>
+// <project name="OwnTaskExample" default="main" basedir=".">
+// <taskdef name="plot" classname="plot.PlotTask" classpath="build"/>
 //
-//  <target name="main">
-//    <mytask message="Hello World! MyVeryOwnTask works!"/>
-//  </target>
-//</project>
+// <target name="main">
+// <mytask message="Hello World! MyVeryOwnTask works!"/>
+// </target>
+// </project>
 
-//Carriage Return in UTF-8 XML: &#13;
-//Line Feed in UTF-8 XML: &#10;
+// Carriage Return in UTF-8 XML: &#13;
+// Line Feed in UTF-8 XML: &#10;
 public class PlantuTask extends Task {
 
 	private String dir = ".";
 
 	// The method executing the task
+	@Override
 	public void execute() throws BuildException {
 
 		this.log("Starting PlantUML");
 		final File f = new File(dir);
 		if (f.exists() == false) {
-			final String s = "The file " + f.getAbsolutePath() + " does not exists.";
+			final String s = "The file " + f.getAbsolutePath()
+					+ " does not exists.";
 			this.log(s);
 			throw new BuildException(s);
 		}
 		final DirWatcher dirWatcher = new DirWatcher(f);
 		try {
-			final SortedMap<FilePng, String> result = dirWatcher.buildCreatedFiles();
-			for (Map.Entry<FilePng, String> ent : result.entrySet()) {
-				this.log(ent.getValue() + " " + ent.getKey());
+			final Collection<GeneratedImage> result = dirWatcher
+					.buildCreatedFiles();
+			for (GeneratedImage g : result) {
+				this.log(g + " " + g.getDescription());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

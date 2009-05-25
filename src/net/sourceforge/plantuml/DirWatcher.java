@@ -33,11 +33,11 @@ package net.sourceforge.plantuml;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class DirWatcher {
 
@@ -49,60 +49,35 @@ public class DirWatcher {
 		this.dir = dir;
 	}
 
-	public SortedMap<FilePng, String> buildCreatedFiles() throws IOException, InterruptedException {
-		final SortedMap<FilePng, String> result = new TreeMap<FilePng, String>();
+	public List<GeneratedImage> buildCreatedFiles() throws IOException,
+			InterruptedException {
+		final List<GeneratedImage> result = new ArrayList<GeneratedImage>();
 		for (File f : dir.listFiles()) {
 			if (f.isFile() == false) {
 				continue;
 			}
-			if (f.getName().toLowerCase().endsWith(".java") == false
-					&& f.getName().toLowerCase().endsWith(".tex") == false
-					&& f.getName().toLowerCase().endsWith(".txt") == false
-					&& f.getName().toLowerCase().endsWith(".htm") == false
-					&& f.getName().toLowerCase().endsWith(".html") == false) {
+			if (fileToSkip(f.getName())) {
 				continue;
 			}
 			final long modified = f.lastModified();
 			final Long previousModified = modifieds.get(f);
 
 			if (previousModified == null || previousModified != modified) {
-				for (Map.Entry<FilePng, String> entry : getPngFileCreated(f).entrySet()) {
-					result.put(entry.getKey(), entry.getValue());
+				for (GeneratedImage g : new JavaFileReader(f).getGeneratedImages()) {
+					result.add(g);
 					modifieds.put(f, modified);
 				}
 			}
 		}
-		return Collections.unmodifiableSortedMap(result);
+		return Collections.unmodifiableList(result);
 	}
 
-	/*
-	static private void list(File dir, boolean recurse, Collection<File> result) {
-		for (File f : dir.listFiles()) {
-			if (f.isDirectory() && recurse) {
-				list(f, recurse, result);
-			}
-			if (f.isFile() == false) {
-				continue;
-			}
-			if (f.getName().toLowerCase().endsWith(".java") == false
-					&& f.getName().toLowerCase().endsWith(".tex") == false
-					&& f.getName().toLowerCase().endsWith(".txt") == false
-					&& f.getName().toLowerCase().endsWith(".htm") == false
-					&& f.getName().toLowerCase().endsWith(".html") == false) {
-				continue;
-			}
-			result.add(f);
-		}
-
+	private boolean fileToSkip(String name) {
+		name = name.toLowerCase();
+		return name.endsWith(".java") == false
+				&& name.endsWith(".tex") == false
+				&& name.endsWith(".txt") == false
+				&& name.endsWith(".htm") == false
+				&& name.endsWith(".html") == false;
 	}
-	*/
-
-	private SortedMap<FilePng, String> getPngFileCreated(File f) throws IOException, InterruptedException {
-		final SortedMap<FilePng, String> result = new TreeMap<FilePng, String>();
-		for (StartUml s : new JavaFileReader(f).execute()) {
-			result.put(s.getPng(), s.getDescription());
-		}
-		return Collections.unmodifiableSortedMap(result);
-	}
-
 }

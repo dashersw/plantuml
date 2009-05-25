@@ -46,6 +46,7 @@ public class CommandArrow extends SingleLineCommand<SequenceDiagram> {
 		super(sequenceDiagram, "(?i)^(\\w+)\\s*(--?[\\>\\]]|[\\<\\[]--?)\\s*(\\w+)\\s*(?::\\s*(.*))?$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		Participant p1;
 		Participant p2;

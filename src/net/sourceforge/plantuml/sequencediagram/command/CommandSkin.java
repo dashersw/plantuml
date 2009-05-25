@@ -42,6 +42,7 @@ public class CommandSkin extends SingleLineCommand<SequenceDiagram> {
 		super(system, "(?i)^skin\\s+([\\w.]+)$");
 	}
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		return getSystem().changeSkin(arg.get(0));
 	}

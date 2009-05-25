@@ -44,6 +44,7 @@ public class CommandGrouping extends SingleLineCommand<SequenceDiagram> {
 	}
 	
 
+	@Override
 	protected boolean executeArg(List<String> arg) {
 		final String type = arg.get(0);
 		final String comment = arg.get(1);

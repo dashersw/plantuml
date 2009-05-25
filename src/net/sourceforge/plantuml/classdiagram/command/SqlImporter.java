@@ -29,22 +29,19 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.printskin;
+package net.sourceforge.plantuml.classdiagram.command;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
 
-import net.sourceforge.plantuml.SingleLineCommand;
+import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 
-class CommandTestSkin extends SingleLineCommand<PrintSkin> {
+public class SqlImporter {
 
-	public CommandTestSkin(PrintSkin system) {
-		super(system, "(?i)^testskin\\s+([\\w.]+)\\s*(.*)$");
+	public SqlImporter(ClassDiagram classDiagram, File source) {
 	}
 
-	@Override
-	protected boolean executeArg(List<String> arg) {
-		return getSystem().setSkin(arg.get(0), Arrays.asList(arg.get(1)));
+	public void process() {
+
 	}
 
 }
