@@ -1117,16 +1117,12 @@ public class DLXEngine {
     }
     
     String generate(int minrating, int maxrating){
-        Date t = new Date();
-        long start = t.getTime();
-        int tries = 0, i, samples = 5;
-        long rating = 0;
-        String ss[] = new String[samples],
-                temp = new String();
-        
-        for(tries = 0; tries < samples; tries++)
-            ss[tries] = new String();
-        tries = 1;
+//        Date t = new Date();
+//        long start = t.getTime();
+//        int tries = 0, i, samples = 5;
+//        long rating = 0;
+        String ss[]  = generator.generate(1, 0);
+        return ss[0];
 
         // Generator:
         // First arg: rand seed
@@ -1136,19 +1132,19 @@ public class DLXEngine {
         // Task: Find a Sudoku with a rating in a specified interval.
         // Do it by generating samples and examine them
         // Continue until an appropriate puzzle is found.
-        while(tries < 9999999) {
-            tries++;
-            t = new Date();
-            ss = generator.generate(samples, 0);
-            for(i = 0; i < samples; i++) {
-                rating = generator.rate(ss[i].replace("\n","").trim());
-                if(rating > minrating && rating < maxrating) {
-                    return ss[i];
-                }
-            }
-            System.out.println(minrating + ", " + maxrating + ", " + rating + ", looping");
-        }
-        return ss[0];
+//        while(tries < 9999999) {
+//            tries++;
+//            t = new Date();
+//            ss = generator.generate(samples, 0);
+//            for(i = 0; i < samples; i++) {
+//                rating = generator.rate(ss[i].replace("\n","").trim());
+//                if(rating > minrating && rating < maxrating) {
+//                    return ss[i];
+//                }
+//            }
+//            System.out.println(minrating + ", " + maxrating + ", " + rating + ", looping");
+//        }
+//        return ss[0];
     }
     
     long rate(String s) {

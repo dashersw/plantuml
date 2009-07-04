@@ -32,22 +32,21 @@
 package net.sourceforge.plantuml.sudoku;
 
 import java.util.List;
-import java.util.Random;
 
 import net.sourceforge.plantuml.SingleLineCommand;
 
 class CommandSudoku extends SingleLineCommand<PSystemSudoku> {
 
 	public CommandSudoku(PSystemSudoku system) {
-		super(system, "(?i)^sudoku(?:\\s+(\\d+))?\\s*$");
+		super(system, "(?i)^sudoku(?:\\s+([0-9a-zA-Z]+))?\\s*$");
 	}
 
 	@Override
 	protected boolean executeArg(List<String> arg) {
 		if (arg.get(0) == null) {
-			getSystem().createSudoku(new Random());
+			getSystem().createSudoku(null);
 		} else {
-			getSystem().createSudoku(new Random(Long.parseLong(arg.get(0))));
+			getSystem().createSudoku(Long.parseLong(arg.get(0).toLowerCase(), 36));
 		}
 		return true;
 	}

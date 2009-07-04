@@ -37,7 +37,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -48,7 +50,8 @@ import net.sourceforge.plantuml.png.PngIO;
 public class GraphicsSudoku {
 
 	private final ISudoku sudoku;
-	private final Font font = new Font("SansSerif", Font.BOLD, 20);
+	private final Font numberFont = new Font("SansSerif", Font.BOLD, 20);
+	private final Font font = new Font("SansSerif", Font.PLAIN, 11);
 
 	public GraphicsSudoku(ISudoku sudoku) {
 		this.sudoku = sudoku;
@@ -59,19 +62,23 @@ public class GraphicsSudoku {
 		PngIO.write(im, os);
 	}
 
-	private int xOffset = 5;
-	private int yOffset = 5;
+	final private int xOffset = 5;
+	final private int yOffset = 5;
 
-	private int cellWidth = 30;
-	private int cellHeight = 32;
+	final private int cellWidth = 30;
+	final private int cellHeight = 32;
 
-	private int numberxOffset = 10;
-	private int numberyOffset = 5;
+	final private int numberxOffset = 10;
+	final private int numberyOffset = 5;
+
+	final private int textTotalHeight = 50;
 
 	private BufferedImage createImage() {
 		final int boldWidth = 3;
-		final EmptyImageBuilder builder = new EmptyImageBuilder(9 * cellWidth + 2 * xOffset + boldWidth, 9 * cellHeight
-				+ 2 * yOffset + boldWidth, Color.WHITE);
+		final int sudoHeight = 9 * cellHeight + 2 * yOffset + boldWidth;
+		final int sudoWidth = 9 * cellWidth + 2 * xOffset + boldWidth;
+
+		final EmptyImageBuilder builder = new EmptyImageBuilder(sudoWidth, sudoHeight + textTotalHeight, Color.WHITE);
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
 
@@ -81,7 +88,7 @@ public class GraphicsSudoku {
 			for (int y = 0; y < 9; y++) {
 				final int num = sudoku.getGiven(x, y);
 				if (num > 0) {
-					final TextBlock text = TextBlockUtils.create(Arrays.asList("" + num), font, Color.BLACK,
+					final TextBlock text = TextBlockUtils.create(Arrays.asList("" + num), numberFont, Color.BLACK,
 							HorizontalAlignement.CENTER);
 					text.draw(g2d, numberxOffset + x * cellWidth, numberyOffset + y * cellHeight);
 				}
@@ -98,6 +105,14 @@ public class GraphicsSudoku {
 			final int w = bold ? boldWidth : 1;
 			g2d.fillRect(i * cellWidth, 0, w, 9 * cellHeight + boldWidth);
 		}
+
+		g2d.translate(0, sudoHeight);
+		final List<String> texts = new ArrayList<String>();
+		texts.add("http://plantuml.sourceforge.net");
+		texts.add("Seed "+Long.toString(sudoku.getSeed(), 36));
+		texts.add("Difficulty "+sudoku.getRatting());
+		final TextBlock textBlock = TextBlockUtils.create(texts, font, Color.BLACK, HorizontalAlignement.LEFT);
+		textBlock.draw(g2d, 0, 0);
 
 		g2d.dispose();
 		return im;

@@ -71,9 +71,9 @@ public class PSystemSudoku implements PSystem {
 		return null;
 	}
 
-	public void createSudoku(Random rnd) {
+	public void createSudoku(Long seed) {
 		//sudoku = new Sudoku(rnd);
-		sudoku = new SudokuDLX(rnd);
+		sudoku = new SudokuDLX(seed);
 
 	}
 
