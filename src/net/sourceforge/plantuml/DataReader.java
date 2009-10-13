@@ -58,7 +58,7 @@ public class DataReader {
 			if (isIgnoredLine(s)) {
 				continue;
 			}
-			if (s.equals("@startuml") || s.startsWith("@startuml ")) {
+			if (isArobaseStartuml(s)) {
 				final int line = nb;
 				PSystem system = null;
 				if (systemFactory instanceof PSystemCommandFactory) {
@@ -71,6 +71,10 @@ public class DataReader {
 				}
 			}
 		}
+	}
+
+	public static boolean isArobaseStartuml(final String s) {
+		return s.equals("@startuml") || s.startsWith("@startuml ");
 	}
 
 	private boolean hasNext() {

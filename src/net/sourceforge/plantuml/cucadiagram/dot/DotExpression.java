@@ -48,16 +48,15 @@ class DotExpression {
 	private final StringBuilder sb = new StringBuilder();
 
 	private final Font normalFont;
-	private static final Color COLOR = Color.BLACK;
 
 	private FontConfiguration fontConfiguration;
 
 	private final boolean underline;
 
 
-	DotExpression(String html, int defaultFontSize) {
+	DotExpression(String html, int defaultFontSize, HtmlColor color) {
 		this.normalFont = new Font("SansSerif", Font.PLAIN, defaultFontSize);
-		this.fontConfiguration = new FontConfiguration(normalFont, COLOR);
+		this.fontConfiguration = new FontConfiguration(normalFont, color.getColor());
 		html = html.replaceAll(" \\<[uU]\\>", "<u>");
 		html = html.replaceAll("\\</[uU]\\> ", "</u>");
 		underline = html.contains("<u>") || html.contains("<U>");

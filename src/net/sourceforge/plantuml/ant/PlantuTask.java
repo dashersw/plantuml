@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.DirWatcher;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.SourceFileReader;
+import net.sourceforge.plantuml.preproc.Defines;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -139,8 +140,8 @@ public class PlantuTask extends Task {
 
 	private void processingSingleFile(final File f) throws IOException, InterruptedException {
 		this.log("Processing " + f.getAbsolutePath());
-		final Collection<GeneratedImage> result = new SourceFileReader(f, Option.getInstance().getOutputDir())
-				.getGeneratedImages();
+		final Collection<GeneratedImage> result = new SourceFileReader(new Defines(), f, Option.getInstance()
+				.getOutputDir(), Option.getInstance().getConfig()).getGeneratedImages();
 		for (GeneratedImage g : result) {
 			this.log(g + " " + g.getDescription());
 		}
@@ -169,6 +170,14 @@ public class PlantuTask extends Task {
 
 	public void setOutput(String s) {
 		Option.getInstance().setOutputDir(new File(s));
+	}
+
+	public void setConfig(String s) {
+		try {
+			Option.getInstance().initConfig(s);
+		} catch (IOException e) {
+			log("Error reading " + s);
+		}
 	}
 
 	public void setRecurse(String s) {

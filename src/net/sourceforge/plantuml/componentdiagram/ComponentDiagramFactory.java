@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
+import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
@@ -102,5 +103,6 @@ public class ComponentDiagramFactory implements PSystemCommandFactory {
 		cmds.add(new CommandTitle(system));
 		cmds.add(new CommandMultilinesTitle(system));
 		cmds.add(new CommandNoopComponent(system));
+		cmds.add(new CommandSkinParam(system));
 	}
 }

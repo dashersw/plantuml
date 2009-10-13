@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.activitydiagram.command.CommandPartition;
 import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
+import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 
@@ -83,5 +84,6 @@ public class ActivityDiagramFactory implements PSystemCommandFactory {
 		cmds.add(new CommandTitle(system));
 		cmds.add(new CommandMultilinesTitle(system));
 		cmds.add(new CommandNoopActivity(system));
+		cmds.add(new CommandSkinParam(system));
 	}
 }

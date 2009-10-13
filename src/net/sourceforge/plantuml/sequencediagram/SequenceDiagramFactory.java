@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
+import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate;
@@ -97,6 +98,7 @@ public class SequenceDiagramFactory implements PSystemCommandFactory {
 
 		cmds.add(new CommandMinwidth(system));
 		cmds.add(new CommandRotate(system));
+		cmds.add(new CommandSkinParam(system));
 	}
 
 	public List<Command> create(List<String> lines) {

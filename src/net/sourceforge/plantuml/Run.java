@@ -64,7 +64,8 @@ public class Run {
 			System.out.println(new MetadataTag(f, "plantuml").getData());
 			System.out.println("------------------------");
 		} else {
-			new SourceFileReader(Option.getInstance().getDefaultDefines(), f, Option.getInstance().getOutputDir()).getGeneratedImages();
+			new SourceFileReader(Option.getInstance().getDefaultDefines(), f, Option.getInstance().getOutputDir(),
+					Option.getInstance().getConfig()).getGeneratedImages();
 		}
 	}
 

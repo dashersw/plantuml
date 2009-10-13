@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
+import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.command.PSystemCommandFactory;
 
@@ -107,5 +108,6 @@ public class ClassDiagramFactory implements PSystemCommandFactory {
 		cmds.add(new CommandTitle(system));
 		cmds.add(new CommandMultilinesTitle(system));
 		cmds.add(new CommandNoopClass(system));
+		cmds.add(new CommandSkinParam(system));
 	}
 }

@@ -57,6 +57,7 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngSizer;
@@ -70,9 +71,8 @@ import net.sourceforge.plantuml.skin.rose.Rose;
 public final class CucaDiagramPngMaker {
 
 	private final CucaDiagram diagram;
-	private final StaticFiles staticFiles = StaticFiles.getInstance();
+	private final StaticFiles staticFiles;
 
-	final private Color red = new Color(Integer.parseInt("A80036", 16));
 	final private Font font = new Font("Courier", Font.BOLD, 17);
 
 	static private final Graphics2D dummyGraphics2D;
@@ -82,8 +82,9 @@ public final class CucaDiagramPngMaker {
 		dummyGraphics2D = builder.getGraphics2D();
 	}
 
-	public CucaDiagramPngMaker(CucaDiagram diagram) {
+	public CucaDiagramPngMaker(CucaDiagram diagram) throws IOException {
 		this.diagram = diagram;
+		this.staticFiles = new StaticFiles(diagram.getSkinParam());
 	}
 
 	public List<File> createPng(File pngFile, String... dotStrings) throws IOException, InterruptedException {
@@ -122,7 +123,11 @@ public final class CucaDiagramPngMaker {
 				new UnderlineTrick(im, new Color(Integer.parseInt("FEFECF", 16)), Color.BLACK).process();
 			}
 
-			im = PngTitler.process(im, diagram.getTitle());
+			HtmlColor htmlColor = diagram.getSkinParam().getFontColor();
+			if (htmlColor == null) {
+				htmlColor = new HtmlColor("black");
+			}
+			im = PngTitler.process(im, htmlColor.getColor(), diagram.getTitle());
 			if (diagram.isRotation()) {
 				im = PngRotation.process(im);
 			}
@@ -137,7 +142,7 @@ public final class CucaDiagramPngMaker {
 	private void cleanTemporaryFiles(final Map<Entity, File> imageFiles) {
 		if (Option.getInstance().isKeepFiles() == false) {
 			for (File f : imageFiles.values()) {
-				staticFiles.delete(f);
+				StaticFiles.delete(f);
 			}
 		}
 	}
@@ -204,9 +209,11 @@ public final class CucaDiagramPngMaker {
 		}
 
 		final File f = createTempFile("plantumlA");
+		final Color red = new Rose().getBorderHtmlColor(diagram.getSkinParam()).getColor();
+		final Color yellow = new Rose().getBoxHtmlColor(diagram.getSkinParam()).getColor();
 		final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), font, stereotype
 				.getColor(), red, Color.BLACK);
-		staticFiles.generateCircleCharacterFile(f, circledCharacter);
+		staticFiles.generateCircleCharacterFile(f, circledCharacter, yellow);
 		return f;
 
 	}

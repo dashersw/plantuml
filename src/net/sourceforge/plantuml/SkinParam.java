@@ -31,9 +31,10 @@
  */
 package net.sourceforge.plantuml;
 
-import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class SkinParam {
 
@@ -43,20 +44,36 @@ public class SkinParam {
 		params.put(key.toLowerCase(), value);
 	}
 
-	public String getBackgroundColor() {
+	public HtmlColor getBackgroundColor() {
 		return null;
 	}
 
-	public String getBoxColor() {
-		return null;
+	public HtmlColor getBoxBackgroundColor() {
+		return getColorFromParam("boxbackgroundcolor");
 	}
 
-	public String getBorderColor() {
-		return null;
+	public HtmlColor getFontColor() {
+		return getColorFromParam("fontcolor");
 	}
 
-	public Color getArrowColor() {
-		return new Color(Integer.parseInt("A80036", 16));
+	public HtmlColor getBorderColor() {
+		return getColorFromParam("bordercolor");
+	}
+
+	public HtmlColor getArrowColor() {
+		return getColorFromParam("arrowcolor");
+	}
+
+	public HtmlColor getNoteBackgroundColor() {
+		return getColorFromParam("notebackgroundcolor");
+	}
+
+	private HtmlColor getColorFromParam(String key) {
+		final String value = params.get(key);
+		if (value == null) {
+			return null;
+		}
+		return new HtmlColor(value);
 	}
 
 }

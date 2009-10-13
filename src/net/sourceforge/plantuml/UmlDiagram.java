@@ -70,5 +70,10 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	public final SkinParam getSkinParam() {
 		return skinParam;
 	}
+	
+	public void setParam(String key, String value) {
+		skinParam.setParam(key.toLowerCase(), value);
+	}
+
 
 }

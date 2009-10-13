@@ -66,8 +66,10 @@ public abstract class AbstractSourceReader {
 
 	}
 
-	protected List<StartUml> getAllStartUml() throws IOException, InterruptedException {
-		final List<String> strings = getStrings(getReader());
+	final protected List<StartUml> getAllStartUml(List<String> config) throws IOException, InterruptedException {
+		final List<String> strings = new ArrayList<String>(getStrings(getReader()));
+		insertConfig(strings, config);
+
 		final SortedMap<Integer, StartUml> r1 = tryThisFactory(strings, new SequenceDiagramFactory());
 		final SortedMap<Integer, StartUml> r2 = tryThisFactory(strings, new ClassDiagramFactory());
 		final SortedMap<Integer, StartUml> r3 = tryThisFactory(strings, new ActivityDiagramFactory());
@@ -122,7 +124,8 @@ public abstract class AbstractSourceReader {
 				system = s7;
 			} else {
 				final PSystemError merge = PSystemError.merge((PSystemError) s1.getSystem(), (PSystemError) s2
-						.getSystem(), (PSystemError) s3.getSystem(), (PSystemError) s3b.getSystem(), (PSystemError) s3c.getSystem());
+						.getSystem(), (PSystemError) s3.getSystem(), (PSystemError) s3b.getSystem(), (PSystemError) s3c
+						.getSystem());
 				system = new StartUml(merge, s1.getStartuml());
 			}
 
@@ -130,6 +133,19 @@ public abstract class AbstractSourceReader {
 		}
 
 		return result;
+	}
+
+	private void insertConfig(List<String> strings, List<String> config) {
+		if (config.size() == 0) {
+			return;
+		}
+		for (int i = 0; i < strings.size(); i++) {
+			if (DataReader.isArobaseStartuml(strings.get(i))) {
+				strings.addAll(i + 1, config);
+				i += config.size();
+			}
+		}
+
 	}
 
 	private boolean isOk(PSystem ps) {

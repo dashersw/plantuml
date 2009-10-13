@@ -31,7 +31,10 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -61,6 +64,7 @@ public class Option {
 	private boolean systemExit = true;
 
 	private final List<String> excludes = new ArrayList<String>();
+	private final List<String> config = new ArrayList<String>();
 	private final Map<String, String> defines = new LinkedHashMap<String, String>();
 
 	private File outputDir = null;
@@ -73,7 +77,7 @@ public class Option {
 		return singleton;
 	}
 
-	public List<String> manageOption(String... arg) throws InterruptedException {
+	public List<String> manageOption(String... arg) throws InterruptedException, IOException {
 		final List<String> result = new ArrayList<String>();
 		for (int i = 0; i < arg.length; i++) {
 			String s = arg[i];
@@ -94,6 +98,12 @@ public class Option {
 					continue;
 				}
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
+			} else if (s.equalsIgnoreCase("-config")) {
+				i++;
+				if (i == arg.length) {
+					continue;
+				}
+				initConfig(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.startsWith("-x")) {
 				s = s.substring(2);
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -124,6 +134,7 @@ public class Option {
 				System.err.println();
 				System.err.println("where options include:");
 				System.err.println("    -o[utput] \"dir\"\tTo generate images in the specified directory");
+				System.err.println("    -config \"file\"\tTo read the provided config file before each diagram");
 				System.err.println("    -e[x]clude pattern\tTo exclude files that matche the provided pattern");
 				System.err.println("    -metadata\t\tTo retrieve PlantUML sources from PNG images");
 				System.err.println("    -version\t\tTo display information about PlantUML and Java versions");
@@ -139,6 +150,21 @@ public class Option {
 			}
 		}
 		return Collections.unmodifiableList(result);
+	}
+
+	public void initConfig(String filename) throws IOException {
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(filename));
+			String s = null;
+			while ((s = br.readLine()) != null) {
+				config.add(s);
+			}
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
 	}
 
 	private void manageDefine(String s) {
@@ -213,6 +239,7 @@ public class Option {
 		outputDir = null;
 		excludes.clear();
 		defines.clear();
+		config.clear();
 	}
 
 	public boolean isKeepFiles() {
@@ -262,6 +289,10 @@ public class Option {
 
 	public void define(String name, String value) {
 		defines.put(name, value);
+	}
+
+	public List<String> getConfig() {
+		return Collections.unmodifiableList(config);
 	}
 
 }

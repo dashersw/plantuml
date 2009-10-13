@@ -36,6 +36,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.Collections;
 
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.preproc.Defines;
@@ -60,7 +61,7 @@ public class SourceStringReader extends AbstractSourceReader {
 	public String generateImage(OutputStream os, int numImage) throws IOException {
 		try {
 			int nb = 0;
-			for (StartUml startUml : getAllStartUml()) {
+			for (StartUml startUml : getAllStartUml(Collections.<String> emptyList())) {
 
 				if (nb == numImage) {
 					startUml.getSystem().createPng(os);

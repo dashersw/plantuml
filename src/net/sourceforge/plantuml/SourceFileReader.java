@@ -46,17 +46,20 @@ public class SourceFileReader extends AbstractSourceReader {
 
 	private final File file;
 	private final File outputDirectory;
+	private final List<String> config;
 
 	public SourceFileReader(File file) throws IOException {
 		this(file, file.getAbsoluteFile().getParentFile());
 	}
 
 	public SourceFileReader(final File file, File outputDirectory) throws IOException {
-		this(new Defines(), file, outputDirectory);
+		this(new Defines(), file, outputDirectory, Collections.<String> emptyList());
 	}
 
-	public SourceFileReader(Defines defines, final File file, File outputDirectory) throws IOException {
+	public SourceFileReader(Defines defines, final File file, File outputDirectory, List<String> config)
+			throws IOException {
 		super(defines);
+		this.config = config;
 		if (file.exists() == false) {
 			throw new IllegalArgumentException();
 		}
@@ -79,7 +82,7 @@ public class SourceFileReader extends AbstractSourceReader {
 		int cpt = 0;
 		final List<GeneratedImage> result = new ArrayList<GeneratedImage>();
 
-		for (StartUml startUml : getAllStartUml()) {
+		for (StartUml startUml : getAllStartUml(config)) {
 			String newName = startUml.getFilename();
 
 			if (newName == null) {

@@ -37,6 +37,8 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -45,14 +47,14 @@ import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.skin.CircleInterface;
 import net.sourceforge.plantuml.skin.StickMan;
+import net.sourceforge.plantuml.skin.rose.Rose;
 
 public class StaticFiles {
-
-	private static final StaticFiles singleton = new StaticFiles();
 
 	private final String circleInterfaceName = "cinterface.png";
 	private final String actorName = "actor.png";
@@ -61,47 +63,45 @@ public class StaticFiles {
 	private final String aName = "stereotypea.png";
 	private final String eName = "stereotypee.png";
 
-	final private Color yellow = new Color(Integer.parseInt("FEFECE", 16));
-	final private Color green = new Color(Integer.parseInt("ADD1B2", 16));
-	final private Color violet = new Color(Integer.parseInt("B4A7E5", 16));
-	final private Color blue = new Color(Integer.parseInt("A9DCDF", 16));
-	final private Color rose = new Color(Integer.parseInt("EB937F", 16));
+	private final Color green = new Color(Integer.parseInt("ADD1B2", 16));
+	private final Color violet = new Color(Integer.parseInt("B4A7E5", 16));
+	private final Color blue = new Color(Integer.parseInt("A9DCDF", 16));
+	private final Color rose = new Color(Integer.parseInt("EB937F", 16));
 
-	final private Color red = new Color(Integer.parseInt("A80036", 16));
 	final private Font font = new Font("Courier", Font.BOLD, 17);
 
 	private final Map<EntityType, File> staticImages = new EnumMap<EntityType, File>(EntityType.class);
 
-	public static StaticFiles getInstance() {
-		return singleton;
-	}
+	private static final Collection<File> toDelete = new ArrayList<File>();
 
-	private StaticFiles() {
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {
-				clean();
-			}
-		});
-	}
-
-	private void clean() {
-		for (File f : staticImages.values()) {
-			delete(f);
+	private void deleteOnExit() {
+		if (toDelete.isEmpty()) {
+			toDelete.addAll(staticImages.values());
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					for (File f : toDelete) {
+						delete(f);
+					}
+				}
+			});
 		}
 	}
 
-	public Map<EntityType, File> getStaticImages() throws IOException {
-		if (staticImages.isEmpty()) {
-			final File dir = getTmpDir();
-			staticImages.put(EntityType.CIRCLE_INTERFACE, ensurePngCircleInterfacePresent(dir));
-			staticImages.put(EntityType.ACTOR, ensurePngActorPresent(dir));
-			staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(dir));
-			staticImages.put(EntityType.CLASS, ensurePngCPresent(dir));
-			staticImages.put(EntityType.INTERFACE, ensurePngIPresent(dir));
-			staticImages.put(EntityType.ENUM, ensurePngEPresent(dir));
-		}
-		return Collections.unmodifiableMap(staticImages);
+	public StaticFiles(SkinParam param) throws IOException {
+		final Rose rose = new Rose();
+		final Color red = rose.getBorderHtmlColor(param).getColor();
+		final Color yellow = rose.getBoxHtmlColor(param).getColor();
+
+		final File dir = getTmpDir();
+		staticImages.put(EntityType.CIRCLE_INTERFACE, ensurePngCircleInterfacePresent(dir, red, yellow));
+		staticImages.put(EntityType.ACTOR, ensurePngActorPresent(dir, red, yellow));
+		staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(dir, red, yellow));
+		staticImages.put(EntityType.CLASS, ensurePngCPresent(dir, red, yellow));
+		staticImages.put(EntityType.INTERFACE, ensurePngIPresent(dir, red, yellow));
+		staticImages.put(EntityType.ENUM, ensurePngEPresent(dir, red, yellow));
+
+		deleteOnExit();
 	}
 
 	public File getTmpDir() {
@@ -112,7 +112,7 @@ public class StaticFiles {
 		return tmpDir;
 	}
 
-	public void delete(File f) {
+	public static void delete(File f) {
 		if (f == null) {
 			return;
 		}
@@ -124,10 +124,7 @@ public class StaticFiles {
 		}
 	}
 
-	private File ensurePngActorPresent(File dir) throws IOException {
-
-		final Color yellow = new Color(Integer.parseInt("FEFECE", 16));
-		final Color red = new Color(Integer.parseInt("A80036", 16));
+	private File ensurePngActorPresent(File dir, final Color red, final Color yellow) throws IOException {
 		final StickMan smallMan = new StickMan(yellow, red);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder((int) smallMan.getPreferredWidth(null), (int) smallMan
@@ -145,14 +142,12 @@ public class StaticFiles {
 
 	}
 
-	private File ensurePngCircleInterfacePresent(File dir) throws IOException {
+	private File ensurePngCircleInterfacePresent(File dir, final Color red, final Color yellow) throws IOException {
 
-		final Color yellow = new Color(Integer.parseInt("FEFECE", 16));
-		final Color red = new Color(Integer.parseInt("A80036", 16));
 		final CircleInterface circleInterface = new CircleInterface(yellow, red);
 
-		final EmptyImageBuilder builder = new EmptyImageBuilder((int) circleInterface.getPreferredWidth(null), (int) circleInterface
-				.getPreferredHeight(null), Color.WHITE);
+		final EmptyImageBuilder builder = new EmptyImageBuilder((int) circleInterface.getPreferredWidth(null),
+				(int) circleInterface.getPreferredHeight(null), Color.WHITE);
 
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
@@ -166,35 +161,36 @@ public class StaticFiles {
 
 	}
 
-	private File ensurePngCPresent(File dir) throws IOException {
+	private File ensurePngCPresent(File dir, final Color red, final Color yellow) throws IOException {
 		final CircledCharacter circledCharacter = new CircledCharacter('C', font, green, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, cName, circledCharacter);
+		return generateCircleCharacterFile(dir, cName, circledCharacter, yellow);
 	}
 
-	private File ensurePngAPresent(File dir) throws IOException {
+	private File ensurePngAPresent(File dir, final Color red, final Color yellow) throws IOException {
 		final CircledCharacter circledCharacter = new CircledCharacter('A', font, blue, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, aName, circledCharacter);
+		return generateCircleCharacterFile(dir, aName, circledCharacter, yellow);
 	}
 
-	private File ensurePngIPresent(File dir) throws IOException {
+	private File ensurePngIPresent(File dir, final Color red, final Color yellow) throws IOException {
 		final CircledCharacter circledCharacter = new CircledCharacter('I', font, violet, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, iName, circledCharacter);
+		return generateCircleCharacterFile(dir, iName, circledCharacter, yellow);
 	}
 
-	private File ensurePngEPresent(File dir) throws IOException {
+	private File ensurePngEPresent(File dir, final Color red, final Color yellow) throws IOException {
 		final CircledCharacter circledCharacter = new CircledCharacter('E', font, rose, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, eName, circledCharacter);
+		return generateCircleCharacterFile(dir, eName, circledCharacter, yellow);
 	}
 
-	private File generateCircleCharacterFile(File dir, String filename, final CircledCharacter circledCharacter)
-			throws IOException {
+	private File generateCircleCharacterFile(File dir, String filename, final CircledCharacter circledCharacter,
+			final Color yellow) throws IOException {
 		final File result = new File(dir, filename);
 		Log.info("Creating temporary file: " + result);
-		generateCircleCharacterFile(result, circledCharacter);
+		generateCircleCharacterFile(result, circledCharacter, yellow);
 		return result;
 	}
 
-	public void generateCircleCharacterFile(File file, final CircledCharacter circledCharacter) throws IOException {
+	public void generateCircleCharacterFile(File file, final CircledCharacter circledCharacter, Color yellow)
+			throws IOException {
 		final EmptyImageBuilder builder = new EmptyImageBuilder(30, 30, yellow);
 
 		BufferedImage im = builder.getBufferedImage();
@@ -205,6 +201,10 @@ public class StaticFiles {
 				.getPreferredHeight(g2d) + 1);
 
 		ImageIO.write(im, "png", file);
+	}
+
+	public final Map<EntityType, File> getStaticImages() {
+		return Collections.unmodifiableMap(staticImages);
 	}
 
 }

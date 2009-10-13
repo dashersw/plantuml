@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Skin;
@@ -47,75 +48,140 @@ public class Rose implements Skin {
 	private final Font bigFont = new Font("SansSerif", Font.BOLD, 13);
 	private final Font smallFont = new Font("SansSerif", Font.BOLD, 11);
 
-	private final Color yellowNote = new Color(Integer.parseInt("FBFB77", 16));
-	private final Color yellow = new Color(Integer.parseInt("FEFECE", 16));
-	private final Color red = new Color(Integer.parseInt("A80036", 16));
+	public HtmlColor getFontHtmlColor(SkinParam param) {
+		final HtmlColor result = param.getFontColor();
+		if (result == null) {
+			return new HtmlColor("black");
+		}
+		return result;
+	}
 
-	private final Color fontColor = Color.BLACK;
+	private Color getFontColor(SkinParam param) {
+		return getFontHtmlColor(param).getColor();
+	}
+
+	public HtmlColor getBorderHtmlColor(SkinParam param) {
+		final HtmlColor result = param.getBorderColor();
+		if (result == null) {
+			return new HtmlColor("#A80036");
+		}
+		return result;
+	}
+
+	private Color getBorderColor(SkinParam param) {
+		return getBorderHtmlColor(param).getColor();
+	}
+
+	public HtmlColor getArrowHtmlColor(SkinParam param) {
+		final HtmlColor result = param.getArrowColor();
+		if (result == null) {
+			return new HtmlColor("#A80036");
+		}
+		return result;
+	}
+
+	public Color getArrowColor(SkinParam param) {
+		return getArrowHtmlColor(param).getColor();
+	}
+
+	public HtmlColor getBoxHtmlColor(SkinParam param) {
+		final HtmlColor result = param.getBoxBackgroundColor();
+		if (result == null) {
+			return new HtmlColor("#FEFECE");
+		}
+		return result;
+	}
+
+	private Color getBoxColor(SkinParam param) {
+		return getBoxHtmlColor(param).getColor();
+	}
+
+	public HtmlColor getNoteHtmlColor(SkinParam param) {
+		final HtmlColor result = param.getNoteBackgroundColor();
+		if (result == null) {
+			return new HtmlColor("#FBFB77");
+		}
+		return result;
+	}
+
+	private Color getNoteColor(SkinParam param) {
+		return getNoteHtmlColor(param).getColor();
+	}
 
 	public Component createComponent(ComponentType type, SkinParam param, List<? extends CharSequence> stringsToDisplay) {
 		if (type == ComponentType.SELF_ARROW) {
-			return new ComponentRoseSelfArrow(red, fontColor, normalFont, stringsToDisplay, false);
+			return new ComponentRoseSelfArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay,
+					false);
 		}
 		if (type == ComponentType.DOTTED_SELF_ARROW) {
-			return new ComponentRoseSelfArrow(red, fontColor, normalFont, stringsToDisplay, true);
+			return new ComponentRoseSelfArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay,
+					true);
 		}
 		if (type == ComponentType.ARROW) {
-			return new ComponentRoseArrow(red, fontColor, normalFont, stringsToDisplay, 1, false);
+			return new ComponentRoseArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay, 1,
+					false);
 		}
 		if (type == ComponentType.RETURN_ARROW) {
-			return new ComponentRoseArrow(red, fontColor, normalFont, stringsToDisplay, -1, false);
+			return new ComponentRoseArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay, -1,
+					false);
 		}
 		if (type == ComponentType.DOTTED_ARROW) {
-			return new ComponentRoseArrow(red, fontColor, normalFont, stringsToDisplay, 1, true);
+			return new ComponentRoseArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay, 1,
+					true);
 		}
 		if (type == ComponentType.RETURN_DOTTED_ARROW) {
-			return new ComponentRoseArrow(red, fontColor, normalFont, stringsToDisplay, -1, true);
+			return new ComponentRoseArrow(getArrowColor(param), getFontColor(param), normalFont, stringsToDisplay, -1,
+					true);
 		}
 		if (type == ComponentType.PARTICIPANT_HEAD) {
-			return new ComponentRoseParticipant(yellow, red, fontColor, normalFont, stringsToDisplay);
+			return new ComponentRoseParticipant(getBoxColor(param), getBorderColor(param), getFontColor(param),
+					normalFont, stringsToDisplay);
 		}
 		if (type == ComponentType.PARTICIPANT_TAIL) {
-			return new ComponentRoseParticipant(yellow, red, fontColor, normalFont, stringsToDisplay);
+			return new ComponentRoseParticipant(getBoxColor(param), getBorderColor(param), getFontColor(param),
+					normalFont, stringsToDisplay);
 		}
 		if (type == ComponentType.PARTICIPANT_LINE) {
-			return new ComponentRoseLine(red);
+			return new ComponentRoseLine(getBorderColor(param));
 		}
 		if (type == ComponentType.ACTOR_HEAD) {
-			return new ComponentRoseActor(yellow, red, fontColor, normalFont, stringsToDisplay, true);
+			return new ComponentRoseActor(getBoxColor(param), getBorderColor(param), getFontColor(param), normalFont,
+					stringsToDisplay, true);
 		}
 		if (type == ComponentType.ACTOR_TAIL) {
-			return new ComponentRoseActor(yellow, red, fontColor, normalFont, stringsToDisplay, false);
+			return new ComponentRoseActor(getBoxColor(param), getBorderColor(param), getFontColor(param), normalFont,
+					stringsToDisplay, false);
 		}
 		if (type == ComponentType.ACTOR_LINE) {
-			return new ComponentRoseLine(red);
+			return new ComponentRoseLine(getBorderColor(param));
 		}
 		if (type == ComponentType.NOTE) {
-			return new ComponentRoseNote(yellowNote, red, fontColor, normalFont, stringsToDisplay);
+			return new ComponentRoseNote(getNoteColor(param), getBorderColor(param), getFontColor(param), normalFont,
+					stringsToDisplay);
 		}
 		if (type == ComponentType.GROUPING_HEADER) {
-			return new ComponentRoseGroupingHeader(fontColor, bigFont, smallFont, stringsToDisplay);
+			return new ComponentRoseGroupingHeader(getFontColor(param), bigFont, smallFont, stringsToDisplay);
 		}
 		if (type == ComponentType.GROUPING_BODY) {
-			return new ComponentRoseGroupingBody(fontColor);
+			return new ComponentRoseGroupingBody(getFontColor(param));
 		}
 		if (type == ComponentType.GROUPING_TAIL) {
-			return new ComponentRoseGroupingTail(fontColor);
+			return new ComponentRoseGroupingTail(getFontColor(param));
 		}
 		if (type == ComponentType.GROUPING_ELSE) {
-			return new ComponentRoseGroupingElse(fontColor, smallFont, stringsToDisplay.get(0));
+			return new ComponentRoseGroupingElse(getFontColor(param), smallFont, stringsToDisplay.get(0));
 		}
 		if (type == ComponentType.ALIVE_LINE) {
-			return new ComponentRoseActiveLine(red);
+			return new ComponentRoseActiveLine(getBorderColor(param));
 		}
 		if (type == ComponentType.DESTROY) {
-			return new ComponentRoseDestroy(red);
+			return new ComponentRoseDestroy(getBorderColor(param));
 		}
 		if (type == ComponentType.NEWPAGE) {
-			return new ComponentRoseNewpage(fontColor);
+			return new ComponentRoseNewpage(getFontColor(param));
 		}
 		if (type == ComponentType.TITLE) {
-			return new ComponentRoseTitle(fontColor, bigFont, stringsToDisplay);
+			return new ComponentRoseTitle(getFontColor(param), bigFont, stringsToDisplay);
 		}
 		if (type == ComponentType.SIGNATURE) {
 			return new ComponentRoseTitle(Color.BLACK, smallFont, Arrays.asList("This skin was created ",
