@@ -40,14 +40,16 @@ import net.sourceforge.plantuml.skin.AbstractComponent;
 public class ComponentRoseActiveLine extends AbstractComponent {
 
 	private final Color foregroundColor;
+	private final Color lifeLineBackground;
 
-	public ComponentRoseActiveLine(Color foregroundColor) {
+	public ComponentRoseActiveLine(Color foregroundColor, Color lifeLineBackground) {
 		this.foregroundColor = foregroundColor;
+		this.lifeLineBackground = lifeLineBackground;
 	}
 
 	@Override
 	protected void drawInternal(Graphics2D g2d, Dimension2D dimensionToUse) {
-		g2d.setColor(Color.WHITE);
+		g2d.setColor(lifeLineBackground);
 		final int x = (int) (dimensionToUse.getWidth() - getPreferredWidth(g2d)) / 2;
 		g2d.fillRect(x, 0, (int) getPreferredWidth(g2d), (int) (dimensionToUse.getHeight()));
 		g2d.setColor(foregroundColor);

@@ -33,7 +33,6 @@ package net.sourceforge.plantuml;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import javax.swing.UIManager;
 
@@ -43,20 +42,21 @@ import net.sourceforge.plantuml.swing.MainWindow;
 public class Run {
 
 	public static void main(String[] argsArray) throws IOException, InterruptedException {
-		final List<String> args = Option.getInstance().manageOption(argsArray);
-		if (args.size() == 0 && Option.getInstance().isMetadata() == false) {
+		//final List<String> args = Option.getInstance().manageOption(argsArray);
+		final Option option = new Option(argsArray);
+		if (option.getResult().size() == 0 && OptionFlags.getInstance().isMetadata() == false) {
 			try {
 				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			} catch (Exception e) {
 			}
 			new MainWindow();
 		} else {
-			manageFiles(args);
+			manageFiles(option);
 		}
 	}
 
-	private static void manageFile(File f) throws IOException, InterruptedException {
-		if (Option.getInstance().isMetadata()) {
+	private static void manageFile(File f, Option option) throws IOException, InterruptedException {
+		if (OptionFlags.getInstance().isMetadata()) {
 			System.out.println("------------------------");
 			System.out.println(f);
 			// new Metadata().readAndDisplayMetadata(f);
@@ -64,22 +64,22 @@ public class Run {
 			System.out.println(new MetadataTag(f, "plantuml").getData());
 			System.out.println("------------------------");
 		} else {
-			new SourceFileReader(Option.getInstance().getDefaultDefines(), f, Option.getInstance().getOutputDir(),
-					Option.getInstance().getConfig()).getGeneratedImages();
+			new SourceFileReader(option.getDefaultDefines(), f, option.getOutputDir(),
+					option.getConfig()).getGeneratedImages();
 		}
 	}
 
-	private static void manageFiles(List<String> args) throws IOException, InterruptedException {
+	private static void manageFiles(Option option) throws IOException, InterruptedException {
 
 		File lockFile = null;
 		try {
-			if (Option.getInstance().isWord()) {
-				final File dir = new File(args.get(0));
+			if (OptionFlags.getInstance().isWord()) {
+				final File dir = new File(option.getResult().get(0));
 				final File javaIsRunningFile = new File(dir, "javaisrunning.tmp");
 				javaIsRunningFile.delete();
 				lockFile = new File(dir, "javaumllock.tmp");
 			}
-			processArgs(args);
+			processArgs(option);
 		} finally {
 			if (lockFile != null) {
 				lockFile.delete();
@@ -88,11 +88,11 @@ public class Run {
 
 	}
 
-	private static void processArgs(List<String> args) throws IOException, InterruptedException {
-		for (String s : args) {
-			final FileGroup group = new FileGroup(s, Option.getInstance().getExcludes());
+	private static void processArgs(Option option) throws IOException, InterruptedException {
+		for (String s : option.getResult()) {
+			final FileGroup group = new FileGroup(s, option.getExcludes(), option);
 			for (File f : group.getFiles()) {
-				manageFile(f);
+				manageFile(f, option);
 			}
 		}
 	}

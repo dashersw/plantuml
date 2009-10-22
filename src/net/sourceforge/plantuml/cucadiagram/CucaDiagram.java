@@ -47,7 +47,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
@@ -232,10 +232,10 @@ public abstract class CucaDiagram extends UmlDiagram {
 		maker.createPng(os);
 	}
 	
-	abstract protected String[] getDotStrings();
+	abstract protected List<String> getDotStrings();
 	
 	final public List<File> createPng(File pngFile) throws IOException, InterruptedException {
-		if (Option.getInstance().useJavaInsteadOfDot()) {
+		if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
 			return createPng2(pngFile);
 		}
 		final CucaDiagramPngMaker maker = new CucaDiagramPngMaker(this);

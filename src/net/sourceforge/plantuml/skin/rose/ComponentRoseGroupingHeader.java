@@ -52,10 +52,13 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
 	private final TextBlock commentTextBlock;
 
-	private final Color background = new Color(Integer.parseInt("EEEEEE", 16));
+	private final Color groupBackground;
+	private final Color background;
 
-	public ComponentRoseGroupingHeader(Color fontColor, Font bigFont, Font smallFont, List<? extends CharSequence> strings) {
+	public ComponentRoseGroupingHeader(Color fontColor, Color background, Color groupBackground, Font bigFont, Font smallFont, List<? extends CharSequence> strings) {
 		super(strings.get(0), fontColor, bigFont, HorizontalAlignement.LEFT, 15, 30, 1);
+		this.groupBackground = groupBackground;
+		this.background = background;
 		if (strings.size() == 1 || strings.get(1) == null) {
 			this.commentTextBlock = null;
 		} else {
@@ -102,7 +105,7 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 		polygon.addPoint(0, 0);
 
 		g2d.setStroke(new BasicStroke(2));
-		g2d.setColor(this.background);
+		g2d.setColor(this.groupBackground);
 		g2d.fill(polygon);
 		g2d.setColor(getFontColor());
 		g2d.draw(polygon);
@@ -114,7 +117,7 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 
 		if (commentTextBlock != null) {
 			final Dimension2D size = commentTextBlock.calculateDimension(g2d);
-			g2d.setColor(Color.WHITE);
+			g2d.setColor(this.background);
 			final int x1 = getMarginX1() + textWidth;
 			final int y2 = getMarginY() + 1;
 			g2d.fillRect(x1, y2, (int) size.getWidth() + 2 * commentMargin, (int) size.getHeight());

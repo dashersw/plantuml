@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedMap;
 
-import net.sourceforge.plantuml.DataReader;
+import net.sourceforge.plantuml.SystemFactoryTry;
 import net.sourceforge.plantuml.PSystem;
 import net.sourceforge.plantuml.PSystemError;
 import net.sourceforge.plantuml.StartUml;
@@ -109,7 +109,7 @@ public class UmlApplet extends Applet {
 		source = source.replaceAll("@enduml", "");
 		source = "@startuml\n" + source + "\n@enduml";
 
-		final DataReader dataReader = new DataReader(getStrings(new StringReader(source)), new SequenceDiagramFactory());
+		final SystemFactoryTry dataReader = new SystemFactoryTry(getStrings(new StringReader(source)), new SequenceDiagramFactory());
 		final SortedMap<Integer, StartUml> r = dataReader.getAllStartUml();
 		if (r.size() > 0) {
 			final PSystem system = r.values().iterator().next().getSystem();

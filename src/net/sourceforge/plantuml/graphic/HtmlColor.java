@@ -191,7 +191,7 @@ public class HtmlColor {
 	private final Color color;
 
 	public HtmlColor(String s) {
-		if (s.startsWith("#") && s.length() == 7) {
+		if (s.matches("#[0-9A-Fa-f]{6}")) {
 			color = new Color(Integer.parseInt(s.substring(1), 16));
 		} else {
 			final String value = htmlNames.get(s.toLowerCase());
@@ -200,6 +200,17 @@ public class HtmlColor {
 			}
 			color = new Color(Integer.parseInt(value.substring(1), 16));
 		}
+		assert isValid(s);
+	}
+
+	static public boolean isValid(String s) {
+		if (s.matches("#[0-9A-Fa-f]{6}")) {
+			return true;
+		}
+		if (htmlNames.containsKey(s.toLowerCase())) {
+			return true;
+		}
+		return false;
 
 	}
 

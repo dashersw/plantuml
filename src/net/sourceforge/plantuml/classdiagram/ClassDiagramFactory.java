@@ -31,11 +31,6 @@
  */
 package net.sourceforge.plantuml.classdiagram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateNote;
@@ -49,65 +44,45 @@ import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
 import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
-import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.CommandControl;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
 import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 
-public class ClassDiagramFactory implements PSystemCommandFactory {
+public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 	private ClassDiagram system;
-
-	private List<Command> cmds;
-
-	public ClassDiagramFactory() {
-		reset();
-	}
-
-	public List<Command> create(List<String> lines) {
-		for (Command cmd : cmds) {
-			final CommandControl result = cmd.isValid(lines);
-			if (result == CommandControl.OK) {
-				return Arrays.asList(cmd);
-			} else if (result == CommandControl.OK_PARTIAL) {
-				return Collections.emptyList();
-			}
-		}
-		return null;
-	}
 
 	public ClassDiagram getSystem() {
 		return system;
 	}
 
-	public void reset() {
+	@Override
+	protected void initCommands() {
 		system = new ClassDiagram();
-		cmds = new ArrayList<Command>();
 
-		cmds.add(new CommandRotate(system));
-		cmds.add(new CommandPage(system));
-		cmds.add(new CommandLink(system));
+		addCommand(new CommandRotate(system));
+		addCommand(new CommandPage(system));
+		addCommand(new CommandLink(system));
 
-		cmds.add(new CommandCreateEntity(system));
-		cmds.add(new CommandCreateNote(system));
-		cmds.add(new CommandPackage(system));
-		cmds.add(new CommandStereotype(system));
-		cmds.add(new CommandImport(system));
-		cmds.add(new CommandNoteEntity(system));
-		cmds.add(new CommandAddMethod(system));
+		addCommand(new CommandCreateEntity(system));
+		addCommand(new CommandCreateNote(system));
+		addCommand(new CommandPackage(system));
+		addCommand(new CommandStereotype(system));
+		addCommand(new CommandImport(system));
+		addCommand(new CommandNoteEntity(system));
+		addCommand(new CommandAddMethod(system));
 
-		cmds.add(new CommandMultiple(system, this));
-		cmds.add(new CommandMultilinesNoteEntity(system));
-		cmds.add(new CommandMultilinesStandaloneNote(system));
-		cmds.add(new CommandMinwidth(system));
+		addCommand(new CommandMultiple(system, this));
+		addCommand(new CommandMultilinesNoteEntity(system));
+		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(new CommandMinwidth(system));
 		
-		cmds.add(new CommandTitle(system));
-		cmds.add(new CommandMultilinesTitle(system));
-		cmds.add(new CommandNoopClass(system));
-		cmds.add(new CommandSkinParam(system));
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
+		addCommand(new CommandNoopClass(system));
+		addCommand(new CommandSkinParam(system));
 	}
 }

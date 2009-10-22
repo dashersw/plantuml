@@ -84,4 +84,13 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 	protected final Pattern getEnding() {
 		return ending;
 	}
+
+	public boolean isDeprecated(List<String> line) {
+		return false;
+	}
+
+	public String getHelpMessageForDeprecated(List<String> lines) {
+		return null;
+	}
+
 }

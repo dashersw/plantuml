@@ -34,8 +34,14 @@ package net.sourceforge.plantuml.command;
 import java.util.List;
 
 public interface Command {
-	boolean execute(List<String> line);
+	
+	boolean execute(List<String> lines);
 
-	CommandControl isValid(List<String> line);
+	CommandControl isValid(List<String> lines);
+	
+	boolean isDeprecated(List<String> lines);
+	
+	String getHelpMessageForDeprecated(List<String> lines);
+
 
 }

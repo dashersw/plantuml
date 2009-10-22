@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Properties;
 
 import net.sourceforge.plantuml.AbstractPSystem;
-import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.OptionPrint;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 
 public class PSystemVersion extends AbstractPSystem {
@@ -77,7 +77,7 @@ public class PSystemVersion extends AbstractPSystem {
 		strings.add("<b>PlantUML version " + Version.version() + "</b> (" + new Date(Version.compileTime()) + ")");
 		strings.add(" ");
 
-		strings.addAll(Option.getInstance().getTestDotStrings());
+		strings.addAll(OptionPrint.getTestDotStrings());
 		strings.add(" ");
 		final Properties p = System.getProperties();
 		strings.add(p.getProperty("java.runtime.name"));
@@ -94,7 +94,7 @@ public class PSystemVersion extends AbstractPSystem {
 		strings.add("<u>Original idea</u>: Arnaud Roques");
 		strings.add("<u>Word Macro</u>: Alain Bertucat & Matthieu Sabatier");
 		strings.add("<u>Eclipse Plugin</u>: Claude Durif & Anne Pecoil");
-		strings.add("<u>Site design</u>: Raphaël Cotisson");
+		strings.add("<u>Site design</u>: Raphael Cotisson");
 
 		strings.add(" ");
 		strings.add("http://plantuml.sourceforge.net");

@@ -62,77 +62,72 @@ public abstract class AbstractSourceReader {
 
 	private SortedMap<Integer, StartUml> tryThisFactory(List<String> strings, PSystemFactory systemFactory)
 			throws IOException, InterruptedException {
-		return new DataReader(strings, systemFactory).getAllStartUml();
+		return new SystemFactoryTry(strings, systemFactory).getAllStartUml();
 
+	}
+
+	private StartUml getStartUmlAtLine(List<SortedMap<Integer, StartUml>> rzz, int i) {
+		for (SortedMap<Integer, StartUml> map : rzz) {
+			final StartUml s1 = map.get(i);
+			if (isOk(s1.getSystem())) {
+				return s1;
+			}
+		}
+		return null;
 	}
 
 	final protected List<StartUml> getAllStartUml(List<String> config) throws IOException, InterruptedException {
 		final List<String> strings = new ArrayList<String>(getStrings(getReader()));
 		insertConfig(strings, config);
 
-		final SortedMap<Integer, StartUml> r1 = tryThisFactory(strings, new SequenceDiagramFactory());
-		final SortedMap<Integer, StartUml> r2 = tryThisFactory(strings, new ClassDiagramFactory());
-		final SortedMap<Integer, StartUml> r3 = tryThisFactory(strings, new ActivityDiagramFactory());
-		final SortedMap<Integer, StartUml> r3b = tryThisFactory(strings, new UsecaseDiagramFactory());
-		final SortedMap<Integer, StartUml> r3c = tryThisFactory(strings, new ComponentDiagramFactory());
-		final SortedMap<Integer, StartUml> r4 = tryThisFactory(strings, new PrintSkinFactory());
-		final SortedMap<Integer, StartUml> r5 = tryThisFactory(strings, new PSystemVersionFactory());
-		final SortedMap<Integer, StartUml> r6 = tryThisFactory(strings, new PSystemSudokuFactory());
-		final SortedMap<Integer, StartUml> r7 = tryThisFactory(strings, new PSystemEggFactory());
+		final List<PSystemFactory> factories = new ArrayList<PSystemFactory>();
+		factories.add(new SequenceDiagramFactory());
+		factories.add(new ClassDiagramFactory());
+		factories.add(new ActivityDiagramFactory());
+		factories.add(new UsecaseDiagramFactory());
+		factories.add(new ComponentDiagramFactory());
+		factories.add(new PrintSkinFactory());
+		factories.add(new PSystemVersionFactory());
+		factories.add(new PSystemSudokuFactory());
+		factories.add(new PSystemEggFactory());
 
-		final SortedSet<Integer> lines = new TreeSet<Integer>(r1.keySet());
-		lines.addAll(r2.keySet());
-		lines.addAll(r3.keySet());
-		lines.addAll(r3b.keySet());
-		lines.addAll(r3c.keySet());
-		lines.addAll(r4.keySet());
-		lines.addAll(r5.keySet());
-		lines.addAll(r6.keySet());
-		lines.addAll(r7.keySet());
+		final List<SortedMap<Integer, StartUml>> allResults = new ArrayList<SortedMap<Integer, StartUml>>();
+		for (PSystemFactory systemFactory : factories) {
+			allResults.add(tryThisFactory(strings, systemFactory));
+		}
+
+		final SortedSet<Integer> lines = new TreeSet<Integer>();
+
+		for (SortedMap<Integer, StartUml> map : allResults) {
+			lines.addAll(map.keySet());
+		}
 
 		final List<StartUml> result = new ArrayList<StartUml>();
 
 		for (Integer i : lines) {
-			final StartUml s1 = r1.get(i);
-			final StartUml s2 = r2.get(i);
-			final StartUml s3 = r3.get(i);
-			final StartUml s3b = r3b.get(i);
-			final StartUml s3c = r3c.get(i);
-			final StartUml s4 = r4.get(i);
-			final StartUml s5 = r5.get(i);
-			final StartUml s6 = r6.get(i);
-			final StartUml s7 = r7.get(i);
 
-			final StartUml system;
-			if (isOk(s1.getSystem())) {
-				system = s1;
-			} else if (isOk(s2.getSystem())) {
-				system = s2;
-			} else if (isOk(s3.getSystem())) {
-				system = s3;
-			} else if (isOk(s3b.getSystem())) {
-				system = s3b;
-			} else if (isOk(s3c.getSystem())) {
-				system = s3c;
-			} else if (isOk(s4.getSystem())) {
-				system = s4;
-			} else if (isOk(s5.getSystem())) {
-				system = s5;
-			} else if (isOk(s6.getSystem())) {
-				system = s6;
-			} else if (isOk(s7.getSystem())) {
-				system = s7;
-			} else {
-				final PSystemError merge = PSystemError.merge((PSystemError) s1.getSystem(), (PSystemError) s2
-						.getSystem(), (PSystemError) s3.getSystem(), (PSystemError) s3b.getSystem(), (PSystemError) s3c
-						.getSystem());
-				system = new StartUml(merge, s1.getStartuml());
+			StartUml system = getStartUmlAtLine(allResults, i);
+
+			if (system == null) {
+				system = getError(allResults, i);
 			}
-
 			result.add(system);
 		}
 
 		return result;
+	}
+
+	private StartUml getError(final List<SortedMap<Integer, StartUml>> allResults, Integer i) {
+		int cpt = 0;
+		final StartUml s1 = allResults.get(cpt++).get(i);
+		final StartUml s2 = allResults.get(cpt++).get(i);
+		final StartUml s3 = allResults.get(cpt++).get(i);
+		final StartUml s4 = allResults.get(cpt++).get(i);
+		final StartUml s5 = allResults.get(cpt++).get(i);
+		final PSystemError merge = PSystemError.merge((PSystemError) s1.getSystem(), (PSystemError) s2
+				.getSystem(), (PSystemError) s3.getSystem(), (PSystemError) s4.getSystem(), (PSystemError) s5
+				.getSystem());
+		return new StartUml(merge, s1.getStartuml());
 	}
 
 	private void insertConfig(List<String> strings, List<String> config) {
@@ -140,7 +135,7 @@ public abstract class AbstractSourceReader {
 			return;
 		}
 		for (int i = 0; i < strings.size(); i++) {
-			if (DataReader.isArobaseStartuml(strings.get(i))) {
+			if (SystemFactoryTry.isArobaseStartuml(strings.get(i))) {
 				strings.addAll(i + 1, config);
 				i += config.size();
 			}

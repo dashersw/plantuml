@@ -31,6 +31,9 @@
  */
 package net.sourceforge.plantuml.activitydiagram;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
@@ -55,6 +58,14 @@ public class ActivityDiagram extends CucaDiagram {
 		return result;
 	}
 
+	public Entity getStart() {
+		return getOrCreate("start", "start", EntityType.CIRCLE_START);
+	}
+
+	public Entity getEnd() {
+		return getOrCreate("end", "end", EntityType.CIRCLE_END);
+	}
+
 	private void updateLasts(final Entity result) {
 		this.lastEntityConsulted = result;
 		if (result.getType() == EntityType.BRANCH) {
@@ -69,9 +80,9 @@ public class ActivityDiagram extends CucaDiagram {
 		return result;
 	}
 
-	final protected String[] getDotStrings() {
-		return new String[] { "nodesep=.20;", "ranksep=0.4;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11];" };
+	final protected List<String> getDotStrings() {
+		return Arrays.asList("nodesep=.20;", "ranksep=0.4;", "edge [fontsize=11,labelfontsize=11];",
+				"node [fontsize=11];");
 	}
 
 	public String getDescription() {

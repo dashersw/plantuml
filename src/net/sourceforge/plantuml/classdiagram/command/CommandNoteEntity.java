@@ -45,7 +45,7 @@ public class CommandNoteEntity extends SingleLineCommand<AbstractEntityDiagram> 
 	private static int cpt = 1;
 
 	public CommandNoteEntity(AbstractEntityDiagram classDiagram) {
-		super(classDiagram, "(?i)^note\\s+(right|left|top|bottom)\\s+of\\s+(\\w+|\\([^\\)]+\\)|\\[[^\\]]+\\]|°[^°]+°|:[^:]+:)\\s*:\\s*(.*)$");
+		super(classDiagram, "(?i)^note\\s+(right|left|top|bottom)\\s+of\\s+(\\w+|\\((?!\\*\\))[^\\)]+\\)|\\[[^\\]]+\\]|\\u00B0[^\\u00B0]+\\u00B0|\\(\\)\\s*\\w+|:[^:]+:)\\s*:\\s*(.*)$");
 	}
 
 	@Override

@@ -44,7 +44,15 @@ public class CommandCreateEntity extends SingleLineCommand<ClassDiagram> {
 	public CommandCreateEntity(ClassDiagram classDiagram) {
 		super(
 				classDiagram,
-				"(?i)^(usecase|interface|actor|enum|component|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+				"(?i)^(usecase|interface|actor|enum|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\w+)(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+	}
+
+	@Override
+	protected boolean isDeprecated(String line) {
+		if (line.matches("(?i)^(usecase)\\s+.*")) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override

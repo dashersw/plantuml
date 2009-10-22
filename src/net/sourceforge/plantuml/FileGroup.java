@@ -43,12 +43,14 @@ public class FileGroup {
 	private final List<File> result = new ArrayList<File>();
 	private final String pattern;
 	private final List<String> excluded;
+	private final Option option;
 
 	private final static Pattern predirPath = Pattern.compile("^([^*?]*[/\\\\])?(.*)$");
 
-	public FileGroup(String pattern, List<String> excluded) {
+	public FileGroup(String pattern, List<String> excluded, Option option) {
 		this.pattern = pattern;
 		this.excluded = excluded;
+		this.option = option;
 		if (pattern.indexOf("*") == -1 && pattern.indexOf("?") == -1) {
 			initNoStar();
 		} else if (pattern.indexOf("**") != -1) {
@@ -95,10 +97,10 @@ public class FileGroup {
 	}
 
 	private void addSimpleDirectory(File dir) {
-		if (Option.getInstance().isWord()) {
+		if (OptionFlags.getInstance().isWord()) {
 			addSimpleDirectory(dir, "(?i)^.*_extr\\d+\\.txt$");
 		} else {
-			addSimpleDirectory(dir, Option.getInstance().getPattern());
+			addSimpleDirectory(dir, option.getPattern());
 		}
 	}
 

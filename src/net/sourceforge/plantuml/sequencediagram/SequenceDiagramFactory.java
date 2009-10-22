@@ -31,19 +31,12 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.CommandControl;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
 import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandArrow;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutonumber;
@@ -60,57 +53,38 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandNoteOverSeveral;
 import net.sourceforge.plantuml.sequencediagram.command.CommandParticipant;
 import net.sourceforge.plantuml.sequencediagram.command.CommandSkin;
 
-public class SequenceDiagramFactory implements PSystemCommandFactory {
+public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 	private SequenceDiagram system;
 
-	private List<Command> cmds;
-
-	public SequenceDiagramFactory() {
-		reset();
-	}
-
-	public void reset() {
+	@Override
+	protected void initCommands() {
 		system = new SequenceDiagram();
 
-		cmds = new ArrayList<Command>();
+		addCommand(new CommandParticipant(system));
+		addCommand(new CommandArrow(system));
+		addCommand(new CommandNote(system));
+		addCommand(new CommandNoteOverSeveral(system));
+		addCommand(new CommandGrouping(system));
+		addCommand(new CommandActivate(system));
 
-		cmds.add(new CommandParticipant(system));
-		cmds.add(new CommandArrow(system));
-		cmds.add(new CommandNote(system));
-		cmds.add(new CommandNoteOverSeveral(system));
-		cmds.add(new CommandGrouping(system));
-		cmds.add(new CommandActivate(system));
+		addCommand(new CommandNoteOnArrow(system));
 
-		cmds.add(new CommandNoteOnArrow(system));
+		addCommand(new CommandMultilinesNote(system));
+		addCommand(new CommandMultilinesNoteOverSeveral(system));
+		addCommand(new CommandMultilinesNoteOnArrow(system));
 
-		cmds.add(new CommandMultilinesNote(system));
-		cmds.add(new CommandMultilinesNoteOverSeveral(system));
-		cmds.add(new CommandMultilinesNoteOnArrow(system));
+		addCommand(new CommandNewpage(system));
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
+		addCommand(new CommandSkin(system));
+		addCommand(new CommandAutonumber(system));
+		addCommand(new CommandFootbox(system));
+		addCommand(new CommandNoopSequence(system));
 
-		cmds.add(new CommandNewpage(system));
-		cmds.add(new CommandTitle(system));
-		cmds.add(new CommandMultilinesTitle(system));
-		cmds.add(new CommandSkin(system));
-		cmds.add(new CommandAutonumber(system));
-		cmds.add(new CommandFootbox(system));
-		cmds.add(new CommandNoopSequence(system));
-
-		cmds.add(new CommandMinwidth(system));
-		cmds.add(new CommandRotate(system));
-		cmds.add(new CommandSkinParam(system));
-	}
-
-	public List<Command> create(List<String> lines) {
-		for (Command cmd : cmds) {
-			final CommandControl result = cmd.isValid(lines);
-			if (result == CommandControl.OK) {
-				return Arrays.asList(cmd);
-			} else if (result == CommandControl.OK_PARTIAL) {
-				return Collections.emptyList();
-			}
-		}
-		return null;
+		addCommand(new CommandMinwidth(system));
+		addCommand(new CommandRotate(system));
+		addCommand(new CommandSkinParam(system));
 	}
 
 	public SequenceDiagram getSystem() {

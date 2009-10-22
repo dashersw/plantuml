@@ -42,9 +42,9 @@ import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
 public class CommandLinkUsecase extends SingleLineCommand<UsecaseDiagram> {
 
 	public CommandLinkUsecase(UsecaseDiagram diagram) {
-		super(diagram, "(?i)^(\\w+|:[^:]+:|\\([^)]+\\))\\s*"
+		super(diagram, "(?i)^(\\w+|:[^:]+:|\\((?!\\*\\))[^)]+\\))\\s*"
 				+ "(?:(([=-]+|\\.+)([\\]>]|\\|[>\\]])?)|(([\\[<]|[<\\[]\\|)?([=-]+|\\.+)))"
-				+ "\\s*(\\w+|:[^:]+:|\\([^)]+\\))\\s*(?::\\s*([^\"]*))?$");
+				+ "\\s*(\\w+|:[^:]+:|\\((?!\\*\\))[^)]+\\))\\s*(?::\\s*([^\"]*))?$");
 	}
 
 	@Override

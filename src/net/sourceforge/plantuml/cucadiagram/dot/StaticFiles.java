@@ -45,6 +45,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.SkinParam;
@@ -63,10 +64,18 @@ public class StaticFiles {
 	private final String aName = "stereotypea.png";
 	private final String eName = "stereotypee.png";
 
-	private final Color green = new Color(Integer.parseInt("ADD1B2", 16));
-	private final Color violet = new Color(Integer.parseInt("B4A7E5", 16));
-	private final Color blue = new Color(Integer.parseInt("A9DCDF", 16));
-	private final Color rose = new Color(Integer.parseInt("EB937F", 16));
+	private final Color stereotypeCBackground;
+	private final Color stereotypeIBackground;
+	private final Color stereotypeABackground;
+	private final Color stereotypeEBackground;
+
+	private final Color interfaceBorder;
+	private final Color classborder;
+	private final Color actorBorder;
+	private final Color classBackground;
+	private final Color actorBackground;
+	private final Color interfaceBackground;
+	private final Color background;
 
 	final private Font font = new Font("Courier", Font.BOLD, 17);
 
@@ -90,16 +99,26 @@ public class StaticFiles {
 
 	public StaticFiles(SkinParam param) throws IOException {
 		final Rose rose = new Rose();
-		final Color red = rose.getBorderHtmlColor(param).getColor();
-		final Color yellow = rose.getBoxHtmlColor(param).getColor();
+		actorBorder = rose.getHtmlColor(param, ColorParam.actorBorder).getColor();
+		classborder = rose.getHtmlColor(param, ColorParam.classBorder).getColor();
+		interfaceBorder = rose.getHtmlColor(param, ColorParam.interfaceBorder).getColor();
+		interfaceBackground = rose.getHtmlColor(param, ColorParam.interfaceBackground).getColor();
+		actorBackground = rose.getHtmlColor(param, ColorParam.actorBackground).getColor();
+		classBackground = rose.getHtmlColor(param, ColorParam.classBackground).getColor();
+		stereotypeCBackground = rose.getHtmlColor(param, ColorParam.stereotypeCBackground).getColor();
+		stereotypeABackground = rose.getHtmlColor(param, ColorParam.stereotypeABackground).getColor();
+		stereotypeIBackground = rose.getHtmlColor(param, ColorParam.stereotypeIBackground).getColor();
+		stereotypeEBackground = rose.getHtmlColor(param, ColorParam.stereotypeEBackground).getColor();
+
+		background = param.getBackgroundColor().getColor();
 
 		final File dir = getTmpDir();
-		staticImages.put(EntityType.CIRCLE_INTERFACE, ensurePngCircleInterfacePresent(dir, red, yellow));
-		staticImages.put(EntityType.ACTOR, ensurePngActorPresent(dir, red, yellow));
-		staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(dir, red, yellow));
-		staticImages.put(EntityType.CLASS, ensurePngCPresent(dir, red, yellow));
-		staticImages.put(EntityType.INTERFACE, ensurePngIPresent(dir, red, yellow));
-		staticImages.put(EntityType.ENUM, ensurePngEPresent(dir, red, yellow));
+		staticImages.put(EntityType.CIRCLE_INTERFACE, ensurePngCircleInterfacePresent(dir));
+		staticImages.put(EntityType.ACTOR, ensurePngActorPresent(dir));
+		staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(dir));
+		staticImages.put(EntityType.CLASS, ensurePngCPresent(dir));
+		staticImages.put(EntityType.INTERFACE, ensurePngIPresent(dir));
+		staticImages.put(EntityType.ENUM, ensurePngEPresent(dir));
 
 		deleteOnExit();
 	}
@@ -124,11 +143,11 @@ public class StaticFiles {
 		}
 	}
 
-	private File ensurePngActorPresent(File dir, final Color red, final Color yellow) throws IOException {
-		final StickMan smallMan = new StickMan(yellow, red);
+	private File ensurePngActorPresent(File dir) throws IOException {
+		final StickMan smallMan = new StickMan(actorBackground, actorBorder);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder((int) smallMan.getPreferredWidth(null), (int) smallMan
-				.getPreferredHeight(null), Color.WHITE);
+				.getPreferredHeight(null), background);
 
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
@@ -142,12 +161,12 @@ public class StaticFiles {
 
 	}
 
-	private File ensurePngCircleInterfacePresent(File dir, final Color red, final Color yellow) throws IOException {
+	private File ensurePngCircleInterfacePresent(File dir) throws IOException {
 
-		final CircleInterface circleInterface = new CircleInterface(yellow, red);
+		final CircleInterface circleInterface = new CircleInterface(interfaceBackground, interfaceBorder);
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder((int) circleInterface.getPreferredWidth(null),
-				(int) circleInterface.getPreferredHeight(null), Color.WHITE);
+				(int) circleInterface.getPreferredHeight(null), background);
 
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
@@ -161,24 +180,28 @@ public class StaticFiles {
 
 	}
 
-	private File ensurePngCPresent(File dir, final Color red, final Color yellow) throws IOException {
-		final CircledCharacter circledCharacter = new CircledCharacter('C', font, green, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, cName, circledCharacter, yellow);
+	private File ensurePngCPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('C', font, stereotypeCBackground, classborder,
+				Color.BLACK);
+		return generateCircleCharacterFile(dir, cName, circledCharacter, classBackground);
 	}
 
-	private File ensurePngAPresent(File dir, final Color red, final Color yellow) throws IOException {
-		final CircledCharacter circledCharacter = new CircledCharacter('A', font, blue, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, aName, circledCharacter, yellow);
+	private File ensurePngAPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('A', font, stereotypeABackground, classborder,
+				Color.BLACK);
+		return generateCircleCharacterFile(dir, aName, circledCharacter, classBackground);
 	}
 
-	private File ensurePngIPresent(File dir, final Color red, final Color yellow) throws IOException {
-		final CircledCharacter circledCharacter = new CircledCharacter('I', font, violet, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, iName, circledCharacter, yellow);
+	private File ensurePngIPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('I', font, stereotypeIBackground, classborder,
+				Color.BLACK);
+		return generateCircleCharacterFile(dir, iName, circledCharacter, classBackground);
 	}
 
-	private File ensurePngEPresent(File dir, final Color red, final Color yellow) throws IOException {
-		final CircledCharacter circledCharacter = new CircledCharacter('E', font, rose, red, Color.BLACK);
-		return generateCircleCharacterFile(dir, eName, circledCharacter, yellow);
+	private File ensurePngEPresent(File dir) throws IOException {
+		final CircledCharacter circledCharacter = new CircledCharacter('E', font, stereotypeEBackground, classborder,
+				Color.BLACK);
+		return generateCircleCharacterFile(dir, eName, circledCharacter, classBackground);
 	}
 
 	private File generateCircleCharacterFile(File dir, String filename, final CircledCharacter circledCharacter,

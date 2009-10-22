@@ -192,8 +192,10 @@ public class SequenceDiagramPngMaker {
 
 		final int width = Math.max(titleWidth, diagramWidth);
 		final int height = (int) (titleHeight + page.getHeight());
+		
+		final Color backColor = sequenceDiagram.getSkinParam().getBackgroundColor().getColor();
 
-		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, Color.WHITE);
+		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, backColor);
 
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2dOk = builder.getGraphics2D();

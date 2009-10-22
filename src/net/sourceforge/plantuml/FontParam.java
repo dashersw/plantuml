@@ -31,44 +31,51 @@
  */
 package net.sourceforge.plantuml;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.awt.Font;
 
-public class StartUml {
+public enum FontParam {
 
-	private final PSystem system;
-	private final String startuml;
+	ACTIVITY(14, Font.PLAIN, "black"),
+	ACTIVITY_ARROW(13, Font.PLAIN, "black"),
+	CLASS_ARROW(10, Font.PLAIN, "black"),
+	CLASS_ATTRIBUTE(10, Font.PLAIN, "black"),
+	CLASS(12, Font.PLAIN, "black"),
+	COMPONENT(14, Font.PLAIN, "black"),
+	COMPONENT_ARROW(13, Font.PLAIN, "black"),
+	NOTE(13, Font.PLAIN, "black"),
+	PACKAGE(14, Font.PLAIN, "black"),
+	SEQUENCE_ACTOR(13, Font.PLAIN, "black"),
+	SEQUENCE_ARROW(13, Font.PLAIN, "black"),
+	SEQUENCE_GROUPING(11, Font.BOLD, "black"),
+	SEQUENCE_GROUPING_HEADER(13, Font.BOLD, "black"),
+	SEQUENCE_PARTICIPANT(13, Font.PLAIN, "black"),
+	SEQUENCE_TITLE(13, Font.BOLD, "black"),
+	TITLE(18, Font.PLAIN, "black"),
+	USECASE(14, Font.PLAIN, "black"),
+	USECASE_ACTOR(14, Font.PLAIN, "black"),
+	USECASE_ARROW(13, Font.PLAIN, "black");
+	
+	private final int defaultSize;
+	private final int fontType;
+	private final String defaultColor;
 
-	private static final Pattern pattern1 = Pattern.compile("^@startuml\\s+\"?(.*?)\"?$");
-
-	StartUml(PSystem system, String startuml) {
-		this.system = system;
-		this.startuml = startuml;
+	private FontParam(int defaultSize, int fontType, String defaultColor) {
+		this.defaultSize = defaultSize;
+		this.fontType = fontType;
+		this.defaultColor = defaultColor;
 	}
 
-	@Override
-	public String toString() {
-		return startuml + " " + system;
+	public final int getDefaultSize() {
+		return defaultSize;
 	}
 
-	public PSystem getSystem() {
-		return system;
+	public final int getFontType() {
+		return fontType;
 	}
 
-	public String getFilename() {
-		if (OptionFlags.getInstance().isWord()) {
-			return null;
-		}
-		final Matcher m = pattern1.matcher(startuml);
-		final boolean ok = m.find();
-		if (ok == false) {
-			return null;
-		}
-		return m.group(1);
+	public final String getDefaultColor() {
+		return defaultColor;
 	}
-
-	public String getStartuml() {
-		return startuml;
-	}
-
+	
+	
 }

@@ -31,80 +31,55 @@
  */
 package net.sourceforge.plantuml.usecasediagram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
-import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.CommandControl;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
 import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase;
 import net.sourceforge.plantuml.usecasediagram.command.CommandLinkUsecase;
 import net.sourceforge.plantuml.usecasediagram.command.CommandMultilinesUsecaseNoteEntity;
 import net.sourceforge.plantuml.usecasediagram.command.CommandNoopUsecase;
 
-public class UsecaseDiagramFactory implements PSystemCommandFactory {
+public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 	private UsecaseDiagram system;
-
-	private List<Command> cmds;
-
-	public UsecaseDiagramFactory() {
-		reset();
-	}
-
-	public List<Command> create(List<String> lines) {
-		for (Command cmd : cmds) {
-			final CommandControl result = cmd.isValid(lines);
-			if (result == CommandControl.OK) {
-				return Arrays.asList(cmd);
-			} else if (result == CommandControl.OK_PARTIAL) {
-				return Collections.emptyList();
-			}
-		}
-		return null;
-	}
 
 	public UsecaseDiagram getSystem() {
 		return system;
 	}
 
-	public void reset() {
+	@Override
+	protected void initCommands() {
 		system = new UsecaseDiagram();
-		cmds = new ArrayList<Command>();
 
-		cmds.add(new CommandRotate(system));
-		cmds.add(new CommandPage(system));
-		cmds.add(new CommandLinkUsecase(system));
+		addCommand(new CommandRotate(system));
+		addCommand(new CommandPage(system));
+		addCommand(new CommandLinkUsecase(system));
 
-		cmds.add(new CommandPackage(system));
+		addCommand(new CommandPackage(system));
 		// cmds.add(new CommandStereotype(system));
-		cmds.add(new CommandNoteEntity(system));
+		addCommand(new CommandNoteEntity(system));
 
-		cmds.add(new CommandCreateNote(system));
-		cmds.add(new CommandCreateActor(system));
-		cmds.add(new CommandCreateUsecase(system));
+		addCommand(new CommandCreateNote(system));
+		addCommand(new CommandCreateActor(system));
+		addCommand(new CommandCreateUsecase(system));
 
-		cmds.add(new CommandMultilinesUsecaseNoteEntity(system));
-		cmds.add(new CommandMultilinesStandaloneNote(system));
-		cmds.add(new CommandMinwidth(system));
-		cmds.add(new CommandNoopUsecase(system));
+		addCommand(new CommandMultilinesUsecaseNoteEntity(system));
+		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(new CommandMinwidth(system));
+		addCommand(new CommandNoopUsecase(system));
 
-		cmds.add(new CommandTitle(system));
-		cmds.add(new CommandMultilinesTitle(system));
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
 
-		cmds.add(new CommandSkinParam(system));
+		addCommand(new CommandSkinParam(system));
 	}
 }

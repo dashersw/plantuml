@@ -5,7 +5,7 @@
  *
  * DLXEngine
  * Sudoku puzzle generator and solver based on the suexg and suexk by
- * Günter Stertenbrink. Suexg and suexk are C implementations of the
+ * Gunter Stertenbrink. Suexg and suexk are C implementations of the
  * Dancing Links algorithm by Donald Knuth and optimized for performance
  * which means that certain cleanup work has been done. There is still
  * lots of these activities left to do, however, the code is nasty and

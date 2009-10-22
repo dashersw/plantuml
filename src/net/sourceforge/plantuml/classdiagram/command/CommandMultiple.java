@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.classdiagram.ClassDiagramFactory;
 import net.sourceforge.plantuml.command.Command;
+import net.sourceforge.plantuml.command.CommandControl;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 
 public class CommandMultiple extends SingleLineCommand<ClassDiagram> {
@@ -64,11 +65,12 @@ public class CommandMultiple extends SingleLineCommand<ClassDiagram> {
 		}
 		for (int i = 0; i < arg.size() - 2; i += 2) {
 			final String simpleLine = arg.get(i) + " " + arg.get(i + 1) + " " + arg.get(i + 2);
-			final List<Command> simpleCmd = factory.create(Arrays.asList(simpleLine));
-			if (simpleCmd == null) {
+			final CommandControl commandControl = factory.isValid(Arrays.asList(simpleLine));
+			if (commandControl != CommandControl.OK) {
 				throw new IllegalArgumentException(simpleLine);
 			}
-			final boolean ok = simpleCmd.get(0).execute(Arrays.asList(simpleLine));
+			final Command simpleCmd = factory.createCommand(Arrays.asList(simpleLine));
+			final boolean ok = simpleCmd.execute(Arrays.asList(simpleLine));
 			if (ok == false) {
 				return false;
 			}

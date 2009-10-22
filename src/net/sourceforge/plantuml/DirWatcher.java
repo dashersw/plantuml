@@ -43,12 +43,14 @@ public class DirWatcher {
 
 	final private File dir;
 	final private boolean recurse;
+	final private Option option;
 
 	final private Map<File, Long> modifieds = new HashMap<File, Long>();
 
-	public DirWatcher(File dir, boolean recurse) {
+	public DirWatcher(File dir, boolean recurse, Option option) {
 		this.dir = dir;
 		this.recurse = recurse;
+		this.option = option;
 	}
 
 	public List<GeneratedImage> buildCreatedFiles() throws IOException, InterruptedException {
@@ -74,7 +76,7 @@ public class DirWatcher {
 			final Long previousModified = modifieds.get(f);
 
 			if (previousModified == null || previousModified != modified) {
-				for (GeneratedImage g : new SourceFileReader(f, Option.getInstance().getOutputDir())
+				for (GeneratedImage g : new SourceFileReader(f, option.getOutputDir())
 				.getGeneratedImages()) {
 					result.add(g);
 					modifieds.put(f, modified);
@@ -84,6 +86,6 @@ public class DirWatcher {
 	}
 
 	private boolean fileToProcess(String name) {
-		return name.matches(Option.getInstance().getPattern());
+		return name.matches(option.getPattern());
 	}
 }

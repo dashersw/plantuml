@@ -37,48 +37,27 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.preproc.Defines;
-import net.sourceforge.plantuml.version.Version;
 
 public class Option {
-
-	public boolean useJavaInsteadOfDot() {
-		return false;
-	}
-
-	private static final Option singleton = new Option();
-
-	private boolean keepTmpFiles = false;
-	private boolean verbose = false;
-	private boolean metadata = false;
-	private boolean word = false;
-	private boolean systemExit = true;
 
 	private final List<String> excludes = new ArrayList<String>();
 	private final List<String> config = new ArrayList<String>();
 	private final Map<String, String> defines = new LinkedHashMap<String, String>();
 
 	private File outputDir = null;
+	private final List<String> result = new ArrayList<String>();
 
-	private Option() {
-		reset();
+	public Option() {
 	}
 
-	public static Option getInstance() {
-		return singleton;
-	}
-
-	public List<String> manageOption(String... arg) throws InterruptedException, IOException {
-		final List<String> result = new ArrayList<String>();
+	public Option(String... arg) throws InterruptedException, IOException {
 		for (int i = 0; i < arg.length; i++) {
 			String s = arg[i];
 			if (s.equalsIgnoreCase("-output") || s.equalsIgnoreCase("-o")) {
@@ -108,48 +87,25 @@ public class Option {
 				s = s.substring(2);
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
 			} else if (s.equalsIgnoreCase("-verbose") || s.equalsIgnoreCase("-v")) {
-				verbose = true;
+				OptionFlags.getInstance().setVerbose(true);
 			} else if (s.equalsIgnoreCase("-keepfiles") || s.equalsIgnoreCase("-keepfile")) {
-				keepTmpFiles = true;
+				OptionFlags.getInstance().setKeepTmpFiles(true);
 			} else if (s.equalsIgnoreCase("-metadata")) {
-				metadata = true;
+				OptionFlags.getInstance().setMetadata(true);
 			} else if (s.equalsIgnoreCase("-word")) {
-				word = true;
+				OptionFlags.getInstance().setWord(true);
 			} else if (s.equalsIgnoreCase("-version")) {
-				displayVersion();
+				OptionPrint.printVersion();
 			} else if (s.startsWith("-D")) {
 				manageDefine(s.substring(2));
 			} else if (s.equalsIgnoreCase("-testdot")) {
-				testDot();
+				OptionPrint.printTestDot();
 			} else if (s.equalsIgnoreCase("-help") || s.equalsIgnoreCase("-h")) {
-				System.err.println("Usage: java -jar plantuml.jar [options]");
-				System.err.println("\t(to execute the GUI)");
-				System.err.println("    or java -jar plantuml.jar [options] [files/dirs]");
-				System.err.println("\t(to process files or directories)");
-				System.err.println();
-				System.err.println("You can use the following wildcards in files/dirs:");
-				System.err.println("\t*\tmeans any characters but '" + File.separator + "'");
-				System.err.println("\t?\tone and only one character but '" + File.separator + "'");
-				System.err.println("\t**\tmeans any characters (used to recurse through directories)");
-				System.err.println();
-				System.err.println("where options include:");
-				System.err.println("    -o[utput] \"dir\"\tTo generate images in the specified directory");
-				System.err.println("    -config \"file\"\tTo read the provided config file before each diagram");
-				System.err.println("    -e[x]clude pattern\tTo exclude files that matche the provided pattern");
-				System.err.println("    -metadata\t\tTo retrieve PlantUML sources from PNG images");
-				System.err.println("    -version\t\tTo display information about PlantUML and Java versions");
-				System.err.println("    -v[erbose]\t\tTo have log information");
-				System.err.println("    -keepfiles\t\tTo NOT delete temporary files after process");
-				System.err.println("    -h[elp]\t\tTo display this help message");
-				System.err.println("    -testdot\t\tTo test the installation of graphviz");
-				System.err.println();
-				System.err.println("If needed, you can setup the environment variable GRAPHVIZ_DOT.");
-				exit();
+				OptionPrint.printHelp();
 			} else {
 				result.add(s);
 			}
 		}
-		return Collections.unmodifiableList(result);
 	}
 
 	public void initConfig(String filename) throws IOException {
@@ -173,93 +129,6 @@ public class Option {
 		if (m.find()) {
 			define(m.group(1), m.group(2));
 		}
-	}
-
-	private void exit() throws InterruptedException {
-		if (systemExit) {
-			System.exit(0);
-		}
-		throw new InterruptedException("exit");
-	}
-
-	public List<String> getTestDotStrings() {
-		final List<String> result = new ArrayList<String>();
-		final String ent = GraphvizUtils.getenvGraphvizDot();
-		if (ent == null) {
-			result.add("The environment variable GRAPHVIZ_DOT has not been set");
-		} else {
-			result.add("The environment variable GRAPHVIZ_DOT has been set to " + ent);
-		}
-		result.add("Dot executable is " + GraphvizUtils.getDotExe());
-
-		boolean ok = true;
-		if (GraphvizUtils.getDotExe() == null) {
-			result.add("Error: Not dot executable");
-			ok = false;
-		} else if (GraphvizUtils.getDotExe() != null && GraphvizUtils.getDotExe().exists() == false) {
-			result.add("Error: the dot executable does not exists at specified location");
-			ok = false;
-		}
-
-		if (ok) {
-			result.add("Installation seems OK");
-			try {
-				final String version = GraphvizUtils.dotVersion();
-				result.add("Dot version: " + version);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} else {
-			result.add("Error: only sequence diagrams will be generated");
-		}
-
-		return Collections.unmodifiableList(result);
-	}
-
-	private void testDot() throws InterruptedException {
-		for (String s : getTestDotStrings()) {
-			System.err.println(s);
-		}
-		exit();
-	}
-
-	private void displayVersion() throws InterruptedException {
-		System.err.println("PlantUML version " + Version.version() + "(" + new Date(Version.compileTime()) + ")");
-		final Properties p = System.getProperties();
-		System.err.println(p.getProperty("java.runtime.name"));
-		System.err.println(p.getProperty("java.vm.name"));
-		System.err.println(p.getProperty("java.runtime.version"));
-		System.err.println(p.getProperty("os.name"));
-		exit();
-	}
-
-	void reset() {
-		keepTmpFiles = false;
-		verbose = false;
-		outputDir = null;
-		excludes.clear();
-		defines.clear();
-		config.clear();
-	}
-
-	public boolean isKeepFiles() {
-		return keepTmpFiles;
-	}
-
-	public boolean isVerbose() {
-		return verbose;
-	}
-
-	public final boolean isMetadata() {
-		return metadata;
-	}
-
-	public final boolean isWord() {
-		return word;
-	}
-
-	public final void setSystemExit(boolean systemExit) {
-		this.systemExit = systemExit;
 	}
 
 	public final File getOutputDir() {
@@ -293,6 +162,10 @@ public class Option {
 
 	public List<String> getConfig() {
 		return Collections.unmodifiableList(config);
+	}
+
+	public final List<String> getResult() {
+		return Collections.unmodifiableList(result);
 	}
 
 }

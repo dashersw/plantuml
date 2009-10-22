@@ -42,7 +42,7 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 public class CommandCreateCircleInterface extends SingleLineCommand<ComponentDiagram> {
 
 	public CommandCreateCircleInterface(ComponentDiagram diagram) {
-		super(diagram, "(?i)^(?:\"([^\"]+)\"\\s+as\\s+)?°(\\w+)°(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+		super(diagram, "(?i)^(?:\"([^\"]+)\"\\s+as\\s+)?(?:\\u00B0|\\(\\)\\s*)(\\w+)\\u00B0?(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
 	}
 
 	@Override

@@ -31,59 +31,35 @@
  */
 package net.sourceforge.plantuml.activitydiagram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandNoopActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandPartition;
-import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.CommandControl;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 
-public class ActivityDiagramFactory implements PSystemCommandFactory {
+public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 	private ActivityDiagram system;
-
-	private List<Command> cmds;
-
-	public ActivityDiagramFactory() {
-		reset();
-	}
-
-	public List<Command> create(List<String> lines) {
-		for (Command cmd : cmds) {
-			final CommandControl result = cmd.isValid(lines);
-			if (result == CommandControl.OK) {
-				return Arrays.asList(cmd);
-			} else if (result == CommandControl.OK_PARTIAL) {
-				return Collections.emptyList();
-			}
-		}
-		return null;
-	}
 
 	public ActivityDiagram getSystem() {
 		return system;
 	}
 
-	public void reset() {
+	@Override
+	protected void initCommands() {
 		system = new ActivityDiagram();
-		cmds = new ArrayList<Command>();
 
-		cmds.add(new CommandLinkActivity(system));
-		cmds.add(new CommandPartition(system));
-		cmds.add(new CommandLinkLongActivity(system));
-		
-		cmds.add(new CommandTitle(system));
-		cmds.add(new CommandMultilinesTitle(system));
-		cmds.add(new CommandNoopActivity(system));
-		cmds.add(new CommandSkinParam(system));
+		addCommand(new CommandLinkActivity(system));
+		addCommand(new CommandPartition(system));
+		addCommand(new CommandLinkLongActivity(system));
+
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
+		addCommand(new CommandNoopActivity(system));
+		addCommand(new CommandSkinParam(system));
 	}
+
 }

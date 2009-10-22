@@ -29,15 +29,48 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.usecasediagram.command;
+package net.sourceforge.plantuml;
 
-import net.sourceforge.plantuml.classdiagram.command.AbstractCommandMultilinesNoteEntity;
-import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
 
-public class CommandMultilinesUsecaseNoteEntity extends AbstractCommandMultilinesNoteEntity {
+public enum ColorParam {
+	background,
+	
+	activityBackground,
+	activityBorder,
+	activityStart,
+	activityEnd,
+	activityBar,
+	activityArrow,
 
-	public CommandMultilinesUsecaseNoteEntity(final UsecaseDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(\\w+|:[^:]+:|\\((?!\\*\\))[^)]+\\))$");
-	}
+	actorBackground,
+	actorBorder,
+	usecaseBorder,
+	usecaseBackground,
+	usecaseArrow,
 
+	classBackground,
+	classBorder,
+	stereotypeCBackground,
+	stereotypeABackground,
+	stereotypeIBackground,
+	stereotypeEBackground,
+	classArrow,
+
+	componentBackground,
+	componentBorder,
+	interfaceBackground,
+	interfaceBorder,
+	componentArrow,
+
+	noteBackground,
+	noteBorder,
+	
+	sequenceActorBackground,
+	sequenceActorBorder,
+	sequenceGroupBackground,
+	sequenceLifeLineBackground,
+	sequenceLifeLineBorder,
+	sequenceParticipantBackground,
+	sequenceParticipantBorder,
+	sequenceArrow
 }

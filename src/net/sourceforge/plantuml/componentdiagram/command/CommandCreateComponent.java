@@ -42,7 +42,7 @@ import net.sourceforge.plantuml.cucadiagram.Stereotype;
 public class CommandCreateComponent extends SingleLineCommand<ComponentDiagram> {
 
 	public CommandCreateComponent(ComponentDiagram diagram) {
-		super(diagram, "(?i)^(?:\"([^\"]+)\"\\s+as\\s+)?\\[(\\w+)\\](?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+		super(diagram, "(?i)^(?:\"([^\"]+)\"\\s+as\\s+)?\\[([^\\]]+)\\](?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
 	}
 
 	@Override

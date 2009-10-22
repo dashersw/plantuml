@@ -37,7 +37,7 @@ import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
 public class CommandMultilinesComponentNoteEntity extends AbstractCommandMultilinesNoteEntity {
 
 	public CommandMultilinesComponentNoteEntity(final ComponentDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(°[^°]+°|\\[[^\\]]+\\])$");
+		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(\\(\\)\\w+|\\u00B0[^\\u00B0]+\\u00B0|\\[[^\\]]+\\])$");
 	}
 
 }

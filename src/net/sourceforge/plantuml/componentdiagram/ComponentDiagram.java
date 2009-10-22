@@ -42,11 +42,13 @@ public class ComponentDiagram extends AbstractEntityDiagram {
 		if (code.startsWith("[") && code.endsWith("]")) {
 			return getOrCreateEntity(removeFirstAndLastChar(code), EntityType.COMPONENT);
 		}
-		if (code.startsWith("°") && code.endsWith("°")) {
+		if (code.startsWith("\u00B0") && code.endsWith("\u00B0")) {
 			return getOrCreateEntity(removeFirstAndLastChar(code), EntityType.CIRCLE_INTERFACE);
+		}
+		if (code.startsWith("()")) {
+			return getOrCreateEntity(code.substring(2).trim(), EntityType.CIRCLE_INTERFACE);
 		}
 		throw new IllegalArgumentException();
 	}
-
 
 }

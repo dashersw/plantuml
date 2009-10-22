@@ -42,9 +42,9 @@ import net.sourceforge.plantuml.cucadiagram.LinkType;
 public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 
 	public CommandLinkComponent(ComponentDiagram diagram) {
-		super(diagram, "(?i)^(\\[[^\\]]+\\]|°[^°]+°)\\s*"
+		super(diagram, "(?i)^(\\[[^\\]]+\\]|\\u00B0[^\\u00B0]+\\u00B0|\\(\\)\\s*\\w+)\\s*"
 				+ "(?:(([=-]+|\\.+)([\\]>]|\\|[>\\]])?)|(([\\[<]|[<\\[]\\|)?([=-]+|\\.+)))"
-				+ "\\s*(\\[[^\\]]+\\]|°[^°]+°)\\s*(?::\\s*([^\"]*))?$");
+				+ "\\s*(\\[[^\\]]+\\]|\\u00B0[^\\u00B0]+\\u00B0|\\(\\)\\s*\\w+)\\s*(?::\\s*([^\"]*))?$");
 	}
 
 	@Override

@@ -53,8 +53,10 @@ class DotExpression {
 
 	private final boolean underline;
 
+	private final String fontFamily;
 
-	DotExpression(String html, int defaultFontSize, HtmlColor color) {
+	DotExpression(String html, int defaultFontSize, HtmlColor color, String fontFamily) {
+		this.fontFamily = fontFamily;
 		this.normalFont = new Font("SansSerif", Font.PLAIN, defaultFontSize);
 		this.fontConfiguration = new FontConfiguration(normalFont, color.getColor());
 		html = html.replaceAll(" \\<[uU]\\>", "<u>");
@@ -95,18 +97,42 @@ class DotExpression {
 		final int size = fontConfiguration.getFont().getSize();
 		final StringBuilder sb = new StringBuilder("<FONT POINT-SIZE=\"");
 		sb.append(size);
-		sb.append("\"");
-		if (fontConfiguration.containsStyle(FontStyle.ITALIC)) {
-			sb.append(" FACE=\"italic\"");
-		} else if (fontConfiguration.containsStyle(FontStyle.BOLD)) {
-			sb.append(" FACE=\"bold\"");
-		} else {
-			// sb.append(" FACE=\"normal\"");
-		}
+		sb.append("\" ");
+		appendFontWithFamily(sb);
+
 		final Color col = fontConfiguration.getColor();
 		sb.append(" COLOR=\"").append(HtmlColor.getAsHtml(col)).append("\"");
 		sb.append(">");
 		return sb.toString();
+	}
+
+	private void appendFontWithFamily(final StringBuilder sb) {
+		String modifier = null;
+		if (fontConfiguration.containsStyle(FontStyle.ITALIC)) {
+			modifier = "italic";
+		} else if (fontConfiguration.containsStyle(FontStyle.BOLD)) {
+			modifier = "bold";
+		}
+		appendFace(sb, fontFamily, modifier);
+	}
+
+	public static void appendFace(StringBuilder sb, String fontFamily, String modifier) {
+		if (fontFamily == null && modifier == null) {
+			return;
+		}
+		sb.append("FACE=\"");
+		if (fontFamily != null && modifier != null) {
+			sb.append(fontFamily + " " + modifier);
+		} else if (fontFamily != null) {
+			assert modifier == null;
+			sb.append(fontFamily);
+		} else if (modifier != null) {
+			assert fontFamily == null;
+			sb.append(modifier);
+		} else {
+			assert false;
+		}
+		sb.append("\"");
 	}
 
 	private void underline() {

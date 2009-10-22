@@ -40,24 +40,28 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.EmptyImageBuilder;
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngSizer;
@@ -72,8 +76,7 @@ public final class CucaDiagramPngMaker {
 
 	private final CucaDiagram diagram;
 	private final StaticFiles staticFiles;
-
-	final private Font font = new Font("Courier", Font.BOLD, 17);
+	private final Rose rose = new Rose();
 
 	static private final Graphics2D dummyGraphics2D;
 
@@ -87,7 +90,7 @@ public final class CucaDiagramPngMaker {
 		this.staticFiles = new StaticFiles(diagram.getSkinParam());
 	}
 
-	public List<File> createPng(File pngFile, String... dotStrings) throws IOException, InterruptedException {
+	public List<File> createPng(File pngFile, List<String> dotStrings) throws IOException, InterruptedException {
 
 		OutputStream os = null;
 		try {
@@ -103,12 +106,34 @@ public final class CucaDiagramPngMaker {
 				.getFiles();
 	}
 
-	public void createPng(OutputStream os, String... dotStrings) throws IOException, InterruptedException {
+	private static int cpt = 1;
+
+	static private void traceDotString(String dotString) throws IOException {
+		final File f = new File("dottmpfile" + cpt + ".tmp");
+		cpt++;
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(f));
+			pw.print(dotString);
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+
+	}
+
+	public void createPng(OutputStream os, List<String> dotStrings) throws IOException, InterruptedException {
 		final Map<Entity, File> imageFiles = new HashMap<Entity, File>();
 		try {
 			populateImages(imageFiles);
 			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(), imageFiles, dotStrings);
 			final String dotString = dotMaker.createDotString();
+
+			if (OptionFlags.getInstance().isKeepTmpFiles()) {
+				traceDotString(dotString);
+			}
+
 			final boolean isUnderline = dotMaker.isUnderline();
 			final Graphviz graphviz = GraphvizUtils.create(dotString);
 
@@ -123,11 +148,11 @@ public final class CucaDiagramPngMaker {
 				new UnderlineTrick(im, new Color(Integer.parseInt("FEFECF", 16)), Color.BLACK).process();
 			}
 
-			HtmlColor htmlColor = diagram.getSkinParam().getFontColor();
-			if (htmlColor == null) {
-				htmlColor = new HtmlColor("black");
-			}
-			im = PngTitler.process(im, htmlColor.getColor(), diagram.getTitle());
+			final Color background = diagram.getSkinParam().getBackgroundColor().getColor();
+			final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.TITLE).getColor();
+			final String fontFamily = getSkinParam().getFontFamily(FontParam.TITLE);
+			final int fontSize = getSkinParam().getFontSize(FontParam.TITLE);
+			im = PngTitler.process(im, background, titleColor, diagram.getTitle(), fontSize, fontFamily);
 			if (diagram.isRotation()) {
 				im = PngRotation.process(im);
 			}
@@ -140,7 +165,7 @@ public final class CucaDiagramPngMaker {
 	}
 
 	private void cleanTemporaryFiles(final Map<Entity, File> imageFiles) {
-		if (Option.getInstance().isKeepFiles() == false) {
+		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			for (File f : imageFiles.values()) {
 				StaticFiles.delete(f);
 			}
@@ -148,7 +173,7 @@ public final class CucaDiagramPngMaker {
 	}
 
 	private GraphvizMaker createDotMaker(Map<EntityType, File> staticImages, Map<Entity, File> images,
-			String... dotStrings) {
+			List<String> dotStrings) {
 		// return new NeatoMaker(diagram, dotStrings);
 		return new DotMaker(staticImages, images, diagram, dotStrings);
 	}
@@ -181,12 +206,13 @@ public final class CucaDiagramPngMaker {
 
 		final Rose skin = new Rose();
 
-		final Component comp = skin.createComponent(ComponentType.NOTE, diagram.getSkinParam(), StringUtils
+		final Component comp = skin.createComponent(ComponentType.NOTE, getSkinParam(), StringUtils
 				.getWithNewlines(entity.getDisplay()));
 		final int width = (int) comp.getPreferredWidth(dummyGraphics2D);
 		final int height = (int) comp.getPreferredHeight(dummyGraphics2D);
 
-		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, Color.WHITE);
+		final Color background = diagram.getSkinParam().getBackgroundColor().getColor();
+		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, background);
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
 
@@ -209,19 +235,24 @@ public final class CucaDiagramPngMaker {
 		}
 
 		final File f = createTempFile("plantumlA");
-		final Color red = new Rose().getBorderHtmlColor(diagram.getSkinParam()).getColor();
-		final Color yellow = new Rose().getBoxHtmlColor(diagram.getSkinParam()).getColor();
+		final Color classBorder = rose.getHtmlColor(getSkinParam(), ColorParam.classBorder).getColor();
+		final Color classBackground = rose.getHtmlColor(getSkinParam(), ColorParam.classBackground).getColor();
+		final Font font = new Font("Courier", Font.BOLD, 17);
 		final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), font, stereotype
-				.getColor(), red, Color.BLACK);
-		staticFiles.generateCircleCharacterFile(f, circledCharacter, yellow);
+				.getColor(), classBorder, Color.BLACK);
+		staticFiles.generateCircleCharacterFile(f, circledCharacter, classBackground);
 		return f;
 
+	}
+
+	private SkinParam getSkinParam() {
+		return diagram.getSkinParam();
 	}
 
 	private File createTempFile(String prefix) throws IOException {
 		final File f = File.createTempFile(prefix, ".png");
 		Log.info("Creating temporary file: " + f);
-		if (Option.getInstance().isKeepFiles() == false) {
+		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			f.deleteOnExit();
 		}
 		return f;

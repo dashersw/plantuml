@@ -44,9 +44,34 @@ import net.sourceforge.plantuml.cucadiagram.LinkType;
 public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 
 	public CommandLinkActivity(ActivityDiagram diagram) {
-		super(diagram, "(?i)^([§*]|\\<\\>|\\[\\]|==+)?\\s*(\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?"
-				+ "\\s*(\\[[^\\]]+\\])?\\s*([=-]+[>\\]]|[<\\[][=-]+)\\s*(\\[[^\\]]+\\])?\\s*"
-				+ "([*§]|\\<\\>|\\[\\]|==+)?\\s*(\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?$");
+		super(
+				diagram,
+				"(?i)^([\\u00A7*]|\\<\\>|\\[\\]|==+)?\\s*(\\(\\*\\)|\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?"
+						+ "\\s*(\\[[^\\]]+\\])?\\s*([=-]+[>\\]]|[<\\[][=-]+)\\s*(\\[[^\\]]+\\])?\\s*"
+						+ "([*\\u00A7]|\\<\\>|\\[\\]|==+)?\\s*(\\(\\*\\)|\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?$");
+	}
+
+	@Override
+	protected boolean isDeprecated(String line) {
+		if (line.indexOf('\u00A7') != -1) {
+			return true;
+		}
+		if (line.indexOf("*start") != -1) {
+			return true;
+		}
+		if (line.indexOf("*end") != -1) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String getHelpMessageForDeprecated(List<String> lines) {
+		String s = lines.get(0);
+		s = s.replaceAll("[\\u00A7]\\w+", "(*)");
+		s = s.replaceAll("\\*start", "(*)");
+		s = s.replaceAll("\\*end", "(*)");
+		return s;
 	}
 
 	@Override
@@ -58,10 +83,19 @@ public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 
 		final String label = getLabel(arg.get(4), arg.get(6));
 
-		final Entity entity1 = getEntity(lastEntityConsulted, getSystem(), arg.get(1), arg.get(2), arg.get(3), type1,
-				label);
-		final Entity entity2 = getEntity(lastEntityConsulted, getSystem(), arg.get(8), arg.get(9), arg.get(10), type2,
-				label);
+		final Entity entity1;
+		if ("(*)".equals(arg.get(1))) {
+			entity1 = getSystem().getStart();
+		} else {
+			entity1 = getEntity(lastEntityConsulted, getSystem(), arg.get(1), arg.get(2), arg.get(3), type1, label);
+		}
+
+		final Entity entity2;
+		if ("(*)".equals(arg.get(8))) {
+			entity2 = getSystem().getEnd();
+		} else {
+			entity2 = getEntity(lastEntityConsulted, getSystem(), arg.get(8), arg.get(9), arg.get(10), type2, label);
+		}
 
 		if (entity1 == null || entity2 == null) {
 			return false;
@@ -93,6 +127,11 @@ public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 		if (arg1 == null) {
 			return label == null ? lastEntityConsulted : system.getLastEntityBrancheConsulted();
 		}
+
+		if (arg1.equals("(*)")) {
+			throw new IllegalArgumentException();
+		}
+
 		final String display;
 		final String code;
 		if (arg2 == null) {
@@ -106,25 +145,6 @@ public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 
 	}
 
-	// static Entity getEntity2(final Entity lastEntityConsulted,
-	// ActivityDiagram system, List<String> arg,
-	// final EntityType type2, final String label) {
-	// if (arg.get(8) == null) {
-	// return label == null ? lastEntityConsulted :
-	// system.getLastEntityBrancheConsulted();
-	// }
-	// final String display;
-	// final String code;
-	// if (arg.get(9) == null) {
-	// display = arg.get(8);
-	// code = arg.get(8);
-	// } else {
-	// display = arg.get(9);
-	// code = arg.get(10) != null ? arg.get(10) : arg.get(9);
-	// }
-	// return system.getOrCreate(code, display, type2);
-	// }
-
 	static String getLabel(String arg4, String arg6) {
 		return arg6 != null ? arg6 : arg4;
 	}
@@ -133,7 +153,7 @@ public class CommandLinkActivity extends SingleLineCommand<ActivityDiagram> {
 		if (type == null) {
 			return EntityType.ACTIVITY;
 		}
-		if (type.equals("*") || type.equals("§")) {
+		if (type.equals("*") || type.equals("\u00A7")) {
 			return circle;
 		}
 		if (type.equals("<>")) {

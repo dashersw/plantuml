@@ -39,13 +39,13 @@ public abstract class Log {
 	}
 
 	public static void info(String s) {
-		if (Option.getInstance().isVerbose()) {
+		if (OptionFlags.getInstance().isVerbose()) {
 			System.out.println(format(s));
 		}
 	}
 
 	public static void error(String s) {
-		System.err.println(format(s));
+		System.err.println(s);
 	}
 
 	private static String format(String s) {

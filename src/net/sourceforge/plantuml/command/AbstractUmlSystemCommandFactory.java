@@ -29,15 +29,51 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.usecasediagram.command;
+package net.sourceforge.plantuml.command;
 
-import net.sourceforge.plantuml.classdiagram.command.AbstractCommandMultilinesNoteEntity;
-import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CommandMultilinesUsecaseNoteEntity extends AbstractCommandMultilinesNoteEntity {
+public abstract class AbstractUmlSystemCommandFactory implements PSystemCommandFactory {
 
-	public CommandMultilinesUsecaseNoteEntity(final UsecaseDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?(\\w+|:[^:]+:|\\((?!\\*\\))[^)]+\\))$");
+	protected AbstractUmlSystemCommandFactory() {
+		reset();
+	}
+
+	private List<Command> cmds = new ArrayList<Command>();
+
+	final public CommandControl isValid(List<String> lines) {
+		for (Command cmd : cmds) {
+			final CommandControl result = cmd.isValid(lines);
+			if (result == CommandControl.OK || result == CommandControl.OK_PARTIAL) {
+				return result;
+			}
+		}
+		return CommandControl.NOT_OK;
+
+	}
+
+	final public Command createCommand(List<String> lines) {
+		for (Command cmd : cmds) {
+			final CommandControl result = cmd.isValid(lines);
+			if (result == CommandControl.OK) {
+				return cmd;
+			} else if (result == CommandControl.OK_PARTIAL) {
+				throw new IllegalArgumentException();
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	final public void reset() {
+		cmds = new ArrayList<Command>();
+		initCommands();
+	}
+
+	protected abstract void initCommands();
+
+	protected final void addCommand(Command cmd) {
+		cmds.add(cmd);
 	}
 
 }

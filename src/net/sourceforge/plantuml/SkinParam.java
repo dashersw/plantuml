@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml;
 
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,39 +42,52 @@ public class SkinParam {
 	private final Map<String, String> params = new HashMap<String, String>();
 
 	public void setParam(String key, String value) {
-		params.put(key.toLowerCase(), value);
+		params.put(key.toLowerCase().trim(), value.trim());
 	}
 
 	public HtmlColor getBackgroundColor() {
-		return null;
+		final HtmlColor result = getHtmlColor(ColorParam.background);
+		if (result == null) {
+			return new HtmlColor("white");
+		}
+		return result;
 	}
 
-	public HtmlColor getBoxBackgroundColor() {
-		return getColorFromParam("boxbackgroundcolor");
+	public String getValue(String key) {
+		return params.get(key.toLowerCase().replaceAll("_", ""));
 	}
 
-	public HtmlColor getFontColor() {
-		return getColorFromParam("fontcolor");
-	}
-
-	public HtmlColor getBorderColor() {
-		return getColorFromParam("bordercolor");
-	}
-
-	public HtmlColor getArrowColor() {
-		return getColorFromParam("arrowcolor");
-	}
-
-	public HtmlColor getNoteBackgroundColor() {
-		return getColorFromParam("notebackgroundcolor");
-	}
-
-	private HtmlColor getColorFromParam(String key) {
-		final String value = params.get(key);
-		if (value == null) {
+	public HtmlColor getHtmlColor(ColorParam param) {
+		final String value = getValue(param.name() + "color");
+		if (value == null || HtmlColor.isValid(value) == false) {
 			return null;
 		}
 		return new HtmlColor(value);
+	}
+
+	public int getFontSize(FontParam param) {
+		final String value = getValue(param.name() + "fontsize");
+		if (value == null || value.matches("\\d+") == false) {
+			return param.getDefaultSize();
+		}
+		return Integer.parseInt(value);
+	}
+
+	public String getFontFamily(FontParam param) {
+		// Aapex, Times, Helvetica, Courier or Symbol
+		return getValue(param.name() + "fontname");
+	}
+
+	public HtmlColor getFontHtmlColor(FontParam param) {
+		String value = getValue(param.name() + "fontcolor");
+		if (value == null) {
+			value = param.getDefaultColor();
+		}
+		return new HtmlColor(value);
+	}
+
+	public Font getFont(FontParam fontParam) {
+		return new Font(getFontFamily(fontParam), fontParam.getFontType(), getFontSize(fontParam));
 	}
 
 }

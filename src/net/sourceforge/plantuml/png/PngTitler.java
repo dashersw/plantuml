@@ -46,20 +46,21 @@ import net.sourceforge.plantuml.graphic.TextBlockUtils;
 
 public class PngTitler {
 
-	static private final Font normalFont = new Font("SansSerif", Font.PLAIN, 18);
-
-	static public BufferedImage process(BufferedImage im, Color color, List<String> titles) throws IOException {
+	static public BufferedImage process(BufferedImage im, Color background, Color textColor, List<String> titles,
+			int fontSize, String fontFamily) throws IOException {
 		if (titles != null && titles.size() > 0) {
-			im = addTitle(im, color, titles);
+			im = addTitle(im, background, textColor, titles, fontSize, fontFamily);
 		}
 		return im;
 
 	}
 
-	static private BufferedImage addTitle(BufferedImage im, Color color, List<String> titles) throws IOException {
+	static private BufferedImage addTitle(BufferedImage im, Color background, Color textColor, List<String> titles,
+			int fontSize, String fontFamily) throws IOException {
 
+		final Font normalFont = new Font(fontFamily, Font.PLAIN, fontSize);
 		final Graphics2D oldg2d = im.createGraphics();
-		final TextBlock title = TextBlockUtils.create(titles, normalFont, color, HorizontalAlignement.CENTER);
+		final TextBlock title = TextBlockUtils.create(titles, normalFont, textColor, HorizontalAlignement.CENTER);
 		final Dimension2D dimTitle = title.calculateDimension(oldg2d);
 		oldg2d.dispose();
 
@@ -70,7 +71,7 @@ public class PngTitler {
 		final Graphics2D g2d = newIm.createGraphics();
 
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-		g2d.setColor(Color.WHITE);
+		g2d.setColor(background);
 		g2d.fillRect(0, 0, newIm.getWidth(), newIm.getHeight());
 		double delta = (width - dimTitle.getWidth()) / 2;
 		title.draw(g2d, delta, 0);

@@ -35,11 +35,11 @@ package net.sourceforge.plantuml.version;
 public class Version {
 	
 	public static int version() {
-		return 3119;
+		return 3219;
 	}
 
 	public static long compileTime() {
-		return 1255284506062L;
+		return 1256041448343L;
 	}
 
 }

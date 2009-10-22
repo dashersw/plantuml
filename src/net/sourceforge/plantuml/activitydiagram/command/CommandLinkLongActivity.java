@@ -43,9 +43,34 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 public class CommandLinkLongActivity extends CommandMultilines<ActivityDiagram> {
 
 	public CommandLinkLongActivity(final ActivityDiagram diagram) {
-		super(diagram, "(?i)^([*§]|\\<\\>|\\[\\]|==+)?\\s*(\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?"
-				+ "\\s*(\\[[^\\]]+\\])?\\s*([=-]+[\\>\\]]|[\\<\\[][=-]+)\\s*(\\[[^\\]]+\\])?\\s*\"([^\"]*?)\\s*$",
+		super(
+				diagram,
+				"(?i)^([*\\u00A7]|\\<\\>|\\[\\]|==+)?\\s*(\\(\\*\\)|\\w+|\"([^\"]+)\"(?:\\s+as\\s+(\\w+))?)?(?:\\s*=+)?"
+						+ "\\s*(\\[[^\\]]+\\])?\\s*([=-]+[\\>\\]]|[\\<\\[][=-]+)\\s*(\\[[^\\]]+\\])?\\s*\"([^\"]*?)\\s*$",
 				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+(\\w+))?\\s*$");
+	}
+
+	@Override
+	public boolean isDeprecated(List<String> line) {
+		if (line.get(0).indexOf('\u00A7') != -1) {
+			return true;
+		}
+		if (line.get(0).indexOf("*start") != -1) {
+			return true;
+		}
+		if (line.get(0).indexOf("*end") != -1) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String getHelpMessageForDeprecated(List<String> lines) {
+		String s = lines.get(0);
+		s = s.replaceAll("[\\u00A7]\\w+", "(*)");
+		s = s.replaceAll("\\*start", "(*)");
+		s = s.replaceAll("\\*end", "(*)");
+		return s;
 	}
 
 	public boolean execute(List<String> lines) {
@@ -56,8 +81,14 @@ public class CommandLinkLongActivity extends CommandMultilines<ActivityDiagram> 
 
 		final EntityType type1 = CommandLinkActivity.getTypeFromString(line0.get(0), EntityType.CIRCLE_START);
 		final String label = CommandLinkActivity.getLabel(line0.get(4), line0.get(6));
-		final Entity entity1 = CommandLinkActivity.getEntity(lastEntityConsulted, getSystem(), line0.get(1), line0
-				.get(2), line0.get(3), type1, label);
+
+		final Entity entity1;
+		if ("(*)".equals(line0.get(1))) {
+			entity1 = getSystem().getStart();
+		} else {
+			entity1 = CommandLinkActivity.getEntity(lastEntityConsulted, getSystem(), line0.get(1), line0.get(2), line0
+					.get(3), type1, label);
+		}
 
 		final StringBuilder sb = new StringBuilder();
 
@@ -89,8 +120,7 @@ public class CommandLinkLongActivity extends CommandMultilines<ActivityDiagram> 
 		final String arrow = StringUtils.manageArrow(line0.get(5));
 		final int lenght = arrow.length() - 1;
 
-		final Link link = new Link(entity1, entity2, CommandLinkActivity.getLinkType(arrow), label, lenght,
-				null, null);
+		final Link link = new Link(entity1, entity2, CommandLinkActivity.getLinkType(arrow), label, lenght, null, null);
 
 		getSystem().addLink(link);
 

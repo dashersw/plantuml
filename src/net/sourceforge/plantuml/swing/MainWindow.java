@@ -61,6 +61,7 @@ import javax.swing.Timer;
 import net.sourceforge.plantuml.DirWatcher;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.Option;
 
 public class MainWindow extends JFrame {
 
@@ -83,7 +84,7 @@ public class MainWindow extends JFrame {
 
 	private MainWindow(File dir) {
 		super(dir.getAbsolutePath());
-		dirWatcher = new DirWatcher(dir, false);
+		dirWatcher = new DirWatcher(dir, false, new Option());
 
 		Log.info("Showing MainWindow");
 		scrollPane = new JScrollPane(jList1);
@@ -145,7 +146,7 @@ public class MainWindow extends JFrame {
 
 	private void changeDir(File dir) {
 		prefs.put(KEY_DIR, dir.getAbsolutePath());
-		dirWatcher = new DirWatcher(dir, false);
+		dirWatcher = new DirWatcher(dir, false, new Option());
 		setTitle(dir.getAbsolutePath());
 		Log.info("Creating DirWatcher");
 		currentDirectoryListing.clear();

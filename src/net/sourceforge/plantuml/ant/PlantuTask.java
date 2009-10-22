@@ -40,6 +40,7 @@ import java.util.List;
 import net.sourceforge.plantuml.DirWatcher;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SourceFileReader;
 import net.sourceforge.plantuml.preproc.Defines;
 
@@ -65,6 +66,7 @@ public class PlantuTask extends Task {
 
 	private String dir = null;
 	private String recurse = "false";
+	private final Option option = new Option();
 	private List<FileSet> filesets = new ArrayList<FileSet>();
 	private List<FileList> filelists = new ArrayList<FileList>();
 
@@ -140,8 +142,8 @@ public class PlantuTask extends Task {
 
 	private void processingSingleFile(final File f) throws IOException, InterruptedException {
 		this.log("Processing " + f.getAbsolutePath());
-		final Collection<GeneratedImage> result = new SourceFileReader(new Defines(), f, Option.getInstance()
-				.getOutputDir(), Option.getInstance().getConfig()).getGeneratedImages();
+		final Collection<GeneratedImage> result = new SourceFileReader(new Defines(), f, option.getOutputDir(), option
+				.getConfig()).getGeneratedImages();
 		for (GeneratedImage g : result) {
 			this.log(g + " " + g.getDescription());
 		}
@@ -153,7 +155,7 @@ public class PlantuTask extends Task {
 			this.log(s);
 			throw new BuildException(s);
 		}
-		final DirWatcher dirWatcher = new DirWatcher(f, recurse);
+		final DirWatcher dirWatcher = new DirWatcher(f, recurse, option);
 		final Collection<GeneratedImage> result = dirWatcher.buildCreatedFiles();
 		for (GeneratedImage g : result) {
 			this.log(g + " " + g.getDescription());
@@ -169,12 +171,12 @@ public class PlantuTask extends Task {
 	}
 
 	public void setOutput(String s) {
-		Option.getInstance().setOutputDir(new File(s));
+		option.setOutputDir(new File(s));
 	}
 
 	public void setConfig(String s) {
 		try {
-			Option.getInstance().initConfig(s);
+			option.initConfig(s);
 		} catch (IOException e) {
 			log("Error reading " + s);
 		}
@@ -182,6 +184,18 @@ public class PlantuTask extends Task {
 
 	public void setRecurse(String s) {
 		this.recurse = s;
+	}
+
+	public void setKeepTmpFiles(String s) {
+		if ("true".equalsIgnoreCase(s)) {
+			OptionFlags.getInstance().setKeepTmpFiles(true);
+		}
+	}
+
+	public void setVerbose(String s) {
+		if ("true".equalsIgnoreCase(s)) {
+			OptionFlags.getInstance().setVerbose(true);
+		}
 	}
 
 }

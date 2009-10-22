@@ -31,78 +31,53 @@
  */
 package net.sourceforge.plantuml.componentdiagram;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
-import net.sourceforge.plantuml.command.Command;
-import net.sourceforge.plantuml.command.CommandControl;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandMinwidth;
 import net.sourceforge.plantuml.command.CommandMultilinesTitle;
 import net.sourceforge.plantuml.command.CommandRotate;
 import net.sourceforge.plantuml.command.CommandSkinParam;
 import net.sourceforge.plantuml.command.CommandTitle;
-import net.sourceforge.plantuml.command.PSystemCommandFactory;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandLinkComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandMultilinesComponentNoteEntity;
 import net.sourceforge.plantuml.componentdiagram.command.CommandNoopComponent;
 
-public class ComponentDiagramFactory implements PSystemCommandFactory {
+public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 	private ComponentDiagram system;
-
-	private List<Command> cmds;
-
-	public ComponentDiagramFactory() {
-		reset();
-	}
-
-	public List<Command> create(List<String> lines) {
-		for (Command cmd : cmds) {
-			final CommandControl result = cmd.isValid(lines);
-			if (result == CommandControl.OK) {
-				return Arrays.asList(cmd);
-			} else if (result == CommandControl.OK_PARTIAL) {
-				return Collections.emptyList();
-			}
-		}
-		return null;
-	}
 
 	public ComponentDiagram getSystem() {
 		return system;
 	}
 
-	public void reset() {
+	@Override
+	protected void initCommands() {
 		system = new ComponentDiagram();
-		cmds = new ArrayList<Command>();
+		
+		addCommand(new CommandRotate(system));
+		addCommand(new CommandPage(system));
+		addCommand(new CommandLinkComponent(system));
 
-		cmds.add(new CommandRotate(system));
-		cmds.add(new CommandPage(system));
-		cmds.add(new CommandLinkComponent(system));
+		addCommand(new CommandPackage(system));
+		addCommand(new CommandNoteEntity(system));
 
-		cmds.add(new CommandPackage(system));
-		cmds.add(new CommandNoteEntity(system));
+		addCommand(new CommandCreateNote(system));
+		addCommand(new CommandCreateComponent(system));
+		addCommand(new CommandCreateCircleInterface(system));
 
-		cmds.add(new CommandCreateNote(system));
-		cmds.add(new CommandCreateComponent(system));
-		cmds.add(new CommandCreateCircleInterface(system));
+		addCommand(new CommandMultilinesComponentNoteEntity(system));
+		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(new CommandMinwidth(system));
 
-		cmds.add(new CommandMultilinesComponentNoteEntity(system));
-		cmds.add(new CommandMultilinesStandaloneNote(system));
-		cmds.add(new CommandMinwidth(system));
-
-		cmds.add(new CommandTitle(system));
-		cmds.add(new CommandMultilinesTitle(system));
-		cmds.add(new CommandNoopComponent(system));
-		cmds.add(new CommandSkinParam(system));
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
+		addCommand(new CommandNoopComponent(system));
+		addCommand(new CommandSkinParam(system));
 	}
 }

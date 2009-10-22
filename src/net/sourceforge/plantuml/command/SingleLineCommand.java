@@ -105,4 +105,19 @@ public abstract class SingleLineCommand<S extends PSystem> implements Command {
 		return StringUtils.getSplit(pattern, line);
 	}
 
+	final public boolean isDeprecated(List<String> lines) {
+		if (lines.size() != 1) {
+			return false;
+		}
+		return isDeprecated(lines.get(0));
+	}
+	
+	public String getHelpMessageForDeprecated(List<String> lines) {
+		return null;
+	}
+
+	protected boolean isDeprecated(String line) {
+		return false;
+	}
+
 }

@@ -37,5 +37,7 @@ import net.sourceforge.plantuml.PSystemFactory;
 
 public interface PSystemCommandFactory extends PSystemFactory {
 
-	List<Command> create(List<String> line);
+	CommandControl isValid(List<String> lines);
+	
+	Command createCommand(List<String> lines);
 }
