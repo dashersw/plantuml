@@ -29,45 +29,35 @@
  * Original Author:  Arnaud Roques (for Atos Origin).
  *
  */
-package net.sourceforge.plantuml.png;
+package net.sourceforge.plantuml.command;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.util.List;
+import java.util.regex.Matcher;
 
-import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 
-public class PngSizer {
+public class CommandMultilinesHeader extends CommandMultilines<UmlDiagram> {
 
-	static public BufferedImage process(BufferedImage im, int minsize) {
-
-		if (minsize != Integer.MAX_VALUE) {
-			return resize(im, minsize);
-		}
-		return im;
-
+	public CommandMultilinesHeader(final UmlDiagram diagram) {
+		super(diagram, "(?i)^(?:(left|right|center)?\\s*)header$", "(?i)^end ?header$");
 	}
 
-	static private BufferedImage resize(BufferedImage im, int minsize) {
-		Log.info("Resizing file to " + minsize);
-
-		if (im.getWidth() >= minsize) {
-			return im;
+	public boolean execute(List<String> lines) {
+		final Matcher m = getStartingPattern().matcher(lines.get(0));
+		if (m.find() == false) {
+			throw new IllegalStateException();
 		}
-
-		final BufferedImage newIm = new BufferedImage(minsize, im.getHeight(), BufferedImage.TYPE_INT_RGB);
-		final Graphics2D g2d = newIm.createGraphics();
-		// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.setColor(Color.WHITE);
-		g2d.fillRect(0, 0, newIm.getWidth(), newIm.getHeight());
-		final int delta = (minsize - im.getWidth()) / 2;
-		g2d.drawImage(im, delta, 0, null);
-
-		g2d.dispose();
-		
-		return newIm;
-
+		final String align = m.group(1);
+		if (align != null) {
+			getSystem().setHeaderAlignement(HorizontalAlignement.valueOf(align.toUpperCase()));
+		}
+		final List<String> strings = lines.subList(1, lines.size() - 1);
+		if (strings.size() > 0) {
+			getSystem().setHeader(strings);
+			return true;
+		}
+		return false;
 	}
 
 }

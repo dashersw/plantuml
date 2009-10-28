@@ -51,6 +51,8 @@ public enum FontParam {
 	SEQUENCE_PARTICIPANT(13, Font.PLAIN, "black"),
 	SEQUENCE_TITLE(13, Font.BOLD, "black"),
 	TITLE(18, Font.PLAIN, "black"),
+	FOOTER(10, Font.PLAIN, "#888888"),
+	HEADER(10, Font.PLAIN, "#888888"),
 	USECASE(14, Font.PLAIN, "black"),
 	USECASE_ACTOR(14, Font.PLAIN, "black"),
 	USECASE_ARROW(13, Font.PLAIN, "black");

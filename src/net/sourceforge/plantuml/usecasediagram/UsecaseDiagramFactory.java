@@ -37,11 +37,6 @@ import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandMinwidth;
-import net.sourceforge.plantuml.command.CommandMultilinesTitle;
-import net.sourceforge.plantuml.command.CommandRotate;
-import net.sourceforge.plantuml.command.CommandSkinParam;
-import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase;
 import net.sourceforge.plantuml.usecasediagram.command.CommandLinkUsecase;
@@ -60,12 +55,10 @@ public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 	protected void initCommands() {
 		system = new UsecaseDiagram();
 
-		addCommand(new CommandRotate(system));
 		addCommand(new CommandPage(system));
 		addCommand(new CommandLinkUsecase(system));
 
 		addCommand(new CommandPackage(system));
-		// cmds.add(new CommandStereotype(system));
 		addCommand(new CommandNoteEntity(system));
 
 		addCommand(new CommandCreateNote(system));
@@ -74,12 +67,8 @@ public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommand(new CommandMultilinesUsecaseNoteEntity(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));
-		addCommand(new CommandMinwidth(system));
 		addCommand(new CommandNoopUsecase(system));
 
-		addCommand(new CommandTitle(system));
-		addCommand(new CommandMultilinesTitle(system));
-
-		addCommand(new CommandSkinParam(system));
+		addCommonCommands(system);
 	}
 }

@@ -34,13 +34,12 @@ package net.sourceforge.plantuml.png;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import net.sourceforge.plantuml.Log;
 
 public class PngRotation {
 
-	public static BufferedImage process(BufferedImage im) throws IOException {
+	public static BufferedImage process(BufferedImage im) {
 
 		Log.info("Rotation");
 

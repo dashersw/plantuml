@@ -46,10 +46,13 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmptyImageBuilder;
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.graphic.VerticalPosition;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngSizer;
+import net.sourceforge.plantuml.png.PngTitler;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
@@ -69,18 +72,15 @@ public class SequenceDiagramPngMaker {
 	static {
 		final BufferedImage imDummy = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
 		g2dummy = imDummy.createGraphics();
-
 	}
 
-	private final SequenceDiagram sequenceDiagram;
-
+	private final SequenceDiagram diagram;
 	private final DrawableSet drawableSet;
-
 	private final Dimension2D fullDimension;
 	private final List<Page> pages;
 
 	public SequenceDiagramPngMaker(SequenceDiagram sequenceDiagram, Skin skin) {
-		this.sequenceDiagram = sequenceDiagram;
+		this.diagram = sequenceDiagram;
 		final DrawableSetInitializer initializer = new DrawableSetInitializer(skin, sequenceDiagram.getSkinParam(),
 				sequenceDiagram.isShowFootbox());
 
@@ -121,60 +121,37 @@ public class SequenceDiagramPngMaker {
 	private PageSplitter create(DrawableSet drawableSet, Map<Newpage, Double> positions, boolean showFootbox,
 			List<String> title) {
 
-		// double titleHeight = 0;
-		// if (drawableSet.getComponentTitle() != null) {
-		// titleHeight =
-		// drawableSet.getComponentTitle().getPreferredHeight(g2dummy);
-		// }
 		final double headerHeight = drawableSet.getHeadHeight(g2dummy);
 		final double tailHeight = drawableSet.getTailHeight(g2dummy, showFootbox);
 		final double signatureHeight = 0;
 		final double newpageHeight = drawableSet.getSkin().createComponent(ComponentType.NEWPAGE,
 				drawableSet.getSkinParam(), Arrays.asList("")).getPreferredHeight(g2dummy);
 
-		return new PageSplitter(fullDimension.getHeight(), /* titleHeight, */headerHeight, positions, tailHeight,
-				signatureHeight, newpageHeight, title);
-	}
-
-	private File writeOneFile(final File pngFile, final int width, final Page page, final int indice)
-			throws IOException {
-		BufferedImage im = createImage(width, page, indice);
-		if (sequenceDiagram.isRotation()) {
-			im = PngRotation.process(im);
-		}
-		im = PngSizer.process(im, sequenceDiagram.getMinwidth());
-
-		final File f = computeFilename(pngFile, indice);
-
-		Log.info("Creating file: " + f);
-		PngIO.write(im, f, sequenceDiagram.getSource());
-
-		return f;
+		return new PageSplitter(fullDimension.getHeight(), headerHeight, positions, tailHeight, signatureHeight,
+				newpageHeight, title);
 	}
 
 	public List<File> createPng(final File pngFile) throws IOException {
-
 		final List<File> result = new ArrayList<File>();
 		for (int i = 0; i < pages.size(); i++) {
-			result.add(writeOneFile(pngFile, (int) fullDimension.getWidth(), pages.get(i), i));
+			final BufferedImage im = createImage((int) fullDimension.getWidth(), pages.get(i), i);
+			final File f = computeFilename(pngFile, i);
+			Log.info("Creating file: " + f);
+			PngIO.write(im, f, diagram.getSource());
+			result.add(f);
 		}
 		return result;
 	}
 
 	public void createPng(OutputStream os) throws IOException {
 		final BufferedImage im = createImage((int) fullDimension.getWidth(), pages.get(0), 0);
-		PngIO.write(im, os, sequenceDiagram.getSource());
+		PngIO.write(im, os, diagram.getSource());
 	}
 
 	private BufferedImage createImage(final int diagramWidth, final Page page, final int indice) {
 		double delta = 0;
 		if (indice > 0) {
-			// if (page.getTitle() == null) {
 			delta = page.getNewpage1() - page.getHeaderHeight();
-			// } else {
-			// delta = page.getNewpage1() - page.getHeaderHeight() -
-			// page.getTitleHeight();
-			// }
 		}
 		if (delta < 0) {
 			throw new IllegalArgumentException();
@@ -192,17 +169,19 @@ public class SequenceDiagramPngMaker {
 
 		final int width = Math.max(titleWidth, diagramWidth);
 		final int height = (int) (titleHeight + page.getHeight());
-		
-		final Color backColor = sequenceDiagram.getSkinParam().getBackgroundColor().getColor();
+
+		final Color backColor = diagram.getSkinParam().getBackgroundColor().getColor();
 
 		final EmptyImageBuilder builder = new EmptyImageBuilder(width, height, backColor);
 
-		final BufferedImage im = builder.getBufferedImage();
+		BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2dOk = builder.getGraphics2D();
 
 		if (compTitle != null) {
 			g2dOk.translate((width - titleWidth) / 2, 0);
-			drawTitle(g2dOk, compTitle);
+			final double h = compTitle.getPreferredHeight(g2dOk);
+			final double w = compTitle.getPreferredWidth(g2dOk);
+			compTitle.draw(g2dOk, new Dimension2DDouble(w, h), new SimpleContext2D(false));
 			g2dOk.translate(-(width - titleWidth) / 2, 0);
 		}
 
@@ -210,19 +189,19 @@ public class SequenceDiagramPngMaker {
 			g2dOk.translate((width - diagramWidth) / 2, titleHeight);
 		}
 
-		// final boolean showTitle = indice == 0 || page.getTitle() != null;
-		drawableSet.draw(g2dOk, delta, im.getWidth(), page, /* showTitle, */sequenceDiagram.isShowFootbox());
+		drawableSet.draw(g2dOk, delta, im.getWidth(), page, diagram.isShowFootbox());
 		g2dOk.dispose();
-		return im;
-	}
 
-	private void drawTitle(Graphics2D g2d, Component compTitle) {
-		final double h = compTitle.getPreferredHeight(g2d);
-		final double w = compTitle.getPreferredWidth(g2d);
-		// final double xpos = (getMaxX() - w) / 2;
-		// g2d.translate(xpos, 0);
-		compTitle.draw(g2d, new Dimension2DDouble(w, h), new SimpleContext2D(false));
-		// g2d.translate(-xpos, 0);
+		final Color background = diagram.getSkinParam().getBackgroundColor().getColor();
+		im = addFooter(im, background);
+		im = addHeader(im, background);
+
+		if (diagram.isRotation()) {
+			im = PngRotation.process(im);
+		}
+		im = PngSizer.process(im, diagram.getMinwidth());
+
+		return im;
 	}
 
 	static public File computeFilename(File pngFile, int i) {
@@ -235,5 +214,25 @@ public class SequenceDiagramPngMaker {
 		return new File(dir, name);
 
 	}
+	
+	private BufferedImage addFooter(BufferedImage im, final Color background) {
+		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER).getColor();
+		final String fontFamily = diagram.getSkinParam().getFontFamily(FontParam.FOOTER);
+		final int fontSize = diagram.getSkinParam().getFontSize(FontParam.FOOTER);
+		im = PngTitler.process(im, background, titleColor, diagram.getFooter(), fontSize, fontFamily,
+				diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
+		return im;
+	}
+
+	private BufferedImage addHeader(BufferedImage im, final Color background) {
+		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER).getColor();
+		final String fontFamily = diagram.getSkinParam().getFontFamily(FontParam.HEADER);
+		final int fontSize = diagram.getSkinParam().getFontSize(FontParam.HEADER);
+		im = PngTitler.process(im, background, titleColor, diagram.getHeader(), fontSize, fontFamily,
+				diagram.getHeaderAlignement(), VerticalPosition.TOP);
+		return im;
+	}
+
+
 
 }

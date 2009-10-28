@@ -62,6 +62,8 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
+import net.sourceforge.plantuml.graphic.HorizontalAlignement;
+import net.sourceforge.plantuml.graphic.VerticalPosition;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngSizer;
@@ -149,10 +151,10 @@ public final class CucaDiagramPngMaker {
 			}
 
 			final Color background = diagram.getSkinParam().getBackgroundColor().getColor();
-			final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.TITLE).getColor();
-			final String fontFamily = getSkinParam().getFontFamily(FontParam.TITLE);
-			final int fontSize = getSkinParam().getFontSize(FontParam.TITLE);
-			im = PngTitler.process(im, background, titleColor, diagram.getTitle(), fontSize, fontFamily);
+			im = addTitle(im, background);
+			im = addFooter(im, background);
+			im = addHeader(im, background);
+
 			if (diagram.isRotation()) {
 				im = PngRotation.process(im);
 			}
@@ -162,6 +164,33 @@ public final class CucaDiagramPngMaker {
 		} finally {
 			cleanTemporaryFiles(imageFiles);
 		}
+	}
+
+	private BufferedImage addTitle(BufferedImage im, final Color background) {
+		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.TITLE).getColor();
+		final String fontFamily = getSkinParam().getFontFamily(FontParam.TITLE);
+		final int fontSize = getSkinParam().getFontSize(FontParam.TITLE);
+		im = PngTitler.process(im, background, titleColor, diagram.getTitle(), fontSize, fontFamily,
+				HorizontalAlignement.CENTER, VerticalPosition.TOP);
+		return im;
+	}
+
+	private BufferedImage addFooter(BufferedImage im, final Color background) {
+		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER).getColor();
+		final String fontFamily = getSkinParam().getFontFamily(FontParam.FOOTER);
+		final int fontSize = getSkinParam().getFontSize(FontParam.FOOTER);
+		im = PngTitler.process(im, background, titleColor, diagram.getFooter(), fontSize, fontFamily, diagram
+				.getFooterAlignement(), VerticalPosition.BOTTOM);
+		return im;
+	}
+
+	private BufferedImage addHeader(BufferedImage im, final Color background) throws IOException {
+		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER).getColor();
+		final String fontFamily = getSkinParam().getFontFamily(FontParam.HEADER);
+		final int fontSize = getSkinParam().getFontSize(FontParam.HEADER);
+		im = PngTitler.process(im, background, titleColor, diagram.getHeader(), fontSize, fontFamily, diagram
+				.getHeaderAlignement(), VerticalPosition.TOP);
+		return im;
 	}
 
 	private void cleanTemporaryFiles(final Map<Entity, File> imageFiles) {

@@ -74,7 +74,7 @@ public class SkinParam {
 	}
 
 	public String getFontFamily(FontParam param) {
-		// Aapex, Times, Helvetica, Courier or Symbol
+		// Times, Helvetica, Courier or Symbol
 		return getValue(param.name() + "fontname");
 	}
 

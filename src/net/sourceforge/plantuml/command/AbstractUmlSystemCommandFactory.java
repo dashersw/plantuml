@@ -34,6 +34,8 @@ package net.sourceforge.plantuml.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.plantuml.UmlDiagram;
+
 public abstract class AbstractUmlSystemCommandFactory implements PSystemCommandFactory {
 
 	protected AbstractUmlSystemCommandFactory() {
@@ -71,6 +73,21 @@ public abstract class AbstractUmlSystemCommandFactory implements PSystemCommandF
 	}
 
 	protected abstract void initCommands();
+
+	final protected void addCommonCommands(UmlDiagram system) {
+		addCommand(new CommandTitle(system));
+		addCommand(new CommandMultilinesTitle(system));
+		
+		addCommand(new CommandFooter(system));
+		addCommand(new CommandMultilinesFooter(system));
+		
+		addCommand(new CommandHeader(system));
+		addCommand(new CommandMultilinesHeader(system));
+		
+		addCommand(new CommandSkinParam(system));
+		addCommand(new CommandMinwidth(system));
+		addCommand(new CommandRotate(system));
+	}
 
 	protected final void addCommand(Command cmd) {
 		cmds.add(cmd);

@@ -33,6 +33,8 @@ package net.sourceforge.plantuml;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.graphic.HorizontalAlignement;
+
 public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 
 	private boolean rotation;
@@ -40,6 +42,10 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	private int minwidth = Integer.MAX_VALUE;
 
 	private List<String> title;
+	private List<String> header;
+	private List<String> footer;
+	private HorizontalAlignement headerAlignement = HorizontalAlignement.RIGHT;
+	private HorizontalAlignement footerAlignement = HorizontalAlignement.CENTER;
 
 	private final SkinParam skinParam = new SkinParam();
 
@@ -73,6 +79,38 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	
 	public void setParam(String key, String value) {
 		skinParam.setParam(key.toLowerCase(), value);
+	}
+
+	public final List<String> getHeader() {
+		return header;
+	}
+
+	public final void setHeader(List<String> header) {
+		this.header = header;
+	}
+
+	public final List<String> getFooter() {
+		return footer;
+	}
+
+	public final void setFooter(List<String> footer) {
+		this.footer = footer;
+	}
+
+	public final HorizontalAlignement getHeaderAlignement() {
+		return headerAlignement;
+	}
+
+	public final void setHeaderAlignement(HorizontalAlignement headerAlignement) {
+		this.headerAlignement = headerAlignement;
+	}
+
+	public final HorizontalAlignement getFooterAlignement() {
+		return footerAlignement;
+	}
+
+	public final void setFooterAlignement(HorizontalAlignement footerAlignement) {
+		this.footerAlignement = footerAlignement;
 	}
 
 

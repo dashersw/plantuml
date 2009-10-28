@@ -36,9 +36,6 @@ import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandNoopActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandPartition;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandMultilinesTitle;
-import net.sourceforge.plantuml.command.CommandSkinParam;
-import net.sourceforge.plantuml.command.CommandTitle;
 
 public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 
@@ -56,10 +53,9 @@ public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandPartition(system));
 		addCommand(new CommandLinkLongActivity(system));
 
-		addCommand(new CommandTitle(system));
-		addCommand(new CommandMultilinesTitle(system));
+		addCommonCommands(system);
+		
 		addCommand(new CommandNoopActivity(system));
-		addCommand(new CommandSkinParam(system));
 	}
 
 }

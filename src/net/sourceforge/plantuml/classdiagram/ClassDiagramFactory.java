@@ -45,11 +45,6 @@ import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
 import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandMinwidth;
-import net.sourceforge.plantuml.command.CommandMultilinesTitle;
-import net.sourceforge.plantuml.command.CommandRotate;
-import net.sourceforge.plantuml.command.CommandSkinParam;
-import net.sourceforge.plantuml.command.CommandTitle;
 
 public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 
@@ -63,7 +58,6 @@ public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 	protected void initCommands() {
 		system = new ClassDiagram();
 
-		addCommand(new CommandRotate(system));
 		addCommand(new CommandPage(system));
 		addCommand(new CommandLink(system));
 
@@ -78,11 +72,9 @@ public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandMultiple(system, this));
 		addCommand(new CommandMultilinesNoteEntity(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));
-		addCommand(new CommandMinwidth(system));
 		
-		addCommand(new CommandTitle(system));
-		addCommand(new CommandMultilinesTitle(system));
 		addCommand(new CommandNoopClass(system));
-		addCommand(new CommandSkinParam(system));
+		
+		addCommonCommands(system);
 	}
 }

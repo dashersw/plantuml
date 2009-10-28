@@ -37,11 +37,6 @@ import net.sourceforge.plantuml.classdiagram.command.CommandNoteEntity;
 import net.sourceforge.plantuml.classdiagram.command.CommandPackage;
 import net.sourceforge.plantuml.classdiagram.command.CommandPage;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandMinwidth;
-import net.sourceforge.plantuml.command.CommandMultilinesTitle;
-import net.sourceforge.plantuml.command.CommandRotate;
-import net.sourceforge.plantuml.command.CommandSkinParam;
-import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandLinkComponent;
@@ -59,8 +54,7 @@ public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 	@Override
 	protected void initCommands() {
 		system = new ComponentDiagram();
-		
-		addCommand(new CommandRotate(system));
+
 		addCommand(new CommandPage(system));
 		addCommand(new CommandLinkComponent(system));
 
@@ -73,11 +67,9 @@ public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommand(new CommandMultilinesComponentNoteEntity(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));
-		addCommand(new CommandMinwidth(system));
 
-		addCommand(new CommandTitle(system));
-		addCommand(new CommandMultilinesTitle(system));
 		addCommand(new CommandNoopComponent(system));
-		addCommand(new CommandSkinParam(system));
+		addCommonCommands(system);
+
 	}
 }

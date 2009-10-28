@@ -32,11 +32,6 @@
 package net.sourceforge.plantuml.sequencediagram;
 
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandMinwidth;
-import net.sourceforge.plantuml.command.CommandMultilinesTitle;
-import net.sourceforge.plantuml.command.CommandRotate;
-import net.sourceforge.plantuml.command.CommandSkinParam;
-import net.sourceforge.plantuml.command.CommandTitle;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandArrow;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutonumber;
@@ -75,16 +70,12 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandMultilinesNoteOnArrow(system));
 
 		addCommand(new CommandNewpage(system));
-		addCommand(new CommandTitle(system));
-		addCommand(new CommandMultilinesTitle(system));
 		addCommand(new CommandSkin(system));
 		addCommand(new CommandAutonumber(system));
 		addCommand(new CommandFootbox(system));
 		addCommand(new CommandNoopSequence(system));
 
-		addCommand(new CommandMinwidth(system));
-		addCommand(new CommandRotate(system));
-		addCommand(new CommandSkinParam(system));
+		addCommonCommands(system);
 	}
 
 	public SequenceDiagram getSystem() {
