@@ -53,6 +53,13 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 		// participantBox.setTopStartingY(arrow.getStartingY());
 
 	}
+	
+	@Override
+	public void setMaxX(double m) {
+		super.setMaxX(m);
+		arrow.setMaxX(m);
+	}
+
 
 	@Override
 	final public double getArrowOnlyWidth(StringBounder stringBounder) {
@@ -100,6 +107,12 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 	public double getPreferredWidth(StringBounder stringBounder) {
 		return arrow.getPreferredWidth(stringBounder) + participantBox.getHeadPreferredWith(stringBounder) / 2;
 	}
+
+	@Override
+	public double getActualWidth(StringBounder stringBounder) {
+		return arrow.getActualWidth(stringBounder) + participantBox.getHeadPreferredWith(stringBounder) / 2;
+	}
+
 
 	@Override
 	public double getStartingX(StringBounder stringBounder) {

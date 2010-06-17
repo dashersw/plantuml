@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4838 $
+ * Revision $Revision: 4855 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -67,6 +67,12 @@ class ArrowAndNoteBox extends Arrow implements InGroupable {
 	final public double getArrowOnlyWidth(StringBounder stringBounder) {
 		return arrow.getPreferredWidth(stringBounder);
 	}
+	
+	@Override
+	public void setMaxX(double m) {
+		super.setMaxX(m);
+		arrow.setMaxX(m);
+	}
 
 	@Override
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
@@ -82,11 +88,13 @@ class ArrowAndNoteBox extends Arrow implements InGroupable {
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
 		double w = arrow.getPreferredWidth(stringBounder);
-		if (arrow instanceof MessageArrow) {
-			final MessageArrow messageArrow = (MessageArrow) arrow;
-			w = Math.max(w, messageArrow.getActualWidth(stringBounder));
-		}
+			w = Math.max(w, arrow.getActualWidth(stringBounder));
 		return w + noteBox.getPreferredWidth(stringBounder);
+	}
+	
+	@Override
+	public double getActualWidth(StringBounder stringBounder) {
+		return getPreferredWidth(stringBounder);
 	}
 
 	@Override
@@ -125,5 +133,6 @@ class ArrowAndNoteBox extends Arrow implements InGroupable {
 	public LivingParticipantBox getParticipantAt(StringBounder stringBounder, NotePosition position) {
 		return arrow.getParticipantAt(stringBounder, position);
 	}
+
 
 }

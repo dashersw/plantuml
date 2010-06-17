@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4718 $
+ * Revision $Revision: 4855 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -118,6 +118,11 @@ class MessageSelfArrow extends Arrow {
 	@Override
 	public LivingParticipantBox getParticipantAt(StringBounder stringBounder, NotePosition position) {
 		return p1;
+	}
+
+	@Override
+	public double getActualWidth(StringBounder stringBounder) {
+		return getPreferredWidth(stringBounder);
 	}
 
 }

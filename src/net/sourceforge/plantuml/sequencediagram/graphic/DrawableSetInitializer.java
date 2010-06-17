@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4836 $
+ * Revision $Revision: 4860 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
-import sun.rmi.transport.LiveRef;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
@@ -141,7 +139,8 @@ class DrawableSetInitializer {
 
 		prepareMissingSpace(stringBounder);
 
-		final double diagramWidth = freeX + 1 + constraintSetHBar.takeConstraintIntoAccount2(stringBounder);
+		final double suppWidth = constraintSetHBar.takeConstraintIntoAccount(stringBounder);
+		final double diagramWidth = freeX + 1 + suppWidth;
 
 		drawableSet.setDimension(new Dimension2DDouble(diagramWidth, getTotalHeight(stringBounder)));
 		return drawableSet;
@@ -162,6 +161,7 @@ class DrawableSetInitializer {
 
 	private void prepareMissingSpace(StringBounder stringBounder) {
 		freeX = constraintSet.getMaxX();
+
 		double missingSpace1 = 0;
 		double missingSpace2 = 0;
 
@@ -171,7 +171,18 @@ class DrawableSetInitializer {
 			if (delta1 > missingSpace1) {
 				missingSpace1 = delta1;
 			}
-			final double endX = startX + ev.getPreferredWidth(stringBounder);
+			if (ev instanceof Arrow) {
+				final Arrow a = (Arrow) ev;
+				a.setMaxX(freeX);
+			}
+			double width = ev.getPreferredWidth(stringBounder);
+			if (ev instanceof Arrow) {
+				final Arrow a = (Arrow) ev;
+				if (width < a.getActualWidth(stringBounder)) {
+					width = a.getActualWidth(stringBounder);
+				}
+			}
+			final double endX = startX + width;
 			final double delta2 = endX - freeX;
 			if (delta2 > missingSpace2) {
 				missingSpace2 = delta2;

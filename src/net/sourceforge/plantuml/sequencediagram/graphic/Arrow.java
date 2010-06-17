@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4737 $
+ * Revision $Revision: 4855 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -44,6 +44,23 @@ abstract class Arrow extends GraphicalElement implements InGroupable {
 	private final Skin skin;
 	private final Component arrowComponent;
 	private double paddingArrowHead = 0;
+	private double maxX;
+
+	public void setMaxX(double m) {
+		if (maxX != 0) {
+			throw new IllegalStateException();
+		}
+		this.maxX = m;
+	}
+
+	final protected double getMaxX() {
+		if (maxX == 0) {
+			throw new IllegalStateException();
+		}
+		return maxX;
+	}
+	
+	public abstract double getActualWidth(StringBounder stringBounder);
 
 	Arrow(double startingY, Skin skin, Component arrowComponent) {
 		super(startingY);

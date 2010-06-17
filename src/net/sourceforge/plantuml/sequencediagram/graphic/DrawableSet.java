@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4836 $
+ * Revision $Revision: 4860 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -189,8 +189,8 @@ class DrawableSet {
 				if (create > page.getNewpage2()) {
 					continue;
 				}
-				if (create > page.getNewpage1() && create < page.getNewpage2()) {
-					start += create - page.getNewpage1() + page.getBodyRelativePosition();
+				if (create >= page.getNewpage1() && create < page.getNewpage2()) {
+					start += create - page.getNewpage1() + 2 * box.magicMargin(ug.getStringBounder());
 				}
 			}
 			box.drawLineU(ug, start, endMax, showTail);
@@ -214,7 +214,7 @@ class DrawableSet {
 				if (create > page.getNewpage2()) {
 					continue;
 				}
-				if (create > page.getNewpage1() && create < page.getNewpage2()) {
+				if (create >= page.getNewpage1() && create < page.getNewpage2()) {
 					showHead = false;
 				}
 			}

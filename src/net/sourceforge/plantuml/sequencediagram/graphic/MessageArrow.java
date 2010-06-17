@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4737 $
+ * Revision $Revision: 4855 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -62,6 +62,7 @@ class MessageArrow extends Arrow {
 		this.p2 = p2;
 	}
 
+	@Override
 	public double getActualWidth(StringBounder stringBounder) {
 		final double r = getRightEndInternal(stringBounder) - getLeftStartInternal(stringBounder);
 		assert r > 0;

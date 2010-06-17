@@ -57,7 +57,7 @@ class MessageExoArrow extends Arrow {
 		this.type = type;
 	}
 
-	public double getActualWidth(StringBounder stringBounder, double maxX) {
+	double getActualWidth(StringBounder stringBounder, double maxX) {
 		final double r = getRightEndInternal(stringBounder, maxX) - getLeftStartInternal(stringBounder);
 		assert r > 0;
 		return r;
@@ -153,6 +153,11 @@ class MessageExoArrow extends Arrow {
 	@Override
 	public LivingParticipantBox getParticipantAt(StringBounder stringBounder, NotePosition position) {
 		return p;
+	}
+
+	@Override
+	public double getActualWidth(StringBounder stringBounder) {
+		return getActualWidth(stringBounder, getMaxX());
 	}
 
 }
