@@ -89,6 +89,7 @@ public class DotxMaker {
 
 	private String getNodeAttibute(Block b) {
 		final StringBuilder sb = new StringBuilder("[");
+		sb.append("label=\"\",");
 		sb.append("fixedsize=true,");
 		sb.append("width=" + b.getSize().getWidth() / 72.0 + ",");
 		sb.append("height=" + b.getSize().getHeight() / 72.0 + ",");

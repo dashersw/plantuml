@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4202 $
+ * Revision $Revision: 4882 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
+import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.skin.UDrawable;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.UClip;
@@ -68,6 +69,7 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> {
 		registerDriver(UPolygon.class, new DriverPolygonG2d());
 		registerDriver(UEllipse.class, new DriverEllipseG2d());
 		registerDriver(UImage.class, new DriverImageG2d());
+		registerDriver(DotPath.class, new DriverDotPathG2d());
 	}
 
 	public StringBounder getStringBounder() {

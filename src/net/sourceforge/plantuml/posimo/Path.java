@@ -33,19 +33,12 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-
-
 public class Path {
 
 	private final Label label;
 	private final Block start;
 	private final Block end;
-	// private final List<Point2D.Double> points = new
-	// ArrayList<Point2D.Double>();
-	private final PointList points2 = new PointList();
+	private DotPath dotPath;
 
 	public Path(Block start, Block end, Label label) {
 		this.start = start;
@@ -65,25 +58,23 @@ public class Path {
 		return end;
 	}
 
-	public void addPoint(double x, double y) {
-		points2.addPoint(x, y);
-	}
-
 	public void setLabelPositionCenter(double labelX, double labelY) {
 		label.setCenterX(labelX);
 		label.setCenterY(labelY);
 	}
 
-	public final PointList getPoints() {
-		return points2;
+	public void setLabelPosition(double x, double y) {
+		label.setX(x);
+		label.setY(y);
 	}
 
-	public Point2D getIntersection(Positionable positionable) {
-		final Point2D position = positionable.getPosition();
-		final Dimension2D dim = positionable.getSize();
-		final Rectangle2D rect = new Rectangle2D.Double(position.getX(),
-				position.getY(), dim.getWidth(), dim.getHeight());
-		return points2.getPoint(points2.getIntersectionDouble(rect));
+	public void setDotPath(DotPath dotPath) {
+		this.dotPath = dotPath;
+
+	}
+
+	public final DotPath getDotPath() {
+		return dotPath;
 	}
 
 }

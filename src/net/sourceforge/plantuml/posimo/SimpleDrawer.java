@@ -36,8 +36,6 @@ package net.sourceforge.plantuml.posimo;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
-import java.awt.geom.Ellipse2D;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -59,7 +57,8 @@ public class SimpleDrawer {
 			final Block b = (Block) cl;
 			final Point2D pos = b.getPosition();
 			final Dimension2D dim = b.getSize();
-			drawRectCentered(g2d, pos, dim);
+			// drawRectCentered(g2d, pos, dim);
+			drawRect(g2d, pos, dim);
 		}
 
 		g2d.setColor(Color.GREEN);
@@ -67,15 +66,16 @@ public class SimpleDrawer {
 			final Label label = p.getLabel();
 			final Point2D labelPos = label.getPosition();
 			final Dimension2D labelDim = label.getSize();
-			final double x1 = labelPos.getX();
-			final double y1 = labelPos.getY();
-			g2d.draw(new Ellipse2D.Double(x1 - 1, y1 - 1, 3, 3));
-			drawRectCentered(g2d, labelPos, labelDim);
+			// final double x1 = labelPos.getX();
+			// final double y1 = labelPos.getY();
+			// g2d.draw(new Ellipse2D.Double(x1 - 1, y1 - 1, 3, 3));
+			// drawRectCentered(g2d, labelPos, labelDim);
+			drawRect(g2d, labelPos, labelDim);
 		}
 
 		g2d.setColor(Color.RED);
 		for (Path p : paths) {
-			drawPath(g2d, p.getPoints());
+			p.getDotPath().draw(g2d);
 		}
 
 		for (Cluster sub : root.getSubClusters()) {
@@ -84,20 +84,14 @@ public class SimpleDrawer {
 
 	}
 
-	private void drawPath(Graphics2D g2d, PointList points) {
-		Point2D last = null;
-		for (Point2D cur : points.getPoints()) {
-			if (last != null) {
-				g2d.draw(new Line2D.Double(last, cur));
-			}
-			last = cur;
-		}
-
-	}
-
 	private void drawRectCentered(Graphics2D g2d, final Point2D pos, final Dimension2D dim) {
 		final Rectangle2D rect = new Rectangle2D.Double(pos.getX() - dim.getWidth() / 2, pos.getY() - dim.getHeight()
 				/ 2, dim.getWidth(), dim.getHeight());
+		g2d.draw(rect);
+	}
+
+	private void drawRect(Graphics2D g2d, final Point2D pos, final Dimension2D dim) {
+		final Rectangle2D rect = new Rectangle2D.Double(pos.getX(), pos.getY(), dim.getWidth(), dim.getHeight());
 		g2d.draw(rect);
 	}
 }

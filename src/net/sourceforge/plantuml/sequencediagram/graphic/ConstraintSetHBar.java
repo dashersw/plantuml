@@ -53,7 +53,7 @@ class ConstraintSetHBar {
 		this.inGroupableLists.add(inGroupableList);
 	}
 
-	public double takeConstraintIntoAccount(StringBounder stringBounder) {
+	public double takeConstraintIntoAccount(StringBounder stringBounder, double freeX) {
 		for (InGroupableList list : inGroupableLists) {
 			if (list.isEmpty()) {
 				list.getBarEnd().pushToLeft(list.getMaxX(stringBounder));
@@ -72,19 +72,26 @@ class ConstraintSetHBar {
 			list.getBarEnd().pushToLeft(list.getMaxX(stringBounder));
 		}
 
-		double delta = 0;
+		double result = freeX;
 		for (int i = 0; i < pushables.size(); i++) {
 			final Pushable pushable = pushables.get(i);
 			if (pushable instanceof VirtualHBar) {
 				final VirtualHBar bar = (VirtualHBar) pushable;
 				final int j = getVirtualNext(i);
 				pushAllToLeft(j, bar.getWidth());
-				delta += bar.getWidth();
+				result += bar.getWidth();
 				i = j;
 			}
 		}
 
-		return delta;
+		for (InGroupableList list : inGroupableLists) {
+			final double endBar = list.getBarEnd().getCenterX(stringBounder) + 5;
+			if (endBar > result) {
+				result = endBar;
+			}
+		}
+
+		return result;
 	}
 
 	private int getVirtualNext(int i) {

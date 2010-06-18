@@ -74,4 +74,12 @@ public class Label implements Positionable {
 		this.height = height;
 	}
 
+	public final void setX(double x) {
+		this.x = x;
+	}
+
+	public final void setY(double y) {
+		this.y = y;
+	}
+
 }

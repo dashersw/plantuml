@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4860 $
+ * Revision $Revision: 4876 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -139,8 +139,7 @@ class DrawableSetInitializer {
 
 		prepareMissingSpace(stringBounder);
 
-		final double suppWidth = constraintSetHBar.takeConstraintIntoAccount(stringBounder);
-		final double diagramWidth = freeX + 1 + suppWidth;
+		final double diagramWidth = constraintSetHBar.takeConstraintIntoAccount(stringBounder, freeX) + 1;
 
 		drawableSet.setDimension(new Dimension2DDouble(diagramWidth, getTotalHeight(stringBounder)));
 		return drawableSet;

@@ -59,6 +59,20 @@ public class Cluster implements Clusterable {
 		return Collections.unmodifiableCollection(children);
 	}
 
+	public Collection<Block> getRecursiveContents() {
+		final Collection<Block> result = new ArrayList<Block>();
+		addContentRecurse(result);
+		return Collections.unmodifiableCollection(result);
+	}
+
+	private void addContentRecurse(Collection<Block> result) {
+		result.addAll(blocs);
+		for (Cluster c : children) {
+			c.addContentRecurse(result);
+		}
+
+	}
+
 	public int getUid() {
 		return uid;
 	}

@@ -40,9 +40,6 @@ import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 
@@ -59,13 +56,12 @@ public class PathDrawerSquared implements PathDrawer {
 	}
 
 	public void drawPath(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
-		// final Point2D pStart = path.getIntersection(start);
-		// final Point2D pEnd = path.getIntersection(end);
-		// drawPath(ug, path.getPoints().muteStartAndEnd(pStart, pEnd));
-		drawPath(ug, path.getPoints(), start, end);
+		//drawPath(ug, path.getPoints(), start, end);
+		
+		ug.draw(0, 0, path.getDotPath());
 
-		final Point2D p1 = path.getIntersection(start);
-		final Point2D p2 = path.getIntersection(end);
+		final Point2D p1 = path.getDotPath().getFrontierIntersection(start);
+		final Point2D p2 = path.getDotPath().getFrontierIntersection(end);
 		if (linkType.getDecor1() == LinkDecor.SQUARRE) {
 			drawSquare(ug, p1.getX(), p1.getY());
 		}
@@ -92,23 +88,23 @@ public class PathDrawerSquared implements PathDrawer {
 		return p;
 	}
 
-	private void drawPath(UGraphic ug, PointList points, Positionable start, Positionable end) {
-		Point2D last = null;
-		final int nb = 10;
-		final double t1 = points.getIntersectionDouble(PositionableUtils.convert(start));
-		final double t2 = points.getIntersectionDouble(PositionableUtils.convert(end));
-		for (int i = 0; i <= nb; i++) {
-			final double d = t1 + (t2 - t1) * i / nb;
-			final Point2D cur = nullIfContained(points.getPoint(d), start, end);
-			if (last != null && cur != null) {
-				ug.draw(last.getX(), last.getY(), new ULine(cur.getX() - last.getX(), cur.getY() - last.getY()));
-			}
-			last = cur;
-		}
-
-		for (Point2D p : points.getPoints()) {
-			ug.draw(p.getX() - 1, p.getY() - 1, new UEllipse(2, 2));
-		}
-	}
+//	private void drawPath(UGraphic ug, PointList points, Positionable start, Positionable end) {
+//		Point2D last = null;
+//		final int nb = 10;
+//		final double t1 = points.getIntersectionDouble(PositionableUtils.convert(start));
+//		final double t2 = points.getIntersectionDouble(PositionableUtils.convert(end));
+//		for (int i = 0; i <= nb; i++) {
+//			final double d = t1 + (t2 - t1) * i / nb;
+//			final Point2D cur = nullIfContained(points.getPoint(d), start, end);
+//			if (last != null && cur != null) {
+//				ug.draw(last.getX(), last.getY(), new ULine(cur.getX() - last.getX(), cur.getY() - last.getY()));
+//			}
+//			last = cur;
+//		}
+//
+//		for (Point2D p : points.getPoints()) {
+//			ug.draw(p.getX() - 1, p.getY() - 1, new UEllipse(2, 2));
+//		}
+//	}
 
 }

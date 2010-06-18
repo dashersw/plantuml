@@ -87,4 +87,12 @@ public class Block implements Clusterable {
 		this.y = center - height / 2;
 	}
 
+	public final void setX(double x) {
+		this.x = x;
+	}
+
+	public final void setY(double y) {
+		this.y = y;
+	}
+
 }

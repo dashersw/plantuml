@@ -62,7 +62,7 @@ import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.posimo.Block;
 import net.sourceforge.plantuml.posimo.Cluster;
 import net.sourceforge.plantuml.posimo.EntityImageBlock;
-import net.sourceforge.plantuml.posimo.GraphvizSolver;
+import net.sourceforge.plantuml.posimo.GraphvizSolverB;
 import net.sourceforge.plantuml.posimo.Label;
 import net.sourceforge.plantuml.posimo.LabelImage;
 import net.sourceforge.plantuml.posimo.Path;
@@ -162,7 +162,7 @@ public final class CucaDiagramFileMaker4 {
 
 		g2d.dispose();
 
-		final GraphvizSolver solver = new GraphvizSolver();
+		final GraphvizSolverB solver = new GraphvizSolverB();
 		final Dimension2D dim = solver.solve(root, paths.keySet());
 
 		builder = new EmptyImageBuilder((int) (dim.getWidth() + 1), (int) (dim.getHeight() + 1), background);
