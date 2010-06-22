@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4351 $
+ * Revision $Revision: 4919 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -94,6 +94,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 	private final FileFormat fileFormat;
 
 	public SequenceDiagramFileMaker(SequenceDiagram sequenceDiagram, Skin skin, FileFormat fileFormat) {
+		HtmlColor.setForceMonochrome(sequenceDiagram.getSkinParam().isMonochrome());
 		this.diagram = sequenceDiagram;
 		this.fileFormat = fileFormat;
 		final DrawableSetInitializer initializer = new DrawableSetInitializer(skin, sequenceDiagram.getSkinParam(),

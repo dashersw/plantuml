@@ -37,28 +37,32 @@ import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class DecorInterfaceProvider implements Decor {
 
 	private final double radius = 4;
-	private final double distanceCircle = 16;
+	private final double radius2 = 6;
 
-	public void drawLine(UGraphic ug, Point2D start, Point2D end) {
-		ug.draw(start.getX(), start.getY(), new ULine(end.getX() - start.getX(), end.getY() - start.getY()));
+	// private final double distanceCircle = 16;
 
-		final double dist = start.distance(end);
-		if (dist == 0) {
-			throw new IllegalArgumentException();
-		}
-		final double dx = end.getX() - start.getX();
-		final double dy = end.getY() - start.getY();
+	public void drawDecor(UGraphic ug, Point2D start, double direction) {
+		final double cornerX = start.getX() - radius;
+		final double cornerY = start.getY() - radius;
+		final double cornerX2 = start.getX() - radius2 - 2 * Math.sin(direction * Math.PI / 180.0);
+		final double cornerY2 = start.getY() - radius2 - 2 * Math.cos(direction * Math.PI / 180.0);
 
-		final double delta = distanceCircle / dist;
-		final double cornerX = start.getX() + delta * dx;
-		final double cornerY = start.getY() + delta * dy;
+		final UEllipse arc = new UEllipse(2 * radius2, 2 * radius2, direction + 15, 180 - 30);
+		ug.getParam().setStroke(new UStroke(1.5));
+		ug.draw(cornerX, cornerY, new UEllipse(2 * radius, 2 * radius));
+		ug.draw(cornerX2, cornerY2, arc);
+		ug.getParam().setStroke(new UStroke());
+		// ug.draw(cornerX + distanceCircle, cornerY, new UEllipse(2 * radius, 2
+		// * radius));
 
-		ug.draw(cornerX - radius, cornerY - radius, new UEllipse(2 * radius, 2 * radius));
+		// ug.getParam().setColor(Color.BLUE);
+		// ug.draw(cornerX, cornerY, new ULine(cornerX2 - cornerX, cornerY2 -
+		// cornerY));
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4155 $
+ * Revision $Revision: 4911 $
  *
  */
 package net.sourceforge.plantuml;
@@ -76,7 +76,7 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 		this.rotation = rotation;
 	}
 
-	public final SkinParam getSkinParam() {
+	public final ISkinParam getSkinParam() {
 		return skinParam;
 	}
 

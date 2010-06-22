@@ -39,7 +39,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -53,12 +53,12 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 public class EntityImageBlock {
 
 	// private final Entity entity;
-	private final SkinParam param;
+	private final ISkinParam param;
 	private final Rose rose;
 	private final int margin = 6;
 	final private TextBlock name;
 
-	public EntityImageBlock(Entity entity, Rose rose, SkinParam param) {
+	public EntityImageBlock(Entity entity, Rose rose, ISkinParam param) {
 		// this.entity = entity;
 		this.param = param;
 		this.rose = rose;

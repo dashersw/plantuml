@@ -28,37 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 4912 $
  *
  */
-package net.sourceforge.plantuml.command;
+package net.sourceforge.plantuml.ugraphic;
 
+import java.awt.Color;
 
-public class CommandExecutionResult {
+public interface ColorChanger {
 
-	private final String error;
-
-	private CommandExecutionResult(String error) {
-			this.error = error;
-	}
-
-	public static CommandExecutionResult ok() {
-		return new CommandExecutionResult(null);
-	}
-
-	public static CommandExecutionResult error(String error) {
-		return new CommandExecutionResult(error);
-	}
-
-	public boolean isOk() {
-		return error == null;
-	}
-
-	public String getError() {
-		if (isOk()) {
-			throw new IllegalStateException();
-		}
-		return error;
-	}
-
+	Color getChangedColor(Color color);
 }

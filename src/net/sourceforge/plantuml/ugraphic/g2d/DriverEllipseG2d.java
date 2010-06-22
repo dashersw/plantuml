@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3837 $
+ * Revision $Revision: 4905 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -36,6 +36,7 @@ package net.sourceforge.plantuml.ugraphic.g2d;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 
 import net.sourceforge.plantuml.ugraphic.UDriver;
@@ -48,15 +49,30 @@ public class DriverEllipseG2d implements UDriver<Graphics2D> {
 	public void draw(UShape ushape, double x, double y, UParam param, Graphics2D g2d) {
 		final UEllipse shape = (UEllipse) ushape;
 		g2d.setStroke(new BasicStroke((float) param.getStroke().getThickness()));
-		final Shape ellipse = new Ellipse2D.Double(x, y, shape.getWidth(), shape.getHeight());
+		if (shape.getStart() == 0 && shape.getExtend() == 0) {
+			final Shape ellipse = new Ellipse2D.Double(x, y, shape.getWidth(), shape.getHeight());
 
-		if (param.getBackcolor() != null) {
-			g2d.setColor(param.getBackcolor());
-			g2d.fill(ellipse);
-		}
-		if (param.getColor() != null) {
-			g2d.setColor(param.getColor());
-			g2d.draw(ellipse);
+			if (param.getBackcolor() != null) {
+				g2d.setColor(param.getBackcolor());
+				g2d.fill(ellipse);
+			}
+			if (param.getColor() != null) {
+				g2d.setColor(param.getColor());
+				g2d.draw(ellipse);
+			}
+		} else {
+			//final Shape ellipse = new Ellipse2D.Double(x, y, shape.getWidth(), shape.getHeight());
+			final Shape ellipse = new Arc2D.Double(x, y, shape.getWidth(), shape.getHeight(), 0, 360, Arc2D.OPEN);
+			final Shape arc = new Arc2D.Double(x, y, shape.getWidth(), shape.getHeight(), shape.getStart(), shape
+					.getExtend(), Arc2D.OPEN);
+			if (param.getColor() != null) {
+//				g2d.setColor(Color.RED);
+//				g2d.draw(ellipse);
+//				g2d.setColor(Color.GREEN);
+				g2d.setColor(param.getColor());
+				g2d.draw(arc);
+			}
+
 		}
 	}
 

@@ -37,7 +37,7 @@ import java.awt.Color;
 import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -50,11 +50,11 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 public class LabelImage {
 
 	// private final Entity entity;
-	private final SkinParam param;
+	private final ISkinParam param;
 	private final Rose rose;
 	final private TextBlock name;
 
-	public LabelImage(Link link, Rose rose, SkinParam param) {
+	public LabelImage(Link link, Rose rose, ISkinParam param) {
 		if (link == null) {
 			throw new IllegalArgumentException();
 		}

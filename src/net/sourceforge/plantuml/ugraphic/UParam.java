@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4126 $
+ * Revision $Revision: 4918 $
  *
  */
 package net.sourceforge.plantuml.ugraphic;
@@ -41,12 +41,14 @@ public class UParam {
 	private Color backcolor = null;
 	private UStroke stroke = new UStroke(1);
 	private UGradient gradient = null;
+	private ColorChanger colorChanger = new ColorChangerIdentity();
 
 	public void reset() {
 		color = null;
 		backcolor = null;
 		gradient = null;
 		stroke = new UStroke(1);
+		colorChanger = new ColorChangerIdentity();
 	}
 
 	public final UGradient getGradient() {
@@ -62,7 +64,7 @@ public class UParam {
 	}
 
 	public Color getColor() {
-		return color;
+		return colorChanger.getChangedColor(color);
 	}
 
 	public void setBackcolor(Color color) {
@@ -70,7 +72,7 @@ public class UParam {
 	}
 
 	public Color getBackcolor() {
-		return backcolor;
+		return colorChanger.getChangedColor(backcolor);
 	}
 
 	public void setStroke(UStroke stroke) {
@@ -79,6 +81,13 @@ public class UParam {
 
 	public UStroke getStroke() {
 		return stroke;
+	}
+
+	private void setColorChanger(ColorChanger colorChanger) {
+		if (colorChanger == null) {
+			throw new IllegalArgumentException();
+		}
+		this.colorChanger = colorChanger;
 	}
 
 }

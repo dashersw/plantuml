@@ -35,10 +35,8 @@ package net.sourceforge.plantuml.oregon;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import net.sourceforge.plantuml.PSystemBasicFactory;
-import net.sourceforge.plantuml.sudoku.PSystemSudoku;
 
 public class PSystemOregonFactory implements PSystemBasicFactory {
 

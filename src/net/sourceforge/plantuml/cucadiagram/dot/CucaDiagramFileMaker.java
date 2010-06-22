@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4829 $
+ * Revision $Revision: 4919 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -66,7 +66,6 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -112,6 +111,7 @@ public final class CucaDiagramFileMaker {
 	}
 
 	public CucaDiagramFileMaker(CucaDiagram diagram) throws IOException {
+		HtmlColor.setForceMonochrome(diagram.getSkinParam().isMonochrome());
 		this.diagram = diagram;
 		this.staticFiles = new StaticFiles(diagram.getSkinParam());
 	}
@@ -677,7 +677,7 @@ public final class CucaDiagramFileMaker {
 
 	}
 
-	private SkinParam getSkinParam() {
+	private ISkinParam getSkinParam() {
 		return diagram.getSkinParam();
 	}
 

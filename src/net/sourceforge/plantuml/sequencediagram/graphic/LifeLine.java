@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4832 $
+ * Revision $Revision: 4911 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -38,7 +38,6 @@ import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -191,7 +190,7 @@ class LifeLine {
 	}
 
 
-	public void drawU(UGraphic ug, Skin skin, SkinParam skinParam) {
+	public void drawU(UGraphic ug, Skin skin, ISkinParam skinParam) {
 	//public void drawU(UGraphic ug, final Component comp) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		

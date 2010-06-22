@@ -36,7 +36,7 @@ package net.sourceforge.plantuml.posimo;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -46,10 +46,10 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 public class PathDrawerSquared implements PathDrawer {
 
 	private final Rose rose;
-	private final SkinParam param;
+	private final ISkinParam param;
 	private final LinkType linkType;
 
-	public PathDrawerSquared(Rose rose, SkinParam param, LinkType linkType) {
+	public PathDrawerSquared(Rose rose, ISkinParam param, LinkType linkType) {
 		this.rose = rose;
 		this.param = param;
 		this.linkType = linkType;
@@ -57,8 +57,8 @@ public class PathDrawerSquared implements PathDrawer {
 
 	public void drawPath(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
 		//drawPath(ug, path.getPoints(), start, end);
-		
-		ug.draw(0, 0, path.getDotPath());
+		final DotPath dotPath = path.getDotPath().manageRect(start, end);
+		ug.draw(0, 0, dotPath);
 
 		final Point2D p1 = path.getDotPath().getFrontierIntersection(start);
 		final Point2D p2 = path.getDotPath().getFrontierIntersection(end);

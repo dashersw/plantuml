@@ -28,38 +28,20 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4920 $
+ * Revision $Revision: 4912 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.ugraphic;
 
-import java.util.List;
+import java.awt.Color;
 
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.sequencediagram.GroupingType;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+public class ColorChangerMonochrome implements ColorChanger {
 
-public class CommandGrouping extends SingleLineCommand<SequenceDiagram> {
-
-	public CommandGrouping(SequenceDiagram sequenceDiagram) {
-		super(
-				sequenceDiagram,
-				"(?i)^(opt|alt|loop|par|break|critical|else|end)((?<!else)(?<!end)#\\w+)?(?:\\s+(#\\w+))?(?:\\s+(.*?))?$");
-	}
-
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String type = arg.get(0);
-		final HtmlColor colorElement = HtmlColor.getColorIfValid(arg.get(1));
-		final HtmlColor colorGeneral = HtmlColor.getColorIfValid(arg.get(2));
-		final String comment = arg.get(3);
-		final boolean result = getSystem().grouping(type, comment,
-				GroupingType.getType(type), colorGeneral, colorElement);
-		if (result == false) {
-			return CommandExecutionResult.error("Cannot create group");
+	public Color getChangedColor(Color color) {
+		if (color==null) {
+			return null;
 		}
-		return CommandExecutionResult.ok();
+		final int grayScale = (int) (color.getRed() * .3 + color.getGreen() * .59 + color.getBlue() * .11);
+		return new Color(grayScale, grayScale, grayScale);
 	}
 }

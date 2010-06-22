@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4860 $
+ * Revision $Revision: 4911 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -40,7 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.Event;
@@ -56,12 +56,12 @@ class DrawableSet {
 	private final Map<Participant, LivingParticipantBox> participants = new LinkedHashMap<Participant, LivingParticipantBox>();
 	private final Map<Event, GraphicalElement> events = new LinkedHashMap<Event, GraphicalElement>();
 	private final Skin skin;
-	private final SkinParam skinParam;
+	private final ISkinParam skinParam;
 	private Dimension2D dimension;
 
 	private double groupingMargin;
 
-	DrawableSet(Skin skin, SkinParam skinParam) {
+	DrawableSet(Skin skin, ISkinParam skinParam) {
 		if (skin == null) {
 			throw new IllegalArgumentException();
 		}
@@ -76,7 +76,7 @@ class DrawableSet {
 		return skin;
 	}
 
-	public final SkinParam getSkinParam() {
+	public final ISkinParam getSkinParam() {
 		return skinParam;
 	}
 

@@ -39,5 +39,5 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 public interface Decor {
 	
-	void drawLine(UGraphic ug, Point2D start, Point2D end);
+	void drawDecor(UGraphic ug, Point2D start, double direction);
 }

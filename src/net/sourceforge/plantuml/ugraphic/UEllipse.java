@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3837 $
+ * Revision $Revision: 4901 $
  *
  */
 package net.sourceforge.plantuml.ugraphic;
@@ -37,10 +37,18 @@ public class UEllipse implements UShape {
 
 	private final double width;
 	private final double height;
+	private final double start;
+	private final double extend;
 
 	public UEllipse(double width, double height) {
+		this(width, height, 0, 0);
+	}
+
+	public UEllipse(double width, double height, double start, double extend) {
 		this.width = width;
 		this.height = height;
+		this.start = start;
+		this.extend = extend;
 	}
 
 	public double getWidth() {
@@ -49,5 +57,13 @@ public class UEllipse implements UShape {
 
 	public double getHeight() {
 		return height;
+	}
+
+	public final double getStart() {
+		return start;
+	}
+
+	public final double getExtend() {
+		return extend;
 	}
 }

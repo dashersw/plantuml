@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4876 $
+ * Revision $Revision: 4911 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -40,7 +40,6 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.Divider;
@@ -76,7 +75,7 @@ class DrawableSetInitializer {
 	private ConstraintSet constraintSet;
 	private ConstraintSetHBar constraintSetHBar;
 
-	public DrawableSetInitializer(Skin skin, SkinParam skinParam, boolean showTail) {
+	public DrawableSetInitializer(Skin skin, ISkinParam skinParam, boolean showTail) {
 		this.drawableSet = new DrawableSet(skin, skinParam);
 		this.showTail = showTail;
 

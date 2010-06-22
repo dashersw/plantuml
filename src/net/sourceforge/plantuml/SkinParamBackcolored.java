@@ -39,15 +39,15 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class SkinParamBackcolored implements ISkinParam {
 
-	final private SkinParam skinParam;
+	final private ISkinParam skinParam;
 	final private HtmlColor backColorElement;
 	final private HtmlColor backColorGeneral;
 
-	public SkinParamBackcolored(SkinParam skinParam, HtmlColor backColorElement) {
+	public SkinParamBackcolored(ISkinParam skinParam, HtmlColor backColorElement) {
 		this(skinParam, backColorElement, null);
 	}
 
-	public SkinParamBackcolored(SkinParam skinParam,
+	public SkinParamBackcolored(ISkinParam skinParam,
 			HtmlColor backColorElement, HtmlColor backColorGeneral) {
 		this.skinParam = skinParam;
 		this.backColorElement = backColorElement;
@@ -102,5 +102,9 @@ public class SkinParamBackcolored implements ISkinParam {
 
 	public int classAttributeIconSize() {
 		return skinParam.classAttributeIconSize();
+	}
+
+	public boolean isMonochrome() {
+		return skinParam.isMonochrome();
 	}
 }

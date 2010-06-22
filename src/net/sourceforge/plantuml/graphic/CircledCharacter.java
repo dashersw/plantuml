@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4235 $
+ * Revision $Revision: 4917 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -72,19 +72,26 @@ public class CircledCharacter implements UDrawable {
 	}
 
 	public void drawU(UGraphic ug, double x, double y) {
-		final Color circleToUse = circle == null ? ug.getParam().getColor() : circle;
+
+		if (circle != null) {
+			ug.getParam().setColor(circle);
+		}
+
+//		final Color circleToUse = circle == null ? ug.getParam().getColor() : circle;
+//		ug.getParam().setColor(circleToUse);
+
 		ug.getParam().setBackcolor(innerCircle);
-		ug.getParam().setColor(circleToUse);
+
 		ug.draw(x, y, new UEllipse(radius * 2, radius * 2));
 
 		ug.getParam().setColor(fontColor);
 
-//		if (ug instanceof UGraphicSvg) {
-//			final UPath p = getUPath(new FontRenderContext(null, true, true));
-//			ug.draw(x + radius, y + radius, p);
-//		} else {
-			ug.centerChar(x + radius, y + radius, c.charAt(0), font);
-//		}
+		// if (ug instanceof UGraphicSvg) {
+		// final UPath p = getUPath(new FontRenderContext(null, true, true));
+		// ug.draw(x + radius, y + radius, p);
+		// } else {
+		ug.centerChar(x + radius, y + radius, c.charAt(0), font);
+		// }
 
 	}
 

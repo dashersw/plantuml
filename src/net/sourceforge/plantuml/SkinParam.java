@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4679 $
+ * Revision $Revision: 4924 $
  *
  */
 package net.sourceforge.plantuml;
@@ -138,6 +138,10 @@ public class SkinParam implements ISkinParam {
 			return Integer.parseInt(value);
 		}
 		return 10;
+	}
+
+	public boolean isMonochrome() {
+		return "true".equals(getValue("monochrome"));
 	}
 
 }

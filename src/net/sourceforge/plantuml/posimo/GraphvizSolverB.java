@@ -55,7 +55,7 @@ public class GraphvizSolverB {
 
 	public Dimension2D solve(Cluster root, Collection<Path> paths) throws IOException, InterruptedException {
 		final String dotString = new DotxMaker(root, paths).createDotString();
-		System.err.println("dotString=" + dotString);
+		//System.err.println("dotString=" + dotString);
 
 		// exportPng(dotString, new File("png", "test1.png"));
 
@@ -77,7 +77,7 @@ public class GraphvizSolverB {
 
 		for (Block b : root.getRecursiveContents()) {
 			final String start = "b" + b.getUid();
-			System.err.println("start=" + start);
+			//System.err.println("start=" + start);
 			final int p1 = s.indexOf("<title>" + start + "</title>");
 			if (p1 == -1) {
 				throw new IllegalStateException();
@@ -101,7 +101,7 @@ public class GraphvizSolverB {
 			p.setDotPath(new DotPath(points, height));
 
 			final List<Point2D.Double> pointsList = extractPointsList(s, p1);
-			System.err.println("pointsList=" + pointsList);
+			//System.err.println("pointsList=" + pointsList);
 			p.setLabelPosition(getMinX(pointsList), getMinY(pointsList) + height);
 
 		}

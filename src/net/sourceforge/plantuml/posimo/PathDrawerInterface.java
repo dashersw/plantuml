@@ -34,9 +34,11 @@
 package net.sourceforge.plantuml.posimo;
 
 import java.awt.geom.Point2D;
+import java.util.Collection;
+import java.util.Map;
 
 import net.sourceforge.plantuml.ColorParam;
-import net.sourceforge.plantuml.SkinParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -46,20 +48,21 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 public class PathDrawerInterface implements PathDrawer {
 
 	private final Rose rose;
-	private final SkinParam param;
+	private final ISkinParam param;
 	private final LinkType linkType;
 
-	public PathDrawerInterface(Rose rose, SkinParam param, LinkType linkType) {
+	public PathDrawerInterface(Rose rose, ISkinParam param, LinkType linkType) {
 		this.rose = rose;
 		this.param = param;
 		this.linkType = linkType;
 	}
 
 	public void drawPath(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
-		ug.draw(0, 0, path.getDotPath());
+		final DotPath dotPath = path.getDotPath().manageRect(start, end);
+		ug.draw(0, 0, dotPath);
 
-		final Point2D p1 = path.getDotPath().getFrontierIntersection(start);
-		final Point2D p2 = path.getDotPath().getFrontierIntersection(end);
+		final Point2D p1 = dotPath.getFrontierIntersection(start);
+		final Point2D p2 = dotPath.getFrontierIntersection(end);
 		if (linkType.getDecor1() == LinkDecor.SQUARRE) {
 			drawSquare(ug, p1.getX(), p1.getY());
 		}
@@ -67,6 +70,38 @@ public class PathDrawerInterface implements PathDrawer {
 			drawSquare(ug, p2.getX(), p2.getY());
 		}
 
+		final Decor decor = new DecorInterfaceProvider();
+		final Map<Point2D, Double> all = dotPath.somePoints();
+		final Point2D p = getFarest(p1, p2, all.keySet());
+		decor.drawDecor(ug, p, all.get(p));
+		// for (Map.Entry<Point2D, Double> p : all.entrySet()) {
+		// ug.getParam().setBackcolor(rose.getHtmlColor(param,
+		// ColorParam.classBackground).getColor());
+		// ug.getParam().setColor(rose.getHtmlColor(param,
+		// ColorParam.classBorder).getColor());
+		// decor.drawDecor(ug, p.getKey(), p.getValue());
+		// }
+	}
+
+	private static Point2D getFarest(Point2D p1, Point2D p2, Collection<Point2D> all) {
+		Point2D result = null;
+		double farest = 0;
+		for (Point2D p : all) {
+			if (result == null) {
+				result = p;
+				farest = p1.distanceSq(result) + p2.distanceSq(result);
+				continue;
+			}
+			final double candidat = p1.distanceSq(p) + p2.distanceSq(p);
+			if (candidat < farest) {
+				result = p;
+				farest = candidat;
+			}
+		}
+		if (result == null) {
+			throw new IllegalArgumentException();
+		}
+		return result;
 	}
 
 	private void drawSquare(UGraphicG2d ug, double centerX, double centerY) {
@@ -87,28 +122,32 @@ public class PathDrawerInterface implements PathDrawer {
 		return p;
 	}
 
-//	private void drawPath(UGraphic ug, PointList points, Positionable start, Positionable end) {
-//		Decor decor = new DecorInterfaceProvider();
-//		Point2D last = null;
-//		final int nb = 10;
-//		final double t1 = points.getIntersectionDouble(PositionableUtils.convert(start));
-//		final double t2 = points.getIntersectionDouble(PositionableUtils.convert(end));
-//		for (int i = 0; i <= nb; i++) {
-//			final double d = t1 + (t2 - t1) * i / nb;
-//			final Point2D cur = nullIfContained(points.getPoint(d), start, end);
-//			if (last != null && cur != null) {
-//				ug.draw(last.getX(), last.getY(), new ULine(cur.getX() - last.getX(), cur.getY() - last.getY()));
-//				if (decor != null) {
-//					decor.drawLine(ug, last, cur);
-//					decor = null;
-//				}
-//			}
-//			last = cur;
-//		}
-//
-//		for (Point2D p : points.getPoints()) {
-//			ug.draw(p.getX() - 1, p.getY() - 1, new UEllipse(2, 2));
-//		}
-//	}
+	// private void drawPath(UGraphic ug, PointList points, Positionable start,
+	// Positionable end) {
+	// Decor decor = new DecorInterfaceProvider();
+	// Point2D last = null;
+	// final int nb = 10;
+	// final double t1 =
+	// points.getIntersectionDouble(PositionableUtils.convert(start));
+	// final double t2 =
+	// points.getIntersectionDouble(PositionableUtils.convert(end));
+	// for (int i = 0; i <= nb; i++) {
+	// final double d = t1 + (t2 - t1) * i / nb;
+	// final Point2D cur = nullIfContained(points.getPoint(d), start, end);
+	// if (last != null && cur != null) {
+	// ug.draw(last.getX(), last.getY(), new ULine(cur.getX() - last.getX(),
+	// cur.getY() - last.getY()));
+	// if (decor != null) {
+	// decor.drawLine(ug, last, cur);
+	// decor = null;
+	// }
+	// }
+	// last = cur;
+	// }
+	//
+	// for (Point2D p : points.getPoints()) {
+	// ug.draw(p.getX() - 1, p.getY() - 1, new UEllipse(2, 2));
+	// }
+	// }
 
 }

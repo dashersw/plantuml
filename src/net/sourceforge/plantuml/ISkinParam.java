@@ -60,5 +60,7 @@ public interface ISkinParam {
 	public boolean isClassCollapse();
 	
 	public int classAttributeIconSize();
+	
+	public boolean isMonochrome();
 
 }

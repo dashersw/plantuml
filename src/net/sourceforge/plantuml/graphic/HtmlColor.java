@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4251 $
+ * Revision $Revision: 4918 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -36,6 +36,8 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.sourceforge.plantuml.ugraphic.ColorChangerMonochrome;
 
 public class HtmlColor {
 
@@ -206,6 +208,10 @@ public class HtmlColor {
 		assert isValid(s);
 	}
 
+	private HtmlColor(Color c) {
+		this.color = c;
+	}
+
 	static public boolean isValid(String s) {
 		if (s.matches("#[0-9A-Fa-f]{6}")) {
 			return true;
@@ -244,15 +250,28 @@ public class HtmlColor {
 	}
 
 	public String getAsHtml() {
-		return getAsHtml(color);
+		return getAsHtml(getColor());
 	}
 
 	public Color getColor() {
+		if (forceMonochrome) {
+			return new ColorChangerMonochrome().getChangedColor(color);
+		}
 		return color;
 	}
-	
+
 	@Override
 	public String toString() {
-		return super.toString()+" "+getAsHtml();
+		return super.toString() + " " + getAsHtml();
+	}
+
+	private static boolean forceMonochrome = false;
+
+	public static final boolean isForceMonochrome() {
+		return forceMonochrome;
+	}
+
+	public static final void setForceMonochrome(boolean forceMonochrome) {
+		HtmlColor.forceMonochrome = forceMonochrome;
 	}
 }
