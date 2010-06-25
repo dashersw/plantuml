@@ -106,7 +106,26 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public void newpage(List<String> strings) {
+		if (ignoreNewpage) {
+			return;
+		}
 		events.add(new Newpage(strings));
+	}
+
+	private boolean ignoreNewpage = false;
+
+	public void ignoreNewpage() {
+		this.ignoreNewpage = true;
+	}
+
+	private int autonewpage = -1;
+
+	public final int getAutonewpage() {
+		return autonewpage;
+	}
+	
+	public void setAutonewpage(int autonewpage) {
+		this.autonewpage = autonewpage;
 	}
 
 	public void divider(List<String> strings) {
@@ -174,7 +193,7 @@ public class SequenceDiagram extends UmlDiagram {
 		} else if (type == GroupingType.END) {
 			openGroupings.remove(0);
 		}
-		
+
 		return true;
 	}
 
@@ -231,4 +250,6 @@ public class SequenceDiagram extends UmlDiagram {
 	public UmlDiagramType getUmlDiagramType() {
 		return UmlDiagramType.SEQUENCE;
 	}
+
+
 }

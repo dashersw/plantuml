@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4640 $
+ * Revision $Revision: 4943 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -53,6 +53,8 @@ public class Rose implements Skin {
 	private final Map<ColorParam, HtmlColor> defaultsColor = new EnumMap<ColorParam, HtmlColor>(ColorParam.class);
 
 	public Rose() {
+		defaultsColor.put(ColorParam.background, new HtmlColor("white"));
+		
 		defaultsColor.put(ColorParam.sequenceArrow, new HtmlColor("#A80036"));
 		defaultsColor.put(ColorParam.usecaseArrow, new HtmlColor("#A80036"));
 		defaultsColor.put(ColorParam.classArrow, new HtmlColor("#A80036"));

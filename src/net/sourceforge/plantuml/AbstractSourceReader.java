@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4814 $
+ * Revision $Revision: 4952 $
  * 
  */
 package net.sourceforge.plantuml;
@@ -119,11 +119,12 @@ public abstract class AbstractSourceReader {
 		final List<StartUml> result = new ArrayList<StartUml>();
 
 		for (Integer i : lines) {
-
 			StartUml system = getStartUmlAtLine(allResults, i);
-
 			if (system == null) {
 				system = getError(allResults, i);
+				if (OptionFlags.getInstance().isQuiet()==false && system.getSystem() instanceof PSystemError) {
+					((PSystemError) system.getSystem()).print(System.err);
+				}
 			}
 			result.add(system);
 		}
@@ -151,10 +152,10 @@ public abstract class AbstractSourceReader {
 		UmlSource source = null;
 		final List<ErrorUml> errors = new ArrayList<ErrorUml>();
 		for (PSystemError system : ps) {
-//			if (system == null) {
-//				throw new IllegalStateException();
-//				// continue;
-//			}
+			// if (system == null) {
+			// throw new IllegalStateException();
+			// // continue;
+			// }
 			if (system.getSource() != null && source == null) {
 				source = system.getSource();
 			}

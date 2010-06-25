@@ -65,7 +65,7 @@ public class GraphvizSolverB {
 		baos.close();
 		final byte[] result = baos.toByteArray();
 		final String s = new String(result, "UTF-8");
-		// System.err.println("result=" + s);
+		//System.err.println("result=" + s);
 
 		final Pattern pGraph = Pattern.compile("(?m)\\<svg\\s+width=\"(\\d+)pt\"\\s+height=\"(\\d+)pt\"");
 		final Matcher mGraph = pGraph.matcher(s);
@@ -100,9 +100,11 @@ public class GraphvizSolverB {
 			final String points = s.substring(p2 + " d=\"".length(), p3);
 			p.setDotPath(new DotPath(points, height));
 
-			final List<Point2D.Double> pointsList = extractPointsList(s, p1);
 			//System.err.println("pointsList=" + pointsList);
-			p.setLabelPosition(getMinX(pointsList), getMinY(pointsList) + height);
+			if (p.getLabel() != null) {
+				final List<Point2D.Double> pointsList = extractPointsList(s, p1);
+				p.setLabelPosition(getMinX(pointsList), getMinY(pointsList) + height);
+			}
 
 		}
 

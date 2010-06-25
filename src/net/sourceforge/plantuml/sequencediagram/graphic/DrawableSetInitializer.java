@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4911 $
+ * Revision $Revision: 4935 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -69,17 +69,21 @@ class DrawableSetInitializer {
 	private double freeY = 0;
 
 	private final double groupingMargin = 10;
+	private final double autonewpage;
 
 	private int maxGrouping = 0;
 
 	private ConstraintSet constraintSet;
 	private ConstraintSetHBar constraintSetHBar;
 
-	public DrawableSetInitializer(Skin skin, ISkinParam skinParam, boolean showTail) {
+	public DrawableSetInitializer(Skin skin, ISkinParam skinParam, boolean showTail, double autonewpage) {
 		this.drawableSet = new DrawableSet(skin, skinParam);
 		this.showTail = showTail;
+		this.autonewpage = autonewpage;
 
 	}
+
+	private double lastFreeY = 0;
 
 	public DrawableSet createDrawableSet(StringBounder stringBounder) {
 		if (freeY != 0) {
@@ -91,6 +95,7 @@ class DrawableSetInitializer {
 		}
 
 		this.freeY = drawableSet.getHeadHeight(stringBounder);
+		this.lastFreeY = this.freeY;
 
 		for (LivingParticipantBox p : drawableSet.getAllLivingParticipantBox()) {
 			p.getParticipantBox().setTopStartingY(this.freeY);
@@ -112,7 +117,11 @@ class DrawableSetInitializer {
 		constraintSet = new ConstraintSet(col, freeX);
 		constraintSetHBar = new ConstraintSetHBar(col);
 
-		for (Event ev : drawableSet.getAllEvents()) {
+		for (Event ev : new ArrayList<Event>(drawableSet.getAllEvents())) {
+			final double diffY = freeY - lastFreeY;
+			if (autonewpage > 0 && diffY > 0 && diffY + getTotalHeight(0, stringBounder) > autonewpage) {
+				prepareNewpageSpecial(stringBounder, new Newpage(null), ev);
+			}
 			if (ev instanceof MessageExo) {
 				prepareMessageExo(stringBounder, (MessageExo) ev);
 			} else if (ev instanceof Message) {
@@ -140,13 +149,13 @@ class DrawableSetInitializer {
 
 		final double diagramWidth = constraintSetHBar.takeConstraintIntoAccount(stringBounder, freeX) + 1;
 
-		drawableSet.setDimension(new Dimension2DDouble(diagramWidth, getTotalHeight(stringBounder)));
+		drawableSet.setDimension(new Dimension2DDouble(diagramWidth, getTotalHeight(freeY, stringBounder)));
 		return drawableSet;
 	}
 
-	private double getTotalHeight(StringBounder stringBounder) {
+	private double getTotalHeight(double y, StringBounder stringBounder) {
 		final double signature = 0;
-		return freeY + drawableSet.getTailHeight(stringBounder, showTail) + signature;
+		return y + drawableSet.getTailHeight(stringBounder, showTail) + signature;
 	}
 
 	public double getYposition(StringBounder stringBounder, Newpage newpage) {
@@ -195,8 +204,17 @@ class DrawableSetInitializer {
 	private void prepareNewpage(StringBounder stringBounder, Newpage newpage) {
 		final GraphicalNewpage graphicalNewpage = new GraphicalNewpage(freeY, drawableSet.getSkin().createComponent(
 				ComponentType.NEWPAGE, drawableSet.getSkinParam(), null));
+		this.lastFreeY = freeY;
 		freeY += graphicalNewpage.getPreferredHeight(stringBounder);
 		drawableSet.addEvent(newpage, graphicalNewpage);
+	}
+
+	private void prepareNewpageSpecial(StringBounder stringBounder, Newpage newpage, Event justBefore) {
+		final GraphicalNewpage graphicalNewpage = new GraphicalNewpage(freeY, drawableSet.getSkin().createComponent(
+				ComponentType.NEWPAGE, drawableSet.getSkinParam(), null));
+		this.lastFreeY = freeY;
+		freeY += graphicalNewpage.getPreferredHeight(stringBounder);
+		drawableSet.addEvent(newpage, graphicalNewpage, justBefore);
 	}
 
 	private void prepareDivider(StringBounder stringBounder, Divider divider) {

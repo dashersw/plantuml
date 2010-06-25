@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4828 $
+ * Revision $Revision: 4952 $
  *
  */
 package net.sourceforge.plantuml;
@@ -43,6 +43,7 @@ public class OptionFlags {
 		debugDot = false;
 		forceGd = false;
 		forceCairo = false;
+		quiet = false;
 		dotExecutable = null;
 	}
 
@@ -63,6 +64,7 @@ public class OptionFlags {
 	private boolean forceCairo = false;
 	private String dotExecutable = null;
 	private boolean gui = false;
+	private boolean quiet = false;
 
 	public final boolean isPipe() {
 		return pipe;
@@ -158,6 +160,14 @@ public class OptionFlags {
 
 	public final void setForceCairo(boolean forceCairo) {
 		this.forceCairo = forceCairo;
+	}
+
+	public final boolean isQuiet() {
+		return quiet;
+	}
+
+	public final void setQuiet(boolean quiet) {
+		this.quiet = quiet;
 	}
 
 }

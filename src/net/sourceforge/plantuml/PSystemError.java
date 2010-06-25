@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4808 $
+ * Revision $Revision: 4928 $
  */
 package net.sourceforge.plantuml;
 
@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,10 +50,23 @@ import net.sourceforge.plantuml.graphic.GraphicStrings;
 public class PSystemError extends AbstractPSystem {
 
 	private final List<ErrorUml> errorsUml = new ArrayList<ErrorUml>();
+	private final List<String> htmlStrings = new ArrayList<String>();
+	private final List<String> plainStrings = new ArrayList<String>();
 
 	public PSystemError(UmlSource source, List<ErrorUml> errorUml) {
 		this.errorsUml.addAll(errorUml);
 		this.setSource(source);
+
+		final Collection<ErrorUml> executions = getErrors(ErrorUmlType.EXECUTION_ERROR);
+		if (executions.size() > 0) {
+			final int position = getHigherErrorPosition(ErrorUmlType.EXECUTION_ERROR);
+			final Collection<String> errs = getErrorsAt(position, ErrorUmlType.EXECUTION_ERROR);
+			appendSource(position, errs);
+		} else {
+			final int position = getHigherErrorPosition(ErrorUmlType.SYNTAX_ERROR);
+			appendSource(position, Collections.singleton("Syntax Error?"));
+		}
+
 	}
 
 	public PSystemError(UmlSource source, ErrorUml... errorUml) {
@@ -77,25 +91,10 @@ public class PSystemError extends AbstractPSystem {
 	}
 
 	public GraphicStrings getPngError() throws IOException {
-		final Collection<ErrorUml> executions = getErrors(ErrorUmlType.EXECUTION_ERROR);
-		if (executions.size() > 0) {
-			return getPngErrorExecution(executions);
-		}
-		final List<String> strings = new ArrayList<String>();
-		final int position = getHigherErrorPosition(ErrorUmlType.SYNTAX_ERROR);
-		appendSource(strings, position, Collections.singleton("Syntax Error?"));
-		return new GraphicStrings(strings);
+		return new GraphicStrings(htmlStrings);
 	}
 
-	private GraphicStrings getPngErrorExecution(Collection<ErrorUml> executions) {
-		final int position = getHigherErrorPosition(ErrorUmlType.EXECUTION_ERROR);
-		final Collection<String> errs = getErrorsAt(position, ErrorUmlType.EXECUTION_ERROR);
-		final List<String> strings = new ArrayList<String>();
-		appendSource(strings, position, errs);
-		return new GraphicStrings(strings);
-	}
-
-	private void appendSource(Collection<String> strings, int position, Collection<String> errs) {
+	private void appendSource(int position, Collection<String> errs) {
 		final int limit = 4;
 		int start;
 		final int skip = position - limit + 1;
@@ -103,18 +102,29 @@ public class PSystemError extends AbstractPSystem {
 			start = 0;
 		} else {
 			if (skip == 1) {
-				strings.add("... (skipping 1 line) ...");
+				htmlStrings.add("... (skipping 1 line) ...");
+				plainStrings.add("... (skipping 1 line) ...");
 			} else {
-				strings.add("... (skipping " + skip + " lines) ...");
+				htmlStrings.add("... (skipping " + skip + " lines) ...");
+				plainStrings.add("... (skipping " + skip + " lines) ...");
 			}
 			start = position - limit + 1;
 		}
 		for (int i = start; i < position; i++) {
-			strings.add(StringUtils.hideComparatorCharacters(getSource().getLine(i)));
+			htmlStrings.add(StringUtils.hideComparatorCharacters(getSource().getLine(i)));
+			plainStrings.add(getSource().getLine(i));
 		}
-		strings.add("<w>" + StringUtils.hideComparatorCharacters(getSource().getLine(position)) + "</w>");
+		final String errorLine = getSource().getLine(position);
+		htmlStrings.add("<w>" + StringUtils.hideComparatorCharacters(errorLine) + "</w>");
+		plainStrings.add(StringUtils.hideComparatorCharacters(errorLine));
+		final StringBuilder underscore = new StringBuilder();
+		for (int i = 0; i < errorLine.length(); i++) {
+			underscore.append("^");
+		}
+		plainStrings.add(underscore.toString());
 		for (String er : errs) {
-			strings.add(" <font color=red>" + er);
+			htmlStrings.add(" <font color=red>" + er);
+			plainStrings.add(" " + er);
 		}
 	}
 
@@ -157,5 +167,11 @@ public class PSystemError extends AbstractPSystem {
 
 	public final List<ErrorUml> getErrorsUml() {
 		return Collections.unmodifiableList(errorsUml);
+	}
+
+	public void print(PrintStream ps) {
+		for (String s : plainStrings) {
+			ps.println(StringUtils.showComparatorCharacters(s));
+		}
 	}
 }

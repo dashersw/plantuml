@@ -28,15 +28,18 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4911 $
+ * Revision $Revision: 4935 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +47,7 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.Event;
+import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -54,7 +58,8 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 class DrawableSet {
 
 	private final Map<Participant, LivingParticipantBox> participants = new LinkedHashMap<Participant, LivingParticipantBox>();
-	private final Map<Event, GraphicalElement> events = new LinkedHashMap<Event, GraphicalElement>();
+	private final Map<Event, GraphicalElement> events = new HashMap<Event, GraphicalElement>();
+	private final List<Event> eventsList = new ArrayList<Event>();
 	private final Skin skin;
 	private final ISkinParam skinParam;
 	private Dimension2D dimension;
@@ -80,8 +85,8 @@ class DrawableSet {
 		return skinParam;
 	}
 
-	public Set<Event> getAllEvents() {
-		return Collections.unmodifiableSet(events.keySet());
+	public Collection<Event> getAllEvents() {
+		return Collections.unmodifiableCollection(eventsList);
 	}
 
 	public Set<Participant> getAllParticipants() {
@@ -93,7 +98,11 @@ class DrawableSet {
 	}
 
 	public Collection<GraphicalElement> getAllGraphicalElements() {
-		return Collections.unmodifiableCollection(events.values());
+		final Collection<GraphicalElement> result = new ArrayList<GraphicalElement>();
+		for (Event ev : eventsList) {
+			result.add(events.get(ev));
+		}
+		return Collections.unmodifiableCollection(result);
 	}
 
 	public LivingParticipantBox getLivingParticipantBox(Participant p) {
@@ -130,8 +139,20 @@ class DrawableSet {
 	}
 
 	public void addEvent(Event event, GraphicalElement object) {
+		if (events.keySet().contains(event) == false) {
+			eventsList.add(event);
+		}
 		events.put(event, object);
+	}
 
+	public void addEvent(Newpage newpage, GraphicalNewpage object, Event justBefore) {
+		final int idx = eventsList.indexOf(justBefore);
+		if (idx == -1) {
+			throw new IllegalArgumentException();
+		}
+		eventsList.add(idx, newpage);
+		events.put(newpage, object);
+		assert events.size() == eventsList.size();
 	}
 
 	void setDimension(Dimension2D dim) {

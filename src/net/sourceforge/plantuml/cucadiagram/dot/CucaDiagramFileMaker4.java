@@ -48,6 +48,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.Log;
@@ -71,7 +72,6 @@ import net.sourceforge.plantuml.posimo.PathDrawerInterface;
 import net.sourceforge.plantuml.posimo.PathDrawerSquared;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 
 public final class CucaDiagramFileMaker4 {
@@ -153,9 +153,14 @@ public final class CucaDiagramFileMaker4 {
 		for (Link link : diagram.getLinks()) {
 			final Block b1 = entities2.get(link.getEntity1());
 			final Block b2 = entities2.get(link.getEntity2());
-			final LabelImage labelImage = new LabelImage(link, rose, diagram.getSkinParam());
-			final Dimension2D dim = labelImage.getDimension(stringBounder);
-			final Label label = new Label(dim.getWidth(), dim.getHeight());
+			final Label label;
+			if (link.getLabel() == null) {
+				label = null;
+			} else {
+				final LabelImage labelImage = new LabelImage(link, rose, diagram.getSkinParam(), getLabelMargin());
+				final Dimension2D dim = labelImage.getDimension(stringBounder);
+				label = new Label(dim.getWidth(), dim.getHeight());
+			}
 			final Path p = new Path(b1, b2, label);
 			paths.put(p, link);
 		}
@@ -171,20 +176,23 @@ public final class CucaDiagramFileMaker4 {
 		ug = new UGraphicG2d(g2d, im);
 		stringBounder = ug.getStringBounder();
 
+		for (Map.Entry<Path, Link> ent : paths.entrySet()) {
+			final LinkType type = ent.getValue().getType();
+			final PathDrawer pathDrawer = getPathDrawer(type);
+			final Path p = ent.getKey();
+			ug.getParam().setColor(rose.getHtmlColor(diagram.getSkinParam(), ColorParam.classBorder).getColor());
+			pathDrawer.drawPath(ug, p.getStart(), p.getEnd(), p);
+			if (p.getLabel() != null) {
+				ug.getParam().setColor(Color.BLACK);
+				drawLabel(ug, p);
+			}
+		}
+
 		for (Map.Entry<Block, Entity> ent : entities.entrySet()) {
 			final Entity entity = ent.getValue();
 			final Block b = ent.getKey();
 			final Point2D pos = b.getPosition();
 			new EntityImageBlock(entity, rose, diagram.getSkinParam()).drawU(ug, pos.getX(), pos.getY());
-		}
-
-		for (Map.Entry<Path, Link> ent : paths.entrySet()) {
-			final LinkType type = ent.getValue().getType();
-			final PathDrawer pathDrawer = getPathDrawer(type);
-			final Path p = ent.getKey();
-			ug.getParam().setColor(Color.BLACK);
-			pathDrawer.drawPath(ug, p.getStart(), p.getEnd(), p);
-			drawLabel(ug, p);
 		}
 
 		PngIO.write(im, os);
@@ -197,15 +205,19 @@ public final class CucaDiagramFileMaker4 {
 		}
 		return new PathDrawerSquared(new Rose(), diagram.getSkinParam(), type);
 	}
+	
+	private double getLabelMargin() {
+		return 2;
+	}
 
 	private void drawLabel(UGraphic ug, Path p) {
-		ug.getParam().setColor(Color.GREEN);
-		ug.getParam().setBackcolor(null);
+//		ug.getParam().setColor(Color.GREEN);
+//		ug.getParam().setBackcolor(null);
 		final Label label = p.getLabel();
 		final Point2D pos = label.getPosition();
-		final Dimension2D dim = label.getSize();
-		ug.draw(pos.getX(), pos.getY(), new URectangle(dim.getWidth(), dim.getHeight()));
-		final LabelImage labelImage = new LabelImage(paths.get(p), rose, diagram.getSkinParam());
+		// final Dimension2D dim = label.getSize();
+		// ug.draw(pos.getX(), pos.getY(), new URectangle(dim.getWidth(), dim.getHeight()));
+		final LabelImage labelImage = new LabelImage(paths.get(p), rose, diagram.getSkinParam(), getLabelMargin());
 		labelImage.drawU(ug, pos.getX(), pos.getY());
 
 	}

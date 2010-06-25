@@ -27,53 +27,27 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
+ * 
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.compositediagram.command;
+package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.compositediagram.CompositeDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandLinkBlock extends SingleLineCommand<CompositeDiagram> {
+public class CommandIgnoreNewpage extends SingleLineCommand<SequenceDiagram> {
 
-	public CommandLinkBlock(CompositeDiagram diagram) {
-		super(diagram, "(?i)^([\\p{L}0-9_.]+)\\s*(\\[\\]|\\*\\))?([=-]+|\\.+)(\\[\\]|\\(\\*)?\\s*([\\p{L}0-9_.]+)\\s*(?::\\s*(\\S*+))?$");
+	public CommandIgnoreNewpage(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram, "(?i)^ignore\\s*newpage$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final Entity cl1 = getSystem().getOrCreateClass(arg.get(0));
-		final Entity cl2 = getSystem().getOrCreateClass(arg.get(4));
-
-		final String deco1 = arg.get(1);
-		final String deco2 = arg.get(3);
-		LinkType linkType = new LinkType(getLinkDecor(deco1), getLinkDecor(deco2));
-		
-		if ("*)".equals(deco1)) {
-			linkType = linkType.getInterfaceProvider();
-		} else if ("(*".equals(deco2)) {
-			linkType = linkType.getInterfaceUser();
-		}
-
-		final String queue = arg.get(2);
-
-		final Link link = new Link(cl1, cl2, linkType, arg.get(5), queue.length());
-		getSystem().addLink(link);
+		getSystem().ignoreNewpage();
 		return CommandExecutionResult.ok();
 	}
-
-	private LinkDecor getLinkDecor(String s) {
-		if ("[]".equals(s)) {
-			return LinkDecor.SQUARRE;
-		}
-		return LinkDecor.NONE;
-	}
-
 }

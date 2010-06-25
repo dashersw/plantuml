@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4828 $
+ * Revision $Revision: 4952 $
  *
  */
 package net.sourceforge.plantuml;
@@ -116,6 +116,9 @@ public class Option {
 					continue;
 				}
 				initConfig(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
+			} else if (s.startsWith("-c")) {
+				s = s.substring(2);
+				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
 			} else if (s.startsWith("-x")) {
 				s = s.substring(2);
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -131,10 +134,13 @@ public class Option {
 				OptionFlags.getInstance().setMetadata(true);
 			} else if (s.equalsIgnoreCase("-word")) {
 				OptionFlags.getInstance().setWord(true);
+				OptionFlags.getInstance().setQuiet(true);
 			} else if (s.equalsIgnoreCase("-forcegd")) {
 				OptionFlags.getInstance().setForceGd(true);
 			} else if (s.equalsIgnoreCase("-forcecairo")) {
 				OptionFlags.getInstance().setForceCairo(true);
+			} else if (s.equalsIgnoreCase("-quiet")) {
+				OptionFlags.getInstance().setQuiet(true);
 			} else if (s.equalsIgnoreCase("-computeurl") || s.equalsIgnoreCase("-encodeurl")) {
 				this.computeurl = true;
 			} else if (s.equalsIgnoreCase("-decodeurl")) {

@@ -70,17 +70,14 @@ public class PathDrawerInterface implements PathDrawer {
 			drawSquare(ug, p2.getX(), p2.getY());
 		}
 
-		final Decor decor = new DecorInterfaceProvider();
+		final Decor decor = new DecorInterfaceProvider(linkType.getStyle());
 		final Map<Point2D, Double> all = dotPath.somePoints();
 		final Point2D p = getFarest(p1, p2, all.keySet());
+
+		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
+		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+
 		decor.drawDecor(ug, p, all.get(p));
-		// for (Map.Entry<Point2D, Double> p : all.entrySet()) {
-		// ug.getParam().setBackcolor(rose.getHtmlColor(param,
-		// ColorParam.classBackground).getColor());
-		// ug.getParam().setColor(rose.getHtmlColor(param,
-		// ColorParam.classBorder).getColor());
-		// decor.drawDecor(ug, p.getKey(), p.getValue());
-		// }
 	}
 
 	private static Point2D getFarest(Point2D p1, Point2D p2, Collection<Point2D> all) {

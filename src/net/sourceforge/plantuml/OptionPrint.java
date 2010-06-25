@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4844 $
+ * Revision $Revision: 4952 $
  *
  */
 package net.sourceforge.plantuml;
@@ -118,6 +118,7 @@ public class OptionPrint {
 		System.err.println("    -metadata\t\tTo retrieve PlantUML sources from PNG images");
 		System.err.println("    -version\t\tTo display information about PlantUML and Java versions");
 		System.err.println("    -v[erbose]\t\tTo have log information");
+		System.err.println("    -quiet\t\tTo NOT print error message into the console");
 		System.err.println("    -forcegd\t\tTo force dot to use GD PNG library");
 		System.err.println("    -forcecairo\t\tTo force dot to use Cairo PNG library");
 		System.err.println("    -keepfiles\t\tTo NOT delete temporary files after process");

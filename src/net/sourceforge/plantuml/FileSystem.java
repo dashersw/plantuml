@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3824 $
+ * Revision $Revision: 4929 $
  *
  */
 package net.sourceforge.plantuml;
@@ -50,12 +50,12 @@ public class FileSystem {
 		return singleton;
 	}
 
-	public void setCurrentDir(File f) {
-		if (f == null) {
+	public void setCurrentDir(File dir) {
+		if (dir == null) {
 			throw new IllegalArgumentException();
 		}
-		Log.info("Setting current dir: " + f);
-		this.currentDir = f;
+		Log.info("Setting current dir: " + dir);
+		this.currentDir = dir;
 	}
 
 	public File getCurrentDir() {

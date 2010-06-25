@@ -77,13 +77,14 @@ public class DotxMaker {
 
 	private String getPathString(Path p) {
 		final StringBuilder sb = new StringBuilder("b" + p.getStart().getUid() + " -> b" + p.getEnd().getUid());
-		final Dimension2D size = p.getLabel().getSize();
-		final String fixed = "FIXEDSIZE=\"TRUE\" WIDTH=\"" + size.getWidth() + "\" HEIGHT=\"" + size.getHeight() + "\"";
-		sb.append(" [dir=none, arrowhead=none, headclip=false, tailclip=false, ");
-		sb.append("label=<<TABLE " + fixed + " ><TR><TD></TD></TR></TABLE>>]");
-		// sb.append("label=<<TABLE " + fixed + "><TR><TD " + fixed +
-		// ">x</TD></TR></TABLE>>]");
-		// sb.append("label=\"XXXXXXXXXX\"]");
+		sb.append(" [dir=none, arrowhead=none, headclip=false, tailclip=false");
+		if (p.getLabel() == null) {
+			sb.append("]");
+		} else {
+			final Dimension2D size = p.getLabel().getSize();
+			sb.append(", label=<<TABLE FIXEDSIZE=\"TRUE\" WIDTH=\"" + size.getWidth() + "\" HEIGHT=\""
+					+ size.getHeight() + "\"><TR><TD></TD></TR></TABLE>>]");
+		}
 		return sb.toString();
 	}
 

@@ -132,6 +132,8 @@ public class DotPath implements UShape {
 	}
 
 	public void draw(Graphics2D g2d) {
+		System.err.println("DotPath::draw "+beziers.size());
+		System.err.println("DotPath::draw "+toString());
 		for (CubicCurve2D.Double bez : beziers) {
 			g2d.draw(bez);
 		}
@@ -168,7 +170,8 @@ public class DotPath implements UShape {
 	}
 
 	public DotPath manageRect(Positionable start, Positionable end) {
-		return manageRect(PositionableUtils.convert(start), PositionableUtils.convert(end));
+		//return manageRect(PositionableUtils.convert(start), PositionableUtils.convert(end));
+		return this;
 	}
 
 	public Point2D getFrontierIntersection(Rectangle2D rect) {

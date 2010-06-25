@@ -35,34 +35,45 @@ package net.sourceforge.plantuml.posimo;
 
 import java.awt.geom.Point2D;
 
+import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class DecorInterfaceProvider implements Decor {
 
-	private final double radius = 4;
-	private final double radius2 = 6;
+	private final double radius = 5;
+	private final double radius2 = 9;
+	private final LinkStyle style;
 
 	// private final double distanceCircle = 16;
+
+	public DecorInterfaceProvider(LinkStyle style) {
+		if (style != LinkStyle.INTERFACE_PROVIDER && style != LinkStyle.INTERFACE_USER) {
+			throw new IllegalArgumentException();
+		}
+		this.style = style;
+	}
 
 	public void drawDecor(UGraphic ug, Point2D start, double direction) {
 		final double cornerX = start.getX() - radius;
 		final double cornerY = start.getY() - radius;
-		final double cornerX2 = start.getX() - radius2 - 2 * Math.sin(direction * Math.PI / 180.0);
-		final double cornerY2 = start.getY() - radius2 - 2 * Math.cos(direction * Math.PI / 180.0);
+		final double cornerX2 = start.getX() - radius2 - 0 * Math.sin(direction * Math.PI / 180.0);
+		final double cornerY2 = start.getY() - radius2 - 0 * Math.cos(direction * Math.PI / 180.0);
+
+		if (style == LinkStyle.INTERFACE_USER) {
+			direction += 180;
+		}
+		if (direction >= 360) {
+			direction -= 360;
+		}
 
 		final UEllipse arc = new UEllipse(2 * radius2, 2 * radius2, direction + 15, 180 - 30);
+		final UStroke old = ug.getParam().getStroke();
 		ug.getParam().setStroke(new UStroke(1.5));
-		ug.draw(cornerX, cornerY, new UEllipse(2 * radius, 2 * radius));
 		ug.draw(cornerX2, cornerY2, arc);
-		ug.getParam().setStroke(new UStroke());
-		// ug.draw(cornerX + distanceCircle, cornerY, new UEllipse(2 * radius, 2
-		// * radius));
-
-		// ug.getParam().setColor(Color.BLUE);
-		// ug.draw(cornerX, cornerY, new ULine(cornerX2 - cornerX, cornerY2 -
-		// cornerY));
+		ug.draw(cornerX, cornerY, new UEllipse(2 * radius, 2 * radius));
+		ug.getParam().setStroke(old);
 	}
 
 }

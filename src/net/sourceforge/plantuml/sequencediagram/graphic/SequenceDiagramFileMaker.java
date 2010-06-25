@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4919 $
+ * Revision $Revision: 4935 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -98,13 +98,12 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		this.diagram = sequenceDiagram;
 		this.fileFormat = fileFormat;
 		final DrawableSetInitializer initializer = new DrawableSetInitializer(skin, sequenceDiagram.getSkinParam(),
-				sequenceDiagram.isShowFootbox());
+				sequenceDiagram.isShowFootbox(), sequenceDiagram.getAutonewpage());
 
 		for (Participant p : sequenceDiagram.participants().values()) {
 			initializer.addParticipant(p);
 		}
 
-		final List<Newpage> newpages = new ArrayList<Newpage>();
 		for (Event ev : sequenceDiagram.events()) {
 			initializer.addEvent(ev);
 			if (ev instanceof Message) {
@@ -118,20 +117,21 @@ public class SequenceDiagramFileMaker implements FileMaker {
 						initializer.addEvent(lifeEvent);
 					}
 				}
-
 			}
+		}
+		drawableSet = initializer.createDrawableSet(dummyStringBounder);
+		final List<Newpage> newpages = new ArrayList<Newpage>();
+		for (Event ev : drawableSet.getAllEvents()) {
 			if (ev instanceof Newpage) {
 				newpages.add((Newpage) ev);
 			}
 		}
-		drawableSet = initializer.createDrawableSet(dummyStringBounder);
 		fullDimension = drawableSet.getDimension();
 		final Map<Newpage, Double> positions = new LinkedHashMap<Newpage, Double>();
 		for (Newpage n : newpages) {
 			positions.put(n, initializer.getYposition(dummyStringBounder, n));
 		}
 		pages = create(drawableSet, positions, sequenceDiagram.isShowFootbox(), sequenceDiagram.getTitle()).getPages();
-
 	}
 
 	private PageSplitter create(DrawableSet drawableSet, Map<Newpage, Double> positions, boolean showFootbox,
@@ -275,9 +275,6 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		addHeader2(area);
 
 		final Color backColor = diagram.getSkinParam().getBackgroundColor().getColor();
-
-		// System.err.println("toto=" + fileFormat);
-
 		final UGraphic ug;
 		final double imageWidth = getImageWidth(area, diagram.isRotation());
 		if (fileFormat == FileFormat.PNG) {
