@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3824 $
+ * Revision $Revision: 4959 $
  *
  */
 package net.sourceforge.plantuml;
@@ -63,6 +63,14 @@ public class Dimension2DDouble extends Dimension2D {
 	@Override
 	public void setSize(double width, double height) {
 		throw new UnsupportedOperationException();
+	}
+
+	public static Dimension2D delta(Dimension2D dim, double delta) {
+		return delta(dim, delta, delta);
+	}
+
+	public static Dimension2D delta(Dimension2D dim, double deltaWidth, double deltaHeight) {
+		return new Dimension2DDouble(dim.getWidth() + deltaWidth, dim.getHeight() + deltaHeight);
 	}
 
 }

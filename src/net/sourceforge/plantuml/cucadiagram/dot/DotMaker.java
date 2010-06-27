@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 4966 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -729,7 +729,7 @@ final public class DotMaker implements GraphvizMaker {
 					+ ",fillcolor=" + getColorString(ColorParam.packageBackground) + ",color="
 					+ getColorString(ColorParam.packageBorder) + ",style=filled,shape=tab," + label + "];");
 		} else {
-			throw new IllegalStateException(type.toString());
+			throw new IllegalStateException(type.toString() + " " + data.getUmlDiagramType());
 		}
 	}
 

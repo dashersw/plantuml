@@ -68,15 +68,18 @@ public class EntityImageBlock {
 
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final Dimension2D dim = name.calculateDimension(stringBounder);
-		return new Dimension2DDouble(dim.getWidth()+margin*2, dim.getHeight()+margin*2);
+		return Dimension2DDouble.delta(dim, margin * 2);
 	}
 
-	public void drawU(UGraphicG2d ug, double x, double y) {
+	public void drawU(UGraphicG2d ug, double xTheoricalPosition, double yTheoricalPosition, double marginWidth,
+			double marginHeight) {
 		final Dimension2D dim = getDimension(ug.getStringBounder());
 		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBackground).getColor());
 		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-		ug.draw(x, y, new URectangle(dim.getWidth(), dim.getHeight()));
-				
-		name.drawU(ug, x+margin, y+margin);
+		
+		ug.draw(xTheoricalPosition - marginWidth, yTheoricalPosition - marginWidth, new URectangle(dim.getWidth() + 2
+				* marginWidth, dim.getHeight() + 2 * marginHeight));
+
+		name.drawU(ug, xTheoricalPosition + margin, yTheoricalPosition + margin);
 	}
 }

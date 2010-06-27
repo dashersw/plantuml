@@ -37,7 +37,10 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 
 public interface PathDrawer {
 
-	public void drawPath(UGraphicG2d ug, Positionable start, Positionable end,
+	public void drawPathBefore(UGraphicG2d ug, Positionable start, Positionable end,
+			Path path);
+
+	public void drawPathAfter(UGraphicG2d ug, Positionable start, Positionable end,
 			Path path);
 
 }

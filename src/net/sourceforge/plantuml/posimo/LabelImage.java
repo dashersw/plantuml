@@ -36,7 +36,6 @@ package net.sourceforge.plantuml.posimo;
 import java.awt.Color;
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
@@ -54,32 +53,31 @@ public class LabelImage {
 	final private ISkinParam param;
 	final private Rose rose;
 	final private TextBlock name;
-	final private double margin;
 
-	public LabelImage(Link link, Rose rose, ISkinParam param, double margin) {
+	public LabelImage(Link link, Rose rose, ISkinParam param) {
 		if (link == null) {
 			throw new IllegalArgumentException();
 		}
 		// this.entity = entity;
 		this.param = param;
 		this.rose = rose;
-		this.margin = margin;
 		this.name = TextBlockUtils.create(StringUtils.getWithNewlines(link.getLabel()), param.getFont(FontParam.CLASS),
 				Color.BLACK, HorizontalAlignement.CENTER);
 	}
 
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final Dimension2D dim = name.calculateDimension(stringBounder);
-		return new Dimension2DDouble(dim.getWidth()+2*margin, dim.getHeight()+2*margin);
+		return dim;
+		//return Dimension2DDouble.delta(dim, 2 * margin);
 	}
 
 	public void drawU(UGraphic ug, double x, double y) {
-		final Dimension2D dim = getDimension(ug.getStringBounder());
+		// final Dimension2D dim = getDimension(ug.getStringBounder());
 		// ug.getParam().setBackcolor(rose.getHtmlColor(param,
 		// ColorParam.classBackground).getColor());
 		// ug.getParam().setColor(rose.getHtmlColor(param,
 		// ColorParam.classBorder).getColor());
 		// ug.draw(x, y, new URectangle(dim.getWidth(), dim.getHeight()));
-		name.drawU(ug, x+margin, y+margin);
+		name.drawU(ug, x, y);
 	}
 }

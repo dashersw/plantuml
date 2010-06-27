@@ -37,13 +37,14 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
+
 public class PositionableUtils {
-	
+
 	static public Rectangle2D convert(Positionable positionable) {
 		final Point2D position = positionable.getPosition();
 		final Dimension2D size = positionable.getSize();
 		return new Rectangle2D.Double(position.getX(), position.getY(), size.getWidth(), size.getHeight());
-
 	}
 
 	static public boolean contains(Positionable positionable, Point2D p) {
@@ -65,6 +66,20 @@ public class PositionableUtils {
 			return false;
 		}
 		return true;
+	}
+
+	static public Positionable addMargin(final Positionable pos, final double widthMargin, final double heightMargin) {
+		return new Positionable() {
+
+			public Point2D getPosition() {
+				final Point2D p = pos.getPosition();
+				return new Point2D.Double(p.getX() - widthMargin, p.getY() - heightMargin);
+			}
+
+			public Dimension2D getSize() {
+				return Dimension2DDouble.delta(pos.getSize(), 2 * widthMargin, 2 * heightMargin);
+			}
+		};
 	}
 
 }

@@ -40,6 +40,7 @@ import java.util.Map;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
+import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -57,9 +58,16 @@ public class PathDrawerInterface implements PathDrawer {
 		this.linkType = linkType;
 	}
 
-	public void drawPath(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
-		final DotPath dotPath = path.getDotPath().manageRect(start, end);
+	public void drawPathBefore(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
+		//final DotPath dotPath = path.getDotPath().manageRect(start, end);
+		final DotPath dotPath = path.getDotPath();
 		ug.draw(0, 0, dotPath);
+
+	}
+
+	public void drawPathAfter(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
+		//final DotPath dotPath = path.getDotPath().manageRect(start, end);
+		final DotPath dotPath = path.getDotPath();
 
 		final Point2D p1 = dotPath.getFrontierIntersection(start);
 		final Point2D p2 = dotPath.getFrontierIntersection(end);
@@ -70,14 +78,17 @@ public class PathDrawerInterface implements PathDrawer {
 			drawSquare(ug, p2.getX(), p2.getY());
 		}
 
-		final Decor decor = new DecorInterfaceProvider(linkType.getStyle());
-		final Map<Point2D, Double> all = dotPath.somePoints();
-		final Point2D p = getFarest(p1, p2, all.keySet());
+		final LinkStyle style = linkType.getStyle();
+		if (style == LinkStyle.INTERFACE_PROVIDER || style == LinkStyle.INTERFACE_USER) {
+			final Decor decor = new DecorInterfaceProvider(style);
+			final Map<Point2D, Double> all = dotPath.somePoints();
+			final Point2D p = getFarest(p1, p2, all.keySet());
 
-		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
-		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
+			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
 
-		decor.drawDecor(ug, p, all.get(p));
+			decor.drawDecor(ug, p, all.get(p));
+		}
 	}
 
 	private static Point2D getFarest(Point2D p1, Point2D p2, Collection<Point2D> all) {

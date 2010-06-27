@@ -52,17 +52,22 @@ public class PSystemOregonFactory implements PSystemBasicFactory {
 	}
 
 	public PSystemOregon getSystem() {
-		final Keyboard keyboard = new KeyboardList(inputs);
+		final Keyboard keyboard;
+		if (inputs == null) {
+			keyboard = new KeyboardList("");
+		} else {
+			keyboard = new KeyboardList(inputs);
+		}
 		system = new PSystemOregon(keyboard);
 		return system;
 	}
 
 	public boolean executeLine(String line) {
-		if (inputs==null && line.equalsIgnoreCase("run oregon trail")) {
+		if (inputs == null && line.equalsIgnoreCase("run oregon trail")) {
 			inputs = new ArrayList<String>();
 			return true;
 		}
-		if (inputs==null) {
+		if (inputs == null) {
 			return false;
 		}
 		inputs.add(line);
