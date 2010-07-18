@@ -74,7 +74,7 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines<Objec
 		final String display = arg.get(1);
 		final String stereotype = arg.get(3);
 		if (getSystem().entityExist(code)) {
-			return getSystem().getOrCreateClass(code);
+			return (Entity) getSystem().getOrCreateClass(code);
 		}
 		final Entity entity = getSystem().createEntity(code, display, EntityType.OBJECT);
 		if (stereotype != null) {

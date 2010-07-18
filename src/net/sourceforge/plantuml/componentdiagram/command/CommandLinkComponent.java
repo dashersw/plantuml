@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4827 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram.command;
@@ -38,8 +38,8 @@ import java.util.List;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -63,8 +63,8 @@ public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 			return CommandExecutionResult.error("Package can be only linked to other package");
 		}
 		
-		final Entity cl1 = getSystem().getOrCreateClass(arg.get(0));
-		final Entity cl2 = getSystem().getOrCreateClass(arg.get(7));
+		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(0));
+		final IEntity cl2 = getSystem().getOrCreateClass(arg.get(7));
 
 		final LinkType linkType = arg.get(1) != null ? getLinkTypeNormal(arg) : getLinkTypeInv(arg);
 		final String queue = arg.get(1) != null ? arg.get(2) : arg.get(6);

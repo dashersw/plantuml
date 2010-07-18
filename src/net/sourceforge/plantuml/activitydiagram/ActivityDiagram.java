@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3851 $
+ * Revision $Revision: 5046 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -36,19 +36,29 @@ package net.sourceforge.plantuml.activitydiagram;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
 public class ActivityDiagram extends CucaDiagram {
 
-	private Entity lastEntityConsulted;
-	private Entity lastEntityBrancheConsulted;
+	private IEntity lastEntityConsulted;
+	private IEntity lastEntityBrancheConsulted;
+	private ConditionalContext currentContext;
+	private boolean acceptOldSyntaxForBranch = true;
 
-	public Entity getOrCreate(String code, String display, EntityType type) {
-		final Entity result;
+	private int autoBranch;
+
+	private String getAutoBranch() {
+		return "#" + (autoBranch++);
+	}
+
+	public IEntity getOrCreate(String code, String display, EntityType type) {
+		final IEntity result;
 		if (entityExist(code)) {
 			result = super.getOrCreateEntity(code, type);
 			if (result.getType() != type) {
@@ -62,11 +72,21 @@ public class ActivityDiagram extends CucaDiagram {
 		return result;
 	}
 
-	public Entity getStart() {
+	public void startIf() {
+		final IEntity br = createEntity(getAutoBranch(), "", EntityType.BRANCH);
+		currentContext = new ConditionalContext(currentContext, br, Direction.DOWN);
+	}
+	
+	public void endif() {
+		currentContext = currentContext.getParent();
+	}
+
+
+	public IEntity getStart() {
 		return getOrCreate("start", "start", EntityType.CIRCLE_START);
 	}
 
-	public Entity getEnd() {
+	public IEntity getEnd() {
 		return getOrCreate("end", "end", EntityType.CIRCLE_END);
 	}
 
@@ -81,7 +101,7 @@ public class ActivityDiagram extends CucaDiagram {
 		return null;
 	}
 
-	private void updateLasts(final Entity result) {
+	private void updateLasts(final IEntity result) {
 		if (result.getType() == EntityType.NOTE) {
 			return;
 		}
@@ -111,17 +131,34 @@ public class ActivityDiagram extends CucaDiagram {
 		return "(" + entities().size() + " activities)";
 	}
 
-	public Entity getLastEntityConsulted() {
+	public IEntity getLastEntityConsulted() {
 		return lastEntityConsulted;
 	}
 
-	public Entity getLastEntityBrancheConsulted() {
+	@Deprecated
+	public IEntity getLastEntityBrancheConsulted() {
 		return lastEntityBrancheConsulted;
 	}
 
 	@Override
 	public UmlDiagramType getUmlDiagramType() {
 		return UmlDiagramType.ACTIVITY;
+	}
+
+	public final ConditionalContext getCurrentContext() {
+		return currentContext;
+	}
+
+	public final void setLastEntityConsulted(IEntity lastEntityConsulted) {
+		this.lastEntityConsulted = lastEntityConsulted;
+	}
+
+	public final boolean isAcceptOldSyntaxForBranch() {
+		return acceptOldSyntaxForBranch;
+	}
+
+	public final void setAcceptOldSyntaxForBranch(boolean acceptOldSyntaxForBranch) {
+		this.acceptOldSyntaxForBranch = acceptOldSyntaxForBranch;
 	}
 
 }

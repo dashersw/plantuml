@@ -63,6 +63,9 @@ public class DotxMaker {
 	}
 
 	private void printCluster(StringBuilder sb, Cluster cl) {
+		if (cl.getContents().size() == 0) {
+			throw new IllegalStateException(cl.toString());
+		}
 		for (Cluster sub : cl.getSubClusters()) {
 			sb.append("subgraph cluster" + sub.getUid() + " {");
 			printCluster(sb, sub);
@@ -76,6 +79,9 @@ public class DotxMaker {
 	}
 
 	private String getPathString(Path p) {
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
 		final StringBuilder sb = new StringBuilder("b" + p.getStart().getUid() + " -> b" + p.getEnd().getUid());
 		sb.append(" [dir=none, arrowhead=none, headclip=false, tailclip=false");
 		if (p.getLabel() == null) {

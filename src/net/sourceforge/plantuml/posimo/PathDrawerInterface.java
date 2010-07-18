@@ -43,8 +43,8 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 
 public class PathDrawerInterface implements PathDrawer {
 
@@ -58,14 +58,14 @@ public class PathDrawerInterface implements PathDrawer {
 		this.linkType = linkType;
 	}
 
-	public void drawPathBefore(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
+	public void drawPathBefore(UGraphic ug, Positionable start, Positionable end, Path path) {
 		//final DotPath dotPath = path.getDotPath().manageRect(start, end);
 		final DotPath dotPath = path.getDotPath();
 		ug.draw(0, 0, dotPath);
 
 	}
 
-	public void drawPathAfter(UGraphicG2d ug, Positionable start, Positionable end, Path path) {
+	public void drawPathAfter(UGraphic ug, Positionable start, Positionable end, Path path) {
 		//final DotPath dotPath = path.getDotPath().manageRect(start, end);
 		final DotPath dotPath = path.getDotPath();
 
@@ -112,7 +112,7 @@ public class PathDrawerInterface implements PathDrawer {
 		return result;
 	}
 
-	private void drawSquare(UGraphicG2d ug, double centerX, double centerY) {
+	private void drawSquare(UGraphic ug, double centerX, double centerY) {
 		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBackground).getColor());
 		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
 		final double width = 10;

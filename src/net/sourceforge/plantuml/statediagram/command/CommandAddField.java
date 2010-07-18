@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.statediagram.command;
@@ -48,7 +48,7 @@ public class CommandAddField extends SingleLineCommand<StateDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final Entity entity = getSystem().getOrCreateClass(arg.get(0));
+		final Entity entity = (Entity) getSystem().getOrCreateClass(arg.get(0));
 
 		entity.addField(arg.get(1));
 		return CommandExecutionResult.ok();

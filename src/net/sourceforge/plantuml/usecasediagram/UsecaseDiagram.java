@@ -34,8 +34,8 @@ package net.sourceforge.plantuml.usecasediagram;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 
 public class UsecaseDiagram extends AbstractEntityDiagram {
@@ -45,7 +45,7 @@ public class UsecaseDiagram extends AbstractEntityDiagram {
 	}
 
 	@Override
-	public Entity getOrCreateClass(String code) {
+	public IEntity getOrCreateClass(String code) {
 		if (code.startsWith("(") && code.endsWith(")")) {
 			return getOrCreateEntity(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(code), EntityType.USECASE);
 		}

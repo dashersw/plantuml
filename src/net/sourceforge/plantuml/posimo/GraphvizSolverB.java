@@ -38,8 +38,10 @@ import java.awt.geom.Point2D;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,14 +50,50 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 
 public class GraphvizSolverB {
 
+	static private void traceDotString(String dotString) throws IOException {
+		final File f = new File("dottmpfile" + UniqueSequence.getValue() + ".tmp");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(f));
+			pw.print(dotString);
+			Log.info("Creating file " + f);
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+	}
+
+	static private void traceSvgString(String svg) throws IOException {
+		final File f = new File("svgtmpfile" + UniqueSequence.getValue() + ".svg");
+		PrintWriter pw = null;
+		try {
+			pw = new PrintWriter(new FileWriter(f));
+			pw.print(svg);
+			Log.info("Creating file " + f);
+		} finally {
+			if (pw != null) {
+				pw.close();
+			}
+		}
+	}
+
 	public Dimension2D solve(Cluster root, Collection<Path> paths) throws IOException, InterruptedException {
 		final String dotString = new DotxMaker(root, paths).createDotString();
-		//System.err.println("dotString=" + dotString);
+
+		if (OptionFlags.getInstance().isKeepTmpFiles()) {
+			traceDotString(dotString);
+		}
+
+		// System.err.println("dotString=" + dotString);
 
 		// exportPng(dotString, new File("png", "test1.png"));
 
@@ -65,7 +103,11 @@ public class GraphvizSolverB {
 		baos.close();
 		final byte[] result = baos.toByteArray();
 		final String s = new String(result, "UTF-8");
-		//System.err.println("result=" + s);
+		// System.err.println("result=" + s);
+
+		if (OptionFlags.getInstance().isKeepTmpFiles()) {
+			traceSvgString(s);
+		}
 
 		final Pattern pGraph = Pattern.compile("(?m)\\<svg\\s+width=\"(\\d+)pt\"\\s+height=\"(\\d+)pt\"");
 		final Matcher mGraph = pGraph.matcher(s);
@@ -77,7 +119,6 @@ public class GraphvizSolverB {
 
 		for (Block b : root.getRecursiveContents()) {
 			final String start = "b" + b.getUid();
-			//System.err.println("start=" + start);
 			final int p1 = s.indexOf("<title>" + start + "</title>");
 			if (p1 == -1) {
 				throw new IllegalStateException();
@@ -85,6 +126,21 @@ public class GraphvizSolverB {
 			final List<Point2D.Double> pointsList = extractPointsList(s, p1);
 			b.setX(getMinX(pointsList));
 			b.setY(getMinY(pointsList) + height);
+		}
+
+		for (Cluster cl : root.getSubClusters()) {
+			final String start = "cluster" + cl.getUid();
+			final int p1 = s.indexOf("<title>" + start + "</title>");
+			if (p1 == -1) {
+				throw new IllegalStateException();
+			}
+			final List<Point2D.Double> pointsList = extractPointsList(s, p1);
+			cl.setX(getMinX(pointsList));
+			cl.setY(getMinY(pointsList) + height);
+			final double w = getMaxX(pointsList) - getMinX(pointsList);
+			final double h = getMaxY(pointsList) - getMinY(pointsList);
+			cl.setHeight(h);
+			cl.setWidth(w);
 		}
 
 		for (Path p : paths) {
@@ -100,7 +156,7 @@ public class GraphvizSolverB {
 			final String points = s.substring(p2 + " d=\"".length(), p3);
 			p.setDotPath(new DotPath(points, height));
 
-			//System.err.println("pointsList=" + pointsList);
+			// System.err.println("pointsList=" + pointsList);
 			if (p.getLabel() != null) {
 				final List<Point2D.Double> pointsList = extractPointsList(s, p1);
 				p.setLabelPosition(getMinX(pointsList), getMinY(pointsList) + height);

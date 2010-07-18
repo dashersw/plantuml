@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4928 $
+ * Revision $Revision: 4975 $
  */
 package net.sourceforge.plantuml;
 
@@ -64,7 +64,11 @@ public class PSystemError extends AbstractPSystem {
 			appendSource(position, errs);
 		} else {
 			final int position = getHigherErrorPosition(ErrorUmlType.SYNTAX_ERROR);
-			appendSource(position, Collections.singleton("Syntax Error?"));
+			final Collection<String> errs = getErrorsAt(position, ErrorUmlType.SYNTAX_ERROR);
+			if (errs.size() != 1) {
+				throw new UnsupportedOperationException(errs.toString());
+			}
+			appendSource(position, errs);
 		}
 
 	}
@@ -154,7 +158,7 @@ public class PSystemError extends AbstractPSystem {
 	private Collection<String> getErrorsAt(int position, ErrorUmlType type) {
 		final Collection<String> result = new TreeSet<String>();
 		for (ErrorUml error : getErrors(type)) {
-			if (error.getPosition() == position) {
+			if (error.getPosition() == position && StringUtils.isNotEmpty(error.getError())) {
 				result.add(error.getError());
 			}
 		}

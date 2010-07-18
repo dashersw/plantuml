@@ -71,7 +71,7 @@ public class CommandCreateActor2 extends SingleLineCommand<ComponentDiagram> {
 			code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1));
 		}
 		final String stereotype = arg.get(2);
-		final Entity entity = getSystem().getOrCreateEntity(code, type);
+		final Entity entity = (Entity) getSystem().getOrCreateEntity(code, type);
 		entity.setDisplay(display);
 
 		if (stereotype != null) {

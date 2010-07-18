@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 5041 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -59,6 +59,9 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 	}
 
 	final public CommandControl isValid(List<String> lines) {
+		if (isCommandForbidden()) {
+			return CommandControl.NOT_OK;
+		}
 		Matcher m1 = starting.matcher(lines.get(0));
 		if (m1.matches() == false) {
 			return CommandControl.NOT_OK;
@@ -72,7 +75,15 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 			return CommandControl.OK_PARTIAL;
 		}
 
+		actionIfCommandValid();
 		return CommandControl.OK;
+	}
+
+	protected boolean isCommandForbidden() {
+		return false;
+	}
+
+	protected void actionIfCommandValid() {
 	}
 
 	protected S getSystem() {

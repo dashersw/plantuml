@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4110 $
+ * Revision $Revision: 4987 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -40,10 +40,4 @@ public interface StringBounder {
 
 	public Dimension2D calculateDimension(Font font, String text);
 	
-//	public double getFontDescent(Font font);
-//
-//	public double getFontAscent(Font font);
-	
-	//public UnusedSpace getUnusedSpace(Font font, char c);
-
 }

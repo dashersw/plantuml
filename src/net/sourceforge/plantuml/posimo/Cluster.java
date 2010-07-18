@@ -39,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
+
 public class Cluster implements Clusterable {
 
 	private static int CPT = 1;
@@ -47,6 +49,10 @@ public class Cluster implements Clusterable {
 	private final Collection<Block> blocs = new ArrayList<Block>();
 	private final Collection<Cluster> children = new ArrayList<Cluster>();
 	private final int uid = CPT++;
+	private double x;
+	private double y;
+	private double width;
+	private double height;
 
 	public Cluster(Cluster parent) {
 		this.parent = parent;
@@ -85,14 +91,6 @@ public class Cluster implements Clusterable {
 		return parent;
 	}
 
-	public Point2D getPosition() {
-		throw new UnsupportedOperationException();
-	}
-
-	public Dimension2D getSize() {
-		throw new UnsupportedOperationException();
-	}
-
 	public Collection<Block> getContents() {
 		return Collections.unmodifiableCollection(blocs);
 	}
@@ -111,5 +109,30 @@ public class Cluster implements Clusterable {
 		}
 		return null;
 	}
+	
+	public Point2D getPosition() {
+		return new Point2D.Double(x, y);
+	}
+
+	public Dimension2D getSize() {
+		return new Dimension2DDouble(width, height);
+	}
+
+	public final void setX(double x) {
+		this.x = x;
+	}
+
+	public final void setY(double y) {
+		this.y = y;
+	}
+
+	public final void setWidth(double width) {
+		this.width = width;
+	}
+
+	public final void setHeight(double height) {
+		this.height = height;
+	}
+
 
 }

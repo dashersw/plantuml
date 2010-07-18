@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 4983 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -45,10 +45,10 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
-import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupHierarchy;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -56,7 +56,7 @@ import net.sourceforge.plantuml.skin.VisibilityModifier;
 final public class DotData {
 
 	final private List<Link> links;
-	final private Map<String, Entity> entities;
+	final private Map<String, ? extends IEntity> entities;
 	final private UmlDiagramType umlDiagramType;
 	final private ISkinParam skinParam;
 	final private Rankdir rankdir;
@@ -67,7 +67,7 @@ final public class DotData {
 	final private Map<VisibilityModifier, DrawFile> visibilityImages = new EnumMap<VisibilityModifier, DrawFile>(
 			VisibilityModifier.class);
 
-	public DotData(Group topParent, List<Link> links, Map<String, Entity> entities, UmlDiagramType umlDiagramType,
+	public DotData(Group topParent, List<Link> links, Map<String, ? extends IEntity> entities, UmlDiagramType umlDiagramType,
 			ISkinParam skinParam, Rankdir rankdir, GroupHierarchy groupHierarchy) {
 		this.topParent = topParent;
 		this.links = links;
@@ -118,17 +118,17 @@ final public class DotData {
 		return links;
 	}
 
-	public Map<String, Entity> getEntities() {
+	public Map<String, ? extends IEntity> getEntities() {
 		return entities;
 	}
 
-	public final Set<Entity> getAllLinkedTo(final Entity ent1) {
-		final Set<Entity> result = new HashSet<Entity>();
+	public final Set<IEntity> getAllLinkedTo(final IEntity ent1) {
+		final Set<IEntity> result = new HashSet<IEntity>();
 		result.add(ent1);
 		int size = 0;
 		do {
 			size = result.size();
-			for (Entity ent : entities.values()) {
+			for (IEntity ent : entities.values()) {
 				if (isDirectyLinked(ent, result)) {
 					result.add(ent);
 				}
@@ -138,8 +138,8 @@ final public class DotData {
 		return Collections.unmodifiableSet(result);
 	}
 
-	private boolean isDirectyLinked(Entity ent1, Collection<Entity> others) {
-		for (Entity ent2 : others) {
+	private boolean isDirectyLinked(IEntity ent1, Collection<IEntity> others) {
+		for (IEntity ent2 : others) {
 			if (isDirectlyLinkedSlow(ent1, ent2)) {
 				return true;
 			}
@@ -147,7 +147,7 @@ final public class DotData {
 		return false;
 	}
 
-	private boolean isDirectlyLinkedSlow(Entity ent1, Entity ent2) {
+	private boolean isDirectlyLinkedSlow(IEntity ent1, IEntity ent2) {
 		for (Link link : links) {
 			if (link.isBetween(ent1, ent2)) {
 				return true;

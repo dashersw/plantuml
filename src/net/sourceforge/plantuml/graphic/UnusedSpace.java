@@ -82,8 +82,6 @@ public class UnusedSpace {
 	private UnusedSpace(Font font, char c) {
 		final BufferedImage im = new BufferedImage(2 * HALF_SIZE, 2 * HALF_SIZE, BufferedImage.TYPE_INT_RGB);
 		final Graphics2D g2d = im.createGraphics();
-		// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_OFF);
 		g2d.setFont(font);
 		g2d.drawString("" + c, HALF_SIZE, HALF_SIZE);
 

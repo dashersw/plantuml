@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4967 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -62,7 +62,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 	private int verticalPages = 1;
 
 	private final Map<String, Entity> entities = new TreeMap<String, Entity>();
-	private final Map<Entity, Integer> nbLinks = new HashMap<Entity, Integer>();
+	private final Map<IEntity, Integer> nbLinks = new HashMap<IEntity, Integer>();
 
 	private final List<Link> links = new ArrayList<Link>();
 
@@ -74,7 +74,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 	private boolean visibilityModifierPresent;
 
 	public boolean hasUrl() {
-		for (Entity entity : entities.values()) {
+		for (IEntity entity : entities.values()) {
 			if (entity.getUrl() != null) {
 				return true;
 			}
@@ -82,8 +82,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 		return false;
 	}
 
-	public Entity getOrCreateEntity(String code, EntityType defaultType) {
-		Entity result = entities.get(code);
+	public IEntity getOrCreateEntity(String code, EntityType defaultType) {
+		IEntity result = entities.get(code);
 		if (result == null) {
 			result = createEntityInternal(code, code, defaultType, getCurrentGroup());
 		}
@@ -134,7 +134,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 		assert groups.containsValue(g) == false;
 
 		for (final Iterator<Entity> it = entities.values().iterator(); it.hasNext();) {
-			final Entity ent = it.next();
+			final IEntity ent = it.next();
 			if (ent.getParent() == g) {
 				it.remove();
 			}
@@ -149,6 +149,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 				result.add(g);
 			}
 		}
+		// assert parent == null || result.size() ==
+		// parent.getChildren().size();
 		return Collections.unmodifiableCollection(result);
 	}
 
@@ -222,7 +224,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 		}
 	}
 
-	private void inc(Entity ent) {
+	private void inc(IEntity ent) {
 		if (ent == null) {
 			throw new IllegalArgumentException();
 		}
@@ -281,7 +283,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 				maker.createFile(os, getDotStrings(), fileFormat);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-				throw new IOException(e.toString(), e);
+				throw new IOException(e.toString());
 			}
 			return;
 		}
@@ -313,8 +315,8 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 			return false;
 		}
 		for (Link link : links) {
-			final Entity e1 = link.getEntity1();
-			final Entity e2 = link.getEntity2();
+			final IEntity e1 = link.getEntity1();
+			final IEntity e2 = link.getEntity2();
 			if (e1.getParent() != g && e2.getParent() == g && e2.getType() != EntityType.GROUP) {
 				return false;
 			}
@@ -397,6 +399,23 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 
 	public final void setVisibilityModifierPresent(boolean visibilityModifierPresent) {
 		this.visibilityModifierPresent = visibilityModifierPresent;
+	}
+
+	private boolean isAutonom(Group g) {
+		for (Link link : links) {
+			final CrossingType type = g.getCrossingType(link);
+			if (type == CrossingType.CUT) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public final void computeAutonomyOfGroups() {
+		for (Group g : groups.values()) {
+			g.setAutonom(isAutonom(g));
+		}
+
 	}
 
 }

@@ -42,12 +42,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
@@ -107,7 +112,12 @@ public final class CucaDiagramFileMaker4 {
 		UGraphicG2d ug = new UGraphicG2d(g2d, im);
 		final PlayField playField = new PlayField(diagram.getSkinParam());
 
-		playField.initInternal(diagram.entities().values(), diagram.getLinks(), ug.getStringBounder());
+		final Collection<IEntity> entities = getFirstLevelEntities();
+		System.err.println("entities=" + entities);
+		// final Collection<Link> links = getLinks(entities);
+		final Collection<Link> links = diagram.getLinks();
+
+		playField.initInternal(entities, links, ug.getStringBounder());
 		g2d.dispose();
 
 		final Dimension2D dim = playField.solve();
@@ -122,6 +132,51 @@ public final class CucaDiagramFileMaker4 {
 
 		PngIO.write(im, os);
 
+	}
+
+	// private List<Link> getLinks(Collection<IEntity> entities) {
+	// final List<Link> result = new ArrayList<Link>();
+	// for (Link link : diagram.getLinks()) {
+	// if (entities.contains(link.getEntity1()) &&
+	// entities.contains(link.getEntity2())) {
+	// result.add(link);
+	// }
+	// }
+	// return result;
+	// }
+
+	private Collection<IEntity> getFirstLevelEntities() {
+		final Collection<IEntity> result = new HashSet<IEntity>();
+		diagram.computeAutonomyOfGroups();
+		System.err.println("diagramEntities = " + diagram.entities());
+		System.err.println("diagramGroups = " + diagram.getGroups());
+		addEntitiesOfGroup(result, null);
+		return result;
+	}
+
+	private void addEntitiesOfGroup(final Collection<IEntity> result, Group parent) {
+		System.err.println("addEntitiesOfGroup parent=" + parent);
+		for (IEntity ent : diagram.entities().values()) {
+			if (ent.getParent() == parent) {
+				result.add(ent);
+				System.err.println("addingA " + ent);
+			}
+		}
+		final Collection<Group> groups = parent == null ? diagram.getGroups() : parent.getChildren();
+		for (Group g : groups) {
+			System.err.println("g=" + g + " parent = " + g.getParent());
+			if (g.isAutonom() == false) {
+				addEntitiesOfGroup(result, g);
+				result.add(g.getEntityCluster());
+				System.err.println("addingB " + g.getEntityCluster());
+			} else if (g.getParent() == parent) {
+				assert g.isAutonom();
+				assert result.contains(g.getEntityCluster()) == false;
+				result.add(g.getEntityCluster());
+				System.err.println("addingC " + g.getEntityCluster());
+			}
+
+		}
 	}
 
 }

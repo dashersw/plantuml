@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -55,7 +56,7 @@ public abstract class AbstractCommandMultilinesNoteEntity extends CommandMultili
 		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
 		final String pos = line0.get(0);
 
-		final Entity cl1 = getSystem().getOrCreateClass(line0.get(1));
+		final IEntity cl1 = getSystem().getOrCreateClass(line0.get(1));
 
 		final List<String> strings = lines.subList(1, lines.size() - 1);
 		final String s = StringUtils.getMergedLines(strings);

@@ -28,71 +28,47 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5031 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkDecor;
+import net.sourceforge.plantuml.cucadiagram.LinkType;
 
-public class CommandLinkLongActivity extends CommandMultilines<ActivityDiagram> {
+public class CommandLinkLongActivity2 extends CommandMultilines<ActivityDiagram> {
 
-	public CommandLinkLongActivity(final ActivityDiagram diagram) {
+	public CommandLinkLongActivity2(final ActivityDiagram diagram) {
 		super(
 				diagram,
-				"(?i)^([*\\u00A7]|\\<\\>|\\[\\]|==+)?\\s*(\\(\\*\\)|[\\p{L}0-9_.]+|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)?(?:\\s*=+)?"
-						+ "\\s*(\\[[^\\]*]+[^\\]]*\\])?\\s*([=-]+\\>|\\<[=-]+)\\s*(\\[[^\\]*]+[^\\]]*\\])?\\s*\"([^\"]*?)\\s*$",
-				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(?::\\s*([^\"]+))?$");
+				"(?i)^(?:(\\(\\*\\))|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)?"
+						+ "\\s*([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*\\>)\\s*(?:\\[([^\\]*]+[^\\]]*)\\])?\\s*\"([^\"]*?)\\s*$",
+				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?$");
 	}
 
 	@Override
-	public boolean isDeprecated(List<String> line) {
-		if (line.get(0).indexOf('\u00A7') != -1) {
-			return true;
-		}
-		if (line.get(0).indexOf("*start") != -1) {
-			return true;
-		}
-		if (line.get(0).indexOf("*end") != -1) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public String getHelpMessageForDeprecated(List<String> lines) {
-		String s = lines.get(0);
-		s = s.replaceAll("[\\u00A7][\\p{L}0-9_.]+", "(*)");
-		s = s.replaceAll("\\*start", "(*)");
-		s = s.replaceAll("\\*end", "(*)");
-		return s;
+	protected void actionIfCommandValid() {
+		getSystem().setAcceptOldSyntaxForBranch(false);
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {
 
-		final Entity lastEntityConsulted = getSystem().getLastEntityConsulted();
+		// final IEntity lastEntityConsulted =
+		// getSystem().getLastEntityConsulted();
 
 		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
-
-		final EntityType type1 = CommandLinkActivity.getTypeFromString(line0.get(0), EntityType.CIRCLE_START);
-		final String entityLabel = CommandLinkActivity.getLabel(line0.get(6), line0.get(4));
-
-		final Entity entity1;
-		if ("(*)".equals(line0.get(1))) {
-			entity1 = getSystem().getStart();
-		} else {
-			entity1 = CommandLinkActivity.getEntity(lastEntityConsulted, getSystem(), line0.get(1), line0.get(2), line0
-					.get(3), type1, entityLabel);
-		}
-
+		final IEntity entity1 = CommandLinkActivity2.getEntity(getSystem(), line0, true);
 		final StringBuilder sb = new StringBuilder();
 
 		if (StringUtils.isNotEmpty(line0.get(7))) {
@@ -124,10 +100,13 @@ public class CommandLinkLongActivity extends CommandMultilines<ActivityDiagram> 
 		final String arrow = StringUtils.manageArrow(line0.get(5));
 		final int lenght = arrow.length() - 1;
 
-		
-		final String linkLabel = CommandLinkActivity.getLabel(entityLabel, lineLast.get(2));
+		final String linkLabel = line0.get(6);
 
-		final Link link = new Link(entity1, entity2, CommandLinkActivity.getLinkType(arrow), linkLabel, lenght);
+		Link link = new Link(entity1, entity2, new LinkType(LinkDecor.ARROW, LinkDecor.NONE), linkLabel, lenght);
+		final Direction direction = StringUtils.getArrowDirection(line0.get(5));
+		if (direction == Direction.LEFT || direction == Direction.UP) {
+			link = link.getInv();
+		}
 
 		getSystem().addLink(link);
 

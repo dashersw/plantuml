@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4547 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -37,11 +37,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 
 public abstract class AbstractEntityDiagram extends CucaDiagram {
 
-	abstract public Entity getOrCreateClass(String code);
+	abstract public IEntity getOrCreateClass(String code);
 
 	final protected List<String> getDotStrings() {
 		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",

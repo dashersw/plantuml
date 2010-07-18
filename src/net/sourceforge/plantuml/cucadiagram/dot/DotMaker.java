@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4966 $
+ * Revision $Revision: 5047 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
@@ -129,9 +130,9 @@ final public class DotMaker implements GraphvizMaker {
 		}
 	}
 
-	private Collection<Entity> getUnpackagedEntities() {
-		final List<Entity> result = new ArrayList<Entity>();
-		for (Entity ent : data.getEntities().values()) {
+	private Collection<IEntity> getUnpackagedEntities() {
+		final List<IEntity> result = new ArrayList<IEntity>();
+		for (IEntity ent : data.getEntities().values()) {
 			if (ent.getParent() == data.getTopParent()) {
 				result.add(ent);
 			}
@@ -142,7 +143,7 @@ final public class DotMaker implements GraphvizMaker {
 	private void printGroups(StringBuilder sb, Group parent) throws IOException {
 		for (Group g : data.getGroupHierarchy().getChildrenGroups(parent)) {
 			if (data.isEmpty(g) && g.getType() == GroupType.PACKAGE) {
-				final Entity folder = new Entity(g.getUid(), g.getCode(), g.getDisplay(), EntityType.EMPTY_PACKAGE,
+				final IEntity folder = new Entity(g.getUid(), g.getCode(), g.getDisplay(), EntityType.EMPTY_PACKAGE,
 						null);
 				printEntity(sb, folder);
 			} else {
@@ -425,8 +426,8 @@ final public class DotMaker implements GraphvizMaker {
 
 	private void printLinks(StringBuilder sb, List<Link> links) {
 		for (Link link : appendPhantomLink(links)) {
-			final Entity entity1 = link.getEntity1();
-			final Entity entity2 = link.getEntity2();
+			final IEntity entity1 = link.getEntity1();
+			final IEntity entity2 = link.getEntity2();
 			if (entity1 == entity2 && entity1.getType() == EntityType.GROUP) {
 				continue;
 			}
@@ -474,7 +475,7 @@ final public class DotMaker implements GraphvizMaker {
 			decoration.append(",style=invis");
 		}
 
-		final int len = link.getLenght();
+		final int len = link.getLength();
 		final String lenString = len >= 3 ? ",minlen=" + (len - 1) : "";
 
 		String uid1 = link.getEntity1().getUid();
@@ -543,14 +544,14 @@ final public class DotMaker implements GraphvizMaker {
 	private List<Link> appendPhantomLink(List<Link> links) {
 		final List<Link> result = new ArrayList<Link>(links);
 		for (Link link : links) {
-			if (link.getLenght() != 1) {
+			if (link.getLength() != 1) {
 				continue;
 			}
 			final DrawFile noteLink = link.getImageFile();
 			if (noteLink == null) {
 				continue;
 			}
-			final Link phantom = new Link(link.getEntity1(), link.getEntity2(), link.getType(), "", link.getLenght());
+			final Link phantom = new Link(link.getEntity1(), link.getEntity2(), link.getType(), "", link.getLength());
 			phantom.setInvis(true);
 			result.add(phantom);
 		}
@@ -616,7 +617,7 @@ final public class DotMaker implements GraphvizMaker {
 		if (workAroundDotBug()) {
 			return;
 		}
-		final int len = link.getLenght();
+		final int len = link.getLength();
 		if (len == 1 && link.getEntity1().getParent() == entityPackage
 				&& link.getEntity2().getParent() == entityPackage) {
 			if (link.getEntity1().getType() == EntityType.GROUP) {
@@ -629,13 +630,13 @@ final public class DotMaker implements GraphvizMaker {
 		}
 	}
 
-	private void printEntities(StringBuilder sb, Collection<Entity> entities) throws IOException {
-		for (Entity entity : entities) {
+	private void printEntities(StringBuilder sb, Collection<? extends IEntity> entities) throws IOException {
+		for (IEntity entity : entities) {
 			printEntity(sb, entity);
 		}
 	}
 
-	private void printEntity(StringBuilder sb, Entity entity) throws IOException {
+	private void printEntity(StringBuilder sb, IEntity entity) throws IOException {
 		final EntityType type = entity.getType();
 		final String label = getLabel(entity);
 		if (type == EntityType.GROUP) {
@@ -687,6 +688,10 @@ final public class DotMaker implements GraphvizMaker {
 			sb.append(entity.getUid() + " [fillcolor=" + getColorString(ColorParam.activityBackground) + ",color="
 					+ getColorString(ColorParam.activityBorder)
 					+ ",style=\"filled\",shape=diamond,height=.25,width=.25,label=\"\"];");
+//			if (StringUtils.isNotEmpty(entity.getDisplay())) {
+//				sb.append(entity.getUid() + "->" + entity.getUid() + "[taillabel=\"" + entity.getDisplay()
+//						+ "\",arrowtail=none,arrowhead=none,color=\"white\"];");
+//			}
 		} else if (type == EntityType.SYNCHRO_BAR) {
 			final String color = getColorString(ColorParam.activityBar);
 			sb.append(entity.getUid() + " [fillcolor=" + color + ",color=" + color + ",style=\"filled\","
@@ -733,7 +738,7 @@ final public class DotMaker implements GraphvizMaker {
 		}
 	}
 
-	private String getLabel(Entity entity) throws IOException {
+	private String getLabel(IEntity entity) throws IOException {
 		if (entity.getType() == EntityType.ABSTRACT_CLASS || entity.getType() == EntityType.CLASS
 				|| entity.getType() == EntityType.INTERFACE || entity.getType() == EntityType.ENUM) {
 			return "label=" + getLabelForClassOrInterfaceOrEnum(entity);
@@ -761,11 +766,11 @@ final public class DotMaker implements GraphvizMaker {
 		return "label=\"" + entity.getDisplay() + "\"";
 	}
 
-	private String getSimpleLabelAsHtml(Entity entity, FontParam param) {
+	private String getSimpleLabelAsHtml(IEntity entity, FontParam param) {
 		return "<" + manageHtmlIB(entity.getDisplay(), param) + ">";
 	}
 
-	private String getLabelForState(Entity entity) {
+	private String getLabelForState(IEntity entity) {
 		final DrawFile cFile = entity.getImageFile();
 		final String stateBgcolor = getColorString(ColorParam.stateBackground);
 
@@ -804,7 +809,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getLabelForUsecase(Entity entity) {
+	private String getLabelForUsecase(IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype == null) {
 			return getSimpleLabelAsHtml(entity, FontParam.USECASE);
@@ -818,7 +823,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getLabelForComponent(Entity entity) {
+	private String getLabelForComponent(IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype == null) {
 			return getSimpleLabelAsHtml(entity, FontParam.COMPONENT);
@@ -832,7 +837,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getLabelForActor(Entity entity) {
+	private String getLabelForActor(IEntity entity) {
 		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages().get(
 				EntityType.ACTOR).getPngOrEps(isEps));
 		final Stereotype stereotype = entity.getStereotype();
@@ -849,7 +854,7 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForCircleInterface(Entity entity) {
+	private String getLabelForCircleInterface(IEntity entity) {
 		final String circleInterfaceAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages()
 				.get(EntityType.CIRCLE_INTERFACE).getPng());
 		final Stereotype stereotype = entity.getStereotype();
@@ -865,7 +870,7 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForClassOrInterfaceOrEnum(Entity entity) throws IOException {
+	private String getLabelForClassOrInterfaceOrEnum(IEntity entity) throws IOException {
 		if (isVisibilityModifierPresent) {
 			return getLabelForClassOrInterfaceOrEnumWithVisibilityImage(entity);
 		}
@@ -873,7 +878,7 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForClassOrInterfaceOrEnumOld(Entity entity) throws IOException {
+	private String getLabelForClassOrInterfaceOrEnumOld(IEntity entity) throws IOException {
 		DrawFile cFile = entity.getImageFile();
 		if (cFile == null) {
 			cFile = data.getStaticImages().get(entity.getType());
@@ -913,7 +918,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getLabelForClassOrInterfaceOrEnumWithVisibilityImage(Entity entity) throws IOException {
+	private String getLabelForClassOrInterfaceOrEnumWithVisibilityImage(IEntity entity) throws IOException {
 		DrawFile cFile = entity.getImageFile();
 		if (cFile == null) {
 			cFile = data.getStaticImages().get(entity.getType());
@@ -967,7 +972,7 @@ final public class DotMaker implements GraphvizMaker {
 		return spring;
 	}
 
-	private void buildTableVisibility(Entity entity, boolean isField, final StringBuilder sb, int spring) {
+	private void buildTableVisibility(IEntity entity, boolean isField, final StringBuilder sb, int spring) {
 		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
 		for (String s : isField ? entity.fields() : entity.methods()) {
 			sb.append("<TR><TD WIDTH=\"10\">");
@@ -990,7 +995,7 @@ final public class DotMaker implements GraphvizMaker {
 		sb.append("</TABLE>");
 	}
 
-	private int getLonguestHeader(Entity entity) {
+	private int getLonguestHeader(IEntity entity) {
 		int result = entity.getDisplay().length();
 		final Stereotype stereotype = entity.getStereotype();
 		if (isThereLabel(stereotype)) {
@@ -1002,11 +1007,11 @@ final public class DotMaker implements GraphvizMaker {
 		return result;
 	}
 
-	private int getLongestFieldOrAttribute(Entity entity) {
+	private int getLongestFieldOrAttribute(IEntity entity) {
 		return Math.max(getLongestField(entity), getLongestMethods(entity));
 	}
 
-	private int getLongestMethods(Entity entity) {
+	private int getLongestMethods(IEntity entity) {
 		int result = 0;
 		for (String s : entity.methods()) {
 			final int size = s.length();
@@ -1018,7 +1023,7 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private int getLongestField(Entity entity) {
+	private int getLongestField(IEntity entity) {
 		int result = 0;
 		for (String s : entity.fields()) {
 			final int size = s.length();
@@ -1029,14 +1034,14 @@ final public class DotMaker implements GraphvizMaker {
 		return result;
 	}
 
-	private String getLabelForObject(Entity entity) throws IOException {
+	private String getLabelForObject(IEntity entity) throws IOException {
 		if (isVisibilityModifierPresent) {
 			return getLabelForObjectWithVisibilityImage(entity);
 		}
 		return getLabelForObjectOld(entity);
 	}
 
-	private String getLabelForObjectWithVisibilityImage(Entity entity) throws IOException {
+	private String getLabelForObjectWithVisibilityImage(IEntity entity) throws IOException {
 
 		final int longuestHeader = getLonguestHeader(entity);
 		final int spring = computeSpring(longuestHeader, getLongestFieldOrAttribute(entity), 30);
@@ -1065,7 +1070,7 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForObjectOld(Entity entity) throws IOException {
+	private String getLabelForObjectOld(IEntity entity) throws IOException {
 		final StringBuilder sb = new StringBuilder("<<TABLE BGCOLOR=" + getColorString(ColorParam.classBackground)
 				+ " BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">");
 		sb.append("<TR><TD>");
@@ -1126,7 +1131,7 @@ final public class DotMaker implements GraphvizMaker {
 		return result.toString();
 	}
 
-	private String getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnumNoSpring(Entity entity,
+	private String getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnumNoSpring(IEntity entity,
 			final String circleAbsolutePath, int cellSpacing, boolean classes) {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"" + cellSpacing + "\" CELLPADDING=\"0\">");
@@ -1144,7 +1149,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(Entity entity, final String circleAbsolutePath,
+	private String getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(IEntity entity, final String circleAbsolutePath,
 			int spring, boolean classes) throws IOException {
 		if (spring == 0) {
 			return getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnumNoSpring(entity, circleAbsolutePath, 0, classes);
@@ -1177,7 +1182,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private void appendLabelAndStereotype(Entity entity, final StringBuilder sb, boolean classes) {
+	private void appendLabelAndStereotype(IEntity entity, final StringBuilder sb, boolean classes) {
 		final Stereotype stereotype = entity.getStereotype();
 		if (isThereLabel(stereotype)) {
 			sb.append("<BR ALIGN=\"LEFT\"/>");
@@ -1214,14 +1219,14 @@ final public class DotMaker implements GraphvizMaker {
 
 	private boolean workAroundDotBug() {
 		for (Link link : data.getLinks()) {
-			if (link.getLenght() != 1) {
+			if (link.getLength() != 1) {
 				return false;
 			}
 		}
 		if (data.getUmlDiagramType() == UmlDiagramType.CLASS && allEntitiesAreClasses(data.getEntities().values())) {
 			return true;
 		}
-		for (Entity ent : data.getEntities().values()) {
+		for (IEntity ent : data.getEntities().values()) {
 			if (data.getAllLinkedTo(ent).size() == 0) {
 				return true;
 			}
@@ -1229,8 +1234,8 @@ final public class DotMaker implements GraphvizMaker {
 		return false;
 	}
 
-	private boolean allEntitiesAreClasses(Collection<Entity> entities) {
-		for (Entity ent : entities) {
+	private boolean allEntitiesAreClasses(Collection<? extends IEntity> entities) {
+		for (IEntity ent : entities) {
 			if (ent.getType() != EntityType.CLASS && ent.getType() != EntityType.ABSTRACT_CLASS
 					&& ent.getType() != EntityType.INTERFACE && ent.getType() != EntityType.ENUM) {
 				return false;

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5048 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
@@ -43,7 +43,7 @@ import net.sourceforge.plantuml.cucadiagram.Group;
 public class CommandEndPartition extends SingleLineCommand<ActivityDiagram> {
 
 	public CommandEndPartition(ActivityDiagram diagram) {
-		super(diagram, "(?i)^end ?partition$");
+		super(diagram, "(?i)^(end ?partition|\\})$");
 	}
 
 	@Override

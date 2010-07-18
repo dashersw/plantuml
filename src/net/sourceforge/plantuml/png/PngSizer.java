@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3835 $
+ * Revision $Revision: 4984 $
  *
  */
 package net.sourceforge.plantuml.png;
@@ -59,8 +59,6 @@ public class PngSizer {
 
 		final BufferedImage newIm = new BufferedImage(minsize, im.getHeight(), BufferedImage.TYPE_INT_RGB);
 		final Graphics2D g2d = newIm.createGraphics();
-		// g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-		// RenderingHints.VALUE_ANTIALIAS_ON);
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, newIm.getWidth(), newIm.getHeight());
 		final int delta = (minsize - im.getWidth()) / 2;

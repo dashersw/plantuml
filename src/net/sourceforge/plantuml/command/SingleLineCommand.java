@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5041 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -76,10 +76,23 @@ public abstract class SingleLineCommand<S extends PSystem> implements Command {
 		if (lines.size() != 1) {
 			return CommandControl.NOT_OK;
 		}
+		if (isCommandForbidden()) {
+			return CommandControl.NOT_OK;
+		}
 		final String line = lines.get(0).trim();
 		final Matcher m = pattern.matcher(line);
 		final boolean result = m.find();
+		if (result) {
+			actionIfCommandValid();
+		}
 		return result ? CommandControl.OK : CommandControl.NOT_OK;
+	}
+
+	protected boolean isCommandForbidden() {
+		return false;
+	}
+
+	protected void actionIfCommandValid() {
 	}
 
 	public final CommandExecutionResult execute(List<String> lines) {

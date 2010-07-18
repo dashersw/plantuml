@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4951 $
+ * Revision $Revision: 4984 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -61,7 +61,6 @@ public class DriverEllipseG2d implements UDriver<Graphics2D> {
 				g2d.draw(ellipse);
 			}
 		} else {
-			//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 			final Shape arc = new Arc2D.Double(x, y, shape.getWidth(), shape.getHeight(), shape.getStart(), shape
 					.getExtend(), Arc2D.OPEN);
 			if (param.getColor() != null) {
@@ -72,8 +71,6 @@ public class DriverEllipseG2d implements UDriver<Graphics2D> {
 				g2d.setColor(param.getColor());
 				g2d.draw(arc);
 			}
-			//g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
 		}
 	}
 

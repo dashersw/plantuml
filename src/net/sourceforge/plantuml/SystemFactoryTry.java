@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4799 $
+ * Revision $Revision: 4975 $
  *
  */
 package net.sourceforge.plantuml;
@@ -105,7 +105,12 @@ final public class SystemFactoryTry {
 			}
 			source.append(s);
 			if (s.equals("@enduml")) {
-				final AbstractPSystem sys = (AbstractPSystem) systemFactory.getSystem();
+				final AbstractPSystem sys;
+				if (source.getSize() == 2) {
+					sys = buildEmptyError(source);
+				} else {
+					sys = (AbstractPSystem) systemFactory.getSystem();
+				}
 				if (sys == null) {
 					return null;
 				}
@@ -116,13 +121,19 @@ final public class SystemFactoryTry {
 			if (ok == false) {
 				final int position = source.getSize();
 				final UmlSource sourceWithEnd = getSourceWithEnd(source);
-				return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.SYNTAX_ERROR, "",
-						position)), start);
+				return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.SYNTAX_ERROR,
+						"Syntax Error?", position)), start);
 			}
 		}
 		final AbstractPSystem sys = (AbstractPSystem) systemFactory.getSystem();
 		sys.setSource(source);
 		return new StartUml(sys, start);
+	}
+
+	private PSystemError buildEmptyError(UmlSource source) {
+		final PSystemError result = new PSystemError(source, new ErrorUml(ErrorUmlType.SYNTAX_ERROR,
+				"Empty description", 1));
+		return result;
 	}
 
 	private UmlSource getSourceWithEnd(UmlSource start) {
@@ -156,7 +167,15 @@ final public class SystemFactoryTry {
 			}
 			source.append(s);
 			if (s.equals("@enduml")) {
-				final AbstractPSystem sys = (AbstractPSystem) systemFactory.getSystem();
+				final AbstractPSystem sys;
+				if (source.getSize() == 2) {
+					sys = buildEmptyError(source);
+				} else {
+					sys = (AbstractPSystem) systemFactory.getSystem();
+				}
+				if (sys == null) {
+					return null;
+				}
 				sys.setSource(source);
 				return new StartUml(sys, start);
 			}
@@ -164,15 +183,15 @@ final public class SystemFactoryTry {
 			if (commandControl == CommandControl.NOT_OK) {
 				final int position = source.getSize() - 1;
 				final UmlSource sourceWithEnd = getSourceWithEnd(source);
-				return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.SYNTAX_ERROR, "",
-						position)), start);
+				return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.SYNTAX_ERROR,
+						"Syntax Error?", position)), start);
 			} else if (commandControl == CommandControl.OK_PARTIAL) {
 				final boolean ok = manageMultiline(systemFactory, s, source);
 				final int position = source.getSize() - 1;
 				if (ok == false) {
 					final UmlSource sourceWithEnd = getSourceWithEnd(source);
-					return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.EXECUTION_ERROR, "",
-							position)), start);
+					return new StartUml(new PSystemError(sourceWithEnd, new ErrorUml(ErrorUmlType.EXECUTION_ERROR,
+							"Syntax Error?", position)), start);
 				}
 			} else if (commandControl == CommandControl.OK) {
 				final Command cmd = new ProtectedCommand(systemFactory.createCommand(Arrays.asList(s)));
@@ -209,7 +228,7 @@ final public class SystemFactoryTry {
 		}
 	}
 
-	private boolean manageMultiline(PSystemCommandFactory systemFactory, final String init, UmlSource source2)
+	private boolean manageMultiline(PSystemCommandFactory systemFactory, final String init, UmlSource source)
 			throws IOException {
 		final List<String> lines = new ArrayList<String>();
 		lines.add(init);
@@ -222,8 +241,7 @@ final public class SystemFactoryTry {
 				return false;
 			}
 			lines.add(s);
-			source2.append(s);
-			// final List<Command> cmd = systemFactory.create(lines);
+			source.append(s);
 			final CommandControl commandControl = systemFactory.isValid(lines);
 			if (commandControl == CommandControl.NOT_OK) {
 				throw new IllegalStateException();

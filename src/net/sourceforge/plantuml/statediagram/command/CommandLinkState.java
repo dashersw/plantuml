@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.statediagram.command;
@@ -37,7 +37,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -52,8 +52,8 @@ public class CommandLinkState extends SingleLineCommand<StateDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final Entity cl1 = getEntityStart(arg.get(0));
-		final Entity cl2 = getEntityEnd(arg.get(2));
+		final IEntity cl1 = getEntityStart(arg.get(0));
+		final IEntity cl2 = getEntityEnd(arg.get(2));
 
 		final int lenght = arg.get(1).length() - 1;
 
@@ -62,14 +62,14 @@ public class CommandLinkState extends SingleLineCommand<StateDiagram> {
 		return CommandExecutionResult.ok();
 	}
 
-	private Entity getEntityStart(String code) {
+	private IEntity getEntityStart(String code) {
 		if (code.startsWith("[*]")) {
 			return getSystem().getStart();
 		}
 		return getSystem().getOrCreateClass(code);
 	}
 
-	private Entity getEntityEnd(String code) {
+	private IEntity getEntityEnd(String code) {
 		if (code.startsWith("[*]")) {
 			return getSystem().getEnd();
 		}

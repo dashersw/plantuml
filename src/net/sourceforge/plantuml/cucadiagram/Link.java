@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4626 $
+ * Revision $Revision: 5047 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -38,11 +38,11 @@ import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 
 public class Link implements Imaged {
 
-	final private Entity cl1;
-	final private Entity cl2;
-	final private LinkType type2;
+	final private IEntity cl1;
+	final private IEntity cl2;
+	final private LinkType type;
 	final private String label;
-	final private int lenght;
+	final private int length;
 	final private String qualifier1;
 	final private String qualifier2;
 	final private String uid = "LNK" + UniqueSequence.getValue();
@@ -51,16 +51,16 @@ public class Link implements Imaged {
 	private String note;
 	private boolean invis = false;
 	private int weight = 1;
-	
+
 	private final String labeldistance;
 	private final String labelangle;
 
-	public Link(Entity cl1, Entity cl2, LinkType type, String label, int length) {
+	public Link(IEntity cl1, IEntity cl2, LinkType type, String label, int length) {
 		this(cl1, cl2, type, label, length, null, null, null, null);
 	}
 
-	public Link(Entity cl1, Entity cl2, LinkType type2, String label, int length, String qualifier1, String qualifier2,
-			String labeldistance, String labelangle) {
+	public Link(IEntity cl1, IEntity cl2, LinkType type, String label, int length, String qualifier1,
+			String qualifier2, String labeldistance, String labelangle) {
 		if (length < 1) {
 			throw new IllegalArgumentException();
 		}
@@ -69,13 +69,17 @@ public class Link implements Imaged {
 		}
 		this.cl1 = cl1;
 		this.cl2 = cl2;
-		this.type2 = type2;
+		this.type = type;
 		this.label = label;
-		this.lenght = length;
+		this.length = length;
 		this.qualifier1 = qualifier1;
 		this.qualifier2 = qualifier2;
 		this.labeldistance = labeldistance;
 		this.labelangle = labelangle;
+	}
+
+	public Link getInv() {
+		return new Link(cl2, cl1, type.getInv(), label, length, qualifier2, qualifier1, labeldistance, labelangle);
 	}
 
 	public String getLabeldistance() {
@@ -100,7 +104,7 @@ public class Link implements Imaged {
 		this.invis = invis;
 	}
 
-	private static Entity muteProxy(Entity ent, Group g, Entity proxy) {
+	private static IEntity muteProxy(IEntity ent, Group g, IEntity proxy) {
 		if (ent.getParent() == g) {
 			return proxy;
 		}
@@ -112,15 +116,15 @@ public class Link implements Imaged {
 				&& cl2.getType() != EntityType.GROUP) {
 			return null;
 		}
-		final Entity ent1 = muteProxy(cl1, g, proxy);
-		final Entity ent2 = muteProxy(cl2, g, proxy);
+		final IEntity ent1 = muteProxy(cl1, g, proxy);
+		final IEntity ent2 = muteProxy(cl2, g, proxy);
 		if (this.cl1 == ent1 && this.cl2 == ent2) {
 			return this;
 		}
-		return new Link(ent1, ent2, type2, label, lenght, qualifier1, qualifier2, labeldistance, labelangle);
+		return new Link(ent1, ent2, type, label, length, qualifier1, qualifier2, labeldistance, labelangle);
 	}
 
-	public boolean isBetween(Entity cl1, Entity cl2) {
+	public boolean isBetween(IEntity cl1, IEntity cl2) {
 		if (cl1.equals(this.cl1) && cl2.equals(this.cl2)) {
 			return true;
 		}
@@ -135,24 +139,24 @@ public class Link implements Imaged {
 		return super.toString() + " " + cl1 + "-->" + cl2;
 	}
 
-	public Entity getEntity1() {
+	public IEntity getEntity1() {
 		return cl1;
 	}
 
-	public Entity getEntity2() {
+	public IEntity getEntity2() {
 		return cl2;
 	}
 
 	public LinkType getType() {
-		return type2;
+		return type;
 	}
 
 	public String getLabel() {
 		return label;
 	}
 
-	public int getLenght() {
-		return lenght;
+	public int getLength() {
+		return length;
 	}
 
 	public String getQualifier1() {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4794 $
+ * Revision $Revision: 5047 $
  *
  */
 package net.sourceforge.plantuml;
@@ -92,6 +92,10 @@ public class StringUtils {
 		return input != null && input.trim().length() > 0;
 	}
 
+	public static boolean isEmpty(String input) {
+		return input == null || input.trim().length() == 0;
+	}
+
 	public static String manageHtml(String s) {
 		s = s.replace("<", "&lt;");
 		s = s.replace(">", "&gt;");
@@ -99,10 +103,48 @@ public class StringUtils {
 	}
 
 	public static String manageArrow(String s) {
+		final Direction dir = getArrowDirection(s);
 		s = s.replace('=', '-');
-		//s = s.replace('[', '<');
-		//s = s.replace(']', '>');
+		s = s.replaceAll("\\w*", "");
+		if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+			s = s.replaceAll("-+", "-");
+		}
+		if (s.length()==2 &&(dir == Direction.UP || dir == Direction.DOWN)) {
+			s = s.replaceFirst("-", "--");
+		}
 		return s;
+	}
+
+	public static Direction getArrowDirection(String s) {
+		s = s.toLowerCase();
+		if (s.contains("left")) {
+			return Direction.LEFT;
+		}
+		if (s.contains("right")) {
+			return Direction.RIGHT;
+		}
+		if (s.contains("up")) {
+			return Direction.UP;
+		}
+		if (s.contains("down")) {
+			return Direction.DOWN;
+		}
+		if (s.contains("l")) {
+			return Direction.LEFT;
+		}
+		if (s.contains("r")) {
+			return Direction.RIGHT;
+		}
+		if (s.contains("u")) {
+			return Direction.UP;
+		}
+		if (s.contains("d")) {
+			return Direction.DOWN;
+		}
+		if (s.length() == 2) {
+			return Direction.RIGHT;
+		}
+		return Direction.DOWN;
 	}
 
 	public static String eventuallyRemoveStartingAndEndingDoubleQuote(String s) {
@@ -145,13 +187,13 @@ public class StringUtils {
 		}
 		return s;
 	}
-	
+
 	public static boolean isCJK(char c) {
 		final Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
 		System.err.println(block);
 		return false;
 	}
-	
+
 	public static char hiddenLesserThan() {
 		return '\u0005';
 	}
@@ -159,7 +201,7 @@ public class StringUtils {
 	public static char hiddenBiggerThan() {
 		return '\u0006';
 	}
-	
+
 	public static String hideComparatorCharacters(String s) {
 		s = s.replace('<', hiddenLesserThan());
 		s = s.replace('>', hiddenBiggerThan());

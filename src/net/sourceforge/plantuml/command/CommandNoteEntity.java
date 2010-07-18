@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -39,6 +39,7 @@ import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -55,7 +56,7 @@ final public class CommandNoteEntity extends SingleLineCommand<AbstractEntityDia
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
 		final String pos = arg.get(0);
-		final Entity cl1 = getSystem().getOrCreateClass(arg.get(1));
+		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(1));
 		final Entity note = getSystem().createEntity("GN" + UniqueSequence.getValue(), arg.get(3), EntityType.NOTE);
 		note.setSpecificBackcolor(arg.get(2));
 

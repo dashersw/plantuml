@@ -70,7 +70,7 @@ public class CommandCreateActor extends SingleLineCommand<UsecaseDiagram> {
 			code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1));
 		}
 		final String stereotype = arg.get(2);
-		final Entity entity = getSystem().getOrCreateClass(code);
+		final Entity entity = (Entity) getSystem().getOrCreateClass(code);
 		entity.setDisplay(display);
 
 		if (stereotype != null) {

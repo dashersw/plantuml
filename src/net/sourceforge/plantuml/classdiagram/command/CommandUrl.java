@@ -50,7 +50,7 @@ public class CommandUrl extends SingleLineCommand<ClassDiagram> {
 	protected CommandExecutionResult executeArg(List<String> arg) {
 		final String code = arg.get(0);
 		final String url = arg.get(1);
-		final Entity entity = getSystem().getOrCreateClass(code);
+		final Entity entity = (Entity) getSystem().getOrCreateClass(code);
 		entity.setUrl(url);
 		return CommandExecutionResult.ok();
 	}

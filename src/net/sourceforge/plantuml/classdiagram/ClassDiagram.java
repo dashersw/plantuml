@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4558 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -38,12 +38,13 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 
 public class ClassDiagram extends AbstractClassOrObjectDiagram {
 
 	@Override
-	public Entity getOrCreateEntity(String code, EntityType defaultType) {
+	public IEntity getOrCreateEntity(String code, EntityType defaultType) {
 		assert defaultType == EntityType.ABSTRACT_CLASS || defaultType == EntityType.CLASS
 				|| defaultType == EntityType.INTERFACE || defaultType == EntityType.ENUM;
 		code = getFullyQualifiedCode(code);
@@ -82,11 +83,11 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	}
 
 	@Override
-	public Entity getOrCreateClass(String code) {
+	public IEntity getOrCreateClass(String code) {
 		return getOrCreateEntity(code, EntityType.CLASS);
 	}
 
-	final public Entity getOrCreateClass(String code, EntityType type) {
+	final public IEntity getOrCreateClass(String code, EntityType type) {
 		if (type != EntityType.ABSTRACT_CLASS && type != EntityType.CLASS && type != EntityType.INTERFACE
 				&& type != EntityType.ENUM) {
 			throw new IllegalArgumentException();

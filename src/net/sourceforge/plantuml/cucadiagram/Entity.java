@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 5000 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -37,12 +37,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class Entity implements Imaged, SpecificBackcolorable {
+public class Entity implements IEntity {
 
 	private final String code;
 	private String display;
@@ -56,7 +55,7 @@ public class Entity implements Imaged, SpecificBackcolorable {
 	private final List<String> methods = new ArrayList<String>();
 
 	private Group container;
-	
+
 	private DrawFile imageFile;
 	private String url;
 
@@ -69,7 +68,7 @@ public class Entity implements Imaged, SpecificBackcolorable {
 		if (code == null || code.length() == 0) {
 			throw new IllegalArgumentException();
 		}
-		if (display == null /*|| display.length() == 0*/) {
+		if (display == null /* || display.length() == 0 */) {
 			throw new IllegalArgumentException();
 		}
 		this.uid = uid;
@@ -151,6 +150,9 @@ public class Entity implements Imaged, SpecificBackcolorable {
 
 	@Override
 	public String toString() {
+		if (type == EntityType.GROUP) {
+			return display + "(" + getType() + ")" + this.container;
+		}
 		return display + "(" + getType() + ")";
 	}
 
@@ -174,9 +176,9 @@ public class Entity implements Imaged, SpecificBackcolorable {
 	public final void setImageFile(DrawFile imageFile) {
 		this.imageFile = imageFile;
 	}
-	
+
 	private HtmlColor specificBackcolor;
-	
+
 	public HtmlColor getSpecificBackColor() {
 		return specificBackcolor;
 	}
@@ -187,12 +189,25 @@ public class Entity implements Imaged, SpecificBackcolorable {
 
 	public final String getUrl() {
 		return url;
-		//return "http://www.google.com";
+		// return "http://www.google.com";
 	}
 
 	public final void setUrl(String url) {
 		this.url = url;
 	}
 
+	@Override
+	public int hashCode() {
+		return uid.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		final IEntity other = (IEntity) obj;
+		return uid.equals(other.getUid());
+	}
 
 }

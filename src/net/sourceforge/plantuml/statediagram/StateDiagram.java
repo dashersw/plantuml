@@ -28,33 +28,33 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3979 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.statediagram;
 
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
-import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 
 public class StateDiagram extends AbstractEntityDiagram {
 
 	@Override
-	public Entity getOrCreateClass(String code) {
+	public IEntity getOrCreateClass(String code) {
 		if (code.startsWith("[*]")) {
 			throw new IllegalArgumentException();
 		}
 		if (isGroup(code)) {
 			return getGroup(code).getEntityCluster();
 		}
-		final Entity result = getOrCreateEntity(code, EntityType.STATE);
+		final IEntity result = getOrCreateEntity(code, EntityType.STATE);
 		return result;
 	}
 
-	public Entity getStart() {
+	public IEntity getStart() {
 		final Group g = getCurrentGroup();
 		if (g == null) {
 			return getOrCreateEntity("*start", EntityType.CIRCLE_START);
@@ -62,7 +62,7 @@ public class StateDiagram extends AbstractEntityDiagram {
 		return getOrCreateEntity("*start*" + g.getCode(), EntityType.CIRCLE_START);
 	}
 
-	public Entity getEnd() {
+	public IEntity getEnd() {
 		final Group p = getCurrentGroup();
 		if (p == null) {
 			return getOrCreateEntity("*end", EntityType.CIRCLE_END);

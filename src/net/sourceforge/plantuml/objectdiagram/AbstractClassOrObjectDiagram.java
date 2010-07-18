@@ -36,19 +36,19 @@ package net.sourceforge.plantuml.objectdiagram;
 import java.util.List;
 
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
 public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram {
 
-	final public boolean insertBetween(Entity entity1, Entity entity2, Entity node) {
+	final public boolean insertBetween(IEntity entity1, IEntity entity2, IEntity node) {
 		final Link link = foundLink(entity1, entity2);
 		if (link == null) {
 			return false;
 		}
-		final Link l1 = new Link(entity1, node, link.getType(), link.getLabel(), link.getLenght(),
+		final Link l1 = new Link(entity1, node, link.getType(), link.getLabel(), link.getLength(),
 				link.getQualifier1(), null, link.getLabeldistance(), link.getLabelangle());
-		final Link l2 = new Link(node, entity2, link.getType(), link.getLabel(), link.getLenght(), null, link
+		final Link l2 = new Link(node, entity2, link.getType(), link.getLabel(), link.getLength(), null, link
 				.getQualifier2(), link.getLabeldistance(), link.getLabelangle());
 		addLink(l1);
 		addLink(l2);
@@ -56,7 +56,7 @@ public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram
 		return true;
 	}
 
-	private Link foundLink(Entity entity1, Entity entity2) {
+	private Link foundLink(IEntity entity1, IEntity entity2) {
 		Link result = null;
 		final List<Link> links = getLinks();
 		for (int i = links.size() - 1; i >= 0; i--) {

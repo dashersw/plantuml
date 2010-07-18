@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.statediagram.command;
@@ -58,7 +58,7 @@ public class CommandCreateState extends SingleLineCommand<StateDiagram> {
 		if (display == null) {
 			display = code;
 		}
-		final Entity ent = getSystem().getOrCreateClass(code);
+		final Entity ent = (Entity) getSystem().getOrCreateClass(code);
 		ent.setDisplay(display);
 		return CommandExecutionResult.ok();
 	}

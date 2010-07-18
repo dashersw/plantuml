@@ -80,8 +80,8 @@ public class PSystemOregon extends AbstractPSystem {
 	}
 
 	private GraphicStrings getGraphicStrings() throws IOException {
-		final Font font = new Font("SansSerif", Font.PLAIN, 12);
-		return new GraphicStrings(screen.getLines(), font, Color.BLACK, Color.WHITE);
+		final Font font = new Font("Monospaced", Font.PLAIN, 14);
+		return new GraphicStrings(screen.getLines(), font, Color.GREEN, Color.BLACK, true);
 	}
 
 	public String getDescription() {

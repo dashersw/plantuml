@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4789 $
+ * Revision $Revision: 4984 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -36,6 +36,7 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -62,27 +63,30 @@ public class GraphicStrings {
 	private final List<String> strings;
 
 	private final BufferedImage image;
+	
+	private final boolean disableTextAliasing;
 
 	public GraphicStrings(List<String> strings) {
 		this(strings, new Font("SansSerif", Font.BOLD, 14), new Color(Integer.parseInt("33FF02", 16)), Color.BLACK,
-				null);
+				null, false);
 	}
 
 	public GraphicStrings(List<String> strings, BufferedImage image) {
 		this(strings, new Font("SansSerif", Font.BOLD, 14), new Color(Integer.parseInt("33FF02", 16)), Color.BLACK,
-				image);
+				image, false);
 	}
 
-	public GraphicStrings(List<String> strings, Font font, Color green, Color background) {
-		this(strings, font, green, background, null);
+	public GraphicStrings(List<String> strings, Font font, Color green, Color background, boolean disableTextAliasing) {
+		this(strings, font, green, background, null, disableTextAliasing);
 	}
 
-	public GraphicStrings(List<String> strings, Font font, Color green, Color background, BufferedImage image) {
+	public GraphicStrings(List<String> strings, Font font, Color green, Color background, BufferedImage image, boolean disableTextAliasing) {
 		this.strings = strings;
 		this.font = font;
 		this.green = green;
 		this.background = background;
 		this.image = image;
+		this.disableTextAliasing = disableTextAliasing;
 	}
 
 	public void writeImage(OutputStream os, FileFormat fileFormat) throws IOException {
@@ -111,22 +115,15 @@ public class GraphicStrings {
 		g2d.dispose();
 		
 		builder = new EmptyImageBuilder((int) size.getWidth(), (int) size.getHeight(), background);
-		BufferedImage im = builder.getBufferedImage();
+		final BufferedImage im = builder.getBufferedImage();
 		g2d = builder.getGraphics2D();
+		if (disableTextAliasing) {
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		}
 		drawU(new UGraphicG2d(g2d, null));
 		g2d.dispose();
 		return im;
 	}
-
-	//
-	// public Dimension2D drawPng(final Graphics2D g2d) {
-	// final TextBlock textBlock = TextBlockUtils.create(strings, font, green,
-	// HorizontalAlignement.LEFT);
-	// final Dimension2D size =
-	// textBlock.calculateDimension(StringBounderUtils.asStringBounder(g2d));
-	// textBlock.drawTOBEREMOVED(g2d, 0, 0);
-	// return size;
-	// }
 
 	public Dimension2D drawU(final UGraphic ug) {
 		final TextBlock textBlock = TextBlockUtils.create(strings, font, green, HorizontalAlignement.LEFT);

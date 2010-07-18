@@ -33,14 +33,12 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 public interface PathDrawer {
 
-	public void drawPathBefore(UGraphicG2d ug, Positionable start, Positionable end,
-			Path path);
+	public void drawPathBefore(UGraphic ug, Positionable start, Positionable end, Path path);
 
-	public void drawPathAfter(UGraphicG2d ug, Positionable start, Positionable end,
-			Path path);
+	public void drawPathAfter(UGraphic ug, Positionable start, Positionable end, Path path);
 
 }

@@ -49,7 +49,7 @@ public class DriverDotPathG2d implements UDriver<Graphics2D> {
 
 		if (param.getColor() != null) {
 			g2d.setColor(param.getColor());
-			shape.draw(g2d);
+			shape.draw(g2d, x, y);
 		}
 	}
 }

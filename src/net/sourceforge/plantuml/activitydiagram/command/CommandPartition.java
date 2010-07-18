@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5048 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
@@ -46,7 +46,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 public class CommandPartition extends SingleLineCommand<ActivityDiagram> {
 
 	public CommandPartition(ActivityDiagram diagram) {
-		super(diagram, "(?i)^partition\\s+(\"[^\"]+\"|\\S+)\\s*(#[0-9a-fA-F]{6}|#?\\w+)?\\s*$");
+		super(diagram, "(?i)^partition\\s+(\"[^\"]+\"|\\S+)\\s*(#[0-9a-fA-F]{6}|#?\\w+)?\\s*\\{?$");
 	}
 
 	@Override

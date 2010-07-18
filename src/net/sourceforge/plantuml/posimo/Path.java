@@ -41,6 +41,9 @@ public class Path {
 	private DotPath dotPath;
 
 	public Path(Block start, Block end, Label label) {
+		if (start == null || end == null) {
+			throw new IllegalArgumentException();
+		}
 		this.start = start;
 		this.end = end;
 		this.label = label;

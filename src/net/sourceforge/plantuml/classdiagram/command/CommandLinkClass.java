@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4820 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -98,8 +99,8 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 			return CommandExecutionResult.error("Package can be only linked to other package");
 		}
 
-		final Entity cl1 = getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
-		final Entity cl2 = getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
+		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
+		final IEntity cl2 = getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
 
 		final LinkType linkType = getLinkType(arg);
 		final String queue = getQueue(arg);
@@ -161,13 +162,13 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		if (getSystem().entityExist(clName2) == false) {
 			return CommandExecutionResult.error("No class "+clName2);
 		}
-		final Entity entity1 = getSystem().getOrCreateClass(clName1);
-		final Entity entity2 = getSystem().getOrCreateClass(clName2);
+		final IEntity entity1 = getSystem().getOrCreateClass(clName1);
+		final IEntity entity2 = getSystem().getOrCreateClass(clName2);
 
 		final Entity node = getSystem().createEntity(arg.get(FIRST_CLASS), "node", EntityType.POINT_FOR_ASSOCIATION);
 
 		getSystem().insertBetween(entity1, entity2, node);
-		final Entity cl2 = getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
+		final IEntity cl2 = getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
 
 		final LinkType linkType = getLinkType(arg);
 		final String queue = getQueue(arg);
@@ -191,13 +192,13 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		if (getSystem().entityExist(clName2) == false) {
 			return CommandExecutionResult.error("No class "+clName2);
 		}
-		final Entity entity1 = getSystem().getOrCreateClass(clName1);
-		final Entity entity2 = getSystem().getOrCreateClass(clName2);
+		final IEntity entity1 = getSystem().getOrCreateClass(clName1);
+		final IEntity entity2 = getSystem().getOrCreateClass(clName2);
 
-		final Entity node = getSystem().createEntity(arg.get(SECOND_CLASS), "node", EntityType.POINT_FOR_ASSOCIATION);
+		final IEntity node = getSystem().createEntity(arg.get(SECOND_CLASS), "node", EntityType.POINT_FOR_ASSOCIATION);
 
 		getSystem().insertBetween(entity1, entity2, node);
-		final Entity cl1 = getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
+		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
 
 		final LinkType linkType = getLinkType(arg);
 		final String queue = getQueue(arg);

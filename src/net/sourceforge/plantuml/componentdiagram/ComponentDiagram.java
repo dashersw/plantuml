@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4586 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram;
@@ -36,13 +36,13 @@ package net.sourceforge.plantuml.componentdiagram;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 
 public class ComponentDiagram extends AbstractEntityDiagram {
 
 	@Override
-	public Entity getOrCreateClass(String code) {
+	public IEntity getOrCreateClass(String code) {
 		if (code.startsWith("[") && code.endsWith("]")) {
 			return getOrCreateEntity(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(code),
 					EntityType.COMPONENT);

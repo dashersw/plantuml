@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4276 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupHierarchy;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -191,8 +192,8 @@ public final class GroupPngMaker {
 	private List<Link> getPureInnerLinks() {
 		final List<Link> result = new ArrayList<Link>();
 		for (Link link : diagram.getLinks()) {
-			final Entity e1 = link.getEntity1();
-			final Entity e2 = link.getEntity2();
+			final IEntity e1 = link.getEntity1();
+			final IEntity e2 = link.getEntity2();
 			if (e1.getParent() == group && e1.getType() != EntityType.GROUP && e2.getParent() == group
 					&& e2.getType() != EntityType.GROUP) {
 				result.add(link);

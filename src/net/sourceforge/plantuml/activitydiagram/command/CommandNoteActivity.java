@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -56,7 +57,7 @@ public class CommandNoteActivity extends SingleLineCommand<ActivityDiagram> {
 		final String pos = arg.get(0);
 		final Entity note = getSystem().createNote("GN" + UniqueSequence.getValue(), arg.get(1));
 
-		Entity activity = getSystem().getLastEntityConsulted();
+		IEntity activity = getSystem().getLastEntityConsulted();
 		if (activity == null) {
 			activity = getSystem().getStart();
 		}

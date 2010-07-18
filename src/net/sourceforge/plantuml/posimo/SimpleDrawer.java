@@ -75,7 +75,7 @@ public class SimpleDrawer {
 
 		g2d.setColor(Color.RED);
 		for (Path p : paths) {
-			p.getDotPath().draw(g2d);
+			p.getDotPath().draw(g2d, 0, 0);
 		}
 
 		for (Cluster sub : root.getSubClusters()) {

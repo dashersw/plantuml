@@ -111,7 +111,7 @@ public class PSystemVersion extends AbstractPSystem {
 
 	private GraphicStrings getGraphicStrings() throws IOException {
 		final Font font = new Font("SansSerif", Font.PLAIN, 12);
-		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE);
+		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE, false);
 	}
 
 	public String getDescription() {

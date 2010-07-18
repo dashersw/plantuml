@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5019 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
@@ -41,7 +41,7 @@ import net.sourceforge.plantuml.FileSystem;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
@@ -90,11 +90,11 @@ public class CommandImport extends SingleLineCommand<ClassDiagram> {
 		final JavaFile javaFile = new JavaFile(f);
 		for (JavaClass cl : javaFile.getJavaClasses()) {
 			final String name = cl.getName();
-			final Entity ent1 = getSystem()
+			final IEntity ent1 = getSystem()
 					.getOrCreateClass(name, cl.getType());
 
 			for (String p : cl.getParents()) {
-				final Entity ent2 = getSystem().getOrCreateClass(p,
+				final IEntity ent2 = getSystem().getOrCreateClass(p,
 						cl.getParentType());
 				final Link link = new Link(ent2, ent1, new LinkType(
 						LinkDecor.NONE, LinkDecor.EXTENDS), null, 2);

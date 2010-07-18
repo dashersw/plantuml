@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4041 $
+ * Revision $Revision: 4984 $
  *
  */
 package net.sourceforge.plantuml.eggs;
@@ -78,7 +78,7 @@ public class PSystemEgg extends AbstractPSystem {
 
 	private GraphicStrings getGraphicStrings() throws IOException {
 		final Font font = new Font("SansSerif", Font.PLAIN, 12);
-		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE);
+		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE, false);
 	}
 
 	public String getDescription() {

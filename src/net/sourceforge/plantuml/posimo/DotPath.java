@@ -80,7 +80,7 @@ public class DotPath implements UShape {
 		this.beziers.addAll(beziers);
 		this.print = super.toString();
 	}
-	
+
 	@Override
 	public String toString() {
 		return print;
@@ -131,10 +131,12 @@ public class DotPath implements UShape {
 		return result;
 	}
 
-	public void draw(Graphics2D g2d) {
-//		System.err.println("DotPath::draw "+beziers.size());
-//		System.err.println("DotPath::draw "+toString());
+	public void draw(Graphics2D g2d, double x, double y) {
+		// System.err.println("DotPath::draw "+beziers.size());
+		// System.err.println("DotPath::draw "+toString());
 		for (CubicCurve2D.Double bez : beziers) {
+			bez = new CubicCurve2D.Double(x + bez.x1, y + bez.y1, x + bez.ctrlx1, y + bez.ctrly1, x + bez.ctrlx2, y
+					+ bez.ctrly2, x + bez.x2, y + bez.y2);
 			g2d.draw(bez);
 		}
 	}
@@ -169,11 +171,12 @@ public class DotPath implements UShape {
 		return new DotPath(list);
 	}
 
-//	public DotPath manageRect(Positionable start, Positionable end) {
-//		//return manageRect(PositionableUtils.convert(start), PositionableUtils.convert(end));
-//		return this;
-//	}
-//
+	// public DotPath manageRect(Positionable start, Positionable end) {
+	// //return manageRect(PositionableUtils.convert(start),
+	// PositionableUtils.convert(end));
+	// return this;
+	// }
+	//
 	public Point2D getFrontierIntersection(Rectangle2D rect) {
 		final CubicCurve2D.Double bez = new CubicCurve2D.Double();
 		bez.setCurve(getCutting(rect));
