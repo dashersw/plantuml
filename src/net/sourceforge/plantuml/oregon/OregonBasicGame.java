@@ -38,12 +38,23 @@ import java.util.Random;
 public class OregonBasicGame implements BasicGame {
 
 	private Screen screen;
-	private SmartKeyboard kb;
+	private SmartKeyboard skb;
 	private Random rnd;
+
+	private int ks;
+	private int kh;
+	private int kp;
+	private int kb;
+	private int km;
+	private int kq;
+
+	private double ma;
+
 
 	private final String da[] = new String[] { "March 29", "April 12", "April 26", "May 10", "May 24", "June 7",
 			"June 21", "July 5", "July 19", "August 2", "August 16", "August 31", "September 13", "September 27",
 			"October 11", "October 25", "November 8", "November 22", "December 6", "December 20" };
+	
 	private final int ep[] = new int[] { 6, 11, 13, 15, 17, 22, 32, 35, 37, 42, 44, 54, 64, 69, 95 };
 
 	public Screen getScreen() {
@@ -67,13 +78,13 @@ public class OregonBasicGame implements BasicGame {
 			throw new IllegalStateException();
 		}
 		screen = new Screen();
-		kb = new SmartKeyboard(keyboard);
+		skb = new SmartKeyboard(keyboard);
 		init();
 	}
 
 	private double rnd() {
 		if (this.rnd == null) {
-			this.rnd = new Random(kb.getHistory().hashCode());
+			this.rnd = new Random(skb.getHistory().hashCode());
 		}
 		return rnd.nextDouble();
 	}
@@ -120,8 +131,8 @@ public class OregonBasicGame implements BasicGame {
 			// print();
 			events1800(j);
 			// print();
-			montains2640();
-			if (kb.hasMore()) {
+			montains2640(j);
+			if (skb.hasMore()) {
 				screen.clear();
 			}
 		}
@@ -151,7 +162,7 @@ public class OregonBasicGame implements BasicGame {
 			a = a - 10;
 			break;
 		case 2:
-			printb("Bad luck…your daughter breaks her arm. You must stop and");
+			printb("Bad luck... your daughter breaks her arm. You must stop and");
 			printb("make a splint and sling with some of your medical supplies.");
 			m = m - 5 - 4 * rnd();
 			r = r - 1 - 2 * rnd();
@@ -176,7 +187,7 @@ public class OregonBasicGame implements BasicGame {
 				if (c < 11 + 2 * rnd()) {
 					c1 = 1;
 				}
-				printb("Cold weather…Brrrrrrr!…You " + (c1 == 1 ? "dont't " : "")
+				printb("Cold weather... Brrrrrrr! ... You " + (c1 == 1 ? "dont't " : "")
 						+ "have enough clothing to keep warm.");
 				if (c1 == 1) {
 					dealWithIllness2880(j);
@@ -251,7 +262,7 @@ public class OregonBasicGame implements BasicGame {
 			break;
 
 		case 12:
-			printb("You're sound asleep and you hear a noise…get up to investigate.");
+			printb("You're sound asleep and you hear a noise... get up to investigate.");
 			printb("It's wild animals! They attack you!");
 			br = shoot3870();
 			if (b <= 39) {
@@ -299,13 +310,6 @@ public class OregonBasicGame implements BasicGame {
 
 	}
 
-	private void sickness2880() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private double ma;
-
 	private void madeIt3190(int j) throws NoInputException {
 		final double ml = (2040 - ma) / (m - ma);
 		f = f + (1 - ml) * (8 + 5 * e);
@@ -339,7 +343,7 @@ public class OregonBasicGame implements BasicGame {
 		int gt;
 		do {
 			print("You can <b>(1)</b> run, <b>(2)</b> attack, <b>(3)</b> ignore them, or <b>(4)</b> circle wagons.");
-			gt = kb.inputInt(screen);
+			gt = skb.inputInt(screen);
 		} while (gt < 0 || gt > 4);
 		if (rnd() < .2) {
 			gh = 1 - gh;
@@ -395,7 +399,7 @@ public class OregonBasicGame implements BasicGame {
 
 	private void riderShoot(final int br) {
 		if (br <= 1) {
-			print("Nice shooting — you drove them off.");
+			print("Nice shooting - you drove them off.");
 		} else if (br <= 4) {
 			print("Kind of slow with your Colt .45.");
 		} else {
@@ -405,32 +409,36 @@ public class OregonBasicGame implements BasicGame {
 		}
 	}
 
-	private int kp;
-	private int kq;
-
-	private void montains2640() {
+	private void montains2640(int j) throws NoInputException {
 		if (m <= 975) {
 			return;
 		}
-		final double mm = (m / 100.0 - 15);
+		final double mm = m / 100.0 - 15;
 		if (10 * rnd() > 9 - (mm * mm + 72) / (mm * mm + 12)) {
-
+			southPass2750(j);
+			return;
 		}
-		// 2670 PRINT "You're in rugged mountain country." : IF RND(1) > .1 THEN
-		// 2700
-		// 2680 PRINT "You get lost and lose valuable time trying to find the
-		// trail."
-		// 2690 M = M - 60 : GOTO 2750
-		// 2700 IF RND(1) > .11 THEN 2730
-		// 2710 PRINT "Trail cave in damages your wagon. You lose time and
-		// supplies."
-		// 2720 M = M - 20 - 30 * RND(1) : B = B - 200 : R = R - 3 : GOTO 2750
-		// 2730 PRINT "The going is really slow; oxen are very tired." : M = M -
-		// 45 - 50 * RND(1)
+		print("You're in rugged mountain country.");
+		if (rnd() <= .1) {
+			print("You get lost and lose valuable time trying to find the trail.");
+			m = m - 60;
+			southPass2750(j);
+			return;
+		}
+		if (rnd() > .11) {
+			print("The going is really slow; oxen are very tired.");
+			m = m - 45 - 50 * rnd();
+		} else {
+			print("Trail cave in damages your wagon. You lose time and supplies.");
+			m = m - 20 - 30 * rnd();
+			b = b - 200;
+			r = r - 3;
+		}
+		southPass2750(j);
 
 	}
 
-	private void southPass2750() {
+	private void southPass2750(int j) throws NoInputException {
 		if (kp == 1) {
 
 		}
@@ -438,28 +446,24 @@ public class OregonBasicGame implements BasicGame {
 		if (rnd() < .8) {
 
 		}
+		print("You made it safely through the South Pass....no snow!");
+		km = 1;
+		if (rnd()<.7) {
+			print("Blizzard in the mountain pass. Going is slow; supplies are lost.");
+			kb = 1;
+			m = m - 30 - 40 * rnd();
+			f = f - 12;
+			b = b - 200;
+			r = r - 5;
+			if (c>=18+2*rnd()) {
+				return;
+			}
+			dealWithIllness2880(j);
+		}
 
 	}
 
-	// 2750 'South Pass routine
-	// 2760 IF KP = 1 THEN 2790 : 'Is the South Pass clear?
-	// 2770 KP = 1 : IF RND(1) < .8 THEN 2840 : '80% chance of blizzard
-	// 2780 PRINT "You made it safely through the South Pass....no snow!"
-	// 2790 IF M < 1700 THEN 2810
-	// 2800 IF KM = 1 THEN 2810 : 'Through Blue Mts yet?
-	// 2810 KM = 1 : IF RND(1) < .7 THEN 2840 ELSE RETURN : 'Get through without
-	// mishap?
-	// 2820 MP = 1 : RETURN : 'Set South Pass flag
-	// 2830 '
-	// 2840 PRINT "Blizzard in the mountain pass. Going is slow; supplies are
-	// lost."
-	// 2850 KB = 1 : M = M - 30 - 40 * RND(1) : F = F - 12 : B = B - 200 : R = R
-	// - 5
-	// 2860 IF C < 18 + 2 * RND(1) THEN GOTO 2880 ELSE RETURN : 'Enough clothes?
-	// 2870 '
 
-	private int ks;
-	private int kh;
 
 	private void dealWithIllness2880(int j) throws NoInputException {
 		if (100 * rnd() < 10 + 35 * (e - 1)) {
@@ -490,7 +494,7 @@ public class OregonBasicGame implements BasicGame {
 		}
 		do {
 			print("Do you want to eat <b>(1)</b> poorly, <b>(2)</b> moderately or <b>(3)</b> well ?");
-			e = kb.inputInt(screen);
+			e = skb.inputInt(screen);
 			if (e < 1 || e > 3) {
 				print("Enter 1, 2, or 3, please.");
 				break;
@@ -560,7 +564,7 @@ public class OregonBasicGame implements BasicGame {
 		if (j % 2 == 1) {
 			do {
 				print("Want to <b>(1)</b> stop at the next fort, <b>(2)</b> hunt, or <b>(3)</b> push on ?");
-				x = kb.inputInt(screen);
+				x = skb.inputInt(screen);
 				if (x == 3) {
 					return;
 				}
@@ -578,7 +582,7 @@ public class OregonBasicGame implements BasicGame {
 		} else {
 			do {
 				print("Would you like to <b>(1)</b> hunt or <b>(2)</b> continue on ?");
-				x = kb.inputInt(screen);
+				x = skb.inputInt(screen);
 				if (x == 2) {
 					return;
 				}
@@ -626,13 +630,13 @@ public class OregonBasicGame implements BasicGame {
 		while (true) {
 			print("What would you like to spend on each of the following");
 			print("Food?");
-			final double p1 = kb.inputInt(screen);
+			final double p1 = skb.inputInt(screen);
 			print("Ammunition?");
-			final double p2 = kb.inputInt(screen);
+			final double p2 = skb.inputInt(screen);
 			print("Clothing?");
-			final double p3 = kb.inputInt(screen);
+			final double p3 = skb.inputInt(screen);
 			print("Medicine and supplies?");
-			final double p4 = kb.inputInt(screen);
+			final double p4 = skb.inputInt(screen);
 			final double p = p1 + p2 + p3 + p4;
 			print("The storekeeper tallies up your bill. It comes to $" + ((int) p));
 			if (t >= p) {
@@ -743,12 +747,12 @@ public class OregonBasicGame implements BasicGame {
 	}
 
 	private void initialPurchasesOfPlayer690() throws NoInputException {
-		if (kb.hasMore()) {
+		if (skb.hasMore()) {
 			screen.clear();
 		}
 		do {
 			print("How much do you want to pay for a team of oxen ?");
-			a = kb.inputInt(screen);
+			a = skb.inputInt(screen);
 			if (a < 100) {
 				print("No one in town has a team that cheap");
 				continue;
@@ -763,7 +767,7 @@ public class OregonBasicGame implements BasicGame {
 		do {
 			print();
 			print("How much do you want to spend on food ?");
-			f = kb.inputInt(screen);
+			f = skb.inputInt(screen);
 			if (f <= 13) {
 				print("That won't even get you to the Kansas River");
 				print(" - better spend a bit more.");
@@ -778,7 +782,7 @@ public class OregonBasicGame implements BasicGame {
 		do {
 			print();
 			print("How much do you want to spend on ammunition ?");
-			b = kb.inputInt(screen);
+			b = skb.inputInt(screen);
 			if (b < 2) {
 				print("Better take a bit just for protection.");
 				continue;
@@ -792,7 +796,7 @@ public class OregonBasicGame implements BasicGame {
 		do {
 			print();
 			print("How much do you want to spend on clothes ?");
-			c = kb.inputInt(screen);
+			c = skb.inputInt(screen);
 			if (c <= 24) {
 				print("Your family is going to be mighty cold in.");
 				print("the montains.");
@@ -808,7 +812,7 @@ public class OregonBasicGame implements BasicGame {
 		do {
 			print();
 			screen.print("How much for medecine, bandage, repair parts, etc. ?");
-			r = kb.inputInt(screen);
+			r = skb.inputInt(screen);
 			if (r <= 5) {
 				print("That's not at all wise.");
 				continue;
@@ -833,7 +837,7 @@ public class OregonBasicGame implements BasicGame {
 		do {
 			print();
 			print("How do you rank yourself ?");
-			dr = kb.inputInt(screen);
+			dr = skb.inputInt(screen);
 			if (dr >= 1 && dr <= 6) {
 				return;
 			}
@@ -871,11 +875,11 @@ public class OregonBasicGame implements BasicGame {
 	private int shoot3870() throws NoInputException {
 		final String word1 = getRandomShootingWord() + getTime();
 		print("Type: " + word1);
-		final String typed1 = kb.input(screen);
+		final String typed1 = skb.input(screen);
 		final int time = getDeltaTime(typed1);
 		final String word2 = getRandomShootingWord() + time;
 		print("Type: " + word2);
-		final String typed2 = kb.input(screen);
+		final String typed2 = skb.input(screen);
 		int duration = extractInt(typed2) - dr - 1;
 		// 3870 'Subroutine to shoot gun
 		// 3880 RN = 1 + INT(4 * RND(1)) : 'Pick a random shooting word

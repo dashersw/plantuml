@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5084 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -46,7 +46,8 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	@Override
 	public IEntity getOrCreateEntity(String code, EntityType defaultType) {
 		assert defaultType == EntityType.ABSTRACT_CLASS || defaultType == EntityType.CLASS
-				|| defaultType == EntityType.INTERFACE || defaultType == EntityType.ENUM;
+				|| defaultType == EntityType.INTERFACE || defaultType == EntityType.ENUM
+				|| defaultType == EntityType.LOLLIPOP;
 		code = getFullyQualifiedCode(code);
 		if (super.entityExist(code)) {
 			return super.getOrCreateEntity(code, defaultType);
@@ -57,7 +58,7 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	@Override
 	public Entity createEntity(String code, String display, EntityType type) {
 		if (type != EntityType.ABSTRACT_CLASS && type != EntityType.CLASS && type != EntityType.INTERFACE
-				&& type != EntityType.ENUM) {
+				&& type != EntityType.ENUM && type != EntityType.LOLLIPOP) {
 			return super.createEntity(code, display, type);
 		}
 		code = getFullyQualifiedCode(code);
@@ -89,7 +90,7 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 
 	final public IEntity getOrCreateClass(String code, EntityType type) {
 		if (type != EntityType.ABSTRACT_CLASS && type != EntityType.CLASS && type != EntityType.INTERFACE
-				&& type != EntityType.ENUM) {
+				&& type != EntityType.ENUM && type != EntityType.LOLLIPOP) {
 			throw new IllegalArgumentException();
 		}
 		return getOrCreateEntity(code, type);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5079 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -56,7 +56,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker4;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 
-public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
+public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, PortionShower {
 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
@@ -415,7 +415,10 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy {
 		for (Group g : groups.values()) {
 			g.setAutonom(isAutonom(g));
 		}
+	}
 
+	public final boolean showPortion(EntityPortion portion, IEntity entity) {
+		return true;
 	}
 
 }

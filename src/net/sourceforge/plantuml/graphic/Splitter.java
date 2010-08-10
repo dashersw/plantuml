@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4794 $
+ * Revision $Revision: 5072 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -44,9 +44,12 @@ import net.sourceforge.plantuml.StringUtils;
 
 public class Splitter {
 
-	static final String endFontPattern = "\\</font\\>";
+	static final String endFontPattern = "\\</font\\>|\\</color\\>|\\</size\\>";
 	static final String fontPattern = "\\<font(\\s+size\\s*=\\s*\"?\\d+\"?|\\s+color\\s*=\\s*\"?(#[0-9a-fA-F]{6}|\\w+)\"?)+\\s*\\>";
+	static final String fontColorPattern2 = "\\<color[\\s:]+(#[0-9a-fA-F]{6}|#?\\w+)\\s*\\>";
+	static final String fontSizePattern2 = "\\<size[\\s:]+(\\d+)\\s*\\>";
 	static final String imgPattern = "<img\\s+(src\\s*=\\s*['\"]?[^\\s\">]+['\"]?\\s*|vspace\\s*=\\s*['\"]?\\d+['\"]?\\s*|valign\\s*=\\s*['\"]?(top|middle|bottom)['\"]?\\s*)+>";
+	static final String imgPattern2 = "<img[\\s:]+([^>]+)/?>";
 	static final String htmlTag;
 
 	private static final Pattern tagOrText;
@@ -65,9 +68,15 @@ public class Splitter {
 		}
 		sb.append(fontPattern);
 		sb.append('|');
+		sb.append(fontColorPattern2);
+		sb.append('|');
+		sb.append(fontSizePattern2);
+		sb.append('|');
 		sb.append(endFontPattern);
 		sb.append('|');
 		sb.append(imgPattern);
+		sb.append('|');
+		sb.append(imgPattern2);
 
 		htmlTag = sb.toString();
 		tagOrText = Pattern.compile(htmlTag + "|.+?(?=" + htmlTag + ")|.+$",

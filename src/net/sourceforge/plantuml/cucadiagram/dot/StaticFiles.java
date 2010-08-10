@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4581 $
+ * Revision $Revision: 5080 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -70,6 +70,7 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 public class StaticFiles {
 
 	private final String circleInterfaceName = "cinterface.png";
+	private final String lollipopName = "lollipop.png";
 	private final String actorName = "actor.png";
 	private final String cName = "stereotypec.png";
 	private final String iName = "stereotypei.png";
@@ -140,6 +141,7 @@ public class StaticFiles {
 		background = param.getBackgroundColor().getColor();
 
 		final File dir = getTmpDir();
+		staticImages.put(EntityType.LOLLIPOP, ensurePngLollipopPresent(dir));
 		staticImages.put(EntityType.CIRCLE_INTERFACE, ensurePngCircleInterfacePresent(dir));
 		staticImages.put(EntityType.ACTOR, ensurePngActorPresent(dir));
 		staticImages.put(EntityType.ABSTRACT_CLASS, ensurePngAPresent(dir));
@@ -221,6 +223,25 @@ public class StaticFiles {
 		circleInterface.drawU(new UGraphicG2d(g2d, null));
 
 		final File result = new File(dir, circleInterfaceName);
+		Log.info("Creating temporary file: " + result);
+		ImageIO.write(im, "png", result);
+		return new DrawFile(result, UGraphicG2d.getSvgString(circleInterface));
+
+	}
+
+	private DrawFile ensurePngLollipopPresent(File dir) throws IOException {
+
+		final CircleInterface circleInterface = new CircleInterface(interfaceBackground, interfaceBorder, 10, 2);
+
+		final EmptyImageBuilder builder = new EmptyImageBuilder((int) circleInterface.getPreferredWidth(null),
+				(int) circleInterface.getPreferredHeight(null), background);
+
+		final BufferedImage im = builder.getBufferedImage();
+		final Graphics2D g2d = builder.getGraphics2D();
+
+		circleInterface.drawU(new UGraphicG2d(g2d, null));
+
+		final File result = new File(dir, lollipopName);
 		Log.info("Creating temporary file: " + result);
 		ImageIO.write(im, "png", result);
 		return new DrawFile(result, UGraphicG2d.getSvgString(circleInterface));

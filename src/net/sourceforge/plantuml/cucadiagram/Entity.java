@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5000 $
+ * Revision $Revision: 5086 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -118,6 +118,18 @@ public class Entity implements IEntity {
 
 	public EntityType getType() {
 		return type;
+	}
+
+	public void muteToType(EntityType newType) {
+		if (type != EntityType.ABSTRACT_CLASS && type != EntityType.CLASS && type != EntityType.ENUM
+				&& type != EntityType.INTERFACE) {
+			throw new IllegalArgumentException("type=" + type);
+		}
+		if (newType != EntityType.ABSTRACT_CLASS && newType != EntityType.CLASS && newType != EntityType.ENUM
+				&& newType != EntityType.INTERFACE) {
+			throw new IllegalArgumentException("newtype=" + newType);
+		}
+		this.type = newType;
 	}
 
 	public String getCode() {

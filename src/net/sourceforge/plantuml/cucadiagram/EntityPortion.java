@@ -28,19 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5104 $
+ * Revision $Revision: 3829 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.cucadiagram;
 
-public class Version {
-
-	public static int version() {
-		return 5103;
-	}
-
-	public static long compileTime() {
-		return 1281460007359L;
-	}
-
+public enum EntityPortion {
+	FIELD, METHOD, CIRCLED_CHARACTER
 }

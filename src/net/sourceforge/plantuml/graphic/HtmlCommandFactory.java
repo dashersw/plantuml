@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3834 $
+ * Revision $Revision: 5072 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -70,6 +70,11 @@ class HtmlCommandFactory {
 		if (s.matches(Splitter.imgPattern)) {
 			return Img.getInstance(s);
 		}
+		
+		if (s.matches(Splitter.imgPattern2)) {
+			return Img.getInstance2(s);
+		}
+		
 		if (addStyle.matcher(s).matches()) {
 			return new AddStyle(FontStyle.getStyle(s));
 		}
@@ -79,6 +84,14 @@ class HtmlCommandFactory {
 
 		if (s.matches(Splitter.fontPattern)) {
 			return new ColorAndSizeChange(s);
+		}
+
+		if (s.matches(Splitter.fontColorPattern2)) {
+			return new ColorChange(s);
+		}
+
+		if (s.matches(Splitter.fontSizePattern2)) {
+			return new SizeChange(s);
 		}
 
 		if (s.matches(Splitter.endFontPattern)) {

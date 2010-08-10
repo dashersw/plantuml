@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4936 $
+ * Revision $Revision: 5079 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -574,7 +574,7 @@ public final class CucaDiagramFileMaker {
 			new CucaDiagramSimplifier(diagram, dotStrings, isEps);
 		}
 		final DotData dotData = new DotData(null, diagram.getLinks(), diagram.entities(), diagram.getUmlDiagramType(),
-				diagram.getSkinParam(), diagram.getRankdir(), diagram);
+				diagram.getSkinParam(), diagram.getRankdir(), diagram, diagram);
 
 		dotData.putAllStaticImages(staticImages);
 		if (diagram.isVisibilityModifierPresent()) {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5098 $
+ * Revision $Revision: 5075 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
@@ -37,8 +37,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -50,7 +49,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.objectdiagram.AbstractClassOrObjectDiagram;
 
-final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObjectDiagram> {
+final public class CommandLinkLollipop extends SingleLineCommand<AbstractClassOrObjectDiagram> {
 
 	private static final int OFFSET = 1;
 
@@ -58,57 +57,27 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 	private static final int FIRST_TYPE = 1 + OFFSET;
 	private static final int FIRST_CLASS = 2 + OFFSET;
 	private static final int FIRST_LABEL = 3 + OFFSET;
-	private static final int LEFT_TO_RIGHT = 4 + OFFSET;
-	private static final int LEFT_TO_RIGHT_QUEUE = 5 + OFFSET;
-	private static final int LEFT_TO_RIGHT_HEAD = 6 + OFFSET;
-	private static final int RIGHT_TO_LEFT = 7 + OFFSET;
-	private static final int RIGHT_TO_LEFT_HEAD = 8 + OFFSET;
-	private static final int RIGHT_TO_LEFT_QUEUE = 9 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO_INV = 10 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO_INV_QUEUE = 11 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO_INV_HEAD = 12 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO = 13 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO_HEAD = 14 + OFFSET;
-	private static final int NAV_AGREG_OR_COMPO_QUEUE = 15 + OFFSET;
-	private static final int SECOND_LABEL = 16 + OFFSET;
-	private static final int SECOND_TYPE_AND_CLASS = 17 + OFFSET;
-	private static final int SECOND_TYPE = 18 + OFFSET;
-	private static final int SECOND_CLASS = 19 + OFFSET;
-	private static final int LINK_LABEL = 20 + OFFSET;
+
+	private static final int LINK1 = 4 + OFFSET;
+	private static final int LINK2 = 5 + OFFSET;
+
+	private static final int SECOND_LABEL = 6 + OFFSET;
+	private static final int SECOND_TYPE_AND_CLASS = 7 + OFFSET;
+	private static final int SECOND_TYPE = 8 + OFFSET;
+	private static final int SECOND_CLASS = 9 + OFFSET;
+	private static final int LINK_LABEL = 10 + OFFSET;
 
 	private final Pattern patternAssociationPoint = Pattern
 			.compile("\\(\\s*(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)\\s*,\\s*(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)\\s*\\)");
 
-	// [\\p{L}0-9_.]+
-	// \\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*
-
-	public CommandLinkClass(AbstractClassOrObjectDiagram diagram) {
+	public CommandLinkLollipop(AbstractClassOrObjectDiagram diagram) {
 		super(
 				diagram,
-				"(?i)^(?:@(\\d+)\\s+)?((?:"
-						+ optionalKeywords(diagram.getUmlDiagramType())
-						+ "\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?:\"([^\"]+)\")?\\s*"
-						// split here
-						+ "(?:(([-=.]+)(o +|[\\]>*+]|\\|[>\\]])?)|(( +o|[\\[<*+]|[<\\[]\\|)?([-=.]+))|(\\<([-=.]+)(o +|\\*))|(( +o|\\*)([-=.]+)\\>))"
-						// split here
-						+ "\\s*(?:\"([^\"]+)\")?\\s*((?:"
-						+ optionalKeywords(diagram.getUmlDiagramType())
-						+ "\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?::\\s*([^\"]+))?$");
-		// "(?i)^(?:@(\\d+)\\s+)?((?:(interface|enum|abstract\\s+class|abstract|class)\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?:\"([^\"]+)\")?\\s*"
-		// +
-		// "(?:(([-=.]+)([\\]>o*+]|\\|[>\\]])?)|(([\\[<o*+]|[<\\[]\\|)?([-=.]+))|(\\<([-=.]+)([o*]))|(([o*])([-=.]+)\\>))"
-		// +
-		// "\\s*(?:\"([^\"]+)\")?\\s*((?:(interface|enum|abstract\\s+class|abstract|class)\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?::\\s*([^\"]+))?$");
-	}
-
-	private static String optionalKeywords(UmlDiagramType type) {
-		if (type == UmlDiagramType.CLASS) {
-			return "(interface|enum|abstract\\s+class|abstract|class)";
-		}
-		if (type == UmlDiagramType.OBJECT) {
-			return "(object)";
-		}
-		throw new IllegalArgumentException();
+				"(?i)^(?:@(\\d+)\\s+)?((?:(interface|enum|abstract\\s+class|abstract|class)\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?:\"([^\"]+)\")?\\s*"
+						// +
+						// "(?:(([-=.]+)([\\]>o*+]|\\|[>\\]])?)|(([\\[<o*+]|[<\\[]\\|)?([-=.]+))|(\\<([-=.]+)([o*]))|(([o*])([-=.]+)\\>))"
+						+ "(?:\\(\\)([-=.]+)|([-=.]+)\\(\\))"
+						+ "\\s*(?:\"([^\"]+)\")?\\s*((?:(interface|enum|abstract\\s+class|abstract|class)\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?::\\s*([^\"]+))?$");
 	}
 
 	@Override
@@ -126,20 +95,17 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 			return CommandExecutionResult.error("Package can be only linked to other package");
 		}
 
-		final Entity cl1 = (Entity) getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
-		final Entity cl2 = (Entity) getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
+		final Entity cl1;
+		final Entity cl2;
 
-		if (arg.get(FIRST_TYPE) != null) {
-			final EntityType type = EntityType.getEntityType(arg.get(FIRST_TYPE));
-			if (type != EntityType.OBJECT) {
-				cl1.muteToType(type);
-			}
-		}
-		if (arg.get(SECOND_TYPE) != null) {
-			final EntityType type = EntityType.getEntityType(arg.get(SECOND_TYPE));
-			if (type != EntityType.OBJECT) {
-				cl2.muteToType(type);
-			}
+		final String suffix = "lol" + UniqueSequence.getValue();
+		if (arg.get(LINK1) != null) {
+			cl2 = (Entity) getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
+			cl1 = getSystem().createEntity(cl2.getCode() + suffix, arg.get(FIRST_CLASS), EntityType.LOLLIPOP);
+		} else {
+			assert arg.get(LINK2) != null;
+			cl1 = (Entity) getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
+			cl2 = getSystem().createEntity(cl1.getCode() + suffix, arg.get(SECOND_CLASS), EntityType.LOLLIPOP);
 		}
 
 		final LinkType linkType = getLinkType(arg);
@@ -151,6 +117,20 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		addLink(link, arg.get(0));
 
 		return CommandExecutionResult.ok();
+	}
+
+	private String getQueue(List<String> arg) {
+		if (arg.get(LINK1) != null) {
+			return arg.get(LINK1);
+		}
+		if (arg.get(LINK2) != null) {
+			return arg.get(LINK2);
+		}
+		throw new IllegalArgumentException();
+	}
+
+	private LinkType getLinkType(List<String> arg) {
+		return new LinkType(LinkDecor.NONE, LinkDecor.NONE);
 	}
 
 	private void addLink(Link link, String arg0) {
@@ -250,115 +230,6 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		addLink(link, arg.get(0));
 
 		return CommandExecutionResult.ok();
-	}
-
-	private LinkType getLinkTypeNormal(List<String> arg) {
-		final String queue = arg.get(LEFT_TO_RIGHT_QUEUE).trim();
-		String key = arg.get(LEFT_TO_RIGHT_HEAD);
-		if (key != null) {
-			key = key.trim();
-		}
-		LinkType linkType = getLinkTypeFromKey(key);
-
-		if (queue.startsWith(".")) {
-			linkType = linkType.getDashed();
-		}
-		return linkType;
-	}
-
-	private LinkType getLinkTypeInv(List<String> arg) {
-		final String queue = arg.get(RIGHT_TO_LEFT_QUEUE).trim();
-		String key = arg.get(RIGHT_TO_LEFT_HEAD);
-		if (key != null) {
-			key = key.trim();
-		}
-		LinkType linkType = getLinkTypeFromKey(key);
-
-		if (queue.startsWith(".")) {
-			linkType = linkType.getDashed();
-		}
-		return linkType.getInv();
-	}
-
-	private LinkType getLinkType(List<String> arg) {
-		if (arg.get(LEFT_TO_RIGHT) != null) {
-			return getLinkTypeNormal(arg);
-		}
-		if (arg.get(RIGHT_TO_LEFT) != null) {
-			return getLinkTypeInv(arg);
-		}
-		if (arg.get(NAV_AGREG_OR_COMPO_INV) != null) {
-			final String type = arg.get(NAV_AGREG_OR_COMPO_INV_HEAD).trim();
-			final String queue = arg.get(NAV_AGREG_OR_COMPO_INV_QUEUE).trim();
-			LinkType result;
-			if (type.equals("*")) {
-				result = new LinkType(LinkDecor.COMPOSITION, LinkDecor.ARROW);
-			} else if (type.equals("o")) {
-				result = new LinkType(LinkDecor.AGREGATION, LinkDecor.ARROW);
-			} else {
-				throw new IllegalArgumentException();
-			}
-			if (queue.startsWith(".")) {
-				result = result.getDashed();
-			}
-			return result;
-		}
-		if (arg.get(NAV_AGREG_OR_COMPO) != null) {
-			final String type = arg.get(NAV_AGREG_OR_COMPO_HEAD).trim();
-			final String queue = arg.get(NAV_AGREG_OR_COMPO_QUEUE).trim();
-			LinkType result;
-			if (type.equals("*")) {
-				result = new LinkType(LinkDecor.ARROW, LinkDecor.COMPOSITION);
-			} else if (type.equals("o")) {
-				result = new LinkType(LinkDecor.ARROW, LinkDecor.AGREGATION);
-			} else {
-				throw new IllegalArgumentException();
-			}
-			if (queue.startsWith(".")) {
-				result = result.getDashed();
-			}
-			return result;
-		}
-		throw new IllegalArgumentException();
-	}
-
-	private String getQueue(List<String> arg) {
-		if (arg.get(LEFT_TO_RIGHT) != null) {
-			return arg.get(LEFT_TO_RIGHT_QUEUE).trim();
-		}
-		if (arg.get(RIGHT_TO_LEFT) != null) {
-			return arg.get(RIGHT_TO_LEFT_QUEUE).trim();
-		}
-		if (arg.get(NAV_AGREG_OR_COMPO_INV) != null) {
-			return arg.get(NAV_AGREG_OR_COMPO_INV_QUEUE).trim();
-		}
-		if (arg.get(NAV_AGREG_OR_COMPO) != null) {
-			return arg.get(NAV_AGREG_OR_COMPO_QUEUE).trim();
-		}
-		throw new IllegalArgumentException();
-	}
-
-	private LinkType getLinkTypeFromKey(String k) {
-		if (k == null) {
-			return new LinkType(LinkDecor.NONE, LinkDecor.NONE);
-		}
-		if (k.equals("+")) {
-			return new LinkType(LinkDecor.PLUS, LinkDecor.NONE);
-		}
-		if (k.equals("*")) {
-			return new LinkType(LinkDecor.COMPOSITION, LinkDecor.NONE);
-		}
-		if (k.equalsIgnoreCase("o")) {
-			return new LinkType(LinkDecor.AGREGATION, LinkDecor.NONE);
-		}
-		if (k.equals("<") || k.equals(">")) {
-			return new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
-		}
-		if (k.equals("<|") || k.equals("|>")) {
-			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
-		}
-		//return null;
-		throw new IllegalArgumentException(k);
 	}
 
 }

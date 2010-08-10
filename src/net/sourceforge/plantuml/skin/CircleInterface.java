@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4189 $
+ * Revision $Revision: 5080 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -46,16 +46,20 @@ import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class CircleInterface implements UDrawable {
 
-	private final float thickness = 2;
-
-	private final double headDiam = 16;
-
+	private final float thickness;
+	private final double headDiam;
 	private final Color backgroundColor;
 	private final Color foregroundColor;
 
 	public CircleInterface(Color backgroundColor, Color foregroundColor) {
+		this(backgroundColor, foregroundColor, 16, 2);
+	}
+
+	public CircleInterface(Color backgroundColor, Color foregroundColor, double headDiam, float thickness) {
 		this.backgroundColor = backgroundColor;
 		this.foregroundColor = foregroundColor;
+		this.headDiam = headDiam;
+		this.thickness = thickness;
 	}
 
 	public void draw(Graphics2D g2d) {

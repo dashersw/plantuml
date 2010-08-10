@@ -28,19 +28,34 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5104 $
+ * Revision $Revision: 3834 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.graphic;
 
-public class Version {
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-	public static int version() {
-		return 5103;
+class ColorChange implements FontChange {
+
+	static private final Pattern colorPattern = Pattern.compile("(?i)" + Splitter.fontColorPattern2);
+
+	private final HtmlColor color;
+
+	ColorChange(String s) {
+		final Matcher matcherColor = colorPattern.matcher(s);
+		if (matcherColor.find() == false) {
+			throw new IllegalArgumentException();
+		}
+		this.color = new HtmlColor(matcherColor.group(1));
 	}
 
-	public static long compileTime() {
-		return 1281460007359L;
+	HtmlColor getColor() {
+		return color;
+	}
+
+	public FontConfiguration apply(FontConfiguration initial) {
+		return initial.changeColor(color);
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4765 $
+ * Revision $Revision: 5075 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
@@ -54,24 +54,22 @@ public class CommandCreateEntityClass extends SingleLineCommand<ClassDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
 		final String arg0 = arg.get(0).toUpperCase();
-		final EntityType type;
-		if (arg0.startsWith("ABSTRACT")) {
-			type = EntityType.ABSTRACT_CLASS;
-		} else {
-			type = EntityType.valueOf(arg0);
-		}
+		final EntityType type = EntityType.getEntityType(arg0);
 		final String code = arg.get(2);
 		final String display = arg.get(1);
 		final String stereotype = arg.get(3);
+		final Entity entity;
 		if (getSystem().entityExist(code)) {
-			return CommandExecutionResult.error("Class already exists : "
-					+ code);
+			// return CommandExecutionResult.error("Class already exists : "
+			// + code);
+			entity = (Entity) getSystem().getOrCreateEntity(code, type);
+			entity.muteToType(type);
+		} else {
+			entity = getSystem().createEntity(code, display, type);
 		}
-		final Entity entity = getSystem().createEntity(code, display, type);
 		if (stereotype != null) {
-			entity.setStereotype(new Stereotype(stereotype, getSystem()
-					.getSkinParam().getCircledCharacterRadius(), getSystem()
-					.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
+			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
+					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
 		}
 		return CommandExecutionResult.ok();
 	}

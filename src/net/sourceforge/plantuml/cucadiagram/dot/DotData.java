@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4983 $
+ * Revision $Revision: 5084 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -45,15 +45,17 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupHierarchy;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 
-final public class DotData {
+final public class DotData implements PortionShower {
 
 	final private List<Link> links;
 	final private Map<String, ? extends IEntity> entities;
@@ -62,13 +64,15 @@ final public class DotData {
 	final private Rankdir rankdir;
 	final private GroupHierarchy groupHierarchy;
 	final private Group topParent;
+	final private PortionShower portionShower;
 
 	final private Map<EntityType, DrawFile> staticImages = new HashMap<EntityType, DrawFile>();
 	final private Map<VisibilityModifier, DrawFile> visibilityImages = new EnumMap<VisibilityModifier, DrawFile>(
 			VisibilityModifier.class);
 
-	public DotData(Group topParent, List<Link> links, Map<String, ? extends IEntity> entities, UmlDiagramType umlDiagramType,
-			ISkinParam skinParam, Rankdir rankdir, GroupHierarchy groupHierarchy) {
+	public DotData(Group topParent, List<Link> links, Map<String, ? extends IEntity> entities,
+			UmlDiagramType umlDiagramType, ISkinParam skinParam, Rankdir rankdir, GroupHierarchy groupHierarchy,
+			PortionShower portionShower) {
 		this.topParent = topParent;
 		this.links = links;
 		this.entities = entities;
@@ -76,6 +80,16 @@ final public class DotData {
 		this.skinParam = skinParam;
 		this.rankdir = rankdir;
 		this.groupHierarchy = groupHierarchy;
+		this.portionShower = portionShower;
+	}
+
+	public DotData(Group topParent, List<Link> links, Map<String, ? extends IEntity> entities,
+			UmlDiagramType umlDiagramType, ISkinParam skinParam, Rankdir rankdir, GroupHierarchy groupHierarchy) {
+		this(topParent, links, entities, umlDiagramType, skinParam, rankdir, groupHierarchy, new PortionShower() {
+			public boolean showPortion(EntityPortion portion, IEntity entity) {
+				return true;
+			}
+		});
 	}
 
 	public boolean hasUrl() {
@@ -135,6 +149,16 @@ final public class DotData {
 			}
 		} while (size != result.size());
 		result.remove(ent1);
+		return Collections.unmodifiableSet(result);
+	}
+
+	public final Set<IEntity> getAllLinkedDirectedTo(final IEntity ent1) {
+		final Set<IEntity> result = new HashSet<IEntity>();
+		for (IEntity ent : entities.values()) {
+			if (isDirectlyLinkedSlow(ent, ent1)) {
+				result.add(ent);
+			}
+		}
 		return Collections.unmodifiableSet(result);
 	}
 
@@ -201,6 +225,10 @@ final public class DotData {
 
 	public boolean isEmpty(Group g) {
 		return groupHierarchy.isEmpty(g);
+	}
+
+	public boolean showPortion(EntityPortion portion, IEntity entity) {
+		return portionShower.showPortion(portion, entity);
 	}
 
 }

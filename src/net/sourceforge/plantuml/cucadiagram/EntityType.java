@@ -28,22 +28,31 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4539 $
+ * Revision $Revision: 5080 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 public enum EntityType {
-	
+
 	EMPTY_PACKAGE,
-	
-	ABSTRACT_CLASS, CLASS, INTERFACE, ENUM, ACTOR, USECASE, COMPONENT, CIRCLE_INTERFACE, NOTE, OBJECT,
-	
+
+	ABSTRACT_CLASS, CLASS, INTERFACE, LOLLIPOP, ENUM, ACTOR, USECASE, COMPONENT, CIRCLE_INTERFACE, NOTE, OBJECT,
+
 	ACTIVITY, BRANCH, SYNCHRO_BAR, CIRCLE_START, CIRCLE_END, POINT_FOR_ASSOCIATION,
-	
+
 	STATE, STATE_CONCURRENT,
-	
+
 	BLOCK,
-	
-	GROUP
+
+	GROUP;
+
+	public static EntityType getEntityType(String arg0) {
+		arg0 = arg0.toUpperCase();
+		if (arg0.startsWith("ABSTRACT")) {
+			return EntityType.ABSTRACT_CLASS;
+		}
+		return EntityType.valueOf(arg0);
+	}
+
 }

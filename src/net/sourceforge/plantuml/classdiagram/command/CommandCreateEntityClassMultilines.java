@@ -71,17 +71,14 @@ public class CommandCreateEntityClassMultilines extends CommandMultilines<ClassD
 
 	private Entity executeArg0(List<String> arg) {
 		final String arg0 = arg.get(0).toUpperCase();
-		final EntityType type;
-		if (arg0.startsWith("ABSTRACT")) {
-			type = EntityType.ABSTRACT_CLASS;
-		} else {
-			type = EntityType.valueOf(arg0);
-		}
+		final EntityType type = EntityType.getEntityType(arg0);
 		final String code = arg.get(2);
 		final String display = arg.get(1);
 		final String stereotype = arg.get(3);
 		if (getSystem().entityExist(code)) {
-			return (Entity) getSystem().getOrCreateClass(code);
+			final Entity result = (Entity) getSystem().getOrCreateClass(code);
+			result.muteToType(type);
+			return result;
 		}
 		final Entity entity = getSystem().createEntity(code, display, type);
 		if (stereotype != null) {

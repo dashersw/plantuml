@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5047 $
+ * Revision $Revision: 5094 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -40,7 +40,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -51,6 +53,7 @@ import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
@@ -437,6 +440,9 @@ final public class DotMaker implements GraphvizMaker {
 			if (entity2.getType() == EntityType.GROUP && entity1.getParent() == entity2.getParent()) {
 				continue;
 			}
+			if (entity1.getType() == EntityType.LOLLIPOP || entity2.getType() == EntityType.LOLLIPOP) {
+				continue;
+			}
 			// System.err.println("outing " + link);
 			printLink(sb, link);
 		}
@@ -631,9 +637,81 @@ final public class DotMaker implements GraphvizMaker {
 	}
 
 	private void printEntities(StringBuilder sb, Collection<? extends IEntity> entities) throws IOException {
+		final Set<IEntity> lollipops = new HashSet<IEntity>();
+		final Set<IEntity> lollipopsFriends = new HashSet<IEntity>();
 		for (IEntity entity : entities) {
+			if (entity.getType() == EntityType.LOLLIPOP) {
+				lollipops.add(entity);
+				lollipopsFriends.add(getConnectedToLollipop(entity));
+			}
+		}
+		for (IEntity entity : entities) {
+			if (lollipops.contains(entity) || lollipopsFriends.contains(entity)) {
+				continue;
+			}
 			printEntity(sb, entity);
 		}
+
+		for (IEntity ent : lollipopsFriends) {
+			sb.append("subgraph cluster" + ent.getUid() + "lol {");
+			sb.append("style=invis;");
+			sb.append("label=\"\";");
+			printEntity(sb, ent);
+			for (IEntity lollipop : getAllLollipop(ent)) {
+				final Link link = getLinkLollipop(lollipop, ent);
+				printEntity(sb, lollipop, link);
+				printLink(sb, link);
+			}
+			sb.append("}");
+		}
+
+	}
+
+	private Collection<IEntity> getAllLollipop(IEntity entity) {
+		final Collection<IEntity> result = new ArrayList<IEntity>();
+		for (IEntity lollipop : data.getAllLinkedDirectedTo(entity)) {
+			if (lollipop.getType() == EntityType.LOLLIPOP) {
+				result.add(lollipop);
+			}
+		}
+		return result;
+	}
+
+	private IEntity getConnectedToLollipop(IEntity lollipop) {
+		assert lollipop.getType() == EntityType.LOLLIPOP;
+		final Collection<IEntity> linked = data.getAllLinkedDirectedTo(lollipop);
+		if (linked.size() != 1) {
+			throw new IllegalStateException("size=" + linked.size());
+		}
+		return linked.iterator().next();
+	}
+
+	private Link getLinkLollipop(IEntity lollipop, IEntity ent) {
+		assert lollipop.getType() == EntityType.LOLLIPOP;
+		for (Link link : data.getLinks()) {
+			if (link.isBetween(lollipop, ent)) {
+				return link;
+			}
+		}
+		throw new IllegalArgumentException();
+	}
+
+	private void printEntity(StringBuilder sb, IEntity entity, Link link) throws IOException {
+		final EntityType type = entity.getType();
+		if (type == EntityType.LOLLIPOP) {
+			final String color1 = getColorString(ColorParam.classBackground);
+			final String color2 = getColorString(ColorParam.classBorder);
+			final String colorBack = getColorString(ColorParam.background);
+			final String labelLo = manageHtmlIB(entity.getDisplay(), FontParam.CLASS_ATTRIBUTE);
+			sb.append(entity.getUid() + " [fillcolor=" + color1 + ",color=" + color2 + ",style=\"filled\","
+					+ "shape=circle,width=0.12,height=0.12,label=\"\"];");
+			final String headOrTail = getHeadOrTail(entity, link);
+			sb.append(entity.getUid() + " -> " + entity.getUid() + "[color=" + colorBack
+					+ ",arrowtail=none,arrowhead=none," + headOrTail + "=<" + labelLo + ">];");
+		} else {
+			throw new IllegalStateException(type.toString() + " " + data.getUmlDiagramType());
+		}
+
 	}
 
 	private void printEntity(StringBuilder sb, IEntity entity) throws IOException {
@@ -688,10 +766,11 @@ final public class DotMaker implements GraphvizMaker {
 			sb.append(entity.getUid() + " [fillcolor=" + getColorString(ColorParam.activityBackground) + ",color="
 					+ getColorString(ColorParam.activityBorder)
 					+ ",style=\"filled\",shape=diamond,height=.25,width=.25,label=\"\"];");
-//			if (StringUtils.isNotEmpty(entity.getDisplay())) {
-//				sb.append(entity.getUid() + "->" + entity.getUid() + "[taillabel=\"" + entity.getDisplay()
-//						+ "\",arrowtail=none,arrowhead=none,color=\"white\"];");
-//			}
+			// if (StringUtils.isNotEmpty(entity.getDisplay())) {
+			// sb.append(entity.getUid() + "->" + entity.getUid() +
+			// "[taillabel=\"" + entity.getDisplay()
+			// + "\",arrowtail=none,arrowhead=none,color=\"white\"];");
+			// }
 		} else if (type == EntityType.SYNCHRO_BAR) {
 			final String color = getColorString(ColorParam.activityBar);
 			sb.append(entity.getUid() + " [fillcolor=" + color + ",color=" + color + ",style=\"filled\","
@@ -738,10 +817,21 @@ final public class DotMaker implements GraphvizMaker {
 		}
 	}
 
+	private String getHeadOrTail(IEntity lollipop, Link link) {
+		assert lollipop.getType() == EntityType.LOLLIPOP;
+		// final Link link = getLinkLollipop(lollipop);
+		if (link.getLength() > 1 && link.getEntity1() == lollipop) {
+			return "taillabel";
+		}
+		return "headlabel";
+	}
+
 	private String getLabel(IEntity entity) throws IOException {
 		if (entity.getType() == EntityType.ABSTRACT_CLASS || entity.getType() == EntityType.CLASS
 				|| entity.getType() == EntityType.INTERFACE || entity.getType() == EntityType.ENUM) {
 			return "label=" + getLabelForClassOrInterfaceOrEnum(entity);
+		} else if (entity.getType() == EntityType.LOLLIPOP) {
+			return "label=" + getLabelForLollipop(entity);
 		} else if (entity.getType() == EntityType.OBJECT) {
 			return "label=" + getLabelForObject(entity);
 		} else if (entity.getType() == EntityType.ACTOR) {
@@ -870,6 +960,22 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
+	private String getLabelForLollipop(IEntity entity) {
+		final String circleInterfaceAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages()
+				.get(EntityType.LOLLIPOP).getPng());
+		final Stereotype stereotype = entity.getStereotype();
+
+		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
+		if (isThereLabel(stereotype)) {
+			sb.append("<TR><TD>" + manageHtmlIB(stereotype.getLabel(), FontParam.CLASS) + "</TD></TR>");
+		}
+		sb.append("<TR><TD><IMG SRC=\"" + circleInterfaceAbsolutePath + "\"/></TD></TR>");
+		sb.append("<TR><TD>" + manageHtmlIB(entity.getDisplay(), FontParam.CLASS) + "</TD></TR>");
+		sb.append("</TABLE>>");
+		return sb.toString();
+
+	}
+
 	private String getLabelForClassOrInterfaceOrEnum(IEntity entity) throws IOException {
 		if (isVisibilityModifierPresent) {
 			return getLabelForClassOrInterfaceOrEnumWithVisibilityImage(entity);
@@ -899,20 +1005,24 @@ final public class DotMaker implements GraphvizMaker {
 		sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(entity, circleAbsolutePath, spring, true));
 
 		sb.append("</TD></TR>");
-		sb.append("<TR ALIGN=\"LEFT\"><TD WIDTH=\"55\" ALIGN=\"LEFT\">");
 
-		for (String s : entity.fields()) {
-			sb.append(manageHtmlIB(s, FontParam.CLASS_ATTRIBUTE));
-			sb.append("<BR ALIGN=\"LEFT\"/>");
+		if (data.showPortion(EntityPortion.FIELD, entity)) {
+
+			sb.append("<TR ALIGN=\"LEFT\"><TD WIDTH=\"55\" ALIGN=\"LEFT\">");
+			for (String s : entity.fields()) {
+				sb.append(manageHtmlIB(s, FontParam.CLASS_ATTRIBUTE));
+				sb.append("<BR ALIGN=\"LEFT\"/>");
+			}
+
+			sb.append("</TD></TR>");
+			sb.append("<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">");
+			for (String s : entity.methods()) {
+				sb.append(manageHtmlIB(s, FontParam.CLASS_ATTRIBUTE));
+				sb.append("<BR ALIGN=\"LEFT\"/>");
+			}
+			sb.append("</TD></TR>");
 		}
 
-		sb.append("</TD></TR>");
-		sb.append("<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">");
-		for (String s : entity.methods()) {
-			sb.append(manageHtmlIB(s, FontParam.CLASS_ATTRIBUTE));
-			sb.append("<BR ALIGN=\"LEFT\"/>");
-		}
-		sb.append("</TD></TR>");
 		sb.append("</TABLE>>");
 
 		return sb.toString();
