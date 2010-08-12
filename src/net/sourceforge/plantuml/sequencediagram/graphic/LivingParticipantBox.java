@@ -28,12 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4836 $
+ * Revision $Revision: 5114 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -89,10 +88,6 @@ public class LivingParticipantBox implements InGroupable {
 
 	public double getCreate() {
 		return lifeLine.getCreate();
-	}
-
-	public void drawLineTxt(CharArea charArea, double endingY, boolean showTail) {
-		participantBox.drawLineArea(charArea, lifeLine.getCreate(), endingY, showTail);
 	}
 
 	public double getMaxX(StringBounder stringBounder) {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4935 $
+ * Revision $Revision: 5115 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -44,7 +44,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.Event;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
@@ -186,11 +185,6 @@ class DrawableSet {
 		this.drawPlaygroundU(ug, height, new SimpleContext2D(false));
 	}
 
-	public void drawTxt(CharArea charArea, int diagramWidth, Page page, boolean showTail) {
-		final int height = (int) page.getHeight();
-		this.drawLineTxt(charArea, height, showTail);
-	}
-
 	private void clipAndTranslate(final double delta, double width, Page p, final UGraphic ug) {
 		ug.setClip(new UClip(0, p.getBodyRelativePosition(), width, p.getBodyHeight() + 1));
 		if (delta > 0) {
@@ -218,12 +212,6 @@ class DrawableSet {
 		}
 		ug.translate(-groupingMargin, 0);
 
-	}
-
-	private void drawLineTxt(CharArea charArea, int height, boolean showTail) {
-		for (LivingParticipantBox box : getAllLivingParticipantBox()) {
-			box.drawLineTxt(charArea, height, showTail);
-		}
 	}
 
 	private void drawHeadTailU(UGraphic ug, double height, Page page) {

@@ -28,13 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4836 $
+ * Revision $Revision: 5114 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -144,10 +143,6 @@ public class ParticipantBox implements Pushable {
 
 	public double magicMargin(StringBounder stringBounder) {
 		return line.getPreferredHeight(stringBounder) / 2;
-	}
-
-	public void drawLineArea(CharArea charArea, double create, double endingY, boolean showTail) {
-		charArea.drawBoxSimple(1, 1, 10, 10);
 	}
 
 	public double getStartingX() {

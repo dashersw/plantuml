@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4935 $
+ * Revision $Revision: 5138 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -54,7 +54,6 @@ import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.asciiart.CharArea;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
@@ -149,56 +148,36 @@ public class SequenceDiagramFileMaker implements FileMaker {
 
 	public List<File> createMany(final File suggestedFile) throws IOException {
 		final List<File> result = new ArrayList<File>();
-		if (fileFormat == FileFormat.TXT) {
-			final CharArea im = createCharArea((int) fullDimension.getWidth(), pages.get(0), 0);
-			im.print(System.err);
-			// } else if (OptionFlags.getInstance().getFileFormat() ==
-			// FileFormat.SVG) {
-			// for (int i = 0; i < pages.size(); i++) {
-			// final GraphicsXml im = createImageXml((int)
-			// fullDimension.getWidth(), pages.get(i), i);
-			// final File f = computeFilename(suggestedFile, i);
-			// OutputStream os = null;
-			// try {
-			// os = new FileOutputStream(f);
-			// im.createXml(os);
-			// } finally {
-			// if (os != null) {
-			// os.close();
-			// }
-			// }
-			// Log.info("Creating file: " + f);
-			// result.add(f);
-			// }
-		} else {
-			for (int i = 0; i < pages.size(); i++) {
-				final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(i), i);
-				final File f = computeFilename(suggestedFile, i, fileFormat);
-				Log.info("Creating file: " + f);
-				if (createImage instanceof UGraphicG2d) {
-					final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
-					Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
-					PngIO.write(im, f, diagram.getMetadata());
-				} else if (createImage instanceof UGraphicSvg) {
-					final UGraphicSvg svg = (UGraphicSvg) createImage;
-					final FileOutputStream fos = new FileOutputStream(f);
-					try {
-						svg.createXml(fos);
-					} finally {
-						fos.close();
-					}
-				} else if (createImage instanceof UGraphicEps) {
-					final UGraphicEps eps = (UGraphicEps) createImage;
-					final FileWriter fw = new FileWriter(f);
-					try {
-						fw.write(eps.getEPSCode());
-					} finally {
-						fw.close();
-					}
+		if (fileFormat == FileFormat.ATXT) {
+			throw new UnsupportedOperationException();
+		}
+		for (int i = 0; i < pages.size(); i++) {
+			final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(i), i);
+			final File f = computeFilename(suggestedFile, i, fileFormat);
+			Log.info("Creating file: " + f);
+			if (createImage instanceof UGraphicG2d) {
+				final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
+				Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
+				PngIO.write(im, f, diagram.getMetadata());
+			} else if (createImage instanceof UGraphicSvg) {
+				final UGraphicSvg svg = (UGraphicSvg) createImage;
+				final FileOutputStream fos = new FileOutputStream(f);
+				try {
+					svg.createXml(fos);
+				} finally {
+					fos.close();
 				}
-				Log.info("File size : " + f.length());
-				result.add(f);
+			} else if (createImage instanceof UGraphicEps) {
+				final UGraphicEps eps = (UGraphicEps) createImage;
+				final FileWriter fw = new FileWriter(f);
+				try {
+					fw.write(eps.getEPSCode());
+				} finally {
+					fw.close();
+				}
 			}
+			Log.info("File size : " + f.length());
+			result.add(f);
 		}
 		return result;
 	}
@@ -215,12 +194,6 @@ public class SequenceDiagramFileMaker implements FileMaker {
 			final UGraphicEps eps = (UGraphicEps) createImage;
 			os.write(eps.getEPSCode().getBytes());
 		}
-	}
-
-	private CharArea createCharArea(final int diagramWidth, Page page, int i) {
-		final CharArea charArea = new CharArea();
-		drawableSet.drawTxt(charArea, diagramWidth, page, diagram.isShowFootbox());
-		return charArea;
 	}
 
 	private double getImageWidth(SequenceDiagramArea area, boolean rotate) {

@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.graphic.FileMaker;
 import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramFileMaker;
+import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramTxtMaker;
 import net.sourceforge.plantuml.skin.ProtectedSkin;
 import net.sourceforge.plantuml.skin.Skin;
 import net.sourceforge.plantuml.skin.SkinUtils;
@@ -137,6 +138,10 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	private FileMaker getSequenceDiagramPngMaker(FileFormat fileFormat) {
+		
+		if (fileFormat==FileFormat.ATXT || fileFormat==FileFormat.UTXT) {
+			return new SequenceDiagramTxtMaker(this, fileFormat);
+		}
 
 		return new SequenceDiagramFileMaker(this, skin, fileFormat);
 		// if (fileFormat == FileFormat.TXT) {

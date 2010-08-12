@@ -33,32 +33,23 @@
  */
 package net.sourceforge.plantuml.asciiart;
 
-import java.io.PrintStream;
-import java.util.List;
+import java.util.Collection;
 
-public interface BasicCharArea {
+public interface UmlCharArea extends BasicCharArea {
 
-	int getWidth();
+	void drawBoxSimple(int x, int y, int width, int height);
 
-	int getHeight();
+	void drawBoxSimpleUnicode(int x, int y, int width, int height);
 
-	void drawChar(char c, int x, int y);
+	void drawNoteSimple(int x, int y, int width, int height);
 
-	void fillRect(char c, int x, int y, int width, int height);
+	void drawNoteSimpleUnicode(int x, int y, int width, int height);
 
-	void drawStringLR(String string, int x, int y);
+	void drawStickMan(int x, int y);
+	
+	void drawStickManUnicode(int x, int y);
 
-	void drawStringTB(String string, int x, int y);
+	void drawStringsLR(Collection<? extends CharSequence> strings, int x, int y);
 
-	String getLine(int line);
-
-	void print(PrintStream ps);
-
-	List<String> getLines();
-
-	void drawHLine(char c, int line, int col1, int col2);
-	void drawHLine(char c, int line, int col1, int col2, char ifFound, char thenUse);
-
-	void drawVLine(char c, int col, int line1, int line2);
 
 }

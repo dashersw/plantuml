@@ -28,13 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4246 $
+ * Revision $Revision: 5140 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -42,8 +43,51 @@ import net.sourceforge.plantuml.skin.Skin;
 
 public class TextSkin implements Skin {
 
+	private final FileFormat fileFormat;
+
+	public TextSkin(FileFormat fileFormat) {
+		this.fileFormat = fileFormat;
+	}
+
 	public Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
-		return new ComponentText(type, stringsToDisplay);
+		if (type == ComponentType.PARTICIPANT_HEAD || type == ComponentType.PARTICIPANT_TAIL) {
+			return new ComponentTextParticipant(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.ACTOR_HEAD || type == ComponentType.ACTOR_TAIL) {
+			return new ComponentTextActor(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.ARROW || type == ComponentType.RETURN_ARROW || type == ComponentType.DOTTED_ARROW
+				|| type == ComponentType.RETURN_DOTTED_ARROW) {
+			return new ComponentTextArrow(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.SELF_ARROW || type == ComponentType.DOTTED_SELF_ARROW) {
+			return new ComponentTextSelfArrow(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.PARTICIPANT_LINE || type == ComponentType.ACTOR_LINE) {
+			return new ComponentTextLine(fileFormat);
+		}
+		if (type == ComponentType.ALIVE_LINE) {
+			return new ComponentTextActiveLine(fileFormat);
+		}
+		if (type == ComponentType.NOTE) {
+			return new ComponentTextNote(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.DIVIDER) {
+			return new ComponentTextDivider(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.GROUPING_HEADER) {
+			return new ComponentTextGroupingHeader(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.GROUPING_BODY) {
+			return new ComponentTextGroupingBody(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.GROUPING_TAIL) {
+			return new ComponentTextGroupingTail(type, stringsToDisplay, fileFormat);
+		}
+		if (type == ComponentType.GROUPING_ELSE) {
+			return new ComponentTextGroupingElse(type, stringsToDisplay, fileFormat);
+		}
+		throw new UnsupportedOperationException(type.toString());
 	}
 
 	public Object getProtocolVersion() {

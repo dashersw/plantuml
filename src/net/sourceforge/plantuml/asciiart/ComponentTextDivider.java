@@ -36,34 +36,59 @@ package net.sourceforge.plantuml.asciiart;
 import java.awt.geom.Dimension2D;
 import java.util.List;
 
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
-public class ComponentText implements Component {
-	
+public class ComponentTextDivider implements Component {
+
 	private final ComponentType type;
 	private final List<? extends CharSequence> stringsToDisplay;
+	private final FileFormat fileFormat;
 
-	public ComponentText(ComponentType type, List<? extends CharSequence> stringsToDisplay) {
+	public ComponentTextDivider(ComponentType type, List<? extends CharSequence> stringsToDisplay, FileFormat fileFormat) {
 		this.type = type;
 		this.stringsToDisplay = stringsToDisplay;
+		this.fileFormat = fileFormat;
 	}
 
 	public void drawU(UGraphic ug, Dimension2D dimensionToUse, Context2D context) {
-		throw new UnsupportedOperationException();
+		final UmlCharArea charArea = ((UGraphicTxt) ug).getCharArea();
+		final int width = (int) dimensionToUse.getWidth();
+		final int textWidth = StringUtils.getWidth(stringsToDisplay);
+		// final int height = (int) dimensionToUse.getHeight();
+
+		final int textPos = (width - textWidth - 1) / 2;
+		final String desc = " " + stringsToDisplay.get(0).toString();
+
+		if (fileFormat == FileFormat.UTXT) {
+			charArea.drawHLine('\u2550', 2, 0, width, '\u2502', '\u256a');
+			charArea.drawStringLR(desc, textPos, 2);
+			
+			charArea.drawHLine('\u2550', 1, textPos - 1, textPos + desc.length() + 1, '\u2502', '\u2567');
+			charArea.drawHLine('\u2550', 3, textPos - 1, textPos + desc.length() + 1, '\u2502', '\u2564');
+			
+			charArea.drawStringTB("\u2554\u2563\u255a", textPos - 1, 1);
+			charArea.drawStringTB("\u2557\u2560\u255d", textPos + desc.length(), 1);
+		} else {
+			charArea.drawHLine('=', 2, 0, width);
+			charArea.drawStringLR(desc, textPos, 2);
+			charArea.drawHLine('=', 1, textPos - 1, textPos + desc.length() + 1);
+			charArea.drawHLine('=', 3, textPos - 1, textPos + desc.length() + 1);
+		}
 	}
 
 	public double getPreferredHeight(StringBounder stringBounder) {
-		System.err.println("ComponentText::getPreferredHeight "+type+" "+stringsToDisplay);
-		return 50;
+		return StringUtils.getHeight(stringsToDisplay) + 4;
 	}
 
 	public double getPreferredWidth(StringBounder stringBounder) {
-		System.err.println("ComponentText::getPreferredWidth "+type+" "+stringsToDisplay);
-		return 100;
+		return StringUtils.getWidth(stringsToDisplay) + 2;
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5047 $
+ * Revision $Revision: 5113 $
  *
  */
 package net.sourceforge.plantuml;
@@ -109,7 +109,7 @@ public class StringUtils {
 		if (dir == Direction.LEFT || dir == Direction.RIGHT) {
 			s = s.replaceAll("-+", "-");
 		}
-		if (s.length()==2 &&(dir == Direction.UP || dir == Direction.DOWN)) {
+		if (s.length() == 2 && (dir == Direction.UP || dir == Direction.DOWN)) {
 			s = s.replaceFirst("-", "--");
 		}
 		return s;
@@ -212,6 +212,20 @@ public class StringUtils {
 		s = s.replace(hiddenLesserThan(), '<');
 		s = s.replace(hiddenBiggerThan(), '>');
 		return s;
+	}
+
+	public static int getWidth(List<? extends CharSequence> stringsToDisplay) {
+		int result = 1;
+		for (CharSequence s : stringsToDisplay) {
+			if (result < s.length()) {
+				result = s.length();
+			}
+		}
+		return result;
+	}
+
+	public static int getHeight(List<? extends CharSequence> stringsToDisplay) {
+		return stringsToDisplay.size();
 	}
 
 }

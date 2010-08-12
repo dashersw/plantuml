@@ -28,37 +28,21 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3826 $
+ * Revision $Revision: 4246 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
 
-import java.io.PrintStream;
-import java.util.List;
+import java.awt.Font;
+import java.awt.geom.Dimension2D;
 
-public interface BasicCharArea {
+import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.graphic.StringBounder;
 
-	int getWidth();
+public class TextStringBounder implements StringBounder {
 
-	int getHeight();
-
-	void drawChar(char c, int x, int y);
-
-	void fillRect(char c, int x, int y, int width, int height);
-
-	void drawStringLR(String string, int x, int y);
-
-	void drawStringTB(String string, int x, int y);
-
-	String getLine(int line);
-
-	void print(PrintStream ps);
-
-	List<String> getLines();
-
-	void drawHLine(char c, int line, int col1, int col2);
-	void drawHLine(char c, int line, int col1, int col2, char ifFound, char thenUse);
-
-	void drawVLine(char c, int col, int line1, int line2);
+	public Dimension2D calculateDimension(Font font, String text) {
+		return new Dimension2DDouble(text.length(), 1);
+	}
 
 }

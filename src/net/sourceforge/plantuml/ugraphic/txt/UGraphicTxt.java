@@ -33,27 +33,50 @@ package net.sourceforge.plantuml.ugraphic.txt;
 
 import java.awt.Font;
 
+import net.sourceforge.plantuml.asciiart.UmlCharAreaImpl;
+import net.sourceforge.plantuml.asciiart.UmlCharArea;
+import net.sourceforge.plantuml.asciiart.TextStringBounder;
+import net.sourceforge.plantuml.asciiart.TranslatedCharArea;
+import net.sourceforge.plantuml.graphic.FontStyle;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.AbstractCommonUGraphic;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UShape;
+import net.sourceforge.plantuml.ugraphic.UText;
 
 public class UGraphicTxt extends AbstractCommonUGraphic {
 
+	private final UmlCharArea charArea = new UmlCharAreaImpl();
+	private int lastPrint = 0;
+
 	public StringBounder getStringBounder() {
-		throw new UnsupportedOperationException();
+		return new TextStringBounder();
 	}
 
 	public void draw(double x, double y, UShape shape) {
+		if (shape instanceof UText) {
+			final UText txt = (UText) shape;
+			charArea.drawStringLR(txt.getText(), 0, lastPrint);
+			lastPrint++;
+			if (txt.getFontConfiguration().containsStyle(FontStyle.WAVE)) {
+				charArea.drawHLine('^', lastPrint, 0, txt.getText().length());
+				lastPrint++;
+			}
+			return;
+		}
 		throw new UnsupportedOperationException();
 	}
 
 	public void setClip(UClip clip) {
-		throw new UnsupportedOperationException();
+		// throw new UnsupportedOperationException();
 	}
 
 	public void centerChar(double x, double y, char c, Font font) {
 		throw new UnsupportedOperationException();
+	}
+
+	public final UmlCharArea getCharArea() {
+		return new TranslatedCharArea(charArea, (int) getTranslateX(), (int) getTranslateY());
 	}
 
 }

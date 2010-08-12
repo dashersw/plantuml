@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4984 $
+ * Revision $Revision: 5138 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -41,6 +41,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -51,6 +52,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
+import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
 public class GraphicStrings {
 
@@ -101,6 +103,10 @@ public class GraphicStrings {
 			final UGraphicSvg svg = new UGraphicSvg(HtmlColor.getAsHtml(background));
 			drawU(svg);
 			svg.createXml(os);
+		} else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+			final UGraphicTxt txt = new UGraphicTxt();
+			drawU(txt);
+			txt.getCharArea().print(new PrintStream(os));
 		} else {
 			throw new UnsupportedOperationException();
 		}

@@ -28,12 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3826 $
+ * Revision $Revision: 5147 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
 
-public class CharArea extends BasicCharArea {
+import java.util.Collection;
+
+public class UmlCharAreaImpl extends BasicCharAreaImpl implements UmlCharArea {
 
 	public void drawBoxSimple(int x, int y, int width, int height) {
 		this.drawHLine('-', y, x + 1, x + width - 1);
@@ -42,10 +44,10 @@ public class CharArea extends BasicCharArea {
 		this.drawVLine('|', x, y + 1, y + height - 1);
 		this.drawVLine('|', x + width - 1, y + 1, y + height - 1);
 
-		this.drawChar('+', x, y);
-		this.drawChar('+', x + width - 1, y);
-		this.drawChar('+', x, y + height - 1);
-		this.drawChar('+', x + width - 1, y + height - 1);
+		this.drawChar(',', x, y);
+		this.drawChar('.', x + width - 1, y);
+		this.drawChar('`', x, y + height - 1);
+		this.drawChar('\'', x + width - 1, y + height - 1);
 	}
 
 	public void drawBoxSimpleUnicode(int x, int y, int width, int height) {
@@ -67,5 +69,54 @@ public class CharArea extends BasicCharArea {
 		this.drawStringLR("/|\\", x, y++);
 		this.drawStringLR(" | ", x, y++);
 		this.drawStringLR("/|\\", x, y++);
+	}
+
+	public void drawStickManUnicode(int x, int y) {
+		this.drawStringLR("\u250c\u2500\u2510", x, y++);
+		this.drawStringLR("\u2551\"\u2502", x, y++);
+		this.drawStringLR("\u2514\u252c\u2518", x, y++);
+		this.drawStringLR("\u250c\u253c\u2510", x, y++);
+		this.drawStringLR(" \u2502 ", x, y++);
+		this.drawStringLR("\u250c\u2534\u2510", x, y++);
+	}
+
+	public void drawStringsLR(Collection<? extends CharSequence> strings, int x, int y) {
+		int i = 0;
+		for (CharSequence s : strings) {
+			this.drawStringLR(s.toString(), x, y + i);
+			i++;
+		}
+
+	}
+
+	public void drawNoteSimple(int x, int y, int width, int height) {
+		this.drawHLine('-', y, x + 1, x + width - 1);
+		this.drawHLine('-', y + height - 1, x + 1, x + width - 1);
+
+		this.drawVLine('|', x, y + 1, y + height - 1);
+		this.drawVLine('|', x + width - 1, y + 1, y + height - 1);
+
+		this.drawChar(',', x, y);
+
+		this.drawStringLR("!. ", x + width - 3, y);
+		this.drawStringLR("|_\\", x + width - 3, y + 1);
+
+		this.drawChar('`', x, y + height - 1);
+		this.drawChar('\'', x + width - 1, y + height - 1);
+	}
+
+	public void drawNoteSimpleUnicode(int x, int y, int width, int height) {
+		this.drawChar('\u2591', x + width - 2, y + 1);
+
+		this.drawHLine('\u2550', y, x + 1, x + width - 1, '\u2502', '\u2567');
+		this.drawHLine('\u2550', y + height - 1, x + 1, x + width - 1, '\u2502', '\u2564');
+
+		this.drawVLine('\u2551', x, y + 1, y + height - 1);
+		this.drawVLine('\u2551', x + width - 1, y + 1, y + height - 1);
+
+		this.drawChar('\u2554', x, y);
+		this.drawChar('\u2557', x + width - 1, y);
+		this.drawChar('\u255a', x, y + height - 1);
+		this.drawChar('\u255d', x + width - 1, y + height - 1);
 	}
 }

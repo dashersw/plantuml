@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4828 $
+ * Revision $Revision: 5138 $
  *
  */
 package net.sourceforge.plantuml.ant;
@@ -200,6 +200,12 @@ public class PlantuTask extends Task {
 	public void setFormat(String s) {
 		if ("svg".equalsIgnoreCase(s)) {
 			option.setFileFormat(FileFormat.SVG);
+		}
+		if ("txt".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.ATXT);
+		}
+		if ("utxt".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.UTXT);
 		}
 	}
 

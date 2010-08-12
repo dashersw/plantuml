@@ -28,37 +28,45 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3826 $
+ * Revision $Revision: 4169 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
 
-import java.io.PrintStream;
-import java.util.List;
+import java.awt.geom.Dimension2D;
 
-public interface BasicCharArea {
+import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Component;
+import net.sourceforge.plantuml.skin.Context2D;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
-	int getWidth();
+public class ComponentTextLine implements Component {
 
-	int getHeight();
+	private final FileFormat fileFormat;
 
-	void drawChar(char c, int x, int y);
+	public ComponentTextLine(FileFormat fileFormat) {
+		this.fileFormat = fileFormat;
+	}
 
-	void fillRect(char c, int x, int y, int width, int height);
+	public void drawU(UGraphic ug, Dimension2D dimensionToUse, Context2D context) {
+		final UmlCharArea charArea = ((UGraphicTxt) ug).getCharArea();
+		final int width = (int) dimensionToUse.getWidth();
+		final int height = (int) dimensionToUse.getHeight();
+		if (fileFormat == FileFormat.UTXT) {
+			charArea.drawVLine('\u2502', (width - 1) / 2, 0, height - 1);
+		} else {
+			charArea.drawVLine('|', (width - 1) / 2, 0, height - 1);
+		}
+	}
 
-	void drawStringLR(String string, int x, int y);
+	public double getPreferredHeight(StringBounder stringBounder) {
+		return 0;
+	}
 
-	void drawStringTB(String string, int x, int y);
-
-	String getLine(int line);
-
-	void print(PrintStream ps);
-
-	List<String> getLines();
-
-	void drawHLine(char c, int line, int col1, int col2);
-	void drawHLine(char c, int line, int col1, int col2, char ifFound, char thenUse);
-
-	void drawVLine(char c, int col, int line1, int line2);
+	public double getPreferredWidth(StringBounder stringBounder) {
+		return 3;
+	}
 
 }
