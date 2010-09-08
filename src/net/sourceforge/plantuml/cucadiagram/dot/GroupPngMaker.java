@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5223 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -64,15 +64,6 @@ public final class GroupPngMaker {
 	private final Group group;
 	private final Rose rose = new Rose();
 	private final boolean isEps;
-
-	// static private final StringBounder stringBounder;
-
-	// static {
-	// final EmptyImageBuilder builder = new EmptyImageBuilder(10, 10,
-	// Color.WHITE);
-	// stringBounder =
-	// StringBounderUtils.asStringBounder(builder.getGraphics2D());
-	// }
 
 	class InnerGroupHierarchy implements GroupHierarchy {
 
@@ -148,7 +139,7 @@ public final class GroupPngMaker {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			graphviz.createPng(baos);
 			baos.close();
-			
+
 			String svg = new String(baos.toByteArray(), "UTF-8");
 			svg = removeSvgXmlHeader(svg);
 			return svg;
@@ -157,18 +148,13 @@ public final class GroupPngMaker {
 			cleanTemporaryFiles(imageFiles);
 		}
 	}
-	
+
 	private static String removeSvgXmlHeader(String svg) {
-		svg = svg
-				.replaceFirst(
-						"(?i)<\\?xml[\\s\\S]*?<svg[^>]*>",
-						"");
+		svg = svg.replaceFirst("(?i)<\\?xml[\\s\\S]*?<svg[^>]*>", "");
 		svg = svg.replaceFirst("(?i)</svg>", "");
 
 		return svg;
 	}
-
-
 
 	private void cleanTemporaryFiles(final Map<Entity, File> imageFiles) {
 		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
@@ -181,7 +167,7 @@ public final class GroupPngMaker {
 	GraphvizMaker createDotMaker(List<String> dotStrings) {
 		final List<Link> links = getPureInnerLinks();
 		final DotData dotData = new DotData(group, links, group.entities(), diagram.getUmlDiagramType(), diagram
-				.getSkinParam(), diagram.getRankdir(), new InnerGroupHierarchy());
+				.getSkinParam(), group.getRankdir(), new InnerGroupHierarchy());
 		// dotData.putAllImages(images);
 		// dotData.putAllStaticImages(staticImages);
 		// dotData.putAllImagesLink(imagesLink);

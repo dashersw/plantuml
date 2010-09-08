@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4952 $
+ * Revision $Revision: 5207 $
  * 
  */
 package net.sourceforge.plantuml;
@@ -53,6 +53,8 @@ import net.sourceforge.plantuml.objectdiagram.ObjectDiagramFactory;
 import net.sourceforge.plantuml.oregon.PSystemOregonFactory;
 import net.sourceforge.plantuml.preproc.Defines;
 import net.sourceforge.plantuml.preproc.Preprocessor;
+import net.sourceforge.plantuml.preproc.ReadLineReader;
+import net.sourceforge.plantuml.preproc.UncommentReadLine;
 import net.sourceforge.plantuml.printskin.PrintSkinFactory;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagramFactory;
 import net.sourceforge.plantuml.statediagram.StateDiagramFactory;
@@ -187,11 +189,11 @@ public abstract class AbstractSourceReader {
 		return true;
 	}
 
-	protected final List<String> getStrings(Reader reader) throws IOException {
+	private List<String> getStrings(Reader reader) throws IOException {
 		final List<String> result = new ArrayList<String>();
 		Preprocessor includer = null;
 		try {
-			includer = new Preprocessor(reader, defines);
+			includer = new Preprocessor(new UncommentReadLine(new ReadLineReader(reader)), defines);
 			String s = null;
 			while ((s = includer.readLine()) != null) {
 				result.add(s);

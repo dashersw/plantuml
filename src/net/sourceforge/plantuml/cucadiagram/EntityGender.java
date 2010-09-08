@@ -28,33 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 3829 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.util.List;
-
-import net.sourceforge.plantuml.SpecificBackcolorable;
-
-public interface IEntity extends Imaged, SpecificBackcolorable {
-
-	public Group getParent();
-	
-	public String getDisplay();
-	
-	public EntityType getType();
-
-	public String getUid();
-	
-	public String getUrl();
-	
-	public List<Member> fields2();
-	
-	public Stereotype getStereotype();
-
-	public List<Member> methods2();
-
-	public String getCode();
-
+public interface EntityGender {
+	public boolean contains(IEntity test);
 }

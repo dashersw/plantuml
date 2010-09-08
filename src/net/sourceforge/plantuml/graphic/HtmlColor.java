@@ -28,24 +28,30 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4918 $
+ * Revision $Revision: 5204 $
  *
  */
 package net.sourceforge.plantuml.graphic;
 
 import java.awt.Color;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.plantuml.ugraphic.ColorChangerMonochrome;
 
 public class HtmlColor {
 
 	private static final Map<String, String> htmlNames;
+	private static final Set<String> names;
 
 	static {
 		// Taken from http://perl.wikipedia.com/wiki/Named_colors ?
 		htmlNames = new HashMap<String, String>();
+		names = new TreeSet<String>();
 		register("AliceBlue", "#F0F8FF");
 		register("AntiqueWhite", "#FAEBD7");
 		register("Aqua", "#00FFFF");
@@ -190,6 +196,7 @@ public class HtmlColor {
 
 	private static void register(String s, String color) {
 		htmlNames.put(s.toLowerCase(), color);
+		names.add(s);
 	}
 
 	private final Color color;
@@ -273,5 +280,9 @@ public class HtmlColor {
 
 	public static final void setForceMonochrome(boolean forceMonochrome) {
 		HtmlColor.forceMonochrome = forceMonochrome;
+	}
+	
+	public static Collection<String> names() {
+		return Collections.unmodifiableSet(names);
 	}
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3835 $
+ * Revision $Revision: 5200 $
  *
  */
 package net.sourceforge.plantuml.preproc;
@@ -92,6 +92,10 @@ class IfManager implements ReadLine {
 		// return null;
 		// }
 		return s;
+	}
+
+	public void close() throws IOException {
+		source.close();
 	}
 
 }

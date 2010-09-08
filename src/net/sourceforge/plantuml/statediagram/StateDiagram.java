@@ -28,12 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5190 $
  *
  */
 package net.sourceforge.plantuml.statediagram;
 
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
@@ -70,19 +71,19 @@ public class StateDiagram extends AbstractEntityDiagram {
 		return getOrCreateEntity("*end*" + p.getCode(), EntityType.CIRCLE_END);
 	}
 
-	private int cpt = 1;
-
 	public boolean concurrentState() {
 		final Group cur = getCurrentGroup();
 		if (cur != null && cur.getType() == GroupType.CONCURRENT_STATE) {
 			super.endGroup();
 		}
-		final Group conc1 = getOrCreateGroup("CONC" + (cpt++), "", null, GroupType.CONCURRENT_STATE, getCurrentGroup());
+		final Group conc1 = getOrCreateGroup("CONC" + UniqueSequence.getValue(), "", null, GroupType.CONCURRENT_STATE,
+				getCurrentGroup());
 		conc1.setDashed(true);
 		if (cur != null && cur.getType() == GroupType.STATE) {
 			cur.moveEntitiesTo(conc1);
 			super.endGroup();
-			final Group conc2 = getOrCreateGroup("CONC" + (cpt++), "", null, GroupType.CONCURRENT_STATE, getCurrentGroup());
+			final Group conc2 = getOrCreateGroup("CONC" + UniqueSequence.getValue(), "", null,
+					GroupType.CONCURRENT_STATE, getCurrentGroup());
 			conc2.setDashed(true);
 		}
 		return true;
@@ -92,11 +93,10 @@ public class StateDiagram extends AbstractEntityDiagram {
 	public void endGroup() {
 		super.endGroup();
 	}
-	
+
 	@Override
 	public UmlDiagramType getUmlDiagramType() {
 		return UmlDiagramType.STATE;
 	}
-
 
 }

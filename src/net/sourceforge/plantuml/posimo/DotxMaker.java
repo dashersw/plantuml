@@ -91,6 +91,11 @@ public class DotxMaker {
 			sb.append(", label=<<TABLE FIXEDSIZE=\"TRUE\" WIDTH=\"" + size.getWidth() + "\" HEIGHT=\""
 					+ size.getHeight() + "\"><TR><TD></TD></TR></TABLE>>]");
 		}
+
+		if (p.getLength() <= 1) {
+			sb.append("{rank=same; b" + p.getStart().getUid() + "; b" + p.getEnd().getUid() + "}");
+		}
+
 		return sb.toString();
 	}
 

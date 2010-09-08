@@ -28,14 +28,19 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4924 $
+ * Revision $Revision: 5220 $
  *
  */
 package net.sourceforge.plantuml;
 
 import java.awt.Font;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
@@ -57,6 +62,21 @@ public class SkinParam implements ISkinParam {
 
 	public String getValue(String key) {
 		return params.get(key.toLowerCase().replaceAll("_", ""));
+	}
+
+	static String humanName(String key) {
+		final StringBuilder sb = new StringBuilder();
+		boolean upper = true;
+		for (int i = 0; i < key.length(); i++) {
+			final char c = key.charAt(i);
+			if (c == '_') {
+				upper = true;
+			} else {
+				sb.append(upper ? Character.toUpperCase(c) : Character.toLowerCase(c));
+				upper = false;
+			}
+		}
+		return sb.toString();
 	}
 
 	public HtmlColor getHtmlColor(ColorParam param) {
@@ -142,6 +162,23 @@ public class SkinParam implements ISkinParam {
 
 	public boolean isMonochrome() {
 		return "true".equals(getValue("monochrome"));
+	}
+
+	public static Collection<String> getPossibleValues() {
+		final Set<String> result = new TreeSet<String>();
+		result.add("Monochrome");
+		result.add("BackgroundColor");
+		result.add("CircledCharacterRadius");
+		result.add("ClassAttributeIconSize");
+		result.add("DefaultFontName");
+		for (FontParam p : EnumSet.allOf(FontParam.class)) {
+			final String h = humanName(p.name());
+			result.add(h + "FontStyle");
+			result.add(h + "FontName");
+			result.add(h + "FontSize");
+			result.add(h + "FontColor");
+		}
+		return Collections.unmodifiableSet(result);
 	}
 
 }

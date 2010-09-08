@@ -28,14 +28,15 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3835 $
+ * Revision $Revision: 5200 $
  *
  */
 package net.sourceforge.plantuml.preproc;
 
+import java.io.Closeable;
 import java.io.IOException;
 
-interface ReadLine {
+interface ReadLine extends Closeable {
 
 	public String readLine() throws IOException;
 }

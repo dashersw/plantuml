@@ -27,34 +27,20 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 4749 $
+ *
+ * Revision $Revision: 4780 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
+class BlockUml {
 
-public interface IEntity extends Imaged, SpecificBackcolorable {
+	BlockUml(List<String> strings) {
+	}
 
-	public Group getParent();
-	
-	public String getDisplay();
-	
-	public EntityType getType();
-
-	public String getUid();
-	
-	public String getUrl();
-	
-	public List<Member> fields2();
-	
-	public Stereotype getStereotype();
-
-	public List<Member> methods2();
-
-	public String getCode();
-
+	public String getFilename() {
+		throw new UnsupportedOperationException();
+	}
 }

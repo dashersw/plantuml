@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5086 $
+ * Revision $Revision: 5186 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -51,8 +51,8 @@ public class Entity implements IEntity {
 
 	private Stereotype stereotype;
 
-	private final List<String> fields = new ArrayList<String>();
-	private final List<String> methods = new ArrayList<String>();
+	private final List<Member> fields2 = new ArrayList<Member>();
+	private final List<Member> methods2 = new ArrayList<Member>();
 
 	private Group container;
 
@@ -94,26 +94,30 @@ public class Entity implements IEntity {
 
 	public void addFieldOrMethod(String s) {
 		if (isMethod(s)) {
-			methods.add(s);
+			methods2.add(new Member(s));
 		} else {
 			addField(s);
 		}
 	}
 
 	public void addField(String s) {
-		fields.add(s);
+		fields2.add(new Member(s));
+	}
+
+	public void addField(Member s) {
+		fields2.add(s);
 	}
 
 	private boolean isMethod(String s) {
 		return s.contains("(") || s.contains(")");
 	}
 
-	public List<String> methods() {
-		return Collections.unmodifiableList(methods);
+	public List<Member> methods2() {
+		return Collections.unmodifiableList(methods2);
 	}
 
-	public List<String> fields() {
-		return Collections.unmodifiableList(fields);
+	public List<Member> fields2() {
+		return Collections.unmodifiableList(fields2);
 	}
 
 	public EntityType getType() {

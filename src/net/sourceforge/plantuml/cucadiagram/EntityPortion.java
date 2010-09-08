@@ -34,5 +34,5 @@
 package net.sourceforge.plantuml.cucadiagram;
 
 public enum EntityPortion {
-	FIELD, METHOD, CIRCLED_CHARACTER
+	FIELD, METHOD, CIRCLED_CHARACTER, STEREOTYPE, LOLLIPOP, ENTIRELY
 }

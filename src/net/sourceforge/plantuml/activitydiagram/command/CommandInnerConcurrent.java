@@ -27,34 +27,32 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 4749 $
+ *
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.activitydiagram.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
+import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand;
 
-public interface IEntity extends Imaged, SpecificBackcolorable {
+public class CommandInnerConcurrent extends SingleLineCommand<ActivityDiagram> {
 
-	public Group getParent();
-	
-	public String getDisplay();
-	
-	public EntityType getType();
+	public CommandInnerConcurrent(ActivityDiagram diagram) {
+		super(diagram, "(?i)^--\\s*(.*)$");
+	}
 
-	public String getUid();
-	
-	public String getUrl();
-	
-	public List<Member> fields2();
-	
-	public Stereotype getStereotype();
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		if (getSystem().getCurrentGroup() == null) {
+			return CommandExecutionResult.error("No inner activity");
+		}
+		getSystem().concurrentActivity(arg.get(0));
 
-	public List<Member> methods2();
-
-	public String getCode();
+		return CommandExecutionResult.ok();
+	}
 
 }

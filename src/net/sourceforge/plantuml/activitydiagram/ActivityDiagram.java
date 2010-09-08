@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5046 $
+ * Revision $Revision: 5223 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -38,9 +38,12 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
@@ -51,10 +54,8 @@ public class ActivityDiagram extends CucaDiagram {
 	private ConditionalContext currentContext;
 	private boolean acceptOldSyntaxForBranch = true;
 
-	private int autoBranch;
-
 	private String getAutoBranch() {
-		return "#" + (autoBranch++);
+		return "#" + UniqueSequence.getValue();
 	}
 
 	public IEntity getOrCreate(String code, String display, EntityType type) {
@@ -76,11 +77,10 @@ public class ActivityDiagram extends CucaDiagram {
 		final IEntity br = createEntity(getAutoBranch(), "", EntityType.BRANCH);
 		currentContext = new ConditionalContext(currentContext, br, Direction.DOWN);
 	}
-	
+
 	public void endif() {
 		currentContext = currentContext.getParent();
 	}
-
 
 	public IEntity getStart() {
 		return getOrCreate("start", "start", EntityType.CIRCLE_START);
@@ -159,6 +159,34 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public final void setAcceptOldSyntaxForBranch(boolean acceptOldSyntaxForBranch) {
 		this.acceptOldSyntaxForBranch = acceptOldSyntaxForBranch;
+	}
+
+	public IEntity createInnerActivity() {
+		// System.err.println("createInnerActivity A");
+		final String code = "##" + UniqueSequence.getValue();
+		final Group g = getOrCreateGroup(code, code, null, GroupType.INNER_ACTIVITY, getCurrentGroup());
+		// g.setRankdir(Rankdir.LEFT_TO_RIGHT);
+		lastEntityConsulted = null;
+		lastEntityBrancheConsulted = null;
+		// System.err.println("createInnerActivity B "+getCurrentGroup());
+		return g.getEntityCluster();
+	}
+
+	public void concurrentActivity(String name) {
+		// System.err.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
+		if (getCurrentGroup().getType() == GroupType.CONCURRENT_ACTIVITY) {
+			// getCurrentGroup().setRankdir(Rankdir.LEFT_TO_RIGHT);
+			endGroup();
+			System.err.println("endgroup");
+		}
+		// System.err.println("concurrentActivity A name=" + name+" "+getCurrentGroup());
+		final String code = "##" + UniqueSequence.getValue();
+		if (getCurrentGroup().getType() != GroupType.INNER_ACTIVITY) {
+			throw new IllegalStateException("type=" + getCurrentGroup().getType());
+		}
+		final Group g = getOrCreateGroup(code, "code", null, GroupType.CONCURRENT_ACTIVITY, getCurrentGroup());
+		lastEntityConsulted = null;
+		lastEntityBrancheConsulted = null;
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5079 $
+ * Revision $Revision: 5190 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -45,6 +45,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.sourceforge.plantuml.FileFormat;
@@ -55,6 +56,7 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker4;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 
 public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, PortionShower {
 
@@ -265,6 +267,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	final public List<File> createFiles(File suggestedFile, FileFormat fileFormat) throws IOException,
 			InterruptedException {
+
+		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+			return createFilesTxt(suggestedFile, fileFormat);
+		}
+
 		if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
 			return createPng2(suggestedFile);
 		}
@@ -276,7 +283,17 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return maker.createFile(suggestedFile, getDotStrings(), fileFormat);
 	}
 
+	private List<File> createFilesTxt(File suggestedFile, FileFormat fileFormat) throws IOException {
+		final CucaDiagramTxtMaker maker = new CucaDiagramTxtMaker(this, fileFormat);
+		return maker.createFiles(suggestedFile);
+	}
+
 	final public void createFile(OutputStream os, int index, FileFormat fileFormat) throws IOException {
+		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+			createFilesTxt(os, index, fileFormat);
+			return;
+		}
+
 		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE) {
 			final CucaDiagramFileMaker4 maker = new CucaDiagramFileMaker4(this);
 			try {
@@ -296,6 +313,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		}
 	}
 
+	private void createFilesTxt(OutputStream os, int index, FileFormat fileFormat) {
+		throw new UnsupportedOperationException();
+		// TODO Auto-generated method stub
+	}
+
 	public final Rankdir getRankdir() {
 		return rankdir;
 	}
@@ -307,6 +329,12 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	public boolean isAutarkic(Group g) {
 		if (g.getType() == GroupType.PACKAGE) {
 			return false;
+		}
+		if (g.getType() == GroupType.INNER_ACTIVITY) {
+			return true;
+		}
+		if (g.getType() == GroupType.CONCURRENT_ACTIVITY) {
+			return true;
 		}
 		if (g.getType() == GroupType.CONCURRENT_STATE) {
 			return true;
@@ -418,7 +446,34 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	public final boolean showPortion(EntityPortion portion, IEntity entity) {
-		return true;
+		boolean result = true;
+		for (HideOrShow cmd : hideOrShows) {
+			if (cmd.portion == portion && cmd.gender.contains(entity)) {
+				result = cmd.show;
+			}
+		}
+		return result;
+	}
+
+	public final void hideOrShow(EntityGender gender, Set<EntityPortion> portions, boolean show) {
+		for (EntityPortion portion : portions) {
+			this.hideOrShows.add(new HideOrShow(gender, portion, show));
+		}
+	}
+
+	private final List<HideOrShow> hideOrShows = new ArrayList<HideOrShow>();
+
+	static class HideOrShow {
+		private final EntityGender gender;
+		private final EntityPortion portion;
+		private final boolean show;
+
+		public HideOrShow(EntityGender gender, EntityPortion portion, boolean show) {
+			this.gender = gender;
+			this.portion = portion;
+			this.show = show;
+		}
+
 	}
 
 }

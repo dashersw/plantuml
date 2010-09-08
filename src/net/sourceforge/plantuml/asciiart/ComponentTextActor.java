@@ -66,26 +66,33 @@ public class ComponentTextActor implements Component {
 
 		final int xman = width / 2 - 1;
 		if (type == ComponentType.ACTOR_HEAD) {
-			charArea.drawStringsLR(stringsToDisplay, 1, 6);
+			charArea.drawStringsLR(stringsToDisplay, 1, getStickManHeight());
 			if (fileFormat == FileFormat.UTXT) {
 				charArea.drawStickManUnicode(xman, 0);
 			} else {
 				charArea.drawStickMan(xman, 0);
 			}
 		} else if (type == ComponentType.ACTOR_TAIL) {
-			charArea.drawStringsLR(stringsToDisplay, 1, 1);
+			charArea.drawStringsLR(stringsToDisplay, 1, 0);
 			if (fileFormat == FileFormat.UTXT) {
-				charArea.drawStickManUnicode(xman, 2);
+				charArea.drawStickManUnicode(xman, 1);
 			} else {
-				charArea.drawStickMan(xman, 2);
+				charArea.drawStickMan(xman, 1);
 			}
 		} else {
 			assert false;
 		}
 	}
 
+	private int getStickManHeight() {
+		if (fileFormat == FileFormat.UTXT) {
+			return UmlCharArea.STICKMAN_UNICODE_HEIGHT;
+		}
+		return UmlCharArea.STICKMAN_HEIGHT;
+	}
+
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return StringUtils.getHeight(stringsToDisplay) + 7;
+		return StringUtils.getHeight(stringsToDisplay) + getStickManHeight();
 	}
 
 	public double getPreferredWidth(StringBounder stringBounder) {

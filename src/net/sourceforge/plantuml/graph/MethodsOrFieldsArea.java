@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4125 $
+ * Revision $Revision: 5186 $
  *
  */
 package net.sourceforge.plantuml.graph;
@@ -37,10 +37,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
@@ -50,11 +52,13 @@ import net.sourceforge.plantuml.graphic.TextBlockUtils;
 class MethodsOrFieldsArea {
 
 	private final Font font;
-	private final List<String> strings;
+	private final List<String> strings = new ArrayList<String>();
 
-	public MethodsOrFieldsArea(List<String> strings, Font font) {
+	public MethodsOrFieldsArea(List<Member> attributes, Font font) {
 		this.font = font;
-		this.strings = strings;
+		for (Member att : attributes) {
+			this.strings.add(att.getDisplayWithVisibilityChar());
+		}
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

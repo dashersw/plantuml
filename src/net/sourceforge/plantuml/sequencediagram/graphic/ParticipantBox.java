@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5114 $
+ * Revision $Revision: 5215 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -46,7 +46,6 @@ public class ParticipantBox implements Pushable {
 	private final int outMargin = 5;
 
 	private double startingX;
-	private double topStartingY;
 
 	private final Component head;
 	private final Component line;
@@ -89,13 +88,9 @@ public class ParticipantBox implements Pushable {
 		startingX += deltaX;
 	}
 
-	public void setTopStartingY(double topStartingY) {
-		this.topStartingY = topStartingY;
-	}
-
-	public void drawHeadTailU(UGraphic ug, double dimensionToUseHeight, boolean showHead) {
+	public void drawHeadTailU(UGraphic ug, double topStartingY, boolean showHead, double positionTail) {
 		if (topStartingY == 0) {
-			throw new IllegalStateException("setTopStartingY not called");
+			throw new IllegalStateException("setTopStartingY cannot be zero");
 		}
 
 		final double atX = ug.getTranslateX();
@@ -111,9 +106,13 @@ public class ParticipantBox implements Pushable {
 			ug.setTranslate(atX, atY);
 		}
 
-		if (dimensionToUseHeight > 0) {
-			final double y2 = dimensionToUseHeight - topStartingY + line.getPreferredHeight(stringBounder) / 2 - 1;
-			ug.translate(startingX + outMargin, y2);
+		if (positionTail > 0) {
+			// final double y2 = positionTail - topStartingY + line.getPreferredHeight(stringBounder) / 2 - 1;
+			positionTail += line.getPreferredHeight(stringBounder) / 2 - 1;
+//			if (y2 != y22) {
+//				throw new IllegalStateException();
+//			}
+			ug.translate(startingX + outMargin, positionTail);
 			tail.drawU(ug, new Dimension2DDouble(tail.getPreferredWidth(stringBounder), tail
 					.getPreferredHeight(stringBounder)), new SimpleContext2D(false));
 			ug.setTranslate(atX, atY);

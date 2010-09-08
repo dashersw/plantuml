@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4524 $
+ * Revision $Revision: 5223 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
@@ -62,10 +63,20 @@ public final class CucaDiagramSimplifier {
 			final Collection<Group> groups = new ArrayList<Group>(diagram.getGroups());
 			for (Group g : groups) {
 				if (diagram.isAutarkic(g)) {
-					final EntityType type = g.getType() == GroupType.CONCURRENT_STATE ? EntityType.STATE_CONCURRENT
-							: EntityType.STATE;
+					final EntityType type;
+					if (g.getType() == GroupType.CONCURRENT_STATE) {
+						type = EntityType.STATE_CONCURRENT;
+					} else if (g.getType() == GroupType.STATE) {
+						type = EntityType.STATE;
+					} else if (g.getType() == GroupType.INNER_ACTIVITY) {
+						type = EntityType.ACTIVITY;
+					} else if (g.getType() == GroupType.CONCURRENT_ACTIVITY) {
+						type = EntityType.ACTIVITY_CONCURRENT;
+					} else {
+						throw new IllegalStateException();
+					}
 					final Entity proxy = new Entity("#" + g.getCode(), g.getDisplay(), type, g.getParent());
-					for (String field : g.getEntityCluster().fields()) {
+					for (Member field : g.getEntityCluster().fields2()) {
 						proxy.addField(field);
 					}
 					computeImageGroup(g, proxy, dotStrings);

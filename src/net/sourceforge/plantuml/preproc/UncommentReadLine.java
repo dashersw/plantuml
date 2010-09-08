@@ -37,57 +37,55 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Preprocessor implements ReadLine {
+public class UncommentReadLine implements ReadLine {
 
-	private static final Pattern definePattern = Pattern.compile("^!define\\s+([A-Za-z_][A-Za-z_0-9]*)(?:\\s+(.*))?$");
-	private static final Pattern undefPattern = Pattern.compile("^!undef\\s+([A-Za-z_][A-Za-z_0-9]*)$");
+	private final ReadLine raw;
+	private final Pattern start;
+	private String headerToRemove;
 
-	private final Defines defines;
-	private final PreprocessorInclude rawSource;
-	private final IfManager source;
-
-	public Preprocessor(ReadLine reader, Defines defines) {
-		this.defines = defines;
-		this.rawSource = new PreprocessorInclude(reader);
-		this.source = new IfManager(rawSource, defines);
+	public UncommentReadLine(ReadLine source) {
+		this.raw = source;
+		this.start = Pattern.compile("(?i)(\\W*)@startuml");
 	}
 
 	public String readLine() throws IOException {
-		String s = source.readLine();
-		if (s == null) {
-			return null;
+		String s = readLine2();
+		if (s != null) {
+			s = cleanLineFromSource(s);
 		}
-
-		Matcher m = definePattern.matcher(s);
-		if (m.find()) {
-			return manageDefine(m);
-		}
-
-		m = undefPattern.matcher(s);
-		if (m.find()) {
-			return manageUndef(m);
-		}
-
-		s = defines.applyDefines(s);
 		return s;
 	}
 
-	private String manageUndef(Matcher m) throws IOException {
-		defines.undefine(m.group(1));
-		return this.readLine();
+	public static String cleanLineFromSource(String s) {
+		s = s.trim();
+		while (s.startsWith(" ") || s.startsWith("\t")) {
+			s = s.substring(1).trim();
+		}
+		return s;
 	}
 
-	private String manageDefine(Matcher m) throws IOException {
-		defines.define(m.group(1), m.group(2));
-		return this.readLine();
-	}
+	private String readLine2() throws IOException {
+		final String result = raw.readLine();
 
-	public int getLineNumber() {
-		return rawSource.getLineNumber();
+		if (result == null) {
+			return null;
+		}
+
+		final Matcher m = start.matcher(result);
+		if (m.find()) {
+			headerToRemove = m.group(1);
+		}
+		if (headerToRemove != null && headerToRemove.startsWith(result)) {
+			return "";
+		}
+		if (headerToRemove != null && result.startsWith(headerToRemove)) {
+			return result.substring(headerToRemove.length());
+		}
+		return result;
 	}
 
 	public void close() throws IOException {
-		rawSource.close();
+		this.raw.close();
 	}
 
 }

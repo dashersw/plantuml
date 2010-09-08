@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5079 $
+ * Revision $Revision: 5190 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -570,7 +570,8 @@ public final class CucaDiagramFileMaker {
 	private GraphvizMaker createDotMaker(Map<EntityType, DrawFile> staticImages,
 			Map<VisibilityModifier, DrawFile> visibilities, List<String> dotStrings, boolean isEps) throws IOException,
 			InterruptedException {
-		if (diagram.getUmlDiagramType() == UmlDiagramType.STATE) {
+		if (diagram.getUmlDiagramType() == UmlDiagramType.STATE
+				|| diagram.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
 			new CucaDiagramSimplifier(diagram, dotStrings, isEps);
 		}
 		final DotData dotData = new DotData(null, diagram.getLinks(), diagram.entities(), diagram.getUmlDiagramType(),

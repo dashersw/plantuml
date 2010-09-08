@@ -37,6 +37,9 @@ import java.util.Collection;
 
 public interface UmlCharArea extends BasicCharArea {
 
+	int STICKMAN_HEIGHT = 5;
+	int STICKMAN_UNICODE_HEIGHT = 6;
+
 	void drawBoxSimple(int x, int y, int width, int height);
 
 	void drawBoxSimpleUnicode(int x, int y, int width, int height);
@@ -46,10 +49,9 @@ public interface UmlCharArea extends BasicCharArea {
 	void drawNoteSimpleUnicode(int x, int y, int width, int height);
 
 	void drawStickMan(int x, int y);
-	
+
 	void drawStickManUnicode(int x, int y);
 
 	void drawStringsLR(Collection<? extends CharSequence> strings, int x, int y);
-
 
 }

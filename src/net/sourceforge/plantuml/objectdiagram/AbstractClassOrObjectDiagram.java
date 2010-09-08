@@ -36,6 +36,7 @@ package net.sourceforge.plantuml.objectdiagram;
 import java.util.List;
 
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
@@ -71,4 +72,17 @@ public abstract class AbstractClassOrObjectDiagram extends AbstractEntityDiagram
 		return result;
 	}
 
+	public int getNbOfHozizontalLollipop(IEntity entity) {
+		if (entity.getType() == EntityType.LOLLIPOP) {
+			throw new IllegalArgumentException();
+		}
+		int result = 0;
+		for (Link link : getLinks()) {
+			if (link.getLength() == 1 && link.contains(entity) && link.containsType(EntityType.LOLLIPOP)) {
+				result++;
+			}
+
+		}
+		return result;
+	}
 }

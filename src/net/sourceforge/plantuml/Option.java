@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5138 $
+ * Revision $Revision: 5211 $
  *
  */
 package net.sourceforge.plantuml;
@@ -159,6 +159,8 @@ public class Option {
 				OptionPrint.printAbout();
 			} else if (s.equalsIgnoreCase("-help") || s.equalsIgnoreCase("-h") || s.equalsIgnoreCase("-?")) {
 				OptionPrint.printHelp();
+			} else if (s.equalsIgnoreCase("-language")) {
+				OptionPrint.printLanguage();
 			} else if (s.equalsIgnoreCase("-gui")) {
 				OptionFlags.getInstance().setGui(true);
 			} else {

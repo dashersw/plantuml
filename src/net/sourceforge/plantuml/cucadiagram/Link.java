@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5047 $
+ * Revision $Revision: 5157 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -225,6 +225,20 @@ public class Link implements Imaged {
 
 		if (getEntity1().getType() == EntityType.GROUP) {
 			assert getEntity2().getType() != EntityType.GROUP;
+			return true;
+		}
+		return false;
+	}
+
+	public boolean containsType(EntityType type) {
+		if (getEntity1().getType() == type || getEntity2().getType() == type) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean contains(IEntity entity) {
+		if (getEntity1() == entity || getEntity2() == entity) {
 			return true;
 		}
 		return false;

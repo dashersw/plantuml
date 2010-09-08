@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4943 $
+ * Revision $Revision: 5218 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -54,7 +54,7 @@ public class Rose implements Skin {
 
 	public Rose() {
 		defaultsColor.put(ColorParam.background, new HtmlColor("white"));
-		
+
 		defaultsColor.put(ColorParam.sequenceArrow, new HtmlColor("#A80036"));
 		defaultsColor.put(ColorParam.usecaseArrow, new HtmlColor("#A80036"));
 		defaultsColor.put(ColorParam.classArrow, new HtmlColor("#A80036"));
@@ -67,6 +67,8 @@ public class Rose implements Skin {
 		defaultsColor.put(ColorParam.sequenceLifeLineBorder, new HtmlColor("#A80036"));
 		defaultsColor.put(ColorParam.sequenceGroupBackground, new HtmlColor("#EEEEEE"));
 		defaultsColor.put(ColorParam.sequenceDividerBackground, new HtmlColor("#EEEEEE"));
+		defaultsColor.put(ColorParam.sequenceEngloberLine, new HtmlColor("#A80036"));
+		defaultsColor.put(ColorParam.sequenceEngloberBackground, new HtmlColor("#DDDDDD"));
 
 		defaultsColor.put(ColorParam.noteBackground, new HtmlColor("#FBFB77"));
 		defaultsColor.put(ColorParam.noteBorder, new HtmlColor("#A80036"));
@@ -98,7 +100,7 @@ public class Rose implements Skin {
 
 		defaultsColor.put(ColorParam.objectBackground, new HtmlColor("#FEFECE"));
 		defaultsColor.put(ColorParam.objectBorder, new HtmlColor("#A80036"));
-		
+
 		defaultsColor.put(ColorParam.stereotypeCBackground, new HtmlColor("#ADD1B2"));
 		defaultsColor.put(ColorParam.stereotypeABackground, new HtmlColor("#A9DCDF"));
 		defaultsColor.put(ColorParam.stereotypeIBackground, new HtmlColor("#B4A7E5"));
@@ -106,7 +108,7 @@ public class Rose implements Skin {
 
 		defaultsColor.put(ColorParam.packageBackground, new HtmlColor("#FEFECE"));
 		defaultsColor.put(ColorParam.packageBorder, new HtmlColor("black"));
-		
+
 		defaultsColor.put(ColorParam.iconPrivate, new HtmlColor("#C82930"));
 		defaultsColor.put(ColorParam.iconPrivateBackground, new HtmlColor("#F24D5C"));
 		defaultsColor.put(ColorParam.iconProtected, new HtmlColor("#B38D22"));
@@ -149,7 +151,6 @@ public class Rose implements Skin {
 		final Font fontParticipant = param.getFont(FontParam.SEQUENCE_PARTICIPANT);
 		final Font fontActor = param.getFont(FontParam.SEQUENCE_ACTOR);
 
-
 		if (type == ComponentType.SELF_ARROW) {
 			return new ComponentRoseSelfArrow(sequenceArrow, getFontColor(param, FontParam.SEQUENCE_ARROW), fontArrow,
 					stringsToDisplay, false, true);
@@ -166,7 +167,7 @@ public class Rose implements Skin {
 			return new ComponentRoseArrow(sequenceArrow, getFontColor(param, FontParam.SEQUENCE_ARROW), fontArrow,
 					stringsToDisplay, 1, false, false);
 		}
-		
+
 		if (type == ComponentType.RETURN_ARROW) {
 			return new ComponentRoseArrow(sequenceArrow, getFontColor(param, FontParam.SEQUENCE_ARROW), fontArrow,
 					stringsToDisplay, -1, false, true);
@@ -254,8 +255,8 @@ public class Rose implements Skin {
 			return new ComponentRoseNewpage(getFontColor(param, FontParam.SEQUENCE_GROUPING));
 		}
 		if (type == ComponentType.DIVIDER) {
-			return new ComponentRoseDivider(getFontColor(param, FontParam.SEQUENCE_DIVIDER), param.getFont(FontParam.SEQUENCE_DIVIDER),
-					sequenceDividerBackground, stringsToDisplay);
+			return new ComponentRoseDivider(getFontColor(param, FontParam.SEQUENCE_DIVIDER), param
+					.getFont(FontParam.SEQUENCE_DIVIDER), sequenceDividerBackground, stringsToDisplay);
 		}
 		if (type == ComponentType.TITLE) {
 			return new ComponentRoseTitle(getFontColor(param, FontParam.SEQUENCE_TITLE), param
@@ -264,6 +265,12 @@ public class Rose implements Skin {
 		if (type == ComponentType.SIGNATURE) {
 			return new ComponentRoseTitle(Color.BLACK, fontGrouping, Arrays.asList("This skin was created ",
 					"in April 2009."));
+		}
+		if (type == ComponentType.ENGLOBER) {
+			final Color borderColor = getHtmlColor(param, ColorParam.sequenceEngloberLine).getColor();
+			final Color backColor = getHtmlColor(param, ColorParam.sequenceEngloberBackground).getColor();
+			return new ComponentRoseEnglober(borderColor, backColor, stringsToDisplay, getFontColor(param,
+					FontParam.SEQUENCE_ENGLOBER), param.getFont(FontParam.SEQUENCE_ENGLOBER));
 		}
 		return null;
 	}

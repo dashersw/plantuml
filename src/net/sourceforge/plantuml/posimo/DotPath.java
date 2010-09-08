@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.asciiart.BasicCharArea;
 import net.sourceforge.plantuml.ugraphic.UShape;
 
 public class DotPath implements UShape {
@@ -189,4 +190,25 @@ public class DotPath implements UShape {
 	public Point2D getFrontierIntersection(Positionable p) {
 		return getFrontierIntersection(PositionableUtils.convert(p));
 	}
+
+	public void draw(BasicCharArea area, double pixelXPerChar, double pixelYPerChar) {
+		for (CubicCurve2D.Double bez : beziers) {
+			if (bez.x1 == bez.x2) {
+				area.drawVLine('|', (int) (bez.x1 / pixelXPerChar), (int) (bez.y1 / pixelYPerChar),
+						(int) (bez.y2 / pixelYPerChar));
+			} else if (bez.y1 == bez.y2) {
+				area.drawHLine('-', (int) (bez.y1 / pixelYPerChar), (int) (bez.x1 / pixelXPerChar),
+						(int) (bez.x2 / pixelXPerChar));
+			} else {
+				throw new UnsupportedOperationException("bez=" + toString(bez));
+			}
+		}
+	}
+
+	private String toString(CubicCurve2D.Double c) {
+		return "(" + c.x1 + "," + c.y1 + ") " + "(" + c.ctrlx1 + "," + c.ctrly1 + ") " + "(" + c.ctrlx2 + ","
+				+ c.ctrly2 + ") " + "(" + c.x2 + "," + c.y2 + ") ";
+
+	}
+
 }

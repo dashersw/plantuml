@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5138 $
+ * Revision $Revision: 5191 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -67,6 +67,7 @@ import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
+import net.sourceforge.plantuml.sequencediagram.ParticipantEnglober;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -101,6 +102,9 @@ public class SequenceDiagramFileMaker implements FileMaker {
 
 		for (Participant p : sequenceDiagram.participants().values()) {
 			initializer.addParticipant(p);
+		}
+		for (ParticipantEnglober englober : sequenceDiagram.getParticipantEnglobers()) {
+			initializer.addParticipantEnglober(englober);
 		}
 
 		for (Event ev : sequenceDiagram.events()) {

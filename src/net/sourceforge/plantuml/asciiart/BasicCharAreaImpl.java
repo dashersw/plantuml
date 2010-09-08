@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5145 $
+ * Revision $Revision: 5178 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
@@ -40,8 +40,8 @@ import java.util.List;
 
 public class BasicCharAreaImpl implements BasicCharArea {
 
-	private int charSize1 = 500;
-	private int charSize2 = 500;
+	private int charSize1 = 160;
+	private int charSize2 = 160;
 
 	private int width;
 	private int height;
@@ -66,6 +66,7 @@ public class BasicCharAreaImpl implements BasicCharArea {
 	}
 
 	public void drawChar(char c, int x, int y) {
+		ensurePossible(x, y);
 		chars[x][y] = c;
 		if (x >= width) {
 			width = x + 1;
@@ -73,6 +74,33 @@ public class BasicCharAreaImpl implements BasicCharArea {
 		if (y >= height) {
 			height = y + 1;
 		}
+	}
+
+	private void ensurePossible(int x, int y) {
+		int newCharSize1 = charSize1;
+		int newCharSize2 = charSize2;
+		while (x >= newCharSize1) {
+			newCharSize1 *= 2;
+		}
+		while (y >= newCharSize2) {
+			newCharSize2 *= 2;
+		}
+		if (newCharSize1 != charSize1 || newCharSize2 != charSize2) {
+			final char newChars[][] = new char[newCharSize1][newCharSize2];
+			for (int i = 0; i < newCharSize1; i++) {
+				for (int j = 0; j < newCharSize2; j++) {
+					char c = ' ';
+					if (i < charSize1 && j < charSize2) {
+						c = chars[i][j];
+					}
+					newChars[i][j] = c;
+				}
+			}
+			this.chars = newChars;
+			this.charSize1 = newCharSize1;
+			this.charSize2 = newCharSize2;
+		}
+
 	}
 
 	public void drawStringLR(String string, int x, int y) {
@@ -117,6 +145,7 @@ public class BasicCharAreaImpl implements BasicCharArea {
 
 	public void drawHLine(char c, int line, int col1, int col2, char ifFound, char thenUse) {
 		for (int x = col1; x < col2; x++) {
+			ensurePossible(x, line);
 			if (this.chars[x][line] == ifFound) {
 				this.drawChar(thenUse, x, line);
 			} else {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4952 $
+ * Revision $Revision: 5211 $
  *
  */
 package net.sourceforge.plantuml;
@@ -159,6 +159,11 @@ public class OptionPrint {
 		System.err.println("Site design: Raphael Cotisson");
 		System.err.println();
 		System.err.println("http://plantuml.sourceforge.net");
+		exit();
+	}
+
+	public static void printLanguage() throws InterruptedException {
+		new LanguageDescriptor().print(System.out);
 		exit();
 	}
 

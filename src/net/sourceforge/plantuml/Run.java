@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4302 $
+ * Revision $Revision: 5197 $
  *
  */
 package net.sourceforge.plantuml;
@@ -82,7 +82,7 @@ public class Run {
 			source = "@startuml\n" + source + "\n@enduml";
 		}
 		final SourceStringReader sourceStringReader = new SourceStringReader(new Defines(), source, option.getConfig());
-		final String result = sourceStringReader.generateImage(System.out);
+		final String result = sourceStringReader.generateImage(System.out, 0 , option.getFileFormat());
 	}
 
 	private static void manageFile(File f, Option option) throws IOException, InterruptedException {

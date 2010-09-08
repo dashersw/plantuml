@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5113 $
+ * Revision $Revision: 5207 $
  *
  */
 package net.sourceforge.plantuml;
@@ -163,30 +163,30 @@ public class StringUtils {
 		return s;
 	}
 
-	public static String cleanLineFromSource(String s) {
-		if (s.startsWith("\uFEFF")) {
-			s = s.substring(1);
-		}
-		if (s.startsWith("~~")) {
-			s = s.substring("~~".length());
-		}
-		// if (s.startsWith(" * ")) {
-		// s = s.substring(" * ".length());
-		// }
-		s = s.replaceFirst("^\\s+\\* ", "");
-		if (s.equals(" *")) {
-			s = "";
-		}
-		s = s.trim();
-		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") || s.startsWith("%") || s.startsWith("/*")) {
-			if (s.startsWith("/*")) {
-				s = s.substring(2).trim();
-			} else {
-				s = s.substring(1).trim();
-			}
-		}
-		return s;
-	}
+//	private static String cleanLineFromSource(String s) {
+//		if (s.startsWith("\uFEFF")) {
+//			s = s.substring(1);
+//		}
+//		if (s.startsWith("~~")) {
+//			s = s.substring("~~".length());
+//		}
+//		// if (s.startsWith(" * ")) {
+//		// s = s.substring(" * ".length());
+//		// }
+//		s = s.replaceFirst("^\\s+\\* ", "");
+//		if (s.equals(" *")) {
+//			s = "";
+//		}
+//		s = s.trim();
+//		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") || s.startsWith("%") || s.startsWith("/*")) {
+//			if (s.startsWith("/*")) {
+//				s = s.substring(2).trim();
+//			} else {
+//				s = s.substring(1).trim();
+//			}
+//		}
+//		return s;
+//	}
 
 	public static boolean isCJK(char c) {
 		final Character.UnicodeBlock block = Character.UnicodeBlock.of(c);

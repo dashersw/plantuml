@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3835 $
+ * Revision $Revision: 5207 $
  *
  */
 package net.sourceforge.plantuml.preproc;
@@ -37,24 +37,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.Reader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.FileSystem;
-import net.sourceforge.plantuml.StringUtils;
 
 class PreprocessorInclude implements ReadLine {
 
 	private static final Pattern includePattern = Pattern.compile("^!include\\s+\"?([^\"]+)\"?$");
 
-	private final LineNumberReader lineNumberReader;
+	private final ReadLine reader2;
+	private int numLine = 0;
 
 	private PreprocessorInclude included = null;
 
-	public PreprocessorInclude(Reader reader) {
-		this.lineNumberReader = new LineNumberReader(reader);
+	public PreprocessorInclude(ReadLine reader) {
+		this.reader2 = reader;
 	}
 
 	public String readLine() throws IOException {
@@ -67,11 +65,11 @@ class PreprocessorInclude implements ReadLine {
 			included = null;
 		}
 
-		String s = lineNumberReader.readLine();
+		final String s = reader2.readLine();
+		numLine++;
 		if (s == null) {
 			return null;
 		}
-		s = StringUtils.cleanLineFromSource(s);
 		final Matcher m = includePattern.matcher(s);
 		assert included == null;
 		if (m.find()) {
@@ -86,17 +84,17 @@ class PreprocessorInclude implements ReadLine {
 		final String fileName = m.group(1);
 		final File f = FileSystem.getInstance().getFile(fileName);
 		if (f.exists()) {
-			included = new PreprocessorInclude(new FileReader(f));
+			included = new PreprocessorInclude(new ReadLineReader(new FileReader(f)));
 		}
 		return this.readLine();
 	}
 
 	public int getLineNumber() {
-		return lineNumberReader.getLineNumber();
+		return numLine;
 	}
 
 	public void close() throws IOException {
-		lineNumberReader.close();
+		reader2.close();
 	}
 
 }

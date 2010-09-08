@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5190 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -61,6 +61,7 @@ public class Group {
 
 	private IEntity entityCluster;
 	private boolean autonom = true;
+	private Rankdir rankdir = Rankdir.TOP_TO_BOTTOM;
 
 	private final int cpt = UniqueSequence.getValue();
 
@@ -249,6 +250,14 @@ public class Group {
 
 	public final void setAutonom(boolean autonom) {
 		this.autonom = autonom;
+	}
+
+	public final Rankdir getRankdir() {
+		return rankdir;
+	}
+
+	public final void setRankdir(Rankdir rankdir) {
+		this.rankdir = rankdir;
 	}
 
 }

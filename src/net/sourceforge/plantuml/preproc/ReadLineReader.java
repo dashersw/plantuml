@@ -28,66 +28,33 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5200 $
+ * Revision $Revision: 3835 $
  *
  */
 package net.sourceforge.plantuml.preproc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.Reader;
 
-public class Preprocessor implements ReadLine {
+public class ReadLineReader implements ReadLine {
 
-	private static final Pattern definePattern = Pattern.compile("^!define\\s+([A-Za-z_][A-Za-z_0-9]*)(?:\\s+(.*))?$");
-	private static final Pattern undefPattern = Pattern.compile("^!undef\\s+([A-Za-z_][A-Za-z_0-9]*)$");
+	private final BufferedReader br;
 
-	private final Defines defines;
-	private final PreprocessorInclude rawSource;
-	private final IfManager source;
-
-	public Preprocessor(ReadLine reader, Defines defines) {
-		this.defines = defines;
-		this.rawSource = new PreprocessorInclude(reader);
-		this.source = new IfManager(rawSource, defines);
+	public ReadLineReader(Reader reader) {
+		br = new BufferedReader(reader);
 	}
 
 	public String readLine() throws IOException {
-		String s = source.readLine();
-		if (s == null) {
-			return null;
+		String s = br.readLine();
+		if (s != null && s.startsWith("\uFEFF")) {
+			s = s.substring(1);
 		}
-
-		Matcher m = definePattern.matcher(s);
-		if (m.find()) {
-			return manageDefine(m);
-		}
-
-		m = undefPattern.matcher(s);
-		if (m.find()) {
-			return manageUndef(m);
-		}
-
-		s = defines.applyDefines(s);
 		return s;
 	}
 
-	private String manageUndef(Matcher m) throws IOException {
-		defines.undefine(m.group(1));
-		return this.readLine();
-	}
-
-	private String manageDefine(Matcher m) throws IOException {
-		defines.define(m.group(1), m.group(2));
-		return this.readLine();
-	}
-
-	public int getLineNumber() {
-		return rawSource.getLineNumber();
-	}
-
 	public void close() throws IOException {
-		rawSource.close();
+		br.close();
 	}
 
 }

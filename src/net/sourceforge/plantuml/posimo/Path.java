@@ -38,15 +38,21 @@ public class Path {
 	private final Label label;
 	private final Block start;
 	private final Block end;
+	private final int length;
 	private DotPath dotPath;
 
 	public Path(Block start, Block end, Label label) {
+		this(start, end, label, 2);
+	}
+
+	public Path(Block start, Block end, Label label, int length) {
 		if (start == null || end == null) {
 			throw new IllegalArgumentException();
 		}
 		this.start = start;
 		this.end = end;
 		this.label = label;
+		this.length = length;
 	}
 
 	public final Label getLabel() {
@@ -78,6 +84,10 @@ public class Path {
 
 	public final DotPath getDotPath() {
 		return dotPath;
+	}
+
+	public int getLength() {
+		return length;
 	}
 
 }

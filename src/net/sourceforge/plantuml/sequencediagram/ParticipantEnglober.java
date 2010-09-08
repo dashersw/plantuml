@@ -28,33 +28,46 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 4836 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.sequencediagram;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public interface IEntity extends Imaged, SpecificBackcolorable {
+public class ParticipantEnglober {
 
-	public Group getParent();
-	
-	public String getDisplay();
-	
-	public EntityType getType();
+	final private List<String> strings;
+	final private Participant first;
+	final private Participant last;
+	final private HtmlColor boxColor;
 
-	public String getUid();
-	
-	public String getUrl();
-	
-	public List<Member> fields2();
-	
-	public Stereotype getStereotype();
+	public ParticipantEnglober(Participant first, Participant last, List<String> strings, HtmlColor boxColor) {
+		if (first == null || last == null) {
+			throw new IllegalArgumentException();
+		}
+		this.first = first;
+		this.last = last;
+		this.strings = strings;
+		this.boxColor = boxColor;
+	}
 
-	public List<Member> methods2();
+	public final Participant getFirst() {
+		return first;
+	}
 
-	public String getCode();
+	public final Participant getLast() {
+		return last;
+	}
+
+	public final List<String> getStrings() {
+		return strings;
+	}
+
+	public final HtmlColor getBoxColor() {
+		return boxColor;
+	}
 
 }

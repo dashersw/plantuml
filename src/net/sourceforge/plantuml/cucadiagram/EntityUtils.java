@@ -45,8 +45,8 @@ public abstract class EntityUtils {
 			throw new IllegalArgumentException();
 		}
 		return new IEntity() {
-			public List<String> fields() {
-				return ent.fields();
+			public List<Member> fields2() {
+				return ent.fields2();
 			}
 
 			public String getDisplay() {
@@ -73,8 +73,8 @@ public abstract class EntityUtils {
 				return ent.getUrl();
 			}
 
-			public List<String> methods() {
-				return ent.methods();
+			public List<Member> methods2() {
+				return ent.methods2();
 			}
 
 			public DrawFile getImageFile() {

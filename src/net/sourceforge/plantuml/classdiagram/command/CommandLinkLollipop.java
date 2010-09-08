@@ -97,21 +97,28 @@ final public class CommandLinkLollipop extends SingleLineCommand<AbstractClassOr
 
 		final Entity cl1;
 		final Entity cl2;
+		final Entity normalEntity;
 
 		final String suffix = "lol" + UniqueSequence.getValue();
 		if (arg.get(LINK1) != null) {
 			cl2 = (Entity) getSystem().getOrCreateClass(arg.get(SECOND_CLASS));
 			cl1 = getSystem().createEntity(cl2.getCode() + suffix, arg.get(FIRST_CLASS), EntityType.LOLLIPOP);
+			normalEntity = cl2;
 		} else {
 			assert arg.get(LINK2) != null;
 			cl1 = (Entity) getSystem().getOrCreateClass(arg.get(FIRST_CLASS));
 			cl2 = getSystem().createEntity(cl1.getCode() + suffix, arg.get(SECOND_CLASS), EntityType.LOLLIPOP);
+			normalEntity = cl1;
 		}
 
 		final LinkType linkType = getLinkType(arg);
 		final String queue = getQueue(arg);
 
-		final Link link = new Link(cl1, cl2, linkType, arg.get(LINK_LABEL), queue.length(), arg.get(FIRST_LABEL), arg
+		int length = queue.length();
+		if (length == 1 && getSystem().getNbOfHozizontalLollipop(normalEntity) > 1) {
+			length++;
+		}
+		final Link link = new Link(cl1, cl2, linkType, arg.get(LINK_LABEL), length, arg.get(FIRST_LABEL), arg
 				.get(SECOND_LABEL), getSystem().getLabeldistance(), getSystem().getLabelangle());
 		getSystem().resetPragmaLabel();
 		addLink(link, arg.get(0));

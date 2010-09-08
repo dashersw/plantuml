@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4933 $
+ * Revision $Revision: 5191 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
@@ -39,10 +39,13 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandActivate2;
 import net.sourceforge.plantuml.sequencediagram.command.CommandArrow;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutoNewpage;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutonumber;
+import net.sourceforge.plantuml.sequencediagram.command.CommandBoxEnd;
+import net.sourceforge.plantuml.sequencediagram.command.CommandBoxStart;
 import net.sourceforge.plantuml.sequencediagram.command.CommandDivider;
 import net.sourceforge.plantuml.sequencediagram.command.CommandExoArrowLeft;
 import net.sourceforge.plantuml.sequencediagram.command.CommandExoArrowRight;
 import net.sourceforge.plantuml.sequencediagram.command.CommandFootbox;
+import net.sourceforge.plantuml.sequencediagram.command.CommandFootboxOld;
 import net.sourceforge.plantuml.sequencediagram.command.CommandGrouping;
 import net.sourceforge.plantuml.sequencediagram.command.CommandIgnoreNewpage;
 import net.sourceforge.plantuml.sequencediagram.command.CommandMultilinesNote;
@@ -88,6 +91,10 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandSkin(system));
 		addCommand(new CommandAutonumber(system));
 		addCommand(new CommandFootbox(system));
+		addCommand(new CommandFootboxOld(system));
+		
+		addCommand(new CommandBoxStart(system));
+		addCommand(new CommandBoxEnd(system));
 	}
 
 	public SequenceDiagram getSystem() {

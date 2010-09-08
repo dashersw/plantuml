@@ -38,6 +38,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,8 @@ public class SequenceDiagram extends UmlDiagram {
 	private final Map<String, Participant> participants = new LinkedHashMap<String, Participant>();
 
 	private final List<Event> events = new ArrayList<Event>();
+
+	private final List<ParticipantEnglober> participantEnglobers = new ArrayList<ParticipantEnglober>();
 
 	private Skin skin = new ProtectedSkin(new Rose());
 
@@ -124,7 +127,7 @@ public class SequenceDiagram extends UmlDiagram {
 	public final int getAutonewpage() {
 		return autonewpage;
 	}
-	
+
 	public void setAutonewpage(int autonewpage) {
 		this.autonewpage = autonewpage;
 	}
@@ -138,8 +141,8 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	private FileMaker getSequenceDiagramPngMaker(FileFormat fileFormat) {
-		
-		if (fileFormat==FileFormat.ATXT || fileFormat==FileFormat.UTXT) {
+
+		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
 			return new SequenceDiagramTxtMaker(this, fileFormat);
 		}
 
@@ -256,5 +259,42 @@ public class SequenceDiagram extends UmlDiagram {
 		return UmlDiagramType.SEQUENCE;
 	}
 
+	private Participant boxStart;
+	private List<String> boxStartComment;
+	private HtmlColor boxColor;
+
+	public void boxStart(List<String> comment, HtmlColor color) {
+		this.boxStart = getLastParticipant();
+		this.boxStartComment = comment;
+		this.boxColor = color;
+	}
+
+	public void endBox() {
+		final Participant last = getLastParticipant();
+		this.participantEnglobers.add(new ParticipantEnglober(next(boxStart), last, boxStartComment, boxColor));
+
+	}
+
+	private Participant next(Participant p) {
+		for (final Iterator<Participant> it = participants.values().iterator(); it.hasNext();) {
+			final Participant current = it.next();
+			if (current == p && it.hasNext()) {
+				return it.next();
+			}
+		}
+		throw new IllegalArgumentException("p="+p.getCode());
+	}
+
+	private Participant getLastParticipant() {
+		Participant result = null;
+		for (Participant p : participants.values()) {
+			result = p;
+		}
+		return result;
+	}
+
+	public final List<ParticipantEnglober> getParticipantEnglobers() {
+		return Collections.unmodifiableList(participantEnglobers);
+	}
 
 }

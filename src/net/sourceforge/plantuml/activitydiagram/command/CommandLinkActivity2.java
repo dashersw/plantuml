@@ -53,7 +53,7 @@ public class CommandLinkActivity2 extends SingleLineCommand<ActivityDiagram> {
 				diagram,
 				"(?i)^(?:(\\(\\*\\))|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)?"
 						+ "\\s*([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*\\>)\\s*(?:\\[([^\\]*]+[^\\]]*)\\])?\\s*"
-						+ "(?:(\\(\\*\\))|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)$");
+						+ "(?:(\\(\\*\\)|\\{)|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)$");
 	}
 
 	@Override
@@ -62,6 +62,9 @@ public class CommandLinkActivity2 extends SingleLineCommand<ActivityDiagram> {
 	}
 
 	static IEntity getEntity(ActivityDiagram system, List<String> arg, final boolean start) {
+		if ("{".equals(arg.get(0))) {
+			return system.createInnerActivity();
+		}
 		if ("(*)".equals(arg.get(0))) {
 			if (start) {
 				return system.getStart();

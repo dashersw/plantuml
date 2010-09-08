@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4660 $
+ * Revision $Revision: 5191 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -45,6 +45,8 @@ public enum ComponentType {
 	GROUPING_BODY, GROUPING_ELSE, GROUPING_HEADER, GROUPING_TAIL,
 
 	NEWPAGE, NOTE, DIVIDER,
+	
+	ENGLOBER,
 
 	PARTICIPANT_HEAD, PARTICIPANT_LINE, PARTICIPANT_TAIL,
 

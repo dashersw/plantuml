@@ -28,33 +28,27 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.SpecificBackcolorable;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public interface IEntity extends Imaged, SpecificBackcolorable {
+public class CommandBoxEnd extends SingleLineCommand<SequenceDiagram> {
 
-	public Group getParent();
-	
-	public String getDisplay();
-	
-	public EntityType getType();
+	public CommandBoxEnd(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram, "(?i)^boxend$");
+	}
 
-	public String getUid();
-	
-	public String getUrl();
-	
-	public List<Member> fields2();
-	
-	public Stereotype getStereotype();
-
-	public List<Member> methods2();
-
-	public String getCode();
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		getSystem().endBox();
+		return CommandExecutionResult.ok();
+	}
 
 }

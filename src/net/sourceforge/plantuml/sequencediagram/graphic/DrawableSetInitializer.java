@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4935 $
+ * Revision $Revision: 5216 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.Participant;
+import net.sourceforge.plantuml.sequencediagram.ParticipantEnglober;
 import net.sourceforge.plantuml.sequencediagram.ParticipantType;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -95,11 +96,14 @@ class DrawableSetInitializer {
 		}
 
 		this.freeY = drawableSet.getHeadHeight(stringBounder);
+		//this.freeY += drawableSet.getOffsetForEnglobers(stringBounder);
 		this.lastFreeY = this.freeY;
+		
+		drawableSet.setTopStartingY(this.freeY);
 
-		for (LivingParticipantBox p : drawableSet.getAllLivingParticipantBox()) {
-			p.getParticipantBox().setTopStartingY(this.freeY);
-		}
+//		for (LivingParticipantBox p : drawableSet.getAllLivingParticipantBox()) {
+//			p.getParticipantBox().setTopStartingY(this.freeY);
+//		}
 
 		for (Participant p : drawableSet.getAllParticipants()) {
 			final LivingParticipantBox living = drawableSet.getLivingParticipantBox(p);
@@ -394,6 +398,10 @@ class DrawableSetInitializer {
 
 	public void addEvent(Event event) {
 		drawableSet.addEvent(event, null);
+	}
+
+	public void addParticipantEnglober(ParticipantEnglober englober) {
+		drawableSet.addParticipantEnglober(englober);
 	}
 
 }
