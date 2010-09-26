@@ -31,6 +31,9 @@
  */
 package net.sourceforge.plantuml.version;
 
+import java.io.IOException;
+
+import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.PSystemBasicFactory;
 
 public class PSystemVersionFactory implements PSystemBasicFactory {
@@ -45,17 +48,22 @@ public class PSystemVersionFactory implements PSystemBasicFactory {
 	}
 
 	public boolean executeLine(String line) {
-		if (line.matches("(?i)^(authors?|about)\\s*$")) {
-			system = PSystemVersion.createShowAuthors();
-			return true;
-		}
-		if (line.matches("(?i)^version\\s*$")) {
-			system = PSystemVersion.createShowVersion();
-			return true;
-		}
-		if (line.matches("(?i)^testdot\\s*$")) {
-			system = PSystemVersion.createTestDot();
-			return true;
+		try {
+			if (line.matches("(?i)^(authors?|about)\\s*$")) {
+				system = PSystemVersion.createShowAuthors();
+				return true;
+			}
+			if (line.matches("(?i)^version\\s*$")) {
+				system = PSystemVersion.createShowVersion();
+				return true;
+			}
+			if (line.matches("(?i)^testdot\\s*$")) {
+				system = PSystemVersion.createTestDot();
+				return true;
+			}
+		} catch (IOException e) {
+			Log.error("Error " + e);
+
 		}
 		return false;
 	}

@@ -42,11 +42,14 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 public class CommandBoxEnd extends SingleLineCommand<SequenceDiagram> {
 
 	public CommandBoxEnd(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^boxend$");
+		super(sequenceDiagram, "(?i)^end ?box$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
+		if (getSystem().isBoxPending() == false) {
+			return CommandExecutionResult.error("Missing starting box");
+		}
 		getSystem().endBox();
 		return CommandExecutionResult.ok();
 	}

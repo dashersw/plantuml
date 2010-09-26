@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5190 $
+ * Revision $Revision: 5280 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -76,6 +76,7 @@ import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Imaged;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.eps.SvgToEpsConverter;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -172,12 +173,24 @@ public final class CucaDiagramFileMaker {
 			return createPng(os, dotStrings);
 		} else if (fileFormat == FileFormat.SVG) {
 			return createSvg(os, dotStrings);
+		} else if (fileFormat == FileFormat.EPS_VIA_SVG) {
+			return createEpsViaSvg(os, dotStrings);
 		} else if (fileFormat == FileFormat.EPS) {
 			return createEps(os, dotStrings);
 		} else {
 			throw new UnsupportedOperationException();
 		}
 
+	}
+
+	private String createEpsViaSvg(OutputStream os, List<String> dotStrings) throws IOException, InterruptedException {
+		final File svgTmp = createTempFile("svgtmp", ".svg");
+		final FileOutputStream svgOs = new FileOutputStream(svgTmp);
+		final String status = createSvg(svgOs, dotStrings);
+		svgOs.close();
+		final SvgToEpsConverter converter = new SvgToEpsConverter(svgTmp);
+		converter.createEps(os);
+		return status;
 	}
 
 	private double deltaY;
@@ -622,7 +635,7 @@ public final class CucaDiagramFileMaker {
 	}
 
 	private DrawFile createImageForNote(String display, HtmlColor backColor) throws IOException {
-		final File f = createTempFile("plantumlB");
+		final File f = createTempFile("plantumlB", ".png");
 
 		final Rose skin = new Rose();
 
@@ -671,7 +684,7 @@ public final class CucaDiagramFileMaker {
 			return null;
 		}
 
-		final File f = createTempFile("plantumlA");
+		final File f = createTempFile("plantumlA", ".png");
 		final Color classBorder = rose.getHtmlColor(getSkinParam(), ColorParam.classBorder).getColor();
 		final Color classBackground = rose.getHtmlColor(getSkinParam(), ColorParam.classBackground).getColor();
 		final Font font = diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER);
@@ -686,8 +699,11 @@ public final class CucaDiagramFileMaker {
 		return diagram.getSkinParam();
 	}
 
-	static public File createTempFile(String prefix) throws IOException {
-		final File f = File.createTempFile(prefix, ".png");
+	static public File createTempFile(String prefix, String suffix) throws IOException {
+		if (suffix.startsWith(".")==false) {
+			throw new IllegalArgumentException();
+		}
+		final File f = File.createTempFile(prefix, suffix);
 		Log.info("Creating temporary file: " + f);
 		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			f.deleteOnExit();

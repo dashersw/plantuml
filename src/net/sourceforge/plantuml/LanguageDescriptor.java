@@ -64,6 +64,7 @@ public class LanguageDescriptor {
 		keyword.add("autonumber");
 		keyword.add("title");
 		keyword.add("newpage");
+		keyword.add("box");
 		keyword.add("alt");
 		keyword.add("else");
 		keyword.add("opt");

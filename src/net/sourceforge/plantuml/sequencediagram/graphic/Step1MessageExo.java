@@ -82,6 +82,11 @@ class Step1MessageExo extends Step1Abstract {
 
 		final double length = graphic.getArrowOnlyWidth(getStringBounder());
 		incFreeY(graphic.getPreferredHeight(getStringBounder()));
+		double marginActivateAndDeactive = 0;
+		if (getMessage().isActivateAndDeactive()) {
+			marginActivateAndDeactive = 30;
+			incFreeY(marginActivateAndDeactive);
+		}
 		getDrawingSet().addEvent(getMessage(), graphic);
 
 		final LivingParticipantBox livingParticipantBox = getLivingParticipantBox();
@@ -94,7 +99,7 @@ class Step1MessageExo extends Step1Abstract {
 		}
 
 		for (LifeEvent lifeEvent : getMessage().getLiveEvents()) {
-			afterMessage(getStringBounder(), lifeEvent, arrowYEndLevel);
+			afterMessage(getStringBounder(), lifeEvent, arrowYEndLevel + marginActivateAndDeactive);
 		}
 
 		if (groupingStructures != null && graphic instanceof InGroupable) {

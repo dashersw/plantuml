@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3836 $
+ * Revision $Revision: 5249 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -36,6 +36,8 @@ package net.sourceforge.plantuml.sequencediagram.graphic;
 import net.sourceforge.plantuml.graphic.StringBounder;
 
 interface Pushable {
+
+	double getPreferredWidth(StringBounder stringBounder);
 
 	double getCenterX(StringBounder stringBounder);
 

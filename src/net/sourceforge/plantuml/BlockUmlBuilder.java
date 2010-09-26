@@ -83,7 +83,7 @@ final public class BlockUmlBuilder {
 			if (current != null && isIgnoredLine(s) == false) {
 				current.add(s);
 			}
-			if (isArobaseEnduml(s)) {
+			if (isArobaseEnduml(s) && current != null) {
 				current.addAll(1, config);
 				blocks.add(new BlockUml(current));
 				current = null;

@@ -27,56 +27,14 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 4780 $
+ * 
+ * Revision $Revision: 5138 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.graphic;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-class StartUml {
-
-	private final String startuml;
-	private final PSystem system;
-
-	private static final Pattern pattern1 = Pattern.compile("^@startuml\\s+\"?(.*?)\"?$");
-
-	StartUml(PSystem system, String startuml) {
-		if (system == null) {
-			throw new IllegalArgumentException();
-		}
-		if (startuml == null) {
-			throw new IllegalArgumentException();
-		}
-		this.startuml = startuml;
-		this.system = system;
-	}
-
-	@Override
-	public String toString() {
-		return startuml + " " + system;
-	}
-
-	public PSystem getSystem() {
-		return system;
-	}
-
-	public String getFilename() {
-		if (OptionFlags.getInstance().isWord()) {
-			return null;
-		}
-		final Matcher m = pattern1.matcher(startuml);
-		final boolean ok = m.find();
-		if (ok == false) {
-			return null;
-		}
-		return m.group(1);
-	}
-
-	public String getStartuml() {
-		return startuml;
-	}
+public enum GraphicPosition {
+	BOTTOM, BACKGROUND_CORNER
 
 }

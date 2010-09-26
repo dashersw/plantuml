@@ -31,7 +31,7 @@
  * Revision $Revision: 4258 $
  *
  */
-package net.sourceforge.plantuml.skin.rose;
+package net.sourceforge.plantuml.skin.bluemodern;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -43,14 +43,16 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 
-public class ComponentRoseEnglober extends AbstractTextualComponent {
-	
+public class ComponentBlueModernEnglober extends AbstractTextualComponent {
+
 	private final Color borderColor;
 	private final Color backColor;
 
-	public ComponentRoseEnglober(Color borderColor, Color backColor, List<? extends CharSequence> strings, Color fontColor, Font font) {
-		super(strings, fontColor, font, HorizontalAlignement.CENTER, 3, 3, 1);
+	public ComponentBlueModernEnglober(Color borderColor, Color backColor, List<? extends CharSequence> strings,
+			Color fontColor, Font font) {
+		super(strings, fontColor, font, HorizontalAlignement.CENTER, 4, 4, 1);
 		this.borderColor = borderColor;
 		this.backColor = backColor;
 	}
@@ -59,8 +61,10 @@ public class ComponentRoseEnglober extends AbstractTextualComponent {
 	protected void drawBackgroundInternalU(UGraphic ug, Dimension2D dimensionToUse) {
 		ug.getParam().setColor(borderColor);
 		ug.getParam().setBackcolor(backColor);
-		ug.draw(0, 0, new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight()));
+		ug.getParam().setStroke(new UStroke(2));
+		ug.draw(0, 0, new URectangle(dimensionToUse.getWidth(), dimensionToUse.getHeight(), 9, 9));
 		final double xpos = (dimensionToUse.getWidth() - getPureTextWidth(ug.getStringBounder())) / 2;
+		ug.getParam().setStroke(new UStroke());
 		getTextBlock().drawU(ug, xpos, 0);
 	}
 
@@ -79,6 +83,6 @@ public class ComponentRoseEnglober extends AbstractTextualComponent {
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return getTextWidth(stringBounder);
+		return getTextWidth(stringBounder) + 10;
 	}
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4633 $
+ * Revision $Revision: 5272 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
@@ -38,6 +38,7 @@ import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -95,7 +96,8 @@ public class BlueModern implements Skin {
 			return new ComponentBlueModernArrow(Color.BLACK, Color.BLACK, normalFont, stringsToDisplay, -1, false, true);
 		}
 		if (type == ComponentType.ASYNC_RETURN_ARROW) {
-			return new ComponentBlueModernArrow(Color.BLACK, Color.BLACK, normalFont, stringsToDisplay, -1, false, false);
+			return new ComponentBlueModernArrow(Color.BLACK, Color.BLACK, normalFont, stringsToDisplay, -1, false,
+					false);
 		}
 		if (type == ComponentType.RETURN_DOTTED_ARROW) {
 			return new ComponentBlueModernArrow(Color.BLACK, Color.BLACK, normalFont, stringsToDisplay, -1, true, true);
@@ -146,6 +148,10 @@ public class BlueModern implements Skin {
 		if (type == ComponentType.SIGNATURE) {
 			return new ComponentRoseTitle(Color.BLACK, smallFont, Arrays.asList("This skin was created ",
 					"in April 2009."));
+		}
+		if (type == ComponentType.ENGLOBER) {
+			return new ComponentBlueModernEnglober(blue1, blue3, stringsToDisplay, Color.BLACK, param
+					.getFont(FontParam.SEQUENCE_ENGLOBER));
 		}
 
 		return null;

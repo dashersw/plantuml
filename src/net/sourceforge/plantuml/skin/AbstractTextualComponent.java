@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3836 $
+ * Revision $Revision: 5277 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -79,10 +79,14 @@ public abstract class AbstractTextualComponent extends AbstractComponent {
 		return textBlock;
 	}
 
-	final public double getTextWidth(StringBounder stringBounder) {
+	final protected double getPureTextWidth(StringBounder stringBounder) {
 		final TextBlock textBlock = getTextBlock();
 		final Dimension2D size = getSize(stringBounder, textBlock);
-		return size.getWidth() + marginX1 + marginX2;
+		return size.getWidth();
+	}
+
+	final public double getTextWidth(StringBounder stringBounder) {
+		return getPureTextWidth(stringBounder) + marginX1 + marginX2;
 	}
 
 	// For cache

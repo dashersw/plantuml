@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4837 $
+ * Revision $Revision: 5275 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -78,9 +78,12 @@ class Step1Message extends Step1Abstract {
 		final Arrow graphic = createArrow();
 		final double arrowYStartLevel = graphic.getArrowYStartLevel(getStringBounder());
 		final double arrowYEndLevel = graphic.getArrowYEndLevel(getStringBounder());
+		
+		//final double delta1 = isSelfMessage() ? 4 : 0;
+		final double delta1 = 0;
 
 		for (LifeEvent lifeEvent : getMessage().getLiveEvents()) {
-			beforeMessage(lifeEvent, arrowYStartLevel);
+			beforeMessage(lifeEvent, arrowYStartLevel + delta1);
 		}
 
 		final double length;
@@ -94,6 +97,11 @@ class Step1Message extends Step1Abstract {
 		}
 
 		incFreeY(graphic.getPreferredHeight(getStringBounder()));
+		double marginActivateAndDeactive = 0;
+		if (getMessage().isActivateAndDeactive()) {
+			marginActivateAndDeactive = 30;
+			incFreeY(marginActivateAndDeactive);
+		}
 		getDrawingSet().addEvent(getMessage(), graphic);
 
 		if (isSelfMessage()) {
@@ -103,7 +111,7 @@ class Step1Message extends Step1Abstract {
 		}
 
 		for (LifeEvent lifeEvent : getMessage().getLiveEvents()) {
-			afterMessage(getStringBounder(), lifeEvent, arrowYEndLevel);
+			afterMessage(getStringBounder(), lifeEvent, arrowYEndLevel + marginActivateAndDeactive - delta1);
 		}
 
 		if (groupingStructures != null && graphic instanceof InGroupable) {
@@ -176,7 +184,7 @@ class Step1Message extends Step1Abstract {
 			final NoteBox noteBox = createNoteBox(getStringBounder(), arrowAndParticipant, getNote(), getMessage()
 					.getNotePosition());
 			if (getMessage().getNotePosition() == NotePosition.RIGHT) {
-				noteBox.pushToRight(getParticipantBox2().getHeadPreferredWith(getStringBounder()) / 2);
+				noteBox.pushToRight(getParticipantBox2().getPreferredWidth(getStringBounder()) / 2);
 			}
 			return new ArrowAndNoteBox(getStringBounder(), arrowAndParticipant, noteBox);
 		}

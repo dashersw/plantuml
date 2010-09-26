@@ -39,6 +39,8 @@
 		<delete dir="build" />
 		<mkdir dir="build" />
 		<javac target="1.5" srcdir="src" destdir="build" />
+		<copy file="src/net/sourceforge/plantuml/version/logo.png"
+			todir="build/net/sourceforge/plantuml/version" />
 	</target>
 
 	<target name="dist" depends="compile">

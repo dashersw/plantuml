@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5223 $
+ * Revision $Revision: 5280 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -90,7 +90,7 @@ public final class CucaDiagramSimplifier {
 	private void computeImageGroup(final Group group, final Entity entity, List<String> dotStrings) throws IOException,
 			FileNotFoundException, InterruptedException {
 		final GroupPngMaker maker = new GroupPngMaker(diagram, group, isEps);
-		final File f = CucaDiagramFileMaker.createTempFile("inner");
+		final File f = CucaDiagramFileMaker.createTempFile("inner", ".png");
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(f);

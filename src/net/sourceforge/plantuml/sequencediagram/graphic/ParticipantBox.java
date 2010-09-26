@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5215 $
+ * Revision $Revision: 5249 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -76,7 +76,7 @@ public class ParticipantBox implements Pushable {
 		return head.getPreferredHeight(stringBounder) + line.getPreferredHeight(stringBounder) / 2.0;
 	}
 
-	public double getHeadPreferredWith(StringBounder stringBounder) {
+	public double getPreferredWidth(StringBounder stringBounder) {
 		return head.getPreferredWidth(stringBounder);
 	}
 

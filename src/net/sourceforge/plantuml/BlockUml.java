@@ -33,14 +33,54 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class BlockUml {
 
+	private final List<String> data;
+	private PSystem system;
+
+	private static final Pattern pattern1 = Pattern.compile("^@startuml\\s+\"?(.*?)\"?$");
+
+	BlockUml(String... strings) {
+		this(Arrays.asList(strings));
+	}
+
 	BlockUml(List<String> strings) {
+		final String s0 = strings.get(0);
+		if (s0.startsWith("@startuml") == false) {
+			throw new IllegalArgumentException();
+		}
+		this.data = new ArrayList<String>(strings);
 	}
 
 	public String getFilename() {
-		throw new UnsupportedOperationException();
+		if (OptionFlags.getInstance().isWord()) {
+			return null;
+		}
+		final Matcher m = pattern1.matcher(data.get(0));
+		final boolean ok = m.find();
+		if (ok == false) {
+			return null;
+		}
+		return m.group(1);
 	}
+
+	public PSystem getSystem() throws IOException, InterruptedException {
+		if (system==null) {
+			createSystem();
+		}
+		return system;
+	}
+
+	private void createSystem() throws IOException, InterruptedException {
+		system = new PSystemBuilder().createPSystem(data);
+		
+	}
+
 }

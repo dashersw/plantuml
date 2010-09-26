@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4683 $
+ * Revision $Revision: 5251 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -91,15 +91,24 @@ class ConstraintSet {
 		if (p1 == null) {
 			throw new IllegalArgumentException();
 		}
-		return getConstraint(p1, getOtherParticipant(p1, 1));
+		return getConstraint(p1, getNext(p1));
 	}
 
 	public Constraint getConstraintBefore(Pushable p1) {
 		if (p1 == null) {
 			throw new IllegalArgumentException();
 		}
-		return getConstraint(p1, getOtherParticipant(p1, -1));
+		return getConstraint(p1, getPrevious(p1));
 	}
+
+	public Pushable getPrevious(Pushable p) {
+		return getOtherParticipant(p, -1);
+	}
+	
+	public Pushable getNext(Pushable p) {
+		return getOtherParticipant(p, 1);
+	}
+
 
 	private Pushable getOtherParticipant(Pushable p, int delta) {
 		final int i = participantList.indexOf(p);

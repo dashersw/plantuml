@@ -103,4 +103,8 @@ public class VirtualHBar implements Pushable {
 		return false;
 	}
 
+	public double getPreferredWidth(StringBounder stringBounder) {
+		throw new UnsupportedOperationException();
+	}
+
 }

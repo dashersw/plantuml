@@ -50,6 +50,7 @@ import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 
 public class PSystemRIP extends AbstractPSystem {
@@ -93,7 +94,7 @@ public class PSystemRIP extends AbstractPSystem {
 
 	private GraphicStrings getGraphicStrings() throws IOException {
 		final Font font = new Font("SansSerif", Font.PLAIN, 12);
-		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE, image, false);
+		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE, image, GraphicPosition.BOTTOM, false);
 	}
 
 	public String getDescription() {

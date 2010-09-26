@@ -47,12 +47,12 @@ import java.util.List;
 import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.preproc.Defines;
 
-public class SourceFileReader extends AbstractSourceReader {
+public class SourceFileReader {
 
 	private final File file;
 	private final File outputDirectory;
-	private final List<String> config;
-	private final String charset;
+
+	private final BlockUmlBuilder builder;
 	private FileFormat fileFormat;
 
 	public SourceFileReader(File file) throws IOException {
@@ -69,9 +69,8 @@ public class SourceFileReader extends AbstractSourceReader {
 
 	public SourceFileReader(Defines defines, final File file, File outputDirectory, List<String> config,
 			String charset, FileFormat fileFormat) throws IOException {
-		super(defines);
-		this.charset = charset;
-		this.config = config;
+		this.file = file;
+		this.fileFormat = fileFormat;
 		if (file.exists() == false) {
 			throw new IllegalArgumentException();
 		}
@@ -84,9 +83,9 @@ public class SourceFileReader extends AbstractSourceReader {
 		if (outputDirectory.exists() == false) {
 			outputDirectory.mkdirs();
 		}
-		this.file = file;
 		this.outputDirectory = outputDirectory;
-		this.fileFormat = fileFormat;
+		
+		builder = new BlockUmlBuilder(config, defines, getReader(charset));
 	}
 
 	public List<GeneratedImage> getGeneratedImages() throws IOException, InterruptedException {
@@ -95,8 +94,8 @@ public class SourceFileReader extends AbstractSourceReader {
 		int cpt = 0;
 		final List<GeneratedImage> result = new ArrayList<GeneratedImage>();
 
-		for (StartUml startUml : getAllStartUml(config)) {
-			String newName = startUml.getFilename();
+		for (BlockUml blockUml : builder.getBlockUmls()) {
+			String newName = blockUml.getFilename();
 
 			if (newName == null) {
 				newName = changeName(file.getName(), cpt++, fileFormat);
@@ -105,8 +104,8 @@ public class SourceFileReader extends AbstractSourceReader {
 			final File suggested = new File(outputDirectory, newName);
 			suggested.getParentFile().mkdirs();
 
-			for (File f : startUml.getSystem().createFiles(suggested, fileFormat)) {
-				final String desc = "[" + file.getName() + "] " + startUml.getSystem().getDescription();
+			for (File f : blockUml.getSystem().createFiles(suggested, fileFormat)) {
+				final String desc = "[" + file.getName() + "] " + blockUml.getSystem().getDescription();
 				final GeneratedImage generatedImage = new GeneratedImage(f, desc);
 				result.add(generatedImage);
 			}
@@ -121,8 +120,8 @@ public class SourceFileReader extends AbstractSourceReader {
 	public List<String> getEncodedUrl() throws IOException, InterruptedException {
 		final List<String> result = new ArrayList<String>();
 		final Transcoder transcoder = new Transcoder();
-		for (StartUml startUml : getAllStartUml(config)) {
-			final String source = startUml.getSystem().getSource().getPlainString();
+		for (BlockUml blockUml : builder.getBlockUmls()) {
+			final String source = blockUml.getSystem().getSource().getPlainString();
 			final String encoded = transcoder.encode(source);
 			result.add(encoded);
 		}
@@ -136,8 +135,7 @@ public class SourceFileReader extends AbstractSourceReader {
 		return name.replaceAll("\\.\\w+$", "_" + String.format("%03d", cpt) + fileFormat.getFileSuffix());
 	}
 
-	@Override
-	protected Reader getReader() throws FileNotFoundException, UnsupportedEncodingException {
+	private Reader getReader(String charset) throws FileNotFoundException, UnsupportedEncodingException {
 		if (charset == null) {
 			Log.info("Using default charset");
 			return new InputStreamReader(new FileInputStream(file));

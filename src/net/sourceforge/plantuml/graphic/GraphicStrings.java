@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5138 $
+ * Revision $Revision: 5256 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -65,29 +65,33 @@ public class GraphicStrings {
 	private final List<String> strings;
 
 	private final BufferedImage image;
-	
+
+	private final GraphicPosition position;
+
 	private final boolean disableTextAliasing;
 
 	public GraphicStrings(List<String> strings) {
 		this(strings, new Font("SansSerif", Font.BOLD, 14), new Color(Integer.parseInt("33FF02", 16)), Color.BLACK,
-				null, false);
+				null, null, false);
 	}
 
 	public GraphicStrings(List<String> strings, BufferedImage image) {
 		this(strings, new Font("SansSerif", Font.BOLD, 14), new Color(Integer.parseInt("33FF02", 16)), Color.BLACK,
-				image, false);
+				image, null, false);
 	}
 
 	public GraphicStrings(List<String> strings, Font font, Color green, Color background, boolean disableTextAliasing) {
-		this(strings, font, green, background, null, disableTextAliasing);
+		this(strings, font, green, background, null, null, disableTextAliasing);
 	}
 
-	public GraphicStrings(List<String> strings, Font font, Color green, Color background, BufferedImage image, boolean disableTextAliasing) {
+	public GraphicStrings(List<String> strings, Font font, Color green, Color background, BufferedImage image,
+			GraphicPosition position, boolean disableTextAliasing) {
 		this.strings = strings;
 		this.font = font;
 		this.green = green;
 		this.background = background;
 		this.image = image;
+		this.position = position;
 		this.disableTextAliasing = disableTextAliasing;
 	}
 
@@ -114,12 +118,12 @@ public class GraphicStrings {
 
 	private BufferedImage createImage() {
 		EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, background);
-		//BufferedImage im = builder.getBufferedImage();
+		// BufferedImage im = builder.getBufferedImage();
 		Graphics2D g2d = builder.getGraphics2D();
-		
+
 		final Dimension2D size = drawU(new UGraphicG2d(g2d, null));
 		g2d.dispose();
-		
+
 		builder = new EmptyImageBuilder((int) size.getWidth(), (int) size.getHeight(), background);
 		final BufferedImage im = builder.getBufferedImage();
 		g2d = builder.getGraphics2D();
@@ -137,8 +141,12 @@ public class GraphicStrings {
 		textBlock.drawU(ug, 0, 0);
 
 		if (image != null) {
-			ug.draw((size.getWidth() - image.getWidth()) / 2, size.getHeight(), new UImage(image));
-			size = new Dimension2DDouble(size.getWidth(), size.getHeight() + image.getHeight());
+			if (position == GraphicPosition.BOTTOM) {
+				ug.draw((size.getWidth() - image.getWidth()) / 2, size.getHeight(), new UImage(image));
+				size = new Dimension2DDouble(size.getWidth(), size.getHeight() + image.getHeight());
+			} else if (position == GraphicPosition.BACKGROUND_CORNER) {
+				ug.draw(size.getWidth() - image.getWidth(), size.getHeight() - image.getHeight(), new UImage(image));
+			}
 		}
 		return size;
 	}

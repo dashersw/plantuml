@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5216 $
+ * Revision $Revision: 5251 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -96,14 +96,15 @@ class DrawableSetInitializer {
 		}
 
 		this.freeY = drawableSet.getHeadHeight(stringBounder);
-		//this.freeY += drawableSet.getOffsetForEnglobers(stringBounder);
+		// this.freeY += drawableSet.getOffsetForEnglobers(stringBounder);
 		this.lastFreeY = this.freeY;
-		
+
 		drawableSet.setTopStartingY(this.freeY);
 
-//		for (LivingParticipantBox p : drawableSet.getAllLivingParticipantBox()) {
-//			p.getParticipantBox().setTopStartingY(this.freeY);
-//		}
+		// for (LivingParticipantBox p :
+		// drawableSet.getAllLivingParticipantBox()) {
+		// p.getParticipantBox().setTopStartingY(this.freeY);
+		// }
 
 		for (Participant p : drawableSet.getAllParticipants()) {
 			final LivingParticipantBox living = drawableSet.getLivingParticipantBox(p);
@@ -147,6 +148,8 @@ class DrawableSetInitializer {
 			}
 		}
 
+		takeParticipantEngloberTitleWidth(stringBounder);
+
 		constraintSet.takeConstraintIntoAccount(stringBounder);
 
 		prepareMissingSpace(stringBounder);
@@ -155,6 +158,36 @@ class DrawableSetInitializer {
 
 		drawableSet.setDimension(new Dimension2DDouble(diagramWidth, getTotalHeight(freeY, stringBounder)));
 		return drawableSet;
+	}
+
+	private void takeParticipantEngloberTitleWidth(StringBounder stringBounder) {
+		for (ParticipantEnglober pe : drawableSet.getParticipantEnglobers()) {
+			final double preferredWidth = drawableSet.getEngloberPreferedWidth(stringBounder, pe);
+			final ParticipantBox first = drawableSet.getLivingParticipantBox(pe.getFirst()).getParticipantBox();
+			final ParticipantBox last = drawableSet.getLivingParticipantBox(pe.getLast()).getParticipantBox();
+			if (first == last) {
+				final Constraint constraint1 = constraintSet.getConstraintBefore(first);
+				final Constraint constraint2 = constraintSet.getConstraintAfter(last);
+				final double w1 = constraint1.getParticipant1().getPreferredWidth(stringBounder);
+				final double w2 = constraint2.getParticipant2().getPreferredWidth(stringBounder);
+				constraint1.ensureValue(preferredWidth / 2 + w1 / 2 + 5);
+				constraint2.ensureValue(preferredWidth / 2 + w2 / 2 + 5);
+			} else {
+				final Pushable beforeFirst = constraintSet.getPrevious(first);
+				final Pushable afterLast = constraintSet.getNext(last);
+				// final Constraint constraint1 =
+				// constraintSet.getConstraint(first, last);
+				final Constraint constraint1 = constraintSet.getConstraint(beforeFirst, afterLast);
+				constraint1.ensureValue(preferredWidth + beforeFirst.getPreferredWidth(stringBounder) / 2
+						+ afterLast.getPreferredWidth(stringBounder) / 2 + 10);
+			}
+			// final double x1 = drawableSet.getX1(pe);
+			// final double x2 = drawableSet.getX2(stringBounder, pe);
+			// assert x2 > x1;
+			// final double diff = preferredWidth - (x2 - x1);
+			// if (diff > 0) {
+			// }
+		}
 	}
 
 	private double getTotalHeight(double y, StringBounder stringBounder) {
@@ -323,22 +356,6 @@ class DrawableSetInitializer {
 		if (lifeEvent.getType() != LifeEventType.DESTROY && lifeEvent.getType() != LifeEventType.CREATE) {
 			throw new IllegalStateException();
 		}
-		// if (lifeEvent.getType() == LifeEventType.CREATE) {
-		// final Participant p = lifeEvent.getParticipant();
-		// drawableSet.getLivingParticipantBox(p).create(freeY);
-		// //
-		// drawableSet.getLivingParticipantBox(p).getParticipantBox().setShowHead(false);
-		// if (1 == 1)
-		// throw new UnsupportedOperationException();
-		// final Component head =
-		// drawableSet.getSkin().createComponent(ComponentType.PARTICIPANT_HEAD,
-		// drawableSet.getSkinParam(), p.getDisplay());
-		// final LifeDestroy destroy = new LifeDestroy(freeY,
-		// drawableSet.getLivingParticipantBox(p)
-		// .getParticipantBox(), head);
-		// drawableSet.addEvent(lifeEvent, destroy);
-		// freeY += destroy.getPreferredHeight(stringBounder);
-		// }
 	}
 
 	private void prepareMessage(StringBounder stringBounder, Message m) {

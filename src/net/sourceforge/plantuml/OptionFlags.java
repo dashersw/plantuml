@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4952 $
+ * Revision $Revision: 5244 $
  *
  */
 package net.sourceforge.plantuml;
@@ -58,21 +58,21 @@ public class OptionFlags {
 	private boolean metadata = false;
 	private boolean word = false;
 	private boolean systemExit = true;
-	private boolean pipe = false;
+//	private boolean pipe = false;
 	private boolean debugDot = false;
 	private boolean forceGd = false;
 	private boolean forceCairo = false;
 	private String dotExecutable = null;
 	private boolean gui = false;
 	private boolean quiet = false;
-
-	public final boolean isPipe() {
-		return pipe;
-	}
-
-	public final void setPipe(boolean pipe) {
-		this.pipe = pipe;
-	}
+//
+//	public final boolean isPipe() {
+//		return pipe;
+//	}
+//
+//	public final void setPipe(boolean pipe) {
+//		this.pipe = pipe;
+//	}
 
 	private OptionFlags() {
 		reset();

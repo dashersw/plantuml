@@ -49,7 +49,7 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 		this.arrow = arrow;
 		this.participantBox = participantBox;
 		//participantBox.setDeltaHead(arrow.getStartingY());
-		arrow.setPaddingArrowHead(participantBox.getHeadPreferredWith(stringBounder) / 2);
+		arrow.setPaddingArrowHead(participantBox.getPreferredWidth(stringBounder) / 2);
 		// participantBox.setTopStartingY(arrow.getStartingY());
 
 	}
@@ -63,7 +63,7 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 
 	@Override
 	final public double getArrowOnlyWidth(StringBounder stringBounder) {
-		return arrow.getPreferredWidth(stringBounder) + participantBox.getHeadPreferredWith(stringBounder) / 2;
+		return arrow.getPreferredWidth(stringBounder) + participantBox.getPreferredWidth(stringBounder) / 2;
 	}
 
 	@Override
@@ -105,12 +105,12 @@ class ArrowAndParticipant extends Arrow implements InGroupable {
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return arrow.getPreferredWidth(stringBounder) + participantBox.getHeadPreferredWith(stringBounder) / 2;
+		return arrow.getPreferredWidth(stringBounder) + participantBox.getPreferredWidth(stringBounder) / 2;
 	}
 
 	@Override
 	public double getActualWidth(StringBounder stringBounder) {
-		return arrow.getActualWidth(stringBounder) + participantBox.getHeadPreferredWith(stringBounder) / 2;
+		return arrow.getActualWidth(stringBounder) + participantBox.getPreferredWidth(stringBounder) / 2;
 	}
 
 

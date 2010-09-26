@@ -44,13 +44,17 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 public class CommandBoxStart extends SingleLineCommand<SequenceDiagram> {
 
 	public CommandBoxStart(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^boxstart\\s+\"([^\"]+)\"(?:\\s+(#\\w+))?$");
+		super(sequenceDiagram, "(?i)^box(?:\\s+\"([^\"]+)\")?(?:\\s+(#\\w+))?$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
+		if (getSystem().isBoxPending()) {
+			return CommandExecutionResult.error("Box cannot be nested");
+		}
 		final HtmlColor color = HtmlColor.getColorIfValid(arg.get(1));
-		getSystem().boxStart(StringUtils.getWithNewlines(arg.get(0)), color);
+		final String title = arg.get(0) == null ? "" : arg.get(0);
+		getSystem().boxStart(StringUtils.getWithNewlines(title), color);
 		return CommandExecutionResult.ok();
 	}
 

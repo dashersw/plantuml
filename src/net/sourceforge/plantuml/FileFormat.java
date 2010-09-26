@@ -28,15 +28,18 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5138 $
+ * Revision $Revision: 5280 $
  *
  */
 package net.sourceforge.plantuml;
 
 public enum FileFormat {
-	PNG, SVG, EPS, ATXT, UTXT;
+	PNG, SVG, EPS, EPS_VIA_SVG, ATXT, UTXT;
 
 	public String getFileSuffix() {
+		if (this == EPS_VIA_SVG) {
+			return EPS.getFileSuffix();
+		}
 		return "." + name().toLowerCase();
 	}
 }

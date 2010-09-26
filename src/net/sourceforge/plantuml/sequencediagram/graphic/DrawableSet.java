@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5220 $
+ * Revision $Revision: 5271 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -69,8 +69,6 @@ class DrawableSet {
 	private final ISkinParam skinParam;
 	private Dimension2D dimension;
 	private double topStartingY;
-
-	// private double groupingMargin;
 
 	DrawableSet(Skin skin, ISkinParam skinParam) {
 		if (skin == null) {
@@ -145,7 +143,7 @@ class DrawableSet {
 		if (englober == null) {
 			return height;
 		}
-		final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober.getStrings());
+		final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober.getTitle());
 		final double heightEnglober = comp.getPreferredHeight(stringBounder);
 		return height + heightEnglober;
 	}
@@ -153,7 +151,7 @@ class DrawableSet {
 	public double getOffsetForEnglobers(StringBounder stringBounder) {
 		double result = 0;
 		for (ParticipantEnglober englober : participantEnglobers) {
-			final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober.getStrings());
+			final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober.getTitle());
 			final double height = comp.getPreferredHeight(stringBounder);
 			if (height > result) {
 				result = height;
@@ -162,16 +160,21 @@ class DrawableSet {
 		return result;
 	}
 
+	static private final int MARGIN_FOR_ENGLOBERS = 4;
+	static private final int MARGIN_FOR_ENGLOBERS1 = 2;
+
 	public double getTailHeight(StringBounder stringBounder, boolean showTail) {
+		final double marginForEnglobers = this.participantEnglobers.size() > 0 ? MARGIN_FOR_ENGLOBERS : 0;
+
 		if (showTail == false) {
-			return 1;
+			return 1 + marginForEnglobers;
 		}
 		double r = 0;
 		for (LivingParticipantBox livingParticipantBox : participants.values()) {
 			final double y = livingParticipantBox.getParticipantBox().getTailHeight(stringBounder);
 			r = Math.max(r, y);
 		}
-		return r;
+		return r + marginForEnglobers;
 	}
 
 	public void addParticipant(Participant p, LivingParticipantBox box) {
@@ -215,15 +218,18 @@ class DrawableSet {
 
 		clipAndTranslate(delta, width, page, ug);
 		this.drawPlaygroundU(ug, height, new SimpleContext2D(true));
-
 		ug.setClip(null);
 		ug.setTranslate(atX, atY);
+		this.drawEnglobers(ug, height - MARGIN_FOR_ENGLOBERS1, new SimpleContext2D(true));
+		// ug.setClip(null);
+		// ug.setTranslate(atX, atY);
 
 		this.drawLineU(ug, showTail, page);
 		this.drawHeadTailU(ug, page, showTail ? height - getTailHeight(ug.getStringBounder(), true) : 0);
 
 		clipAndTranslate(delta, width, page, ug);
 		this.drawPlaygroundU(ug, height, new SimpleContext2D(false));
+		ug.setClip(null);
 	}
 
 	private void clipAndTranslate(final double delta, double width, Page p, final UGraphic ug) {
@@ -234,7 +240,6 @@ class DrawableSet {
 	}
 
 	private void drawLineU(UGraphic ug, boolean showTail, Page page) {
-		// ug.translate(groupingMargin, 0);
 		for (LivingParticipantBox box : getAllLivingParticipantBox()) {
 			final double create = box.getCreate();
 			final double startMin = page.getBodyRelativePosition() - box.magicMargin(ug.getStringBounder());
@@ -251,12 +256,9 @@ class DrawableSet {
 			}
 			box.drawLineU(ug, start, endMax, showTail);
 		}
-		// ug.translate(-groupingMargin, 0);
-
 	}
 
 	private void drawHeadTailU(UGraphic ug, Page page, double positionTail) {
-		// ug.translate(groupingMargin, 0);
 		for (LivingParticipantBox box : getAllLivingParticipantBox()) {
 			final double create = box.getCreate();
 			boolean showHead = true;
@@ -270,7 +272,6 @@ class DrawableSet {
 			}
 			box.getParticipantBox().drawHeadTailU(ug, topStartingY, showHead, positionTail);
 		}
-		// ug.translate(-groupingMargin, 0);
 	}
 
 	private double getMaxX() {
@@ -282,8 +283,6 @@ class DrawableSet {
 	}
 
 	private void drawPlaygroundU(UGraphic ug, double height, Context2D context) {
-		// ug.translate(groupingMargin, 0);
-
 		for (Participant p : getAllParticipants()) {
 			drawLifeLineU(ug, p);
 		}
@@ -291,39 +290,60 @@ class DrawableSet {
 		for (GraphicalElement element : getAllGraphicalElements()) {
 			element.drawU(ug, getMaxX(), context);
 		}
-		ug.setClip(null);
-		// ug.translate(-groupingMargin, 0);
+	}
 
-		if (context.isBackground()) {
-			for (ParticipantEnglober englober : participantEnglobers) {
-				final Participant first = englober.getFirst();
-				final Participant last = englober.getLast();
-				final ParticipantBox firstBox = participants.get(first).getParticipantBox();
-				final ParticipantBox lastBox = participants.get(last).getParticipantBox();
-				final double x1 = firstBox.getStartingX() + 1;
-				final double x2 = lastBox.getMaxX(ug.getStringBounder()) - 1;
+	private void drawEnglobers(UGraphic ug, double height, Context2D context) {
+		for (ParticipantEnglober englober : participantEnglobers) {
+			double x1 = getX1(englober);
+			final double x2 = getX2(ug.getStringBounder(), englober);
 
-				final ISkinParam s = englober.getBoxColor() == null ? skinParam : new SkinParamBackcolored(skinParam,
-						englober.getBoxColor());
-				final Component comp = skin.createComponent(ComponentType.ENGLOBER, s, englober.getStrings());
+			final Component comp = getEngloberComponent(englober);
 
+			final double width = x2 - x1;
+			final double preferedWidth = getEngloberPreferedWidth(ug.getStringBounder(), englober);
+			if (preferedWidth > width) {
+				if (englober.getFirst() == englober.getLast()) {
+					x1 -= (preferedWidth - width) / 2;
+				}
+				final Dimension2DDouble dim = new Dimension2DDouble(preferedWidth, height);
 				ug.translate(x1, 1);
-				final Dimension2DDouble dim = new Dimension2DDouble(x2 - x1, height - 2);
+				comp.drawU(ug, dim, context);
+				ug.translate(-x1, -1);
+			} else {
+				final Dimension2DDouble dim = new Dimension2DDouble(width, height);
+				ug.translate(x1, 1);
 				comp.drawU(ug, dim, context);
 				ug.translate(-x1, -1);
 			}
 		}
+	}
 
+	public double getEngloberPreferedWidth(StringBounder stringBounder, ParticipantEnglober englober) {
+		return getEngloberComponent(englober).getPreferredWidth(stringBounder);
+	}
+
+	private Component getEngloberComponent(ParticipantEnglober englober) {
+		final ISkinParam s = englober.getBoxColor() == null ? skinParam : new SkinParamBackcolored(skinParam, englober
+				.getBoxColor());
+		return skin.createComponent(ComponentType.ENGLOBER, s, englober.getTitle());
+	}
+
+	private double getX1(ParticipantEnglober englober) {
+		final Participant first = englober.getFirst();
+		final ParticipantBox firstBox = participants.get(first).getParticipantBox();
+		return firstBox.getStartingX() + 1;
+	}
+
+	private double getX2(StringBounder stringBounder, ParticipantEnglober englober) {
+		final Participant last = englober.getLast();
+		final ParticipantBox lastBox = participants.get(last).getParticipantBox();
+		return lastBox.getMaxX(stringBounder) - 1;
 	}
 
 	private void drawLifeLineU(UGraphic ug, Participant p) {
 		final LifeLine line = getLivingParticipantBox(p).getLifeLine();
 
 		line.finish(getMaxY());
-		// skinParam.overideBackColor(new HtmlColor(("#00FF00")));
-		// final Component comp =
-		// getSkin().createComponent(ComponentType.ALIVE_LINE, skinParam, null);
-		// skinParam.overideBackColor(null);
 		line.drawU(ug, getSkin(), skinParam);
 	}
 
@@ -361,6 +381,10 @@ class DrawableSet {
 
 	public void setTopStartingY(double topStartingY) {
 		this.topStartingY = topStartingY;
+	}
+
+	public final List<ParticipantEnglober> getParticipantEnglobers() {
+		return Collections.unmodifiableList(participantEnglobers);
 	}
 
 }

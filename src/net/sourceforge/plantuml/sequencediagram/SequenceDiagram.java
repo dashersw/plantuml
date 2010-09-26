@@ -262,27 +262,45 @@ public class SequenceDiagram extends UmlDiagram {
 	private Participant boxStart;
 	private List<String> boxStartComment;
 	private HtmlColor boxColor;
+	private boolean boxPending = false;
 
 	public void boxStart(List<String> comment, HtmlColor color) {
+		if (boxPending) {
+			throw new IllegalStateException();
+		}
 		this.boxStart = getLastParticipant();
 		this.boxStartComment = comment;
 		this.boxColor = color;
+		this.boxPending = true;
 	}
 
 	public void endBox() {
+		if (boxPending == false) {
+			throw new IllegalStateException();
+		}
 		final Participant last = getLastParticipant();
 		this.participantEnglobers.add(new ParticipantEnglober(next(boxStart), last, boxStartComment, boxColor));
+		this.boxStart = null;
+		this.boxStartComment = null;
+		this.boxColor = null;
+		this.boxPending = false;
+	}
 
+	public boolean isBoxPending() {
+		return boxPending;
 	}
 
 	private Participant next(Participant p) {
+		if (p == null) {
+			return participants.values().iterator().next();
+		}
 		for (final Iterator<Participant> it = participants.values().iterator(); it.hasNext();) {
 			final Participant current = it.next();
 			if (current == p && it.hasNext()) {
 				return it.next();
 			}
 		}
-		throw new IllegalArgumentException("p="+p.getCode());
+		throw new IllegalArgumentException("p=" + p.getCode());
 	}
 
 	private Participant getLastParticipant() {

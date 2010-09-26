@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5211 $
+ * Revision $Revision: 5269 $
  *
  */
 package net.sourceforge.plantuml;
@@ -55,6 +55,8 @@ public class Option {
 	private String charset;
 	private boolean computeurl = false;
 	private boolean decodeurl = false;
+	private boolean pipe = false;
+	private boolean syntax = false;
 
 	private File outputDir = null;
 	private final List<String> result = new ArrayList<String>();
@@ -120,6 +122,8 @@ public class Option {
 					continue;
 				}
 				initConfig(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
+			} else if (s.equalsIgnoreCase("-computeurl") || s.equalsIgnoreCase("-encodeurl")) {
+				this.computeurl = true;
 			} else if (s.startsWith("-c")) {
 				s = s.substring(2);
 				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -131,7 +135,10 @@ public class Option {
 			} else if (s.equalsIgnoreCase("-verbose") || s.equalsIgnoreCase("-v")) {
 				OptionFlags.getInstance().setVerbose(true);
 			} else if (s.equalsIgnoreCase("-pipe") || s.equalsIgnoreCase("-p")) {
-				OptionFlags.getInstance().setPipe(true);
+				pipe = true;
+			} else if (s.equalsIgnoreCase("-syntax")) {
+				syntax = true;
+				OptionFlags.getInstance().setQuiet(true);
 			} else if (s.equalsIgnoreCase("-keepfiles") || s.equalsIgnoreCase("-keepfile")) {
 				OptionFlags.getInstance().setKeepTmpFiles(true);
 			} else if (s.equalsIgnoreCase("-metadata")) {
@@ -145,8 +152,6 @@ public class Option {
 				OptionFlags.getInstance().setForceCairo(true);
 			} else if (s.equalsIgnoreCase("-quiet")) {
 				OptionFlags.getInstance().setQuiet(true);
-			} else if (s.equalsIgnoreCase("-computeurl") || s.equalsIgnoreCase("-encodeurl")) {
-				this.computeurl = true;
 			} else if (s.equalsIgnoreCase("-decodeurl")) {
 				this.decodeurl = true;
 			} else if (s.equalsIgnoreCase("-version")) {
@@ -244,6 +249,14 @@ public class Option {
 
 	public final boolean isDecodeurl() {
 		return decodeurl;
+	}
+
+	public final boolean isPipe() {
+		return pipe;
+	}
+
+	public final boolean isSyntax() {
+		return syntax;
 	}
 
 }

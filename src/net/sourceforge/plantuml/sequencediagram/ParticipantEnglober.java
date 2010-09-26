@@ -39,18 +39,18 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class ParticipantEnglober {
 
-	final private List<String> strings;
+	final private List<String> title;
 	final private Participant first;
 	final private Participant last;
 	final private HtmlColor boxColor;
 
-	public ParticipantEnglober(Participant first, Participant last, List<String> strings, HtmlColor boxColor) {
+	public ParticipantEnglober(Participant first, Participant last, List<String> title, HtmlColor boxColor) {
 		if (first == null || last == null) {
 			throw new IllegalArgumentException();
 		}
 		this.first = first;
 		this.last = last;
-		this.strings = strings;
+		this.title = title;
 		this.boxColor = boxColor;
 	}
 
@@ -62,8 +62,8 @@ public class ParticipantEnglober {
 		return last;
 	}
 
-	public final List<String> getStrings() {
-		return strings;
+	public final List<String> getTitle() {
+		return title;
 	}
 
 	public final HtmlColor getBoxColor() {

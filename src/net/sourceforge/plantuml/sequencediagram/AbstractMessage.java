@@ -71,6 +71,14 @@ public abstract class AbstractMessage implements Event {
 		return false;
 	}
 
+	public final boolean isActivateAndDeactive() {
+		if (lifeEvents.size() < 2) {
+			return false;
+		}
+		return lifeEvents.get(0).getType() == LifeEventType.ACTIVATE
+				&& (lifeEvents.get(1).getType() == LifeEventType.DEACTIVATE || lifeEvents.get(1).getType() == LifeEventType.DESTROY);
+	}
+
 	public final List<LifeEvent> getLiveEvents() {
 		return Collections.unmodifiableList(lifeEvents);
 	}

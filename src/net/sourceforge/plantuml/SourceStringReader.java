@@ -35,7 +35,6 @@ package net.sourceforge.plantuml;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,19 +43,21 @@ import java.util.List;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
 import net.sourceforge.plantuml.preproc.Defines;
 
-public class SourceStringReader extends AbstractSourceReader {
+public class SourceStringReader {
 
-	private final String source;
-	private final List<String> config;
+	final private List<BlockUml> blocks;
 
 	public SourceStringReader(String source) {
 		this(new Defines(), source, Collections.<String> emptyList());
 	}
 
 	public SourceStringReader(Defines defines, String source, List<String> config) {
-		super(defines);
-		this.source = source;
-		this.config = config;
+		try {
+			final BlockUmlBuilder builder = new BlockUmlBuilder(config, defines, new StringReader(source));
+			this.blocks = builder.getBlockUmls();
+		} catch (IOException e) {
+			throw new IllegalStateException();
+		}
 	}
 
 	public String generateImage(OutputStream os) throws IOException {
@@ -72,24 +73,22 @@ public class SourceStringReader extends AbstractSourceReader {
 	}
 
 	public String generateImage(OutputStream os, int numImage, FileFormat fileFormat) throws IOException {
-		try {
-			for (StartUml startUml : getAllStartUml(config)) {
-				startUml.getSystem().createFile(os, numImage, fileFormat);
-				return startUml.getSystem().getDescription();
-			}
-
+		if (blocks.size() == 0) {
 			final GraphicStrings error = new GraphicStrings(Arrays.asList("No @startuml found"));
 			error.writeImage(os, fileFormat);
-
 			return null;
+		}
+		try {
+			final PSystem system = blocks.get(0).getSystem();
+			system.createFile(os, numImage, fileFormat);
+			return system.getDescription();
 		} catch (InterruptedException e) {
 			return null;
 		}
 	}
 
-	@Override
-	protected Reader getReader() {
-		return new StringReader(source);
+	public final List<BlockUml> getBlocks() {
+		return Collections.unmodifiableList(blocks);
 	}
 
 }

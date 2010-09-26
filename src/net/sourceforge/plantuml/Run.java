@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5197 $
+ * Revision $Revision: 5269 $
  *
  */
 package net.sourceforge.plantuml;
@@ -37,6 +37,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
 
 import javax.swing.UIManager;
@@ -56,7 +57,7 @@ public class Run {
 			} catch (Exception e) {
 			}
 			new MainWindow(option);
-		} else if (OptionFlags.getInstance().isPipe()) {
+		} else if (option.isPipe() || option.isSyntax()) {
 			managePipe(option);
 		} else {
 			manageFiles(option);
@@ -71,6 +72,10 @@ public class Run {
 		} else {
 			br = new BufferedReader(new InputStreamReader(System.in, charset));
 		}
+		managePipe(option, br, System.out);
+	}
+
+	static void managePipe(Option option, final BufferedReader br, final PrintStream ps) throws IOException {
 		final StringBuilder sb = new StringBuilder();
 		String s = null;
 		while ((s = br.readLine()) != null) {
@@ -82,7 +87,30 @@ public class Run {
 			source = "@startuml\n" + source + "\n@enduml";
 		}
 		final SourceStringReader sourceStringReader = new SourceStringReader(new Defines(), source, option.getConfig());
-		final String result = sourceStringReader.generateImage(System.out, 0 , option.getFileFormat());
+
+		if (option.isSyntax()) {
+			try {
+				final PSystem system = sourceStringReader.getBlocks().get(0).getSystem();
+				if (system instanceof UmlDiagram) {
+					ps.println(((UmlDiagram) system).getUmlDiagramType().name());
+					ps.println(system.getDescription());
+				} else if (system instanceof PSystemError) {
+					ps.println("ERROR");
+					final PSystemError sys = (PSystemError) system;
+					ps.println(sys.getHigherErrorPosition());
+					for (String er : sys.getErrs()) {
+						ps.println(er);
+					}
+				} else {
+					ps.println("OTHER");
+					ps.println(system.getDescription());
+				}
+			} catch (InterruptedException e) {
+				Log.error("InterruptedException " + e);
+			}
+		} else if (option.isPipe()) {
+			final String result = sourceStringReader.generateImage(ps, 0, option.getFileFormat());
+		}
 	}
 
 	private static void manageFile(File f, Option option) throws IOException, InterruptedException {

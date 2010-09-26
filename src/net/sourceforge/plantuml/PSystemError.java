@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4975 $
+ * Revision $Revision: 5269 $
  */
 package net.sourceforge.plantuml;
 
@@ -52,6 +52,8 @@ public class PSystemError extends AbstractPSystem {
 	private final List<ErrorUml> errorsUml = new ArrayList<ErrorUml>();
 	private final List<String> htmlStrings = new ArrayList<String>();
 	private final List<String> plainStrings = new ArrayList<String>();
+	private final int higherErrorPosition;
+	private final Collection<String> errs;
 
 	public PSystemError(UmlSource source, List<ErrorUml> errorUml) {
 		this.errorsUml.addAll(errorUml);
@@ -59,16 +61,16 @@ public class PSystemError extends AbstractPSystem {
 
 		final Collection<ErrorUml> executions = getErrors(ErrorUmlType.EXECUTION_ERROR);
 		if (executions.size() > 0) {
-			final int position = getHigherErrorPosition(ErrorUmlType.EXECUTION_ERROR);
-			final Collection<String> errs = getErrorsAt(position, ErrorUmlType.EXECUTION_ERROR);
-			appendSource(position, errs);
+			higherErrorPosition = getHigherErrorPosition(ErrorUmlType.EXECUTION_ERROR);
+			errs = getErrorsAt(higherErrorPosition, ErrorUmlType.EXECUTION_ERROR);
+			appendSource(higherErrorPosition, errs);
 		} else {
-			final int position = getHigherErrorPosition(ErrorUmlType.SYNTAX_ERROR);
-			final Collection<String> errs = getErrorsAt(position, ErrorUmlType.SYNTAX_ERROR);
+			higherErrorPosition = getHigherErrorPosition(ErrorUmlType.SYNTAX_ERROR);
+			errs = getErrorsAt(higherErrorPosition, ErrorUmlType.SYNTAX_ERROR);
 			if (errs.size() != 1) {
 				throw new UnsupportedOperationException(errs.toString());
 			}
-			appendSource(position, errs);
+			appendSource(higherErrorPosition, errs);
 		}
 
 	}
@@ -177,5 +179,13 @@ public class PSystemError extends AbstractPSystem {
 		for (String s : plainStrings) {
 			ps.println(StringUtils.showComparatorCharacters(s));
 		}
+	}
+
+	public final int getHigherErrorPosition() {
+		return higherErrorPosition;
+	}
+
+	public final Collection<String> getErrs() {
+		return Collections.unmodifiableCollection(errs);
 	}
 }

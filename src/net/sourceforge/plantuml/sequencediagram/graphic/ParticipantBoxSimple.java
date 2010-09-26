@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4683 $
+ * Revision $Revision: 5249 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -61,5 +61,10 @@ class ParticipantBoxSimple implements Pushable {
 	public void pushToLeft(double deltaX) {
 		pos += deltaX;
 	}
+	
+	public double getPreferredWidth(StringBounder stringBounder) {
+		return 0;
+	}
+
 
 }

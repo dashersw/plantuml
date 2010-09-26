@@ -41,10 +41,16 @@ final public class UmlSource {
 
 	final private List<String> source = new ArrayList<String>();
 
+	@Deprecated
 	public UmlSource(UmlSource start) {
 		this.source.addAll(start.source);
 	}
 
+	public UmlSource(List<String> source) {
+		this.source.addAll(source);
+	}
+
+	@Deprecated
 	public UmlSource() {
 	}
 
@@ -52,6 +58,7 @@ final public class UmlSource {
 		return source.iterator();
 	}
 
+	@Deprecated
 	public void append(String s) {
 		source.add(s);
 	}
