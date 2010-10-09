@@ -27,32 +27,21 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 3977 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.util.Arrays;
-import java.util.List;
-
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
-
-public abstract class AbstractEntityDiagram extends CucaDiagram {
-
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+public class Unlazy<O> implements Lazy<O> {
+	
+	private final O data;
+	
+	public Unlazy(O data) {
+		this.data = data;
 	}
-
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	
+	public O getNow() {
+		return data;
 	}
-
-
 }

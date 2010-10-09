@@ -29,30 +29,19 @@
  * Original Author:  Arnaud Roques
  *
  */
-package net.sourceforge.plantuml.ugraphic.svg;
+package net.sourceforge.plantuml.ugraphic.eps;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.svg.SvgGraphics;
+import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.ugraphic.UDriver;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
+import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UShape;
 
-public class DriverEllipseSvg implements UDriver<SvgGraphics> {
+public class DriverImageEps implements UDriver<EpsGraphics> {
 
-	public void draw(UShape ushape, double x, double y, UParam param, SvgGraphics svg) {
-		final UEllipse rect = (UEllipse) ushape;
-		final double width = rect.getWidth();
-		final double height = rect.getHeight();
-
-		final String color = param.getColor() == null ? "none" : HtmlColor.getAsHtml(param.getColor());
-		final String backcolor = param.getBackcolor() == null ? "none" : HtmlColor.getAsHtml(param.getBackcolor());
-
-		svg.setFillColor(backcolor);
-		svg.setStrokeColor(color);
-		svg.setStrokeWidth(""+param.getStroke().getThickness(), param.getStroke().getDasharraySvg());
-
-		svg.svgEllipse(x + width / 2, y + height / 2, width / 2, height / 2);
+	public void draw(UShape ushape, double x, double y, UParam param, EpsGraphics eps) {
+		final UImage shape = (UImage) ushape;
+		eps.drawImage(shape.getImage(), x, y);
 	}
 
 }

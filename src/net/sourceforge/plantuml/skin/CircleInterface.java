@@ -28,16 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5080 $
+ * Revision $Revision: 5343 $
  *
  */
 package net.sourceforge.plantuml.skin;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Shape;
-import java.awt.geom.Ellipse2D;
 
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
@@ -62,21 +58,21 @@ public class CircleInterface implements UDrawable {
 		this.thickness = thickness;
 	}
 
-	public void draw(Graphics2D g2d) {
-
-		g2d.setStroke(new BasicStroke(thickness));
-
-		final Shape head = new Ellipse2D.Double(thickness, thickness, headDiam, headDiam);
-
-		g2d.setColor(backgroundColor);
-		g2d.fill(head);
-
-		g2d.setColor(foregroundColor);
-		g2d.draw(head);
-
-		g2d.setStroke(new BasicStroke());
-		throw new UnsupportedOperationException();
-	}
+//	public void draw(Graphics2D g2d) {
+//
+//		g2d.setStroke(new BasicStroke(thickness));
+//
+//		final Shape head = new Ellipse2D.Double(thickness, thickness, headDiam, headDiam);
+//
+//		g2d.setColor(backgroundColor);
+//		g2d.fill(head);
+//
+//		g2d.setColor(foregroundColor);
+//		g2d.draw(head);
+//
+//		g2d.setStroke(new BasicStroke());
+//		throw new UnsupportedOperationException();
+//	}
 	
 	public void drawU(UGraphic ug) {
 

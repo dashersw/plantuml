@@ -27,32 +27,50 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4207 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
+public class PostScriptCommandMacro implements PostScriptCommand {
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+	final private String name;
+	final private PostScriptData data = new PostScriptData();
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
-
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	public PostScriptCommandMacro(String name) {
+		this.name = name;
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public String getName() {
+		return name;
 	}
 
+	public void add(PostScriptCommand cmd) {
+		data.add(cmd);
+	}
+
+	public String toPostString() {
+		return name;
+	}
+
+	public String toPostStringDefinition() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("/" + name + " {\n");
+		sb.append(data.toPostString());
+		sb.append("} def\n");
+		return sb.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return data.toPostString().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		final PostScriptCommandMacro other = (PostScriptCommandMacro) obj;
+		return this.data.toPostString().equals(other.data.toPostString());
+	}
 
 }

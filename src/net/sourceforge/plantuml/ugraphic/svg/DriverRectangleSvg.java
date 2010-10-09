@@ -72,7 +72,7 @@ public class DriverRectangleSvg implements UDriver<SvgGraphics> {
 			svg.setStrokeColor(null);
 		}
 
-		svg.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharray());
+		svg.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharraySvg());
 
 		final UClip clip = clipContainer.getClip();
 

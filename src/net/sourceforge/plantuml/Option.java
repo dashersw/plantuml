@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5269 $
+ * Revision $Revision: 5343 $
  *
  */
 package net.sourceforge.plantuml;
@@ -82,6 +82,8 @@ public class Option {
 			String s = arg[i];
 			if (s.equalsIgnoreCase("-tsvg") || s.equalsIgnoreCase("-svg")) {
 				setFileFormat(FileFormat.SVG);
+			} else if (s.equalsIgnoreCase("-teps") || s.equalsIgnoreCase("-eps")) {
+				setFileFormat(FileFormat.EPS);
 			} else if (s.equalsIgnoreCase("-ttxt") || s.equalsIgnoreCase("-txt")) {
 				setFileFormat(FileFormat.ATXT);
 			} else if (s.equalsIgnoreCase("-tutxt") || s.equalsIgnoreCase("-utxt")) {

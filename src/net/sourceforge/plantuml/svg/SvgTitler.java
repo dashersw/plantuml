@@ -80,7 +80,7 @@ public final class SvgTitler {
 		if (textBloc == null) {
 			return 0;
 		}
-		return textBloc.calculateDimension(new UGraphicSvg().getStringBounder()).getHeight() + margin;
+		return textBloc.calculateDimension(new UGraphicSvg(false).getStringBounder()).getHeight() + margin;
 	}
 
 	public String addTitleSvg(String svg, double width, double height) throws IOException {
@@ -88,7 +88,7 @@ public final class SvgTitler {
 			return svg;
 		}
 
-		final UGraphicSvg uGraphicSvg = new UGraphicSvg();
+		final UGraphicSvg uGraphicSvg = new UGraphicSvg(false);
 		final Dimension2D dimText = textBloc.calculateDimension(uGraphicSvg.getStringBounder());
 		final double xpos;
 

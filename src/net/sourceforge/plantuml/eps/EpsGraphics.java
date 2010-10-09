@@ -34,7 +34,10 @@
 package net.sourceforge.plantuml.eps;
 
 import java.awt.Color;
+import java.awt.geom.PathIterator;
+import java.awt.image.BufferedImage;
 import java.util.Date;
+import java.util.Locale;
 
 public class EpsGraphics {
 
@@ -54,8 +57,6 @@ public class EpsGraphics {
 		header.append("%%Creator: PlantUML\n");
 		header.append("%%Title: noTitle\n");
 		header.append("%%CreationDate: " + new Date() + "\n");
-
-		body.append("gsave\n");
 	}
 
 	private boolean closeDone = false;
@@ -72,24 +73,30 @@ public class EpsGraphics {
 		}
 	}
 
+	protected final Color getColor() {
+		return color;
+	}
+
 	public void close() {
 		checkCloseDone();
 
 		header.append("%%BoundingBox: 0 0 " + maxX + " " + maxY + "\n");
-		//header.append("%%DocumentData: Clean7Bit\n");
-		//header.append("%%DocumentProcessColors: Black\n");
+		// header.append("%%DocumentData: Clean7Bit\n");
+		// header.append("%%DocumentProcessColors: Black\n");
 		header.append("%%ColorUsage: Color\n");
 		header.append("%%Origin: 0 0\n");
 		header.append("%%EndComments\n\n");
+		header.append("gsave\n");
+		header.append("0 " + maxY + " translate\n");
+		header.append("1 -1 scale\n");
 
-		body.append("grestore\n");
+		append("grestore");
 
 		// if(isClipSet())
 		// writer.write("grestore\n");
 
-		body.append("showpage\n");
-		body.append("\n");
-		body.append("%%EOF");
+		append("showpage");
+		append("%%EOF");
 		closeDone = true;
 	}
 
@@ -103,7 +110,11 @@ public class EpsGraphics {
 		if (closeDone == false) {
 			close();
 		}
-		return header.toString() + body.toString();
+		return header.toString() + getBodyString();
+	}
+
+	protected String getBodyString() {
+		return body.toString();
 	}
 
 	public final void setStrokeColor(Color c) {
@@ -123,30 +134,40 @@ public class EpsGraphics {
 	}
 
 	public void epsLine(double x1, double y1, double x2, double y2) {
+		if (strokeDasharray != null) {
+			append("[" + strokeDasharray + "] 0 setdash");
+		}
 		checkCloseDone();
 		append(strokeWidth + " setlinewidth");
 		appendColor(color);
 		append("newpath");
-		append("" + x1 + " " + y1 + " " + " moveto");
-		append("" + x2 + " " + y2 + " " + " lineto");
+		append(format(x1) + " " + format(y1) + " moveto");
+		append(format(x2 - x1) + " " + format(y2 - y1) + " rlineto");
 		append("closepath stroke");
 		ensureVisible(Math.max(x1, x2), Math.max(y1, y2));
+		if (strokeDasharray != null) {
+			append("[] 0 setdash");
+		}
 	}
 
 	public void epsPolygon(double... points) {
 		checkCloseDone();
+		double lastX = 0;
+		double lastY = 0;
 		if (fillcolor != null) {
 			appendColor(fillcolor);
 			append("newpath");
 			for (int i = 0; i < points.length; i += 2) {
 				ensureVisible(points[i], points[i + 1]);
 				if (i == 0) {
-					append("" + points[i] + " " + points[i + 1] + " " + " moveto");
+					append(format(points[i]) + " " + format(points[i + 1]) + " moveto");
 				} else {
-					append("" + points[i] + " " + points[i + 1] + " " + " lineto");
+					append(format(points[i] - lastX) + " " + format(points[i + 1] - lastY) + " rlineto");
 				}
+				lastX = points[i];
+				lastY = points[i + 1];
 			}
-			append("" + points[0] + " " + points[1] + " " + " lineto");
+			append(format(points[0]) + " " + format(points[1]) + " lineto");
 			append("closepath eofill");
 		}
 
@@ -157,12 +178,14 @@ public class EpsGraphics {
 			for (int i = 0; i < points.length; i += 2) {
 				ensureVisible(points[i], points[i + 1]);
 				if (i == 0) {
-					append("" + points[i] + " " + points[i + 1] + " " + " moveto");
+					append(format(points[i]) + " " + format(points[i + 1]) + " moveto");
 				} else {
-					append("" + points[i] + " " + points[i + 1] + " " + " lineto");
+					append(format(points[i] - lastX) + " " + format(points[i + 1] - lastY) + " rlineto");
 				}
+				lastX = points[i];
+				lastY = points[i + 1];
 			}
-			append("" + points[0] + " " + points[1] + " " + " lineto");
+			append(format(points[0]) + " " + format(points[1]) + " lineto");
 			append("closepath stroke");
 		}
 
@@ -174,11 +197,11 @@ public class EpsGraphics {
 		if (fillcolor != null) {
 			appendColor(fillcolor);
 			append("newpath");
-			append("" + x + " " + y + " " + " moveto");
-			append("" + (x + width) + " " + y + " " + " lineto");
-			append("" + (x + width) + " " + (y + height) + " " + " lineto");
-			append("" + x + " " + (y + height) + " " + " lineto");
-			append("" + x + " " + y + " " + " lineto");
+			append(format(x) + " " + format(y) + " moveto");
+			append(format(width) + " 0 rlineto");
+			append("0 " + format(height) + " rlineto");
+			append(format(-width) + " 0 rlineto");
+			// append("0 " + format(-height) + " rlineto");
 			append("closepath eofill");
 		}
 
@@ -186,11 +209,11 @@ public class EpsGraphics {
 			append(strokeWidth + " setlinewidth");
 			appendColor(color);
 			append("newpath");
-			append("" + x + " " + y + " " + " moveto");
-			append("" + (x + width) + " " + y + " " + " lineto");
-			append("" + (x + width) + " " + (y + height) + " " + " lineto");
-			append("" + x + " " + (y + height) + " " + " lineto");
-			append("" + x + " " + y + " " + " lineto");
+			append(format(x) + " " + format(y) + " moveto");
+			append(format(width) + " 0 rlineto");
+			append("0 " + format(height) + " rlineto");
+			append(format(-width) + " 0 rlineto");
+			// append("0 " + format(-height) + " rlineto");
 			append("closepath stroke");
 		}
 	}
@@ -204,7 +227,7 @@ public class EpsGraphics {
 		if (fillcolor != null) {
 			appendColor(fillcolor);
 			append("newpath");
-			append("" + x + " " + y + " " + xRadius + " 0 360 arc");
+			append(format(x) + " " + format(y) + " " + format(xRadius) + " 0 360 arc");
 			append("closepath eofill");
 		}
 
@@ -212,20 +235,102 @@ public class EpsGraphics {
 			append(strokeWidth + " setlinewidth");
 			appendColor(color);
 			append("newpath");
-			append("" + x + " " + y + " " + xRadius + " 0 360 arc");
+			append(format(x) + " " + format(y) + " " + format(xRadius) + " 0 360 arc");
 			append("closepath stroke");
 		}
 	}
 
-	private void appendColor(Color c) {
+	protected void appendColor(Color c) {
 		final double r = c.getRed() / 255.0;
 		final double g = c.getGreen() / 255.0;
 		final double b = c.getBlue() / 255.0;
-		append("" + r + " " + g + " " + b + " setrgbcolor");
+		append(format(r) + " " + format(g) + " " + format(b) + " setrgbcolor");
 	}
 
-	private void append(String s) {
+	public static String format(double x) {
+		if (x == 0) {
+			return "0";
+		}
+		String s = String.format(Locale.US, "%1.4f", x);
+		s = s.replaceAll("(\\.\\d*?)0+$", "$1");
+		if (s.endsWith(".")) {
+			s = s.substring(0, s.length() - 1);
+		}
+		return s;
+	}
+
+	protected void append(String s) {
+		if (s.indexOf("  ") != -1) {
+			throw new IllegalArgumentException(s);
+		}
 		body.append(s + "\n");
 	}
 
+	// FONT
+	public void moveto(double x1, double y1) {
+		append(format(x1) + " " + format(y1) + " moveto");
+	}
+
+	public void lineto(double x1, double y1) {
+		append(format(x1) + " " + format(y1) + " lineto");
+	}
+
+	public void curveto(double x1, double y1, double x2, double y2, double x3, double y3) {
+		append(format(x1) + " " + format(y1) + " " + format(x2) + " " + format(y2) + " " + format(x3) + " "
+				+ format(y3) + " curveto");
+	}
+
+	public void quadto(double x1, double y1, double x2, double y2) {
+		append(format(x1) + " " + format(y1) + " " + format(x1) + " " + format(y1) + " " + format(x2) + " "
+				+ format(y2) + " curveto");
+	}
+
+	public void newpath() {
+		append("0 setlinewidth");
+		append("[] 0 setdash");
+		appendColor(color);
+		append("newpath");
+	}
+
+	public void closepath() {
+		append("closepath");
+	}
+
+	public void fill(int windingRule) {
+		append("%fill");
+		if (windingRule == PathIterator.WIND_EVEN_ODD) {
+			append("eofill");
+		} else if (windingRule == PathIterator.WIND_NON_ZERO) {
+			append("fill");
+		}
+	}
+
+	public void drawImage(BufferedImage image, double x, double y) {
+		final int width = image.getWidth();
+		final int height = image.getHeight();
+		append("gsave");
+		append(format(x) + " " + format(y) + " translate");
+		append(format(width) + " " + format(height) + " scale");
+		append("" + width + " " + height + " 8 [" + width + " 0 0 -" + height + " 0 " + height + "]");
+		// append("" + width + " " + height + " 8 [0 0 0 0 0 0]");
+		append("{<");
+		final StringBuilder sb = new StringBuilder();
+		for (int j = height - 1; j >= 0; j--) {
+			for (int i = 0; i < width; i++) {
+				final String hexString = getRgb(image.getRGB(i, j));
+				assert hexString.length() == 6;
+				sb.append(hexString);
+			}
+		}
+		append(sb.toString());
+		// append(">} image");
+		append(">} false 3 colorimage");
+		ensureVisible(x + width, y + height);
+		append("grestore");
+	}
+
+	static String getRgb(int x) {
+		final String s = "000000" + Integer.toHexString(x);
+		return s.substring(s.length() - 6);
+	}
 }

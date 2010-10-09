@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4125 $
+ * Revision $Revision: 5343 $
  *
  */
 package net.sourceforge.plantuml.graph;
@@ -36,14 +36,12 @@ package net.sourceforge.plantuml.graph;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.skin.CircleInterface;
@@ -70,22 +68,23 @@ class EntityImageCircleInterface extends AbstractEntityImage {
 
 	@Override
 	public void draw(Graphics2D g2d) {
-		final Dimension2D dimTotal = getDimension(StringBounderUtils.asStringBounder(g2d));
-		final Dimension2D nameDim = name.calculateDimension(StringBounderUtils.asStringBounder(g2d));
-
-		final double manWidth = circleInterface.getPreferredWidth(StringBounderUtils.asStringBounder(g2d));
-		final double manHeight = circleInterface.getPreferredHeight(StringBounderUtils.asStringBounder(g2d));
-
-		final double manX = (dimTotal.getWidth() - manWidth) / 2;
-
-		g2d.setColor(Color.WHITE);
-		g2d.fill(new Rectangle2D.Double(0, 0, dimTotal.getWidth(), dimTotal.getHeight()));
-
-		g2d.translate(manX, 0);
-		circleInterface.draw(g2d);
-		g2d.translate(-manX, 0);
-
-		g2d.setColor(Color.BLACK);
-		name.drawTOBEREMOVED(g2d, (dimTotal.getWidth() - nameDim.getWidth()) / 2, manHeight);
+		throw new UnsupportedOperationException();
+//		final Dimension2D dimTotal = getDimension(StringBounderUtils.asStringBounder(g2d));
+//		final Dimension2D nameDim = name.calculateDimension(StringBounderUtils.asStringBounder(g2d));
+//
+//		final double manWidth = circleInterface.getPreferredWidth(StringBounderUtils.asStringBounder(g2d));
+//		final double manHeight = circleInterface.getPreferredHeight(StringBounderUtils.asStringBounder(g2d));
+//
+//		final double manX = (dimTotal.getWidth() - manWidth) / 2;
+//
+//		g2d.setColor(Color.WHITE);
+//		g2d.fill(new Rectangle2D.Double(0, 0, dimTotal.getWidth(), dimTotal.getHeight()));
+//
+//		g2d.translate(manX, 0);
+//		circleInterface.draw(g2d);
+//		g2d.translate(-manX, 0);
+//
+//		g2d.setColor(Color.BLACK);
+//		name.drawTOBEREMOVED(g2d, (dimTotal.getWidth() - nameDim.getWidth()) / 2, manHeight);
 	}
 }

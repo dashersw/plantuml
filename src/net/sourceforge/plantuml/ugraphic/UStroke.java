@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3837 $
+ * Revision $Revision: 5289 $
  *
  */
 package net.sourceforge.plantuml.ugraphic;
@@ -59,11 +59,18 @@ public class UStroke {
 		return thickness;
 	}
 
-	public String getDasharray() {
+	public String getDasharraySvg() {
 		if (dash == 0) {
 			return null;
 		}
 		return "" + dash + "," + dash;
+	}
+
+	public String getDasharrayEps() {
+		if (dash == 0) {
+			return null;
+		}
+		return "" + dash + " " + (2*dash);
 	}
 
 }

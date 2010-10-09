@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5280 $
+ * Revision $Revision: 5335 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -76,6 +76,7 @@ import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Imaged;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.eps.SvgToEpsConverter;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
@@ -95,6 +96,7 @@ import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svg.SvgTitler;
+import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 
@@ -570,7 +572,7 @@ public final class CucaDiagramFileMaker {
 		return pngTitler.processImage(im, background, 3);
 	}
 
-	private void cleanTemporaryFiles(final Collection<? extends Imaged> imageFiles) {
+	private void cleanTemporaryFiles(final Collection<? extends Imaged> imageFiles) throws IOException {
 		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			for (Imaged entity : imageFiles) {
 				if (entity.getImageFile() != null) {
@@ -635,7 +637,7 @@ public final class CucaDiagramFileMaker {
 	}
 
 	private DrawFile createImageForNote(String display, HtmlColor backColor) throws IOException {
-		final File f = createTempFile("plantumlB", ".png");
+		final File fPng = createTempFile("plantumlB", ".png");
 
 		final Rose skin = new Rose();
 
@@ -652,14 +654,21 @@ public final class CucaDiagramFileMaker {
 		final Graphics2D g2d = builder.getGraphics2D();
 
 		comp.drawU(new UGraphicG2d(g2d, null), new Dimension(width, height), new SimpleContext2D(false));
-		PngIO.write(im, f);
-
+		PngIO.write(im, fPng);
 		g2d.dispose();
 
-		final UGraphicSvg ug = new UGraphicSvg();
+		final UGraphicSvg ug = new UGraphicSvg(true);
 		comp.drawU(ug, new Dimension(width, height), new SimpleContext2D(false));
+		
+		final File fEps = createTempFile("plantumlB", ".eps");
+		final PrintWriter pw = new PrintWriter(fEps);
+		final UGraphicEps uEps = new UGraphicEps(EpsStrategy.getDefault());
+		comp.drawU(uEps, new Dimension(width, height), new SimpleContext2D(false));
+		pw.print(uEps.getEPSCode());
+		pw.close();
+		
 
-		return new DrawFile(f, getSvg(ug));
+		return new DrawFile(fPng, getSvg(ug), fEps);
 	}
 
 	static public String getSvg(UGraphicSvg ug) throws IOException {
@@ -685,13 +694,14 @@ public final class CucaDiagramFileMaker {
 		}
 
 		final File f = createTempFile("plantumlA", ".png");
+		final File fEps = createTempFile("plantumlA", ".eps");
 		final Color classBorder = rose.getHtmlColor(getSkinParam(), ColorParam.classBorder).getColor();
 		final Color classBackground = rose.getHtmlColor(getSkinParam(), ColorParam.classBackground).getColor();
 		final Font font = diagram.getSkinParam().getFont(FontParam.CIRCLED_CHARACTER);
 		final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), getSkinParam()
 				.getCircledCharacterRadius(), font, stereotype.getColor(), classBorder, Color.BLACK);
-		staticFiles.generateCircleCharacterPng(f, circledCharacter, classBackground);
-		return new DrawFile(f, UGraphicG2d.getSvgString(circledCharacter));
+		return staticFiles.generateCircleCharacter(f, fEps, circledCharacter, classBackground);
+		//return new DrawFile(f, UGraphicG2d.getSvgString(circledCharacter), fEps);
 
 	}
 
@@ -715,8 +725,8 @@ public final class CucaDiagramFileMaker {
 
 		try {
 			deltaY = 0;
-			// populateImages();
-			// populateImagesLink();
+			populateImages();
+			populateImagesLink();
 			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(), staticFiles
 					.getVisibilityImages(), dotStrings, true);
 			final String dotString = dotMaker.createDotString();

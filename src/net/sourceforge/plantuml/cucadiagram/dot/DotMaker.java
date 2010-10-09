@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5190 $
+ * Revision $Revision: 5334 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -48,6 +48,7 @@ import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.StringUtils;
@@ -429,7 +430,7 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private void printLinks(StringBuilder sb, List<Link> links) {
+	private void printLinks(StringBuilder sb, List<Link> links) throws IOException {
 		for (Link link : appendPhantomLink(links)) {
 			final IEntity entity1 = link.getEntity1();
 			final IEntity entity2 = link.getEntity2();
@@ -450,7 +451,7 @@ final public class DotMaker implements GraphvizMaker {
 		}
 	}
 
-	private void printLink(StringBuilder sb, Link link) {
+	private void printLink(StringBuilder sb, Link link) throws IOException {
 		final StringBuilder decoration = getLinkDecoration();
 
 		if (link.getWeight() > 1) {
@@ -468,7 +469,7 @@ final public class DotMaker implements GraphvizMaker {
 		if (link.getLabel() != null) {
 			decoration.append("label=<" + manageHtmlIB(link.getLabel(), getArrowFontParam()) + ">,");
 		} else if (noteLink != null) {
-			decoration.append("label=<" + getHtmlForLinkNote(noteLink.getPng()) + ">,");
+			decoration.append("label=<" + getHtmlForLinkNote(noteLink.getPngOrEps(isEps)) + ">,");
 		}
 
 		if (link.getQualifier1() != null) {
@@ -751,12 +752,15 @@ final public class DotMaker implements GraphvizMaker {
 		} else if (type == EntityType.NOTE) {
 			final DrawFile file = entity.getImageFile();
 			if (file == null) {
+				// sb.append(entity.getUid() + ";");
+				// Log.error("Warning : no file for NOTE");
+				// return;
+				throw new IllegalStateException("No file for NOTE");
+			}
+			if (file.getPngOrEps(isEps).exists() == false) {
 				throw new IllegalStateException();
 			}
-			if (file.getPng().exists() == false) {
-				throw new IllegalStateException();
-			}
-			final String absolutePath = StringUtils.getPlateformDependentAbsolutePath(file.getPng());
+			final String absolutePath = StringUtils.getPlateformDependentAbsolutePath(file.getPngOrEps(isEps));
 			sb.append(entity.getUid() + " [margin=0,pad=0," + label + ",shape=none,image=\"" + absolutePath + "\"];");
 		} else if (type == EntityType.ACTIVITY) {
 			String shape = "octagon";
@@ -891,7 +895,7 @@ final public class DotMaker implements GraphvizMaker {
 		return "<" + manageHtmlIB(entity.getDisplay(), param) + ">";
 	}
 
-	private String getLabelForState(IEntity entity) {
+	private String getLabelForState(IEntity entity) throws IOException {
 		final DrawFile cFile = entity.getImageFile();
 		final String stateBgcolor = getColorString(ColorParam.stateBackground);
 
@@ -957,9 +961,9 @@ final public class DotMaker implements GraphvizMaker {
 		return sb.toString();
 	}
 
-	private String getLabelForActor(IEntity entity) {
-		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages().get(
-				EntityType.ACTOR).getPngOrEps(isEps));
+	private String getLabelForActor(IEntity entity) throws IOException {
+		final String actorAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages()
+				.get(EntityType.ACTOR).getPngOrEps(isEps));
 		final Stereotype stereotype = getStereotype(entity);
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
@@ -974,9 +978,9 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForCircleInterface(IEntity entity) {
+	private String getLabelForCircleInterface(IEntity entity) throws IOException {
 		final String circleInterfaceAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages()
-				.get(EntityType.CIRCLE_INTERFACE).getPng());
+				.get(EntityType.CIRCLE_INTERFACE).getPngOrEps(isEps));
 		final Stereotype stereotype = getStereotype(entity);
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
@@ -990,9 +994,9 @@ final public class DotMaker implements GraphvizMaker {
 
 	}
 
-	private String getLabelForLollipop(IEntity entity) {
+	private String getLabelForLollipop(IEntity entity) throws IOException {
 		final String circleInterfaceAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(data.getStaticImages()
-				.get(EntityType.LOLLIPOP).getPng());
+				.get(EntityType.LOLLIPOP).getPngOrEps(isEps));
 		final Stereotype stereotype = getStereotype(entity);
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">");
@@ -1024,7 +1028,7 @@ final public class DotMaker implements GraphvizMaker {
 		}
 		final String circleAbsolutePath;
 		if (data.showPortion(EntityPortion.CIRCLED_CHARACTER, entity)) {
-			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile.getPng());
+			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile.getPngOrEps(isEps));
 		} else {
 			circleAbsolutePath = null;
 		}
@@ -1095,7 +1099,7 @@ final public class DotMaker implements GraphvizMaker {
 		}
 		final String circleAbsolutePath;
 		if (data.showPortion(EntityPortion.CIRCLED_CHARACTER, entity)) {
-			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile.getPng());
+			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile.getPngOrEps(isEps));
 		} else {
 			circleAbsolutePath = null;
 		}
@@ -1109,10 +1113,10 @@ final public class DotMaker implements GraphvizMaker {
 		} else {
 			final int longuestHeader = getLonguestHeader(entity);
 			final int spring = computeSpring(longuestHeader, getLongestFieldOrAttribute(entity), 30);
-			final int springField = computeSpring(getLongestField(entity), Math.max(longuestHeader,
-					getLongestMethods(entity)), 30);
-			final int springMethod = computeSpring(getLongestMethods(entity), Math.max(longuestHeader,
-					getLongestField(entity)), 30);
+			final int springField = computeSpring(getLongestField(entity),
+					Math.max(longuestHeader, getLongestMethods(entity)), 30);
+			final int springMethod = computeSpring(getLongestMethods(entity),
+					Math.max(longuestHeader, getLongestField(entity)), 30);
 
 			sb.append("<TABLE BGCOLOR=" + getColorString(ColorParam.classBackground)
 					+ " BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">");
@@ -1154,7 +1158,7 @@ final public class DotMaker implements GraphvizMaker {
 		return spring;
 	}
 
-	private void buildTableVisibility(IEntity entity, boolean isField, final StringBuilder sb, int spring) {
+	private void buildTableVisibility(IEntity entity, boolean isField, final StringBuilder sb, int spring) throws IOException {
 		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
 
 		final boolean hasStatic = hasStatic(entity.methods2());
@@ -1165,7 +1169,7 @@ final public class DotMaker implements GraphvizMaker {
 					.getVisibilityModifier(s.charAt(0), isField);
 			if (visibilityModifier != null) {
 				final String modifierFile = StringUtils.getPlateformDependentAbsolutePath(data.getVisibilityImages()
-						.get(visibilityModifier).getPng());
+						.get(visibilityModifier).getPngOrEps(isEps));
 				sb.append("<IMG SRC=\"" + modifierFile + "\"/>");
 				s = s.substring(1);
 			}
@@ -1232,8 +1236,8 @@ final public class DotMaker implements GraphvizMaker {
 
 		final int longuestHeader = getLonguestHeader(entity);
 		final int spring = computeSpring(longuestHeader, getLongestFieldOrAttribute(entity), 30);
-		final int springField = computeSpring(getLongestField(entity), Math.max(longuestHeader,
-				getLongestMethods(entity)), 30);
+		final int springField = computeSpring(getLongestField(entity),
+				Math.max(longuestHeader, getLongestMethods(entity)), 30);
 
 		final StringBuilder sb = new StringBuilder("<<TABLE BGCOLOR=" + getColorString(ColorParam.classBackground)
 				+ " BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\" CELLPADDING=\"4\">");
@@ -1371,9 +1375,7 @@ final public class DotMaker implements GraphvizMaker {
 		}
 		final StringBuilder sb = new StringBuilder();
 
-		sb
-				.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"" + border + "\" CELLPADDING=\"" + border
-						+ "\">");
+		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"" + border + "\" CELLPADDING=\"" + border + "\">");
 		sb.append("<TR>");
 
 		for (int i = 0; i < spring; i++) {
@@ -1381,11 +1383,15 @@ final public class DotMaker implements GraphvizMaker {
 		}
 
 		if (circleAbsolutePath != null) {
-			final BufferedImage im = ImageIO.read(new File(circleAbsolutePath));
-			final int height = im.getHeight();
-			final int width = im.getWidth();
-			sb.append("<TD FIXEDSIZE=\"TRUE\" WIDTH=\"" + width + "\" HEIGHT=\"" + height + "\"><IMG SRC=\""
-					+ circleAbsolutePath + "\"/></TD>");
+			if (circleAbsolutePath.endsWith(".png")) {
+				final BufferedImage im = ImageIO.read(new File(circleAbsolutePath));
+				final int height = im.getHeight();
+				final int width = im.getWidth();
+				sb.append("<TD FIXEDSIZE=\"TRUE\" WIDTH=\"" + width + "\" HEIGHT=\"" + height + "\"><IMG SRC=\""
+						+ circleAbsolutePath + "\"/></TD>");
+			} else if (circleAbsolutePath.endsWith(".eps")) {
+				sb.append("<TD><IMG SRC=\"" + circleAbsolutePath + "\"/></TD>");
+			}
 		}
 
 		sb.append("<TD>");

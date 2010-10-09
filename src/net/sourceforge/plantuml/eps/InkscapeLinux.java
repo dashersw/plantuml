@@ -27,32 +27,33 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4826 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+class InkscapeLinux extends AbstractInkscape {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+	@Override
+	protected File specificExe() {
+		final File usrLocalBin = new File("/usr/local/bin/inkscape");
+		if (usrLocalBin.exists()) {
+			return usrLocalBin;
+		}
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+		final File usrBin = new File("/usr/bin/inkscape");
+		if (usrBin.exists()) {
+			return usrBin;
+		}
+		return null;
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	@Override
+	protected void appendFilePath(final StringBuilder sb, File file) {
+		sb.append(file.getAbsolutePath());
 	}
-
 
 }

@@ -43,68 +43,96 @@ import net.sourceforge.plantuml.Log;
 
 public class DrawFile {
 
-	private final File png;
-	private final String svg;
-	private final File eps;
+	private final LazyCached<File> png2;
+	private final LazyCached<String> svg2;
+	private final LazyCached<File> eps2;
 
 	private int widthPng = -1;
 	private int heightPng = -1;
 
-	public DrawFile(File png) {
-		this(png, null, null);
+	public DrawFile(Lazy<File> png) {
+		this(png, (Lazy<String>) null, null);
 	}
 
-	public DrawFile(File png, String svg) {
+	public DrawFile(Lazy<File> png, Lazy<String> svg) {
 		this(png, svg, null);
 	}
 
-	public DrawFile(File png, String svg, File eps) {
-		this.png = png;
-		this.svg = svg;
-		this.eps = eps;
+	public DrawFile(Lazy<File> png, Lazy<String> svg, Lazy<File> eps) {
+		this.png2 = new LazyCached<File>(png);
+		this.svg2 = new LazyCached<String>(svg);
+		this.eps2 = new LazyCached<File>(eps);
 	}
 
-	public File getPngOrEps(boolean isEps) {
+	public DrawFile(File fPng, String svg, File fEps) {
+		this(new Unlazy<File>(fPng), new Unlazy<String>(svg), new Unlazy<File>(fEps));
+	}
+
+	public DrawFile(File fPng, String svg, Lazy<File> eps) {
+		this(new Unlazy<File>(fPng), new Unlazy<String>(svg), eps);
+	}
+
+	public DrawFile(Lazy<File> png, String svg, Lazy<File> eps) {
+		this(png, new Unlazy<String>(svg), eps);
+	}
+
+	public DrawFile(File f, String svg) {
+		this(f, svg, (File) null);
+	}
+
+	public File getPngOrEps(boolean isEps) throws IOException {
 		if (isEps) {
-			if (eps == null) {
-				throw new UnsupportedOperationException();
+			if (eps2 == null) {
+				throw new UnsupportedOperationException("No eps for " + getPng().getAbsolutePath());
 			}
-			return eps;
+			return getEps();
 		} else {
-			return png;
+			return getPng();
 		}
 	}
 
-	public File getPng() {
-		return png;
+	public File getPng() throws IOException {
+		return png2.getNow();
 	}
 
-	public String getSvg() {
-		return svg;
+	public String getSvg() throws IOException {
+		return svg2.getNow();
 	}
 
-	public File getEps() {
-		return eps;
+	public File getEps() throws IOException {
+		return eps2.getNow();
 	}
 
 	private void initSize() throws IOException {
-		final BufferedImage im = ImageIO.read(png);
+		final BufferedImage im = ImageIO.read(getPng());
 		widthPng = im.getWidth();
 		heightPng = im.getHeight();
 	}
 
 	public void delete() {
 		Thread.yield();
-		Log.info("Deleting temporary file " + png);
-		final boolean ok = png.delete();
-		if (ok == false) {
-			Log.error("Cannot delete: " + png);
+		if (png2 != null && png2.isLoaded()) {
+			try {
+				Log.info("Deleting temporary file " + getPng());
+				final boolean ok = getPng().delete();
+				if (ok == false) {
+					Log.error("Cannot delete: " + getPng());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.error("Problem deleting PNG file");
+			}
 		}
-		if (eps != null) {
-			Log.info("Deleting temporary file " + eps);
-			final boolean ok2 = eps.delete();
-			if (ok2 == false) {
-				Log.error("Cannot delete: " + eps);
+		if (eps2 != null && eps2.isLoaded()) {
+			try {
+				Log.info("Deleting temporary file " + getEps());
+				final boolean ok2 = getEps().delete();
+				if (ok2 == false) {
+					Log.error("Cannot delete: " + getEps());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.error("Problem deleting EPS file");
 			}
 
 		}
@@ -124,12 +152,12 @@ public class DrawFile {
 		return heightPng;
 	}
 
-	@Override
-	public String toString() {
-		if (svg == null) {
-			return png.toString();
-		}
-		return png + " " + svg.length();
-	}
+	// @Override
+	// public String toString() {
+	// if (svg == null) {
+	// return getPng().toString();
+	// }
+	// return png + " " + svg.length();
+	// }
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4265 $
+ * Revision $Revision: 5328 $
  *
  */
 package net.sourceforge.plantuml.svg;
@@ -365,6 +365,42 @@ public class SvgGraphics {
 		elt.setAttribute("d", sb.toString());
 		elt.setAttribute("style", getStyle());
 		getG().appendChild(elt);
+	}
+
+	public void newpath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void moveto(double d, double e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void lineto(double d, double e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void closepath() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void curveto(double d, double e, double f, double h, double i,
+			double j) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void quadto(double d, double e, double f, double h) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void fill(int windingRule) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

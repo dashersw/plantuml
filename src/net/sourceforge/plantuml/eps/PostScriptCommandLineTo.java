@@ -27,32 +27,25 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4207 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public class PostScriptCommandLineTo implements PostScriptCommand {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+	private final double x;
+	private final double y;
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	public PostScriptCommandLineTo(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public String toPostString() {
+		return EpsGraphics.format(x) + " " + EpsGraphics.format(y) + " rlineto";
 	}
-
 
 }

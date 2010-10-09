@@ -27,32 +27,31 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 3977 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public class LazyCached<O> implements Lazy<O> {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+	private O data;
+	private final Lazy<O> lazy;
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	public LazyCached(Lazy<O> lazy) {
+		this.lazy = lazy;
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public O getNow() throws IOException {
+		if (data == null) {
+			this.data = this.lazy.getNow();
+		}
+		return this.data;
 	}
 
-
+	public boolean isLoaded() {
+		return data != null;
+	}
 }

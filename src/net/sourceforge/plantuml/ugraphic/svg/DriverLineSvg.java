@@ -66,7 +66,7 @@ public class DriverLineSvg implements UDriver<SvgGraphics> {
 		// param.getStroke().getThickness()));
 		final String color = param.getColor() == null ? "none" : HtmlColor.getAsHtml(param.getColor());
 		svg.setStrokeColor(color);
-		svg.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharray());
+		svg.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharraySvg());
 		svg.svgLine(x, y, x + shape.getDX(), y + shape.getDY());
 	}
 }

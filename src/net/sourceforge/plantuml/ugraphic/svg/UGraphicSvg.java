@@ -55,26 +55,36 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
 
-public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipContainer {
+public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements
+		ClipContainer {
 
-	final static Graphics2D imDummy = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB).createGraphics();
+	final static Graphics2D imDummy = new BufferedImage(10, 10,
+			BufferedImage.TYPE_INT_RGB).createGraphics();
 	private UClip clip;
 
 	private final StringBounder stringBounder;
 
-	public UGraphicSvg(String backcolor) {
-		this(new SvgGraphics(backcolor));
+	public UGraphicSvg(String backcolor, boolean textAsPath) {
+		this(new SvgGraphics(backcolor), textAsPath);
 	}
 
-	public UGraphicSvg() {
-		this(new SvgGraphics());
+	public UGraphicSvg(boolean textAsPath) {
+		this(new SvgGraphics(), textAsPath);
 	}
 
-	private UGraphicSvg(SvgGraphics svg) {
+	private UGraphicSvg(SvgGraphics svg, boolean textAsPath) {
 		super(svg);
 		stringBounder = StringBounderUtils.asStringBounder(imDummy);
 		registerDriver(URectangle.class, new DriverRectangleSvg(this));
-		registerDriver(UText.class, new DriverTextSvg(getStringBounder(), this));
+		textAsPath = false;
+		if (textAsPath) {
+			registerDriver(UText.class,
+					new DriverTextAsPathSvg(imDummy.getFontRenderContext(),
+							this));
+		} else {
+			registerDriver(UText.class, new DriverTextSvg(getStringBounder(),
+					this));
+		}
 		registerDriver(ULine.class, new DriverLineSvg(this));
 		registerDriver(UPolygon.class, new DriverPolygonSvg(this));
 		registerDriver(UEllipse.class, new DriverEllipseSvg());
@@ -99,7 +109,8 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 	}
 
 	public void setClip(UClip clip) {
-		this.clip = clip == null ? null : clip.translate(getTranslateX(), getTranslateY());
+		this.clip = clip == null ? null : clip.translate(getTranslateX(),
+				getTranslateY());
 	}
 
 	public UClip getClip() {
@@ -107,7 +118,8 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 	}
 
 	public void centerChar(double x, double y, char c, Font font) {
-		final UText uText = new UText("" + c, new FontConfiguration(font, getParam().getColor()));
+		final UText uText = new UText("" + c, new FontConfiguration(font,
+				getParam().getColor()));
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
 		// final Dimension2D dim = stringBounder.calculateDimension(font, "" +
 		// c);

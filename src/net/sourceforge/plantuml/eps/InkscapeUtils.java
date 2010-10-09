@@ -27,32 +27,33 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4826 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public class InkscapeUtils {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
-
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	private static boolean isWindows() {
+		return File.separatorChar == '\\';
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public static Inkscape create() {
+		if (isWindows()) {
+			return new InkscapeWindows();
+		}
+		return new InkscapeLinux();
 	}
 
+	public static String getenvInkscape() {
+		final String env = System.getProperty("INKSCAPE");
+		if (env != null) {
+			return env;
+		}
+		return System.getenv("INKSCAPE");
+	}
 
 }

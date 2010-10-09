@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4802 $
+ * Revision $Revision: 5347 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -93,7 +93,7 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 		}
 	}
 
-	private Dimension2D calculateDimension(StringBounder stringBounder, Font font, String text) {
+	static public Dimension2D calculateDimension(StringBounder stringBounder, Font font, String text) {
 		final Dimension2D rect = stringBounder.calculateDimension(font, text);
 		double h = rect.getHeight();
 		if (h < 10) {

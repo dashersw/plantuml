@@ -27,32 +27,28 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4207 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
+public enum EpsStrategy {
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+	VERY_SIMPLE, WITH_MACRO;
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
-
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	public EpsGraphics creatEpsGraphics() {
+		if (this == VERY_SIMPLE) {
+			return new EpsGraphics();
+		}
+		if (this == WITH_MACRO) {
+			return new EpsGraphicsMacro();
+		}
+		throw new IllegalArgumentException();
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public static EpsStrategy getDefault() {
+		return WITH_MACRO;
 	}
-
 
 }

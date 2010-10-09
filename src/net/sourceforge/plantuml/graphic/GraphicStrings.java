@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5256 $
+ * Revision $Revision: 5326 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -103,8 +103,8 @@ public class GraphicStrings {
 		if (fileFormat == FileFormat.PNG) {
 			final BufferedImage im = createImage();
 			PngIO.write(im, os, metadata);
-		} else if (fileFormat == FileFormat.SVG) {
-			final UGraphicSvg svg = new UGraphicSvg(HtmlColor.getAsHtml(background));
+		} else if (fileFormat == FileFormat.SVG || fileFormat == FileFormat.EPS_VIA_SVG) {
+			final UGraphicSvg svg = new UGraphicSvg(HtmlColor.getAsHtml(background), false);
 			drawU(svg);
 			svg.createXml(os);
 		} else if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {

@@ -34,12 +34,20 @@ package net.sourceforge.plantuml.ugraphic.eps;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
+import net.sourceforge.plantuml.ugraphic.ClipContainer;
+import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UDriver;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
 
 public class DriverPolygonEps implements UDriver<EpsGraphics> {
+	
+	private final ClipContainer clipContainer;
+	
+	public DriverPolygonEps(ClipContainer clipContainer) {
+		this.clipContainer = clipContainer;
+	}
 
 	public void draw(UShape ushape, double x, double y, UParam param, EpsGraphics eps) {
 		final UPolygon shape = (UPolygon) ushape;
@@ -50,6 +58,16 @@ public class DriverPolygonEps implements UDriver<EpsGraphics> {
 		for (Point2D pt : shape.getPoints()) {
 			points[i++] = pt.getX() + x;
 			points[i++] = pt.getY() + y;
+		}
+		
+		final UClip clip = clipContainer.getClip();
+
+		if (clip != null) {
+			for (int j = 0; j < points.length; j += 2) {
+				if (clip.isInside(points[j], points[j + 1]) == false) {
+					return;
+				}
+			}
 		}
 
 		eps.setFillColor(param.getBackcolor());

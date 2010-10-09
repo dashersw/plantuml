@@ -63,7 +63,7 @@ public class DriverLineEps implements UDriver<EpsGraphics> {
 
 		//final String color = param.getColor() == null ? "none" : HtmlColor.getAsHtml(param.getColor());
 		eps.setStrokeColor(param.getColor());
-		eps.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharray());
+		eps.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharrayEps());
 		eps.epsLine(x, y, x + shape.getDX(), y + shape.getDY());
 	}
 }

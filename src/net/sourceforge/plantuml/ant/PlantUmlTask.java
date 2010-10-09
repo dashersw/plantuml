@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5138 $
+ * Revision $Revision: 5300 $
  *
  */
 package net.sourceforge.plantuml.ant;
@@ -198,6 +198,9 @@ public class PlantUmlTask extends Task {
 	}
 
 	public void setFormat(String s) {
+		if ("eps".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.EPS_VIA_SVG);
+		}
 		if ("svg".equalsIgnoreCase(s)) {
 			option.setFileFormat(FileFormat.SVG);
 		}

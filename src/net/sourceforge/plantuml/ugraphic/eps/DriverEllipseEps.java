@@ -46,7 +46,7 @@ public class DriverEllipseEps implements UDriver<EpsGraphics> {
 
 		eps.setFillColor(param.getBackcolor());
 		eps.setStrokeColor(param.getColor());
-		eps.setStrokeWidth(""+param.getStroke().getThickness(), param.getStroke().getDasharray());
+		eps.setStrokeWidth(""+param.getStroke().getThickness(), param.getStroke().getDasharraySvg());
 
 		eps.epsEllipse(x + width / 2, y + height / 2, width / 2, height / 2);
 	}

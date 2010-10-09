@@ -33,17 +33,23 @@ package net.sourceforge.plantuml.ugraphic.eps;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import net.sourceforge.plantuml.eps.EpsGraphics;
+import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
+import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.skin.UDrawable;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
+import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -56,19 +62,19 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 
 	private final StringBounder stringBounder;
 
-	public UGraphicEps() {
-		this(new EpsGraphics());
+	public UGraphicEps(EpsStrategy strategy) {
+		this(strategy.creatEpsGraphics());
 	}
 
 	private UGraphicEps(EpsGraphics eps) {
 		super(eps);
 		stringBounder = StringBounderUtils.asStringBounder(imDummy);
 		registerDriver(URectangle.class, new DriverRectangleEps(this));
-		registerDriver(UText.class, new DriverTextEps(getStringBounder(), this));
+		registerDriver(UText.class, new DriverTextEps(imDummy, this));
 		registerDriver(ULine.class, new DriverLineEps(this));
-		registerDriver(UPolygon.class, new DriverPolygonEps());
+		registerDriver(UPolygon.class, new DriverPolygonEps(this));
 		registerDriver(UEllipse.class, new DriverEllipseEps());
-		// registerDriver(UImage.class, new DriverImageSvg());
+		registerDriver(UImage.class, new DriverImageEps());
 		// registerDriver(UPath.class, new DriverPathSvg(this));
 	}
 
@@ -97,13 +103,27 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 	}
 
 	public void centerChar(double x, double y, char c, Font font) {
-		throw new UnsupportedOperationException();
+		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
+
+		final double xpos = x - unusedSpace.getCenterX() - 0.5;
+		final double ypos = y - unusedSpace.getCenterY() - 0.5;
+
+		final TextLayout t = new TextLayout("" + c, font, imDummy.getFontRenderContext());
+		getGraphicObject().setStrokeColor(getParam().getColor());
+		DriverTextEps.drawPathIterator(getGraphicObject(), xpos, ypos, t.getOutline(null).getPathIterator(null));
+
 	}
 
 	static public String getEpsString(UDrawable udrawable) throws IOException {
-		final UGraphicEps ug = new UGraphicEps();
+		final UGraphicEps ug = new UGraphicEps(EpsStrategy.getDefault());
 		udrawable.drawU(ug);
 		return ug.getEPSCode();
+	}
+
+	static public void copyEpsToFile(UDrawable udrawable, File f) throws IOException {
+		final PrintWriter pw = new PrintWriter(f);
+		pw.print(UGraphicEps.getEpsString(udrawable));
+		pw.close();
 	}
 
 }

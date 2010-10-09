@@ -27,32 +27,33 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 5350 $
+ * 
+ * Revision $Revision: 4207 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.eps;
 
-import java.util.Arrays;
-import java.util.List;
+public class PostScriptCommandCurveTo implements PostScriptCommand {
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+	private final double x1;
+	private final double y1;
+	private final double x2;
+	private final double y2;
+	private final double x3;
+	private final double y3;
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
-
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-//		return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-//		"node [fontsize=11,height=.35,width=.55];");
-		return Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-		"node [fontsize=11,height=.35,width=.55];");
+	public PostScriptCommandCurveTo(double x1, double y1, double x2, double y2, double x3, double y3) {
+		this.x1 = x1;
+		this.y1 = y1;
+		this.x2 = x2;
+		this.y2 = y2;
+		this.x3 = x3;
+		this.y3 = y3;
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public String toPostString() {
+		return EpsGraphics.format(x1) + " " + EpsGraphics.format(y1) + " " + EpsGraphics.format(x2) + " "
+				+ EpsGraphics.format(y2) + " " + EpsGraphics.format(x3) + " " + EpsGraphics.format(y3) + " rcurveto";
 	}
-
 
 }

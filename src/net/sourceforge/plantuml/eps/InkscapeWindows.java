@@ -34,57 +34,29 @@
 package net.sourceforge.plantuml.eps;
 
 import java.io.File;
-import java.io.IOException;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.cucadiagram.dot.ProcessRunner;
+class InkscapeWindows extends AbstractInkscape {
 
-class InkscapeWindows {
-
+	@Override
 	protected File specificExe() {
-		return new File("C:\\Program Files\\Inkscape\\inkscape");
+		final File f1 = new File("C:\\Program Files\\Inkscape\\inkscape.exe");
+		if (f1.exists()) {
+			return f1;
+		}
+
+		final File f2 = new File("C:\\Program Files (x86)\\Inkscape\\inkscape.exe");
+		if (f2.exists()) {
+			return f2;
+		}
+
+		return null;
 	}
 
-	String getCommandLine() {
-		final StringBuilder sb = new StringBuilder();
-		appendDoubleQuoteOnWindows(sb);
-		sb.append(specificExe().getAbsolutePath());
-		appendDoubleQuoteOnWindows(sb);
-		return sb.toString();
-	}
-
-	private static void appendDoubleQuoteOnWindows(final StringBuilder sb) {
+	@Override
+	protected void appendFilePath(final StringBuilder sb, File file) {
 		sb.append('\"');
-	}
-
-	final public void createEps(File svg, File eps) throws IOException, InterruptedException {
-		final StringBuilder cmd = new StringBuilder(getCommandLine());
-		cmd.append(" -E ");
-		appendDoubleQuoteOnWindows(cmd);
-		cmd.append(eps.getAbsolutePath());
-		appendDoubleQuoteOnWindows(cmd);
-		cmd.append(" ");
-		appendDoubleQuoteOnWindows(cmd);
-		cmd.append(svg.getAbsolutePath());
-		appendDoubleQuoteOnWindows(cmd);
-		String result = executeCmd(cmd.toString());
-	}
-
-	private String executeCmd(final String cmd) throws IOException,
-			InterruptedException {
-		final ProcessRunner p = new ProcessRunner(cmd);
-		p.run(null, null);
-		final StringBuilder sb = new StringBuilder();
-		if (StringUtils.isNotEmpty(p.getOut())) {
-			sb.append(p.getOut());
-		}
-		if (StringUtils.isNotEmpty(p.getError())) {
-			if (sb.length() > 0) {
-				sb.append(' ');
-			}
-			sb.append(p.getError());
-		}
-		return sb.toString().replace('\n', ' ').trim();
+		sb.append(file.getAbsolutePath());
+		sb.append('\"');
 	}
 
 }

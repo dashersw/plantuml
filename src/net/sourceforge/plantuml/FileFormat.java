@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5280 $
+ * Revision $Revision: 5333 $
  *
  */
 package net.sourceforge.plantuml;
@@ -38,7 +38,8 @@ public enum FileFormat {
 
 	public String getFileSuffix() {
 		if (this == EPS_VIA_SVG) {
-			return EPS.getFileSuffix();
+			throw new UnsupportedOperationException("Not used anymore");
+			// return EPS.getFileSuffix();
 		}
 		return "." + name().toLowerCase();
 	}

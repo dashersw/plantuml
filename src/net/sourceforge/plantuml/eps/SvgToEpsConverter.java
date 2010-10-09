@@ -33,28 +33,26 @@
  */
 package net.sourceforge.plantuml.eps;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 
 public class SvgToEpsConverter {
 
-	private final InkscapeWindows inkscape = new InkscapeWindows();
+	private final Inkscape inkscape;
 	private final File svgFile;
 
 	public SvgToEpsConverter(String svg) throws IOException {
 		if (svg == null) {
 			throw new IllegalArgumentException();
 		}
+		this.inkscape = InkscapeUtils.create();
 		this.svgFile = CucaDiagramFileMaker.createTempFile("convert", ".svg");
 		final PrintWriter pw = new PrintWriter(svgFile);
 		pw.println(svg);
@@ -65,6 +63,7 @@ public class SvgToEpsConverter {
 		if (svgFile == null) {
 			throw new IllegalArgumentException();
 		}
+		this.inkscape = InkscapeUtils.create();
 		this.svgFile = svgFile;
 	}
 

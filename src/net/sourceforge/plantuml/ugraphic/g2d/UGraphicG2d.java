@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4882 $
+ * Revision $Revision: 5326 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -103,7 +103,7 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> {
 	}
 	
 	static public String getSvgString(UDrawable udrawable) throws IOException {
-		final UGraphicSvg ug = new UGraphicSvg();
+		final UGraphicSvg ug = new UGraphicSvg(false);
 		udrawable.drawU(ug);
 		return CucaDiagramFileMaker.getSvg(ug);
 	}

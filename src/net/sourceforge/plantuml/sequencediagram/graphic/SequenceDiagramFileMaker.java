@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5191 $
+ * Revision $Revision: 5326 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -54,6 +54,9 @@ import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
+import net.sourceforge.plantuml.eps.EpsStrategy;
+import net.sourceforge.plantuml.eps.InkscapeUtils;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
@@ -163,7 +166,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
 				Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
 				PngIO.write(im, f, diagram.getMetadata());
-			} else if (createImage instanceof UGraphicSvg) {
+			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.SVG) {
 				final UGraphicSvg svg = (UGraphicSvg) createImage;
 				final FileOutputStream fos = new FileOutputStream(f);
 				try {
@@ -171,6 +174,22 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				} finally {
 					fos.close();
 				}
+//			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.EPS_VIA_SVG) {
+//				final File svgFile = CucaDiagramFileMaker.createTempFile("seq", ".svg");
+//				final UGraphicSvg svg = (UGraphicSvg) createImage;
+//				final FileOutputStream fos = new FileOutputStream(svgFile);
+//				try {
+//					svg.createXml(fos);
+//				} finally {
+//					fos.close();
+//				}
+//				try {
+//					InkscapeUtils.create().createEps(svgFile, f);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//					Log.error("Error "+e);
+//					throw new IOException(e.toString());
+//				}
 			} else if (createImage instanceof UGraphicEps) {
 				final UGraphicEps eps = (UGraphicEps) createImage;
 				final FileWriter fw = new FileWriter(f);
@@ -179,6 +198,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				} finally {
 					fw.close();
 				}
+			} else {
+				throw new IllegalStateException();
 			}
 			Log.info("File size : " + f.length());
 			result.add(f);
@@ -269,14 +290,14 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				graphics2D.setTransform(at);
 			}
 			ug = new UGraphicG2d(graphics2D, builder.getBufferedImage());
-		} else if (fileFormat == FileFormat.SVG) {
+		} else if (fileFormat == FileFormat.SVG  /*|| fileFormat == FileFormat.EPS_VIA_SVG*/) {
 			if (backColor.equals(Color.WHITE)) {
-				ug = new UGraphicSvg();
+				ug = new UGraphicSvg(false);
 			} else {
-				ug = new UGraphicSvg(HtmlColor.getAsHtml(backColor));
+				ug = new UGraphicSvg(HtmlColor.getAsHtml(backColor), false);
 			}
 		} else if (fileFormat == FileFormat.EPS) {
-			ug = new UGraphicEps();
+			ug = new UGraphicEps(EpsStrategy.getDefault());
 		} else {
 			throw new UnsupportedOperationException();
 		}
