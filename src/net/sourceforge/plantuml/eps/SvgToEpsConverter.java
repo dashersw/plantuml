@@ -71,31 +71,6 @@ public class SvgToEpsConverter {
 		inkscape.createEps(svgFile, epsFile);
 	}
 
-//	static private File createTempFile(String prefix) throws IOException {
-//		final File f = File.createTempFile(prefix, ".svg");
-//		Log.info("Creating temporary file: " + f);
-//		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
-//			f.deleteOnExit();
-//		}
-//		return f;
-//	}
-
-	// public String createEps() throws IOException, InterruptedException {
-	// final File tmp = createTempFile("eps");
-	// createEps(tmp);
-	// final BufferedReader br = new BufferedReader(new FileReader(tmp));
-	// final StringBuilder result = new StringBuilder();
-	// String s;
-	// while ((s = br.readLine()) != null) {
-	// result.append(s);
-	// result.append('\n');
-	// }
-	// br.close();
-	// if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
-	// tmp.delete();
-	// }
-	// return result.toString();
-	// }
 
 	public void createEps(OutputStream os) throws IOException, InterruptedException {
 		final File epsFile = CucaDiagramFileMaker.createTempFile("eps", ".eps");

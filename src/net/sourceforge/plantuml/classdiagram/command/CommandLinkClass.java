@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5115 $
+ * Revision $Revision: 5436 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sourceforge.plantuml.Direction;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
@@ -86,13 +88,25 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 				diagram,
 				"(?i)^(?:@(\\d+)\\s+)?((?:"
 						+ optionalKeywords(diagram.getUmlDiagramType())
-						+ "\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?:\"([^\"]+)\")?\\s*"
+						+ "\\s+)?"
+						+ "(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\)"
+						+ ")\\s*(?:\"([^\"]+)\")?\\s*"
 						// split here
-						+ "(?:(([-=.]+)(o +|[\\]>*+]|\\|[>\\]])?)|(( +o|[\\[<*+]|[<\\[]\\|)?([-=.]+))|(\\<([-=.]+)(o +|\\*))|(( +o|\\*)([-=.]+)\\>))"
+						+ "(?:"
+						+ "(([-=.]+(?:left|right|up|down|le?|ri?|up?|do?)?[-=.]*)(o +|[\\]>*+]|\\|[>\\]])?)"
+						+ "|"
+						+ "(( +o|[\\[<*+]|[<\\[]\\|)?([-=.]*(?:left|right|up|down|le?|ri?|up?|do?)?[-=.]+))"
+						+ "|"
+						+ "(\\<([-=.]*(?:left|right|up|down|le?|ri?|up?|do?[-=.]+)?[-=.]+)(o +|\\*))"
+						+ "|"
+						+ "(( +o|\\*)([-=.]+(?:left|right|up|down|le?|ri?|up?|do?)?[-=.]*)\\>)"
+						+ ")"
 						// split here
 						+ "\\s*(?:\"([^\"]+)\")?\\s*((?:"
 						+ optionalKeywords(diagram.getUmlDiagramType())
-						+ "\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?::\\s*([^\"]+))?$");
+						+ "\\s+)?"
+						+ "(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\)"
+						+ ")\\s*(?::\\s*([^\"]+))?$");
 		// "(?i)^(?:@(\\d+)\\s+)?((?:(interface|enum|abstract\\s+class|abstract|class)\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)|\\(\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*,\\s*\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*\\s*\\))\\s*(?:\"([^\"]+)\")?\\s*"
 		// +
 		// "(?:(([-=.]+)([\\]>o*+]|\\|[>\\]])?)|(([\\[<o*+]|[<\\[]\\|)?([-=.]+))|(\\<([-=.]+)([o*]))|(([o*])([-=.]+)\\>))"
@@ -142,10 +156,51 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		}
 
 		final LinkType linkType = getLinkType(arg);
-		final String queue = getQueue(arg);
+		final String queueRaw = getQueue(arg);
+		final String queue = StringUtils.manageQueueForCuca(queueRaw);
 
-		final Link link = new Link(cl1, cl2, linkType, arg.get(LINK_LABEL), queue.length(), arg.get(FIRST_LABEL), arg
+		Link link = new Link(cl1, cl2, linkType, arg.get(LINK_LABEL), queue.length(), arg.get(FIRST_LABEL), arg
 				.get(SECOND_LABEL), getSystem().getLabeldistance(), getSystem().getLabelangle());
+
+		if (queueRaw.matches(".*\\w.*")) {
+			if (arg.get(LEFT_TO_RIGHT) != null) {
+				Direction direction = StringUtils.getQueueDirection(arg.get(LEFT_TO_RIGHT_QUEUE));
+				if (linkType.isExtendsOrAgregationOrCompositionOrPlus()) {
+					direction = direction.getInv();
+				}
+				if (direction == Direction.LEFT || direction == Direction.UP) {
+					link = link.getInv();
+				}
+			}
+			if (arg.get(RIGHT_TO_LEFT) != null) {
+				Direction direction = StringUtils.getQueueDirection(arg.get(RIGHT_TO_LEFT_QUEUE));
+				if (linkType.isExtendsOrAgregationOrCompositionOrPlus()) {
+					direction = direction.getInv();
+				}
+				if (direction == Direction.RIGHT || direction == Direction.DOWN) {
+					link = link.getInv();
+				}
+			}
+			if (arg.get(NAV_AGREG_OR_COMPO) != null) {
+				Direction direction = StringUtils.getQueueDirection(arg.get(NAV_AGREG_OR_COMPO_QUEUE));
+				if (linkType.isExtendsOrAgregationOrCompositionOrPlus()) {
+					direction = direction.getInv();
+				}
+				if (direction == Direction.RIGHT || direction == Direction.DOWN) {
+					link = link.getInv();
+				}
+			}
+			if (arg.get(NAV_AGREG_OR_COMPO_INV) != null) {
+				Direction direction = StringUtils.getQueueDirection(arg.get(NAV_AGREG_OR_COMPO_INV_QUEUE));
+				if (linkType.isExtendsOrAgregationOrCompositionOrPlus()) {
+					direction = direction.getInv();
+				}
+				if (direction == Direction.LEFT || direction == Direction.UP) {
+					link = link.getInv();
+				}
+			}
+		}
+
 		getSystem().resetPragmaLabel();
 		addLink(link, arg.get(0));
 
@@ -356,7 +411,7 @@ final public class CommandLinkClass extends SingleLineCommand<AbstractClassOrObj
 		if (k.equals("<|") || k.equals("|>")) {
 			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
 		}
-		//return null;
+		// return null;
 		throw new IllegalArgumentException(k);
 	}
 

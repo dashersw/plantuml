@@ -28,12 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5424 $
+ * Revision $Revision: 5383 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -50,7 +49,6 @@ import javax.imageio.ImageIO;
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.SignatureUtils;
 import net.sourceforge.plantuml.StringUtils;
@@ -65,17 +63,11 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.TextBlock;
-import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.skin.UDrawable;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 
-final public class DotMaker implements GraphvizMaker {
+final public class DotMaker2 implements GraphvizMaker {
 
 	private final DotData data;
 
@@ -95,7 +87,7 @@ final public class DotMaker implements GraphvizMaker {
 		isJunit = true;
 	}
 
-	public DotMaker(DotData data, List<String> dotStrings, FileFormat fileFormat) {
+	public DotMaker2(DotData data, List<String> dotStrings, FileFormat fileFormat) {
 		this.data = data;
 		this.dotStrings = dotStrings;
 		this.fileFormat = fileFormat;
@@ -631,10 +623,9 @@ final public class DotMaker implements GraphvizMaker {
 	}
 
 	private void eventuallySameRank(StringBuilder sb, Group entityPackage, Link link) {
-//		if (workAroundDotBug()) {
-//			throw new UnsupportedOperationException("workAroundDotBug");
-//			// return;
-//		}
+		if (workAroundDotBug()) {
+			return;
+		}
 		final int len = link.getLength();
 		if (len == 1 && link.getEntity1().getParent() == entityPackage
 				&& link.getEntity2().getParent() == entityPackage) {
@@ -1065,9 +1056,6 @@ final public class DotMaker implements GraphvizMaker {
 			sb.append("</TD></TR>");
 
 			if (showFields) {
-				// if (fileFormat == FileFormat.EPS) {
-				// sb.append(addFieldsEps(entity.fields2(), true));
-				// } else {
 				final boolean hasStatic = hasStatic(entity.fields2());
 				sb.append("<TR ALIGN=\"LEFT\"><TD WIDTH=\"55\" ALIGN=\"LEFT\">");
 				for (Member att : entity.fields2()) {
@@ -1076,12 +1064,8 @@ final public class DotMaker implements GraphvizMaker {
 					sb.append("<BR ALIGN=\"LEFT\"/>");
 				}
 				sb.append("</TD></TR>");
-				// }
 			}
 			if (showMethods) {
-				// if (fileFormat == FileFormat.EPS) {
-				// sb.append(addFieldsEps(entity.methods2(), true));
-				// } else {
 				final boolean hasStatic = hasStatic(entity.methods2());
 				sb.append("<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">");
 				for (Member att : entity.methods2()) {
@@ -1090,46 +1074,13 @@ final public class DotMaker implements GraphvizMaker {
 					sb.append("<BR ALIGN=\"LEFT\"/>");
 				}
 				sb.append("</TD></TR>");
-				// }
 			}
+
 			sb.append("</TABLE>");
 		}
 		sb.append(">");
 
 		return sb.toString();
-	}
-
-	final private List<File> fileToClean = new ArrayList<File>();
-
-	private String addFieldsEps(List<Member> members, boolean withVisibilityChar) throws IOException {
-		final List<String> texts = new ArrayList<String>();
-		for (Member att : members) {
-			String s = att.getDisplay(withVisibilityChar);
-			if (att.isAbstract()) {
-				s = "<i>" + s + "</i>";
-			}
-			if (att.isStatic()) {
-				s = "<u>" + s + "</u>";
-			}
-			texts.add(s);
-		}
-		final Font font = data.getSkinParam().getFont(FontParam.CLASS_ATTRIBUTE);
-		final Color color = getFontHtmlColor(FontParam.CLASS_ATTRIBUTE).getColor();
-		final TextBlock text = TextBlockUtils.create(texts, font, color, HorizontalAlignement.LEFT);
-		final File feps = CucaDiagramFileMaker.createTempFile("member", ".eps");
-		UGraphicEps.copyEpsToFile(new UDrawable() {
-			public void drawU(UGraphic ug) {
-				text.drawU(ug, 0, 0);
-			}
-		}, feps);
-		fileToClean.add(feps);
-
-		final String path = StringUtils.getPlateformDependentAbsolutePath(feps);
-
-		return "<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">" + "<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\">"
-				+ "<TR><TD><IMG SRC=\"" + path + "\"/>" + "</TD>" + "<TD></TD>" + "</TR></TABLE></TD></TR>";
-		// return "<TR ALIGN=\"LEFT\"><TD WIDTH=\"55\"
-		// ALIGN=\"LEFT\">toto</TD></TR>";
 	}
 
 	private boolean hasStatic(Collection<Member> attributes) {
@@ -1358,8 +1309,7 @@ final public class DotMaker implements GraphvizMaker {
 		return result;
 	}
 
-	private String manageHtmlIBspecial(Member att, FontParam param, boolean hasStatic, String backColor,
-			boolean withVisibilityChar) {
+	private String manageHtmlIBspecial(Member att, FontParam param, boolean hasStatic, String backColor, boolean withVisibilityChar) {
 		String prefix = "";
 		if (hasStatic) {
 			prefix = "<FONT COLOR=" + backColor + ">_</FONT>";
@@ -1541,16 +1491,8 @@ final public class DotMaker implements GraphvizMaker {
 	}
 
 	public void clean() {
-		if (OptionFlags.getInstance().isKeepTmpFiles()) {
-			return;
-		}
-		for (File f : fileToClean) {
-			Log.info("Deleting temporary file " + f);
-			final boolean ok = f.delete();
-			if (ok == false) {
-				Log.error("Cannot delete: " + f);
-			}
-		}
+		// TODO Auto-generated method stub
+		
 	}
 
 }

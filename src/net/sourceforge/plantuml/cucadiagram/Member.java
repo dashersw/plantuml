@@ -78,10 +78,19 @@ public class Member {
 
 	}
 
+	public String getDisplay(boolean withVisibilityChar) {
+		if (withVisibilityChar) {
+			return getDisplayWithVisibilityChar();
+		}
+		return getDisplayWithoutVisibilityChar();
+	}
+
+	
 	public String getDisplayWithoutVisibilityChar() {
 		assert VisibilityModifier.isVisibilityCharacter(display.charAt(0)) == false;
 		return display;
 	}
+	
 
 	public String getDisplayWithVisibilityChar() {
 		if (isPrivate()) {

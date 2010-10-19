@@ -130,4 +130,21 @@ public class LinkType {
 		return decor2;
 	}
 
+	public boolean isExtendsOrAgregationOrCompositionOrPlus() {
+		return isExtends() || isAgregationOrComposition() || isPlus();
+	}
+
+	private boolean isExtends() {
+		return decor1 == LinkDecor.EXTENDS || decor2 == LinkDecor.EXTENDS;
+	}
+
+	private boolean isPlus() {
+		return decor1 == LinkDecor.PLUS || decor2 == LinkDecor.PLUS;
+	}
+
+	private boolean isAgregationOrComposition() {
+		return decor1 == LinkDecor.AGREGATION || decor2 == LinkDecor.AGREGATION || decor1 == LinkDecor.COMPOSITION
+				|| decor2 == LinkDecor.COMPOSITION;
+	}
+
 }

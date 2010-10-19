@@ -58,9 +58,9 @@ public class EpsGraphicsMacro extends EpsGraphics {
 	@Override
 	protected String getBodyString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append(rquadto.toPostStringDefinition());
+		sb.append(rquadto.getPostStringDefinition());
 		for (PostScriptCommandMacro macro : macros.keySet()) {
-			sb.append(macro.toPostStringDefinition());
+			sb.append(macro.getPostStringDefinition());
 		}
 		sb.append(data.toPostString());
 		return sb.toString();
@@ -103,6 +103,7 @@ public class EpsGraphicsMacro extends EpsGraphics {
 		this.posX = x1;
 		this.posY = y1;
 		openMacro();
+		ensureVisible(x1, y1);
 	}
 
 	@Override
@@ -111,6 +112,7 @@ public class EpsGraphicsMacro extends EpsGraphics {
 		macroInProgress.add(cmd);
 		this.posX = x1;
 		this.posY = y1;
+		ensureVisible(x1, y1);
 	}
 
 	@Override
@@ -120,6 +122,9 @@ public class EpsGraphicsMacro extends EpsGraphics {
 		macroInProgress.add(cmd);
 		this.posX = x3;
 		this.posY = y3;
+		ensureVisible(x1, y1);
+		ensureVisible(x2, y2);
+		ensureVisible(x3, y3);
 	}
 
 	@Override
@@ -128,6 +133,8 @@ public class EpsGraphicsMacro extends EpsGraphics {
 		macroInProgress.add(cmd);
 		this.posX = x2;
 		this.posY = y2;
+		ensureVisible(x1, y1);
+		ensureVisible(x2, y2);
 	}
 
 	private void openMacro() {

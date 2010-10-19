@@ -33,6 +33,7 @@ package net.sourceforge.plantuml.ugraphic.svg;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,6 +41,7 @@ import java.io.OutputStream;
 import javax.xml.transform.TransformerException;
 
 import net.sourceforge.plantuml.graphic.FontConfiguration;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
@@ -55,11 +57,9 @@ import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UText;
 
-public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements
-		ClipContainer {
+public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipContainer {
 
-	final static Graphics2D imDummy = new BufferedImage(10, 10,
-			BufferedImage.TYPE_INT_RGB).createGraphics();
+	final static Graphics2D imDummy = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB).createGraphics();
 	private UClip clip;
 
 	private final StringBounder stringBounder;
@@ -78,12 +78,9 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements
 		registerDriver(URectangle.class, new DriverRectangleSvg(this));
 		textAsPath = false;
 		if (textAsPath) {
-			registerDriver(UText.class,
-					new DriverTextAsPathSvg(imDummy.getFontRenderContext(),
-							this));
+			registerDriver(UText.class, new DriverTextAsPathSvg(imDummy.getFontRenderContext(), this));
 		} else {
-			registerDriver(UText.class, new DriverTextSvg(getStringBounder(),
-					this));
+			registerDriver(UText.class, new DriverTextSvg(getStringBounder(), this));
 		}
 		registerDriver(ULine.class, new DriverLineSvg(this));
 		registerDriver(UPolygon.class, new DriverPolygonSvg(this));
@@ -109,22 +106,29 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements
 	}
 
 	public void setClip(UClip clip) {
-		this.clip = clip == null ? null : clip.translate(getTranslateX(),
-				getTranslateY());
+		this.clip = clip == null ? null : clip.translate(getTranslateX(), getTranslateY());
 	}
 
 	public UClip getClip() {
 		return clip;
 	}
 
-	public void centerChar(double x, double y, char c, Font font) {
-		final UText uText = new UText("" + c, new FontConfiguration(font,
-				getParam().getColor()));
+	public void centerCharOld(double x, double y, char c, Font font) {
+		final UText uText = new UText("" + c, new FontConfiguration(font, getParam().getColor()));
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
-		// final Dimension2D dim = stringBounder.calculateDimension(font, "" +
-		// c);
-		// draw(x - dim.getWidth() / 2, y + dim.getHeight() / 2, uText);
-		draw(x - unusedSpace.getCenterX(), y - unusedSpace.getCenterY(), uText);
+		draw(x - unusedSpace.getCenterX() + getTranslateX(), y - unusedSpace.getCenterY() + getTranslateY(), uText);
+	}
+
+	public void centerChar(double x, double y, char c, Font font) {
+		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
+
+		final double xpos = x - unusedSpace.getCenterX() - 0.5;
+		final double ypos = y - unusedSpace.getCenterY() - 0.5;
+
+		final TextLayout t = new TextLayout("" + c, font, imDummy.getFontRenderContext());
+		getGraphicObject().setStrokeColor(HtmlColor.getAsHtml(getParam().getColor()));
+		DriverTextAsPathSvg.drawPathIterator(getGraphicObject(), xpos + getTranslateX(), ypos + getTranslateY(), t
+				.getOutline(null).getPathIterator(null));
 	}
 
 }

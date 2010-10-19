@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3829 $
+ * Revision $Revision: 5380 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -40,5 +40,7 @@ public interface GraphvizMaker {
 	String createDotString() throws IOException;
 
 	boolean isUnderline();
+
+	void clean();
 
 }

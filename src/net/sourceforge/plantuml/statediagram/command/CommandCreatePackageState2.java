@@ -28,27 +28,33 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.statediagram.command;
 
-public enum Direction {
-	RIGHT, LEFT, DOWN, UP;
+import java.util.List;
 
-	public Direction getInv() {
-		if (this == RIGHT) {
-			return LEFT;
-		}
-		if (this == LEFT) {
-			return RIGHT;
-		}
-		if (this == DOWN) {
-			return UP;
-		}
-		if (this == UP) {
-			return DOWN;
-		}
-		throw new IllegalStateException();
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.statediagram.StateDiagram;
+
+public class CommandCreatePackageState2 extends SingleLineCommand<StateDiagram> {
+
+	public CommandCreatePackageState2(StateDiagram diagram) {
+		super(diagram, "(?i)^state\\s+([\\p{L}0-9_.]+)\\s+as\\s+\"([^\"]+)\"(?:\\s*\\{|\\s+begin)$");
 	}
+
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final Group currentPackage = getSystem().getCurrentGroup();
+		final String code = arg.get(0);
+		final String display = arg.get(1);
+		final Group p = getSystem().getOrCreateGroup(code, display, null, GroupType.STATE, currentPackage);
+		p.setRounded(true);
+		return CommandExecutionResult.ok();
+	}
+
 }

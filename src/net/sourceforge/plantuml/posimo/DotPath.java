@@ -34,11 +34,15 @@
 package net.sourceforge.plantuml.posimo;
 
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -76,6 +80,14 @@ public class DotPath implements UShape {
 
 	private final List<CubicCurve2D.Double> beziers = new ArrayList<CubicCurve2D.Double>();
 	private final String print;
+
+	public Point2D getStartPoint() {
+		return beziers.get(0).getP1();
+	}
+
+	public Point2D getEndPoint() {
+		return beziers.get(beziers.size() - 1).getP2();
+	}
 
 	private DotPath(List<CubicCurve2D.Double> beziers) {
 		this.beziers.addAll(beziers);
@@ -142,13 +154,58 @@ public class DotPath implements UShape {
 		}
 	}
 
-	private CubicCurve2D.Double getCutting(Rectangle2D rect) {
-		for (CubicCurve2D.Double bez : beziers) {
-			if (BezierUtils.isCutting(bez, rect)) {
-				return bez;
+	public Point2D getFrontierIntersection(Shape shape, Rectangle2D... notIn) {
+		final List<CubicCurve2D.Double> all = new ArrayList<CubicCurve2D.Double>(beziers);
+		for (int i = 0; i < 8; i++) {
+			for (CubicCurve2D.Double immutable : all) {
+				if (contains(immutable, notIn)) {
+					continue;
+				}
+				final CubicCurve2D.Double bez = new CubicCurve2D.Double();
+				bez.setCurve(immutable);
+				if (BezierUtils.isCutting(bez, shape)) {
+					while (BezierUtils.dist(bez) > 1.0) {
+						BezierUtils.shorten(bez, shape);
+					}
+					final Point2D.Double result = new Point2D.Double((bez.x1 + bez.x2) / 2, (bez.y1 + bez.y2) / 2);
+					if (contains(result, notIn) == false) {
+						return result;
+					}
+				}
+			}
+			cutAllCubic(all);
+		}
+		throw new IllegalArgumentException("shape=" + shape);
+	}
+
+	private void cutAllCubic(List<CubicCurve2D.Double> all) {
+		final List<CubicCurve2D.Double> tmp = new ArrayList<CubicCurve2D.Double>(all);
+		all.clear();
+		for (CubicCurve2D.Double bez : tmp) {
+			final CubicCurve2D.Double left = new CubicCurve2D.Double();
+			final CubicCurve2D.Double right = new CubicCurve2D.Double();
+			bez.subdivide(left, right);
+			all.add(left);
+			all.add(right);
+		}
+	}
+
+	static private boolean contains(Point2D.Double point, Rectangle2D... rects) {
+		for (Rectangle2D r : rects) {
+			if (r.contains(point)) {
+				return true;
 			}
 		}
-		throw new IllegalArgumentException();
+		return false;
+	}
+
+	static private boolean contains(CubicCurve2D.Double cubic, Rectangle2D... rects) {
+		for (Rectangle2D r : rects) {
+			if (r.contains(cubic.getP1()) && r.contains(cubic.getP2())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public DotPath manageRect(Rectangle2D start, Rectangle2D end) {
@@ -170,21 +227,6 @@ public class DotPath implements UShape {
 			}
 		}
 		return new DotPath(list);
-	}
-
-	// public DotPath manageRect(Positionable start, Positionable end) {
-	// //return manageRect(PositionableUtils.convert(start),
-	// PositionableUtils.convert(end));
-	// return this;
-	// }
-	//
-	public Point2D getFrontierIntersection(Rectangle2D rect) {
-		final CubicCurve2D.Double bez = new CubicCurve2D.Double();
-		bez.setCurve(getCutting(rect));
-		while (BezierUtils.dist(bez) > 1.0) {
-			BezierUtils.shorten(bez, rect);
-		}
-		return new Point2D.Double((bez.x1 + bez.x2) / 2, (bez.y1 + bez.y2) / 2);
 	}
 
 	public Point2D getFrontierIntersection(Positionable p) {

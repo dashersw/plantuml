@@ -28,27 +28,39 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 4179 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.png;
 
-public enum Direction {
-	RIGHT, LEFT, DOWN, UP;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 
-	public Direction getInv() {
-		if (this == RIGHT) {
-			return LEFT;
+public class PngScaler {
+
+	public static BufferedImage scale(BufferedImage im, double scale) {
+		if (scale == 1 || scale == 0) {
+			return im;
 		}
-		if (this == LEFT) {
-			return RIGHT;
-		}
-		if (this == DOWN) {
-			return UP;
-		}
-		if (this == UP) {
-			return DOWN;
-		}
-		throw new IllegalStateException();
+
+		final int width = (int) (im.getWidth() * scale);
+		final int height = (int) (im.getHeight() * scale);
+
+		final BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		final Graphics2D g = resizedImage.createGraphics();
+		g.setComposite(AlphaComposite.Src);
+
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+		g.drawImage(im, 0, 0, width, height, null);
+		g.dispose();
+		return resizedImage;
 	}
+
 }

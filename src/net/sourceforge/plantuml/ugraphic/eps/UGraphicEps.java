@@ -110,7 +110,8 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 
 		final TextLayout t = new TextLayout("" + c, font, imDummy.getFontRenderContext());
 		getGraphicObject().setStrokeColor(getParam().getColor());
-		DriverTextEps.drawPathIterator(getGraphicObject(), xpos, ypos, t.getOutline(null).getPathIterator(null));
+		DriverTextEps.drawPathIterator(getGraphicObject(), xpos + getTranslateX(), ypos + getTranslateY(), t
+				.getOutline(null).getPathIterator(null));
 
 	}
 

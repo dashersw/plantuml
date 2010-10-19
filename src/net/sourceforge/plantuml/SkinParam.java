@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5220 $
+ * Revision $Revision: 5403 $
  *
  */
 package net.sourceforge.plantuml;
@@ -88,7 +88,10 @@ public class SkinParam implements ISkinParam {
 	}
 
 	public int getFontSize(FontParam param) {
-		final String value = getValue(param.name() + "fontsize");
+		String value = getValue(param.name() + "fontsize");
+		if (value == null || value.matches("\\d+") == false) {
+			value = getValue("defaultfontsize");
+		}
 		if (value == null || value.matches("\\d+") == false) {
 			return param.getDefaultSize();
 		}
@@ -113,13 +116,19 @@ public class SkinParam implements ISkinParam {
 	public HtmlColor getFontHtmlColor(FontParam param) {
 		String value = getValue(param.name() + "fontcolor");
 		if (value == null) {
+			value = getValue("defaultfontcolor");
+		}
+		if (value == null) {
 			value = param.getDefaultColor();
 		}
 		return new HtmlColor(value);
 	}
 
 	public int getFontStyle(FontParam param) {
-		final String value = getValue(param.name() + "fontstyle");
+		String value = getValue(param.name() + "fontstyle");
+		if (value == null) {
+			value = getValue("defaultfontstyle");
+		}
 		if (value == null) {
 			return param.getDefaultFontStyle();
 		}
@@ -171,6 +180,9 @@ public class SkinParam implements ISkinParam {
 		result.add("CircledCharacterRadius");
 		result.add("ClassAttributeIconSize");
 		result.add("DefaultFontName");
+		result.add("DefaultFontStyle");
+		result.add("DefaultFontSize");
+		result.add("DefaultFontColor");
 		for (FontParam p : EnumSet.allOf(FontParam.class)) {
 			final String h = humanName(p.name());
 			result.add(h + "FontStyle");

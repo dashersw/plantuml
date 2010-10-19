@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5186 $
+ * Revision $Revision: 5386 $
  *
  */
 package net.sourceforge.plantuml.graph;
@@ -48,8 +48,9 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-class MethodsOrFieldsArea {
+public class MethodsOrFieldsArea {
 
 	private final Font font;
 	private final List<String> strings = new ArrayList<String>();
@@ -77,13 +78,20 @@ class MethodsOrFieldsArea {
 		return TextBlockUtils.create(Arrays.asList(s), font, Color.BLACK, HorizontalAlignement.LEFT);
 	}
 
-	public void draw(Graphics2D g2d, double x, double y) {
+	public void drawTOBEREMOVED(Graphics2D g2d, double x, double y) {
 		for (String s : strings) {
 			final TextBlock bloc = createTextBlock(s);
 			bloc.drawTOBEREMOVED(g2d, x, y);
 			y += bloc.calculateDimension(StringBounderUtils.asStringBounder(g2d)).getHeight();
 		}
+	}
 
+	public void draw(UGraphic ug, double x, double y) {
+		for (String s : strings) {
+			final TextBlock bloc = createTextBlock(s);
+			bloc.drawU(ug, x, y);
+			y += bloc.calculateDimension(ug.getStringBounder()).getHeight();
+		}
 	}
 
 }

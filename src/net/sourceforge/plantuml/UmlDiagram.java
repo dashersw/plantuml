@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4911 $
+ * Revision $Revision: 5401 $
  *
  */
 package net.sourceforge.plantuml;
@@ -49,6 +49,7 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	private HorizontalAlignement headerAlignement = HorizontalAlignement.RIGHT;
 	private HorizontalAlignement footerAlignement = HorizontalAlignement.CENTER;
 	private final Pragma pragma = new Pragma();
+	private double scale = 1;
 
 	private final SkinParam skinParam = new SkinParam();
 
@@ -120,6 +121,14 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 
 	public Pragma getPragma() {
 		return pragma;
+	}
+
+	final public void setScale(double scale) {
+		this.scale = scale;
+	}
+	
+	final public double getScale() {
+		return scale;
 	}
 
 }

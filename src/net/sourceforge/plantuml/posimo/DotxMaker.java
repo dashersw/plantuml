@@ -83,7 +83,8 @@ public class DotxMaker {
 			throw new IllegalArgumentException();
 		}
 		final StringBuilder sb = new StringBuilder("b" + p.getStart().getUid() + " -> b" + p.getEnd().getUid());
-		sb.append(" [dir=none, arrowhead=none, headclip=false, tailclip=false");
+		//sb.append(" [dir=none, arrowhead=none, headclip=false, tailclip=false");
+		sb.append(" [dir=none, arrowhead=none, headclip=true, tailclip=true");
 		if (p.getLabel() == null) {
 			sb.append("]");
 		} else {

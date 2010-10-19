@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4587 $
+ * Revision $Revision: 5398 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram;
@@ -40,7 +40,7 @@ import net.sourceforge.plantuml.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.command.CommandNoteEntity;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
-import net.sourceforge.plantuml.componentdiagram.command.CommandCreateActor2;
+import net.sourceforge.plantuml.componentdiagram.command.CommandCreateActorInComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandLinkComponent;
@@ -72,7 +72,7 @@ public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandCreateNote(system));
 		addCommand(new CommandCreateComponent(system));
 		addCommand(new CommandCreateCircleInterface(system));
-		addCommand(new CommandCreateActor2(system));
+		addCommand(new CommandCreateActorInComponent(system));
 
 		addCommand(new CommandMultilinesComponentNoteEntity(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));

@@ -33,9 +33,10 @@
  */
 package net.sourceforge.plantuml.posimo;
 
+import java.awt.Shape;
 import java.awt.geom.CubicCurve2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 public class BezierUtils {
 
@@ -71,31 +72,31 @@ public class BezierUtils {
 		return a;
 	}
 
-	static boolean isCutting(CubicCurve2D.Double bez, Rectangle2D rect) {
-		final boolean contains1 = rect.contains(bez.x1, bez.y1);
-		final boolean contains2 = rect.contains(bez.x2, bez.y2);
+	static boolean isCutting(CubicCurve2D.Double bez, Shape shape) {
+		final boolean contains1 = shape.contains(bez.x1, bez.y1);
+		final boolean contains2 = shape.contains(bez.x2, bez.y2);
 		return contains1 ^ contains2;
 	}
 
-	static void shorten(CubicCurve2D.Double bez, Rectangle2D rect) {
-		final boolean contains1 = rect.contains(bez.x1, bez.y1);
-		final boolean contains2 = rect.contains(bez.x2, bez.y2);
+	static void shorten(CubicCurve2D.Double bez, Shape shape) {
+		final boolean contains1 = shape.contains(bez.x1, bez.y1);
+		final boolean contains2 = shape.contains(bez.x2, bez.y2);
 		if (contains1 ^ contains2 == false) {
 			throw new IllegalArgumentException();
 		}
 		if (contains1 == false) {
 			bez.setCurve(bez.x2, bez.y2, bez.ctrlx2, bez.ctrly2, bez.ctrlx1, bez.ctrly1, bez.x1, bez.y1);
 		}
-		assert rect.contains(bez.x1, bez.y1) && rect.contains(bez.x2, bez.y2) == false;
+		assert shape.contains(bez.x1, bez.y1) && shape.contains(bez.x2, bez.y2) == false;
 		final CubicCurve2D.Double left = new CubicCurve2D.Double();
 		final CubicCurve2D.Double right = new CubicCurve2D.Double();
 		subdivide(bez, left, right, 0.5);
 
-		if (isCutting(left, rect) ^ isCutting(right, rect) == false) {
+		if (isCutting(left, shape) ^ isCutting(right, shape) == false) {
 			throw new IllegalArgumentException();
 		}
 
-		if (isCutting(left, rect)) {
+		if (isCutting(left, shape)) {
 			bez.setCurve(left);
 		} else {
 			bez.setCurve(right);
@@ -126,6 +127,42 @@ public class BezierUtils {
 
 	static double dist(CubicCurve2D.Double seg) {
 		return Point2D.distance(seg.x1, seg.y1, seg.x2, seg.y2);
+	}
+
+	static double dist(Line2D.Double seg) {
+		return Point2D.distance(seg.x1, seg.y1, seg.x2, seg.y2);
+	}
+
+	static public Point2D middle(Line2D.Double seg) {
+		return new Point2D.Double((seg.x1 + seg.x2) / 2, (seg.y1 + seg.y2) / 2);
+	}
+
+	static public Point2D middle(Point2D p1, Point2D p2) {
+		return new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
+	}
+
+	public static Point2D intersect(Line2D.Double orig, Shape shape) {
+		final Line2D.Double copy = new Line2D.Double(orig.x1, orig.y1, orig.x2, orig.y2);
+		final boolean contains1 = shape.contains(copy.x1, copy.y1);
+		final boolean contains2 = shape.contains(copy.x2, copy.y2);
+		if (contains1 ^ contains2 == false) {
+			throw new IllegalArgumentException();
+		}
+		while (true) {
+			final double mx = (copy.x1 + copy.x2) / 2;
+			final double my = (copy.y1 + copy.y2) / 2;
+			final boolean containsMiddle = shape.contains(mx, my);
+			if (contains1 == containsMiddle) {
+				copy.x1 = mx;
+				copy.y1 = my;
+			} else {
+				copy.x2 = mx;
+				copy.y2 = my;
+			}
+			if (dist(copy) < 1) {
+				return new Point2D.Double(mx, my);
+			}
+		}
 	}
 
 }

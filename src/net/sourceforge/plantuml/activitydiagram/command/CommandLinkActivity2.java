@@ -94,7 +94,7 @@ public class CommandLinkActivity2 extends SingleLineCommand<ActivityDiagram> {
 		final IEntity entity2 = getEntity(getSystem(), arg.subList(7, 12), false);
 		final String linkLabel = arg.get(6);
 
-		final String arrow = StringUtils.manageArrow(arg.get(5));
+		final String arrow = StringUtils.manageArrowForCuca(arg.get(5));
 		final int lenght = arrow.length() - 1;
 
 		Link link = new Link(entity1, entity2, new LinkType(LinkDecor.ARROW, LinkDecor.NONE), linkLabel, lenght);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5207 $
+ * Revision $Revision: 5427 $
  *
  */
 package net.sourceforge.plantuml;
@@ -44,9 +44,6 @@ public class StringUtils {
 	static private final Pattern multiLines = Pattern.compile("((?:\\\\\\\\|[^\\\\])+)(\\\\n)?");
 
 	public static String getPlateformDependentAbsolutePath(File file) {
-		// assert file.getAbsolutePath().replace('/',
-		// File.separatorChar).equals(file.getAbsolutePath());
-		// return file.getAbsolutePath().replace('/', File.separatorChar);
 		return file.getAbsolutePath();
 
 	}
@@ -102,7 +99,12 @@ public class StringUtils {
 		return s;
 	}
 
-	public static String manageArrow(String s) {
+	public static String manageArrowForSequence(String s) {
+		s = s.replace('=', '-');
+		return s;
+	}
+
+	public static String manageArrowForCuca(String s) {
 		final Direction dir = getArrowDirection(s);
 		s = s.replace('=', '-');
 		s = s.replaceAll("\\w*", "");
@@ -115,7 +117,36 @@ public class StringUtils {
 		return s;
 	}
 
+	public static String manageQueueForCuca(String s) {
+		final Direction dir = getQueueDirection(s);
+		s = s.replace('=', '-');
+		s = s.replaceAll("\\w*", "");
+		if (dir == Direction.LEFT || dir == Direction.RIGHT) {
+			s = s.replaceAll("-+", "-");
+		}
+		if (s.length() == 1 && (dir == Direction.UP || dir == Direction.DOWN)) {
+			s = s.replaceFirst("-", "--");
+		}
+		return s;
+	}
+
 	public static Direction getArrowDirection(String s) {
+		if (s.endsWith(">")) {
+			return getQueueDirection(s.substring(0, s.length() - 1));
+		}
+		if (s.startsWith("<")) {
+			if (s.length() == 2) {
+				return Direction.LEFT;
+			}
+			return Direction.UP;
+		}
+		throw new IllegalArgumentException(s);
+	}
+
+	public static Direction getQueueDirection(String s) {
+		if (s.indexOf('<') != -1 || s.indexOf('>') != -1) {
+			throw new IllegalArgumentException(s);
+		}
 		s = s.toLowerCase();
 		if (s.contains("left")) {
 			return Direction.LEFT;
@@ -141,7 +172,7 @@ public class StringUtils {
 		if (s.contains("d")) {
 			return Direction.DOWN;
 		}
-		if (s.length() == 2) {
+		if (s.length() == 1) {
 			return Direction.RIGHT;
 		}
 		return Direction.DOWN;
@@ -163,30 +194,31 @@ public class StringUtils {
 		return s;
 	}
 
-//	private static String cleanLineFromSource(String s) {
-//		if (s.startsWith("\uFEFF")) {
-//			s = s.substring(1);
-//		}
-//		if (s.startsWith("~~")) {
-//			s = s.substring("~~".length());
-//		}
-//		// if (s.startsWith(" * ")) {
-//		// s = s.substring(" * ".length());
-//		// }
-//		s = s.replaceFirst("^\\s+\\* ", "");
-//		if (s.equals(" *")) {
-//			s = "";
-//		}
-//		s = s.trim();
-//		while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") || s.startsWith("%") || s.startsWith("/*")) {
-//			if (s.startsWith("/*")) {
-//				s = s.substring(2).trim();
-//			} else {
-//				s = s.substring(1).trim();
-//			}
-//		}
-//		return s;
-//	}
+	// private static String cleanLineFromSource(String s) {
+	// if (s.startsWith("\uFEFF")) {
+	// s = s.substring(1);
+	// }
+	// if (s.startsWith("~~")) {
+	// s = s.substring("~~".length());
+	// }
+	// // if (s.startsWith(" * ")) {
+	// // s = s.substring(" * ".length());
+	// // }
+	// s = s.replaceFirst("^\\s+\\* ", "");
+	// if (s.equals(" *")) {
+	// s = "";
+	// }
+	// s = s.trim();
+	// while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") ||
+	// s.startsWith("%") || s.startsWith("/*")) {
+	// if (s.startsWith("/*")) {
+	// s = s.substring(2).trim();
+	// } else {
+	// s = s.substring(1).trim();
+	// }
+	// }
+	// return s;
+	// }
 
 	public static boolean isCJK(char c) {
 		final Character.UnicodeBlock block = Character.UnicodeBlock.of(c);

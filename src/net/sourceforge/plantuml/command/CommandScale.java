@@ -28,27 +28,29 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.command;
 
-public enum Direction {
-	RIGHT, LEFT, DOWN, UP;
+import java.util.List;
 
-	public Direction getInv() {
-		if (this == RIGHT) {
-			return LEFT;
-		}
-		if (this == LEFT) {
-			return RIGHT;
-		}
-		if (this == DOWN) {
-			return UP;
-		}
-		if (this == UP) {
-			return DOWN;
-		}
-		throw new IllegalStateException();
+import net.sourceforge.plantuml.UmlDiagram;
+
+public class CommandScale extends SingleLineCommand<UmlDiagram> {
+
+	public CommandScale(UmlDiagram diagram) {
+		super(diagram, "(?i)^scale\\s+([0-9.]+)(?:\\s*/\\s*([0-9.]+))?$");
 	}
+
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		double scale = Double.parseDouble(arg.get(0));
+		if (arg.get(1) != null) {
+			scale /= Double.parseDouble(arg.get(1));
+		}
+		getSystem().setScale(scale);
+		return CommandExecutionResult.ok();
+	}
+
 }

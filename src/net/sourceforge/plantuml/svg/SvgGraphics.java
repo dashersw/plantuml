@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5328 $
+ * Revision $Revision: 5361 $
  *
  */
 package net.sourceforge.plantuml.svg;
@@ -51,6 +51,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.ugraphic.UPath;
 import net.sourceforge.plantuml.ugraphic.USegmentType;
 import net.sourceforge.plantuml.ugraphic.USegment;
@@ -139,34 +140,6 @@ public class SvgGraphics {
 		return svg;
 	}
 
-	// This method returns a reference to a linear gradient
-	// node for which the beginning and ending points and
-	// the beginning and ending colors have been
-	// established. The id value is the value by which the
-	// gradient is referenced in order to apply it to
-	// a component.
-	public Element makeLinearGradient(Element parent, String id, String beginningPoint, String beginningColor,
-			String endingPoint, String endingColor) {
-		final Element linearGradient = (Element) document.createElement("linearGradient");
-		parent.appendChild(linearGradient);
-		linearGradient.setAttribute("id", id);
-
-		// Establish the point at which the gradient begins
-		// and the color at the beginning point.
-		final Element beginningElement = (Element) document.createElement("stop");
-		beginningElement.setAttribute("offset", beginningPoint);
-		beginningElement.setAttribute("style", beginningColor);
-		linearGradient.appendChild(beginningElement);
-
-		// Establish the point at which the gradient ends and
-		// the color at that point.
-		final Element endingElement = (Element) document.createElement("stop");
-		endingElement.setAttribute("offset", endingPoint);
-		endingElement.setAttribute("style", endingColor);
-		linearGradient.appendChild(endingElement);
-
-		return linearGradient;
-	}
 
 	public void svgEllipse(double x, double y, double xRadius, double yRadius) {
 		final Element elt = (Element) document.createElement("ellipse");
@@ -367,40 +340,46 @@ public class SvgGraphics {
 		getG().appendChild(elt);
 	}
 
+	private StringBuilder currentPath = null;
+
 	public void newpath() {
-		// TODO Auto-generated method stub
-		
+		currentPath = new StringBuilder();
+
 	}
 
-	public void moveto(double d, double e) {
-		// TODO Auto-generated method stub
-		
+	public void moveto(double x, double y) {
+		currentPath.append("M" + format(x) + "," + format(y) + " ");
 	}
 
-	public void lineto(double d, double e) {
-		// TODO Auto-generated method stub
-		
+	public void lineto(double x, double y) {
+		currentPath.append("L" + format(x) + "," + format(y) + " ");
 	}
 
 	public void closepath() {
-		// TODO Auto-generated method stub
-		
+		currentPath.append("Z ");
+
 	}
 
-	public void curveto(double d, double e, double f, double h, double i,
-			double j) {
-		// TODO Auto-generated method stub
-		
+	public void curveto(double x1, double y1, double x2, double y2, double x3, double y3) {
+		currentPath.append("C" + format(x1) + "," + format(y1) + " " + format(x2) + "," + format(y2) + " " + format(x3) + "," + format(y3) + " ");
+
 	}
 
-	public void quadto(double d, double e, double f, double h) {
-		// TODO Auto-generated method stub
-		
+	public void quadto(double x1, double y1, double x2, double y2) {
+		currentPath.append("Q" + format(x1) + "," + format(y1) + " " + format(x2) + "," + format(y2) + " ");
+	}
+	
+	private static String format(double x) {
+		return EpsGraphics.format(x);
 	}
 
 	public void fill(int windingRule) {
-		// TODO Auto-generated method stub
-		
+		final Element elt = (Element) document.createElement("path");
+		elt.setAttribute("d", currentPath.toString());
+		//elt elt.setAttribute("style", getStyle());
+		getG().appendChild(elt);
+		currentPath = null;
+
 	}
 
 }

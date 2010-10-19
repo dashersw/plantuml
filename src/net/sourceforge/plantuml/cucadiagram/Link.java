@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5157 $
+ * Revision $Revision: 5425 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -42,6 +42,7 @@ public class Link implements Imaged {
 	final private IEntity cl2;
 	final private LinkType type;
 	final private String label;
+
 	final private int length;
 	final private String qualifier1;
 	final private String qualifier2;

@@ -83,12 +83,12 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
 			final Dimension2D dim = DriverTextG2d.calculateDimension(stringBounder, font, shape.getText());
-			final int ypos = (int) (y + 2.5);
+			// final int ypos = (int) (y + 2.5);
 			eps.setStrokeWidth("1", null);
-			eps.epsLine(x, ypos, x + dim.getWidth(), ypos);
-			// eps.setStrokeWidth("1", null);
+			// eps.epsLine(x, ypos, x + dim.getWidth(), ypos);
+			eps.epsLine(x, y + 1.5, x + dim.getWidth(), y + 1.5);
 		}
-		
+
 		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
 			final Dimension2D dim = DriverTextG2d.calculateDimension(stringBounder, font, shape.getText());
 			final FontMetrics fm = g2dummy.getFontMetrics(font);
@@ -97,7 +97,6 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 			eps.epsLine(x, ypos, x + dim.getWidth(), ypos);
 			eps.setStrokeWidth("1", null);
 		}
-
 
 	}
 

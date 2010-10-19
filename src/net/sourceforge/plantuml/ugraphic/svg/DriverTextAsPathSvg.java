@@ -36,7 +36,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.PathIterator;
 
-import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
@@ -72,7 +71,7 @@ public class DriverTextAsPathSvg implements UDriver<SvgGraphics> {
 
 	}
 	
-	private void drawPathIterator(SvgGraphics svg, double x, double y, PathIterator path) {
+	static void drawPathIterator(SvgGraphics svg, double x, double y, PathIterator path) {
 
 		svg.newpath();
 		final double coord[] = new double[6];

@@ -27,28 +27,22 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 3828 $
  *
+ * Revision $Revision: 4236 $
+ * 
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.posimo;
 
-public enum Direction {
-	RIGHT, LEFT, DOWN, UP;
+import java.awt.geom.Dimension2D;
 
-	public Direction getInv() {
-		if (this == RIGHT) {
-			return LEFT;
-		}
-		if (this == LEFT) {
-			return RIGHT;
-		}
-		if (this == DOWN) {
-			return UP;
-		}
-		if (this == UP) {
-			return DOWN;
-		}
-		throw new IllegalStateException();
-	}
+import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
+
+public interface IEntityImageBlock {
+
+	Dimension2D getDimension(StringBounder stringBounder);
+
+	void drawU(UGraphic ug, double xTheoricalPosition, double yTheoricalPosition, double marginWidth,
+			double marginHeight);
+
 }

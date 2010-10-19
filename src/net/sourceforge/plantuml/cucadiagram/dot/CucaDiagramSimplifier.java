@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5280 $
+ * Revision $Revision: 5378 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -51,12 +52,12 @@ import net.sourceforge.plantuml.cucadiagram.GroupType;
 public final class CucaDiagramSimplifier {
 
 	private final CucaDiagram diagram;
-	private final boolean isEps;
+	private final FileFormat fileFormat;
 
-	public CucaDiagramSimplifier(CucaDiagram diagram, List<String> dotStrings, boolean isEps) throws IOException,
+	public CucaDiagramSimplifier(CucaDiagram diagram, List<String> dotStrings, FileFormat fileFormat) throws IOException,
 			InterruptedException {
 		this.diagram = diagram;
-		this.isEps = isEps;
+		this.fileFormat = fileFormat;
 		boolean changed;
 		do {
 			changed = false;
@@ -89,7 +90,7 @@ public final class CucaDiagramSimplifier {
 
 	private void computeImageGroup(final Group group, final Entity entity, List<String> dotStrings) throws IOException,
 			FileNotFoundException, InterruptedException {
-		final GroupPngMaker maker = new GroupPngMaker(diagram, group, isEps);
+		final GroupPngMaker maker = new GroupPngMaker(diagram, group, fileFormat);
 		final File f = CucaDiagramFileMaker.createTempFile("inner", ".png");
 		FileOutputStream fos = null;
 		try {

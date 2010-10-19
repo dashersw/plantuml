@@ -27,61 +27,51 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
+ * 
  * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.Direction;
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.cucadiagram.LinkDecor;
-import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.sequencediagram.Participant;
+import net.sourceforge.plantuml.sequencediagram.ParticipantType;
+import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandIf extends SingleLineCommand<ActivityDiagram> {
+public class CommandParticipant2 extends SingleLineCommand<SequenceDiagram> {
 
-	public CommandIf(ActivityDiagram diagram) {
-		super(
-				diagram,
-				"(?i)^(?:(\\(\\*\\))|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)?"
-						+ "\\s*([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*\\>)?\\s*(?:\\[([^\\]*]+[^\\]]*)\\])?\\s*if\\s*\"([^\"]*)\"\\s*then$");
+	public CommandParticipant2(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram,
+				"(?i)^(participant|actor)\\s+([\\p{L}0-9_.]+)\\s+as\\s+\"([^\"]+)\"(?:\\s*(\\<\\<.*\\>\\>))?\\s*(#\\w+)?$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final IEntity entity1 = CommandLinkActivity2.getEntity(getSystem(), arg, true);
-
-		getSystem().startIf();
-
-		int lenght = 2;
-
-		if (arg.get(5) != null) {
-			final String arrow = StringUtils.manageArrowForCuca(arg.get(5));
-			lenght = arrow.length() - 1;
+		final String code = arg.get(1);
+		if (getSystem().participants().containsKey(code)) {
+			return CommandExecutionResult.error("Duplicate participant : " + code);
 		}
 
-		final IEntity branch = getSystem().getCurrentContext().getBranch();
+		final List<String> strings = StringUtils.getWithNewlines(arg.get(2));
 
+		final ParticipantType type = ParticipantType.valueOf(arg.get(0).toUpperCase());
+		final Participant participant = getSystem().createNewParticipant(type, code, strings);
 
-		Link link = new Link(entity1, branch, new LinkType(LinkDecor.ARROW, LinkDecor.NONE), arg.get(6), lenght, null,
-				arg.get(7), getSystem().getLabeldistance(), getSystem().getLabelangle());
-		if (arg.get(5) != null) {
-			final Direction direction = StringUtils.getArrowDirection(arg.get(5));
-			if (direction == Direction.LEFT || direction == Direction.UP) {
-				link = link.getInv();
-			}
+		final String stereotype = arg.get(3);
+
+		if (stereotype != null) {
+			participant.setStereotype(new Stereotype(stereotype,
+					getSystem().getSkinParam().getCircledCharacterRadius(), getSystem().getSkinParam().getFont(
+							FontParam.CIRCLED_CHARACTER)));
 		}
+		participant.setSpecificBackcolor(arg.get(4));
 
-		getSystem().addLink(link);
-
-		getSystem().setAcceptOldSyntaxForBranch(false);
 		return CommandExecutionResult.ok();
 	}
 

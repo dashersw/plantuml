@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4093 $
+ * Revision $Revision: 5396 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -36,6 +36,7 @@ package net.sourceforge.plantuml.cucadiagram.dot;
 import java.awt.Color;
 import java.awt.Font;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.graphic.FontChange;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -45,7 +46,7 @@ import net.sourceforge.plantuml.graphic.HtmlCommand;
 import net.sourceforge.plantuml.graphic.Splitter;
 import net.sourceforge.plantuml.graphic.Text;
 
-class DotExpression {
+final class DotExpression {
 
 	private final StringBuilder sb = new StringBuilder();
 
@@ -57,10 +58,13 @@ class DotExpression {
 
 	private final String fontFamily;
 
-	DotExpression(String html, int defaultFontSize, HtmlColor color, String fontFamily, int style) {
+	private final FileFormat fileFormat;
+
+	DotExpression(String html, int defaultFontSize, HtmlColor color, String fontFamily, int style, FileFormat fileFormat) {
 		this.fontFamily = fontFamily;
 		this.normalFont = new Font("SansSerif", Font.PLAIN, defaultFontSize);
 		this.fontConfiguration = new FontConfiguration(normalFont, color.getColor());
+		this.fileFormat = fileFormat;
 
 		if ((style & Font.ITALIC) != 0) {
 			html = "<i>" + html;
@@ -91,6 +95,7 @@ class DotExpression {
 	}
 
 	private void manage(Text command) {
+		underline(false);
 		sb.append(getFontTag());
 
 		String text = command.getText();
@@ -100,11 +105,10 @@ class DotExpression {
 
 		sb.append(text);
 		sb.append("</FONT>");
-		underline();
+		underline(true);
 	}
 
 	private String getFontTag() {
-		underline();
 		final int size = fontConfiguration.getFont().getSize();
 		final StringBuilder sb = new StringBuilder("<FONT POINT-SIZE=\"");
 		sb.append(size);
@@ -146,9 +150,13 @@ class DotExpression {
 		sb.append("\"");
 	}
 
-	private void underline() {
+	private void underline(boolean closing) {
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
-			sb.append("<FONT COLOR=\"#FEFECF\">_</FONT>");
+			String special = "_";
+			if (closing && fileFormat == FileFormat.EPS) {
+				special = "_!";
+			}
+			sb.append("<FONT COLOR=\"#FEFECF\">" + special + "</FONT>");
 		}
 	}
 
@@ -157,7 +165,7 @@ class DotExpression {
 
 	}
 
-	protected final boolean isUnderline() {
+	boolean isUnderline() {
 		return underline;
 	}
 

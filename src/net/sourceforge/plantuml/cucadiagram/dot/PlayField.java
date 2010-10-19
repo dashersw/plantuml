@@ -59,8 +59,10 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.posimo.Block;
 import net.sourceforge.plantuml.posimo.Cluster;
 import net.sourceforge.plantuml.posimo.EntityImageBlock;
+import net.sourceforge.plantuml.posimo.EntityImageClass2;
 import net.sourceforge.plantuml.posimo.Frame;
 import net.sourceforge.plantuml.posimo.GraphvizSolverB;
+import net.sourceforge.plantuml.posimo.IEntityImageBlock;
 import net.sourceforge.plantuml.posimo.Label;
 import net.sourceforge.plantuml.posimo.LabelImage;
 import net.sourceforge.plantuml.posimo.Path;
@@ -80,9 +82,10 @@ public final class PlayField {
 
 	private final Map<IEntity, Block> blocks = new HashMap<IEntity, Block>();
 	private final Map<IEntity, Cluster> clusters = new HashMap<IEntity, Cluster>();
-	private final Map<IEntity, EntityImageBlock> images = new HashMap<IEntity, EntityImageBlock>();
+	private final Map<IEntity, IEntityImageBlock> images = new HashMap<IEntity, IEntityImageBlock>();
 
 	final private double marginLabel = 6;
+	final private double marginDecorator = 40;
 
 	private int uid = 1;
 
@@ -122,9 +125,9 @@ public final class PlayField {
 					parentCluster = root;
 				}
 			}
-			final EntityImageBlock entityImageBlock = new EntityImageBlock(ent, rose, skinParam, links);
+			final IEntityImageBlock entityImageBlock = createEntityImageBlock(links, ent);
 			final Dimension2D d = entityImageBlock.getDimension(stringBounder);
-			final Block b = new Block(uid++, d.getWidth(), d.getHeight());
+			final Block b = new Block(uid++, d.getWidth() + 2 * marginDecorator, d.getHeight() + 2 * marginDecorator);
 			blocks.put(ent, b);
 			images.put(ent, entityImageBlock);
 			parentCluster.addBloc(b);
@@ -185,15 +188,14 @@ public final class PlayField {
 			ug.setTranslate(oldX, oldY);
 		}
 
-		final double margin = 4;
-
 		for (Map.Entry<Path, Link> ent : paths.entrySet()) {
 			final LinkType type = ent.getValue().getType();
-			final PathDrawerInterface pathDrawer = new PathDrawerInterface(new Rose(), skinParam, type);
+			final PathDrawerInterface pathDrawer = PathDrawerInterface.create(new Rose(), skinParam, type);
 			final Path p = ent.getKey();
 			ug.getParam().setColor(rose.getHtmlColor(skinParam, ColorParam.classBorder).getColor());
-			pathDrawer.drawPathBefore(ug, PositionableUtils.addMargin(p.getStart(), margin, margin), PositionableUtils
-					.addMargin(p.getEnd(), margin, margin), p);
+			pathDrawer.drawPathBefore(ug,
+					PositionableUtils.addMargin(p.getStart(), -marginDecorator, -marginDecorator),
+					PositionableUtils.addMargin(p.getEnd(), -marginDecorator, -marginDecorator), p);
 			if (p.getLabel() != null) {
 				ug.getParam().setColor(Color.BLACK);
 				drawLabel(ug, p);
@@ -204,16 +206,16 @@ public final class PlayField {
 			final IEntity entity = ent.getKey();
 			final Block b = ent.getValue();
 			final Point2D pos = b.getPosition();
-			images.get(entity).drawU(ug, pos.getX(), pos.getY(), margin, margin);
+			images.get(entity).drawU(ug, pos.getX() + marginDecorator, pos.getY() + marginDecorator, 0, 0);
 		}
 
 		for (Map.Entry<Path, Link> ent : paths.entrySet()) {
 			final LinkType type = ent.getValue().getType();
-			final PathDrawerInterface pathDrawer = new PathDrawerInterface(new Rose(), skinParam, type);
+			final PathDrawerInterface pathDrawer = PathDrawerInterface.create(new Rose(), skinParam, type);
 			final Path p = ent.getKey();
 			ug.getParam().setColor(rose.getHtmlColor(skinParam, ColorParam.classBorder).getColor());
-			pathDrawer.drawPathAfter(ug, PositionableUtils.addMargin(p.getStart(), margin, margin), PositionableUtils
-					.addMargin(p.getEnd(), margin, margin), p);
+			pathDrawer.drawPathAfter(ug, PositionableUtils.addMargin(p.getStart(), -marginDecorator, -marginDecorator),
+					PositionableUtils.addMargin(p.getEnd(), -marginDecorator, -marginDecorator), p);
 		}
 	}
 
@@ -238,6 +240,13 @@ public final class PlayField {
 		}
 		final LabelImage labelImage = new LabelImage(paths.get(p), rose, skinParam);
 		labelImage.drawU(ug, pos.getX(), pos.getY());
-
 	}
+
+	private IEntityImageBlock createEntityImageBlock(Collection<Link> links, IEntity ent) {
+		if (ent.getType() == EntityType.CLASS) {
+			return new EntityImageClass2(ent, rose, skinParam, links);
+		}
+		return new EntityImageBlock(ent, rose, skinParam, links);
+	}
+
 }

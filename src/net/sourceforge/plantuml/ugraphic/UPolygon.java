@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3837 $
+ * Revision $Revision: 5392 $
  *
  */
 package net.sourceforge.plantuml.ugraphic;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,4 +50,10 @@ public class UPolygon implements UShape {
 		return all;
 	}
 
+	public void rotate(double theta) {
+		final AffineTransform rotate = AffineTransform.getRotateInstance(theta);
+		for (Point2D.Double pt : all) {
+			rotate.transform(pt, pt);
+		}
+	}
 }

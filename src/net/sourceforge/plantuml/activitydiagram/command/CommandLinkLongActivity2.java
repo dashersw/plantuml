@@ -97,7 +97,7 @@ public class CommandLinkLongActivity2 extends CommandMultilines<ActivityDiagram>
 			return CommandExecutionResult.error("No such entity");
 		}
 
-		final String arrow = StringUtils.manageArrow(line0.get(5));
+		final String arrow = StringUtils.manageArrowForCuca(line0.get(5));
 		final int lenght = arrow.length() - 1;
 
 		final String linkLabel = line0.get(6);

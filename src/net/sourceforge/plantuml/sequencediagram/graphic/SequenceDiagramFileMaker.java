@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5326 $
+ * Revision $Revision: 5403 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -174,22 +174,24 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				} finally {
 					fos.close();
 				}
-//			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.EPS_VIA_SVG) {
-//				final File svgFile = CucaDiagramFileMaker.createTempFile("seq", ".svg");
-//				final UGraphicSvg svg = (UGraphicSvg) createImage;
-//				final FileOutputStream fos = new FileOutputStream(svgFile);
-//				try {
-//					svg.createXml(fos);
-//				} finally {
-//					fos.close();
-//				}
-//				try {
-//					InkscapeUtils.create().createEps(svgFile, f);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//					Log.error("Error "+e);
-//					throw new IOException(e.toString());
-//				}
+				// } else if (createImage instanceof UGraphicSvg && fileFormat
+				// == FileFormat.EPS_VIA_SVG) {
+				// final File svgFile =
+				// CucaDiagramFileMaker.createTempFile("seq", ".svg");
+				// final UGraphicSvg svg = (UGraphicSvg) createImage;
+				// final FileOutputStream fos = new FileOutputStream(svgFile);
+				// try {
+				// svg.createXml(fos);
+				// } finally {
+				// fos.close();
+				// }
+				// try {
+				// InkscapeUtils.create().createEps(svgFile, f);
+				// } catch (InterruptedException e) {
+				// e.printStackTrace();
+				// Log.error("Error "+e);
+				// throw new IOException(e.toString());
+				// }
 			} else if (createImage instanceof UGraphicEps) {
 				final UGraphicEps eps = (UGraphicEps) createImage;
 				final FileWriter fw = new FileWriter(f);
@@ -236,18 +238,18 @@ public class SequenceDiagramFileMaker implements FileMaker {
 	private double getImageWidthWithoutMinsize(SequenceDiagramArea area, boolean rotate) {
 		final double w;
 		if (rotate) {
-			w = area.getHeight();
+			w = area.getHeight() * diagram.getScale();
 		} else {
-			w = area.getWidth();
+			w = area.getWidth() * diagram.getScale();
 		}
 		return w;
 	}
 
 	private double getImageHeight(SequenceDiagramArea area, final Page page, boolean rotate) {
 		if (rotate) {
-			return area.getWidth();
+			return area.getWidth() * diagram.getScale();
 		}
-		return area.getHeight();
+		return area.getHeight() * diagram.getScale();
 	}
 
 	private UGraphic createImage(final int diagramWidth, final Page page, final int indice) {
@@ -289,8 +291,14 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				at.concatenate(AffineTransform.getTranslateInstance(0.01, 0));
 				graphics2D.setTransform(at);
 			}
+			final AffineTransform scale = graphics2D.getTransform();
+			scale.scale(diagram.getScale(), diagram.getScale());
+			graphics2D.setTransform(scale);
 			ug = new UGraphicG2d(graphics2D, builder.getBufferedImage());
-		} else if (fileFormat == FileFormat.SVG  /*|| fileFormat == FileFormat.EPS_VIA_SVG*/) {
+		} else if (fileFormat == FileFormat.SVG /*
+												 * || fileFormat ==
+												 * FileFormat.EPS_VIA_SVG
+												 */) {
 			if (backColor.equals(Color.WHITE)) {
 				ug = new UGraphicSvg(false);
 			} else {

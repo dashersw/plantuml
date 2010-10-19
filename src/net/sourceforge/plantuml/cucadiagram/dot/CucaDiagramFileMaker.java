@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5335 $
+ * Revision $Revision: 5401 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -87,6 +87,7 @@ import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.VerticalPosition;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
+import net.sourceforge.plantuml.png.PngScaler;
 import net.sourceforge.plantuml.png.PngSizer;
 import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.png.PngTitler;
@@ -143,8 +144,8 @@ public final class CucaDiagramFileMaker {
 		}
 
 		if (fileFormat == FileFormat.PNG) {
-			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(), diagram
-					.getVerticalPages(), diagram.getMetadata()).getFiles();
+			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(),
+					diagram.getVerticalPages(), diagram.getMetadata()).getFiles();
 			for (File f : result) {
 				Log.info("Creating file: " + f);
 			}
@@ -203,8 +204,8 @@ public final class CucaDiagramFileMaker {
 			deltaY = 0;
 			populateImages();
 			populateImagesLink();
-			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(), staticFiles
-					.getVisibilityImages(), dotStrings, false);
+			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(),
+					staticFiles.getVisibilityImages(), dotStrings, FileFormat.SVG);
 			final String dotString = dotMaker.createDotString();
 
 			if (OptionFlags.getInstance().isKeepTmpFiles()) {
@@ -217,6 +218,7 @@ public final class CucaDiagramFileMaker {
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			graphviz.createPng(baos);
 			baos.close();
+			dotMaker.clean();
 
 			String svg = new String(baos.toByteArray(), "UTF-8");
 
@@ -378,8 +380,8 @@ public final class CucaDiagramFileMaker {
 		try {
 			populateImages();
 			populateImagesLink();
-			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(), staticFiles
-					.getVisibilityImages(), dotStrings, false);
+			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(),
+					staticFiles.getVisibilityImages(), dotStrings, FileFormat.PNG);
 			final String dotString = dotMaker.createDotString();
 
 			if (OptionFlags.getInstance().isKeepTmpFiles()) {
@@ -406,6 +408,7 @@ public final class CucaDiagramFileMaker {
 				return null;
 			}
 			bais.close();
+			dotMaker.clean();
 
 			final boolean isUnderline = dotMaker.isUnderline();
 			if (isUnderline) {
@@ -416,6 +419,7 @@ public final class CucaDiagramFileMaker {
 			im = addTitle(im, background);
 			im = addFooter(im, background);
 			im = addHeader(im, background);
+			im = rotateImage(im, diagram.getScale());
 
 			if (diagram.isRotation()) {
 				im = PngRotation.process(im);
@@ -431,6 +435,10 @@ public final class CucaDiagramFileMaker {
 			return cmap.toString();
 		}
 		return null;
+	}
+
+	private BufferedImage rotateImage(BufferedImage im, double scale) {
+		return PngScaler.scale(im, scale);
 	}
 
 	private byte[] getImageDataCmap(final String dotString, StringBuilder cmap2) throws IOException,
@@ -539,8 +547,8 @@ public final class CucaDiagramFileMaker {
 		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER).getColor();
 		final String fontFamily = getSkinParam().getFontFamily(FontParam.HEADER);
 		final int fontSize = getSkinParam().getFontSize(FontParam.HEADER);
-		final SvgTitler svgTitler = new SvgTitler(titleColor, diagram.getHeader(), fontSize, fontFamily, diagram
-				.getHeaderAlignement(), VerticalPosition.TOP, 3);
+		final SvgTitler svgTitler = new SvgTitler(titleColor, diagram.getHeader(), fontSize, fontFamily,
+				diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
 		this.deltaY += svgTitler.getHeight();
 		return svgTitler.addTitleSvg(svg, width, height);
 	}
@@ -549,8 +557,8 @@ public final class CucaDiagramFileMaker {
 		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER).getColor();
 		final String fontFamily = getSkinParam().getFontFamily(FontParam.FOOTER);
 		final int fontSize = getSkinParam().getFontSize(FontParam.FOOTER);
-		final SvgTitler svgTitler = new SvgTitler(titleColor, diagram.getFooter(), fontSize, fontFamily, diagram
-				.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
+		final SvgTitler svgTitler = new SvgTitler(titleColor, diagram.getFooter(), fontSize, fontFamily,
+				diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
 		return svgTitler.addTitleSvg(svg, width, height + deltaY);
 	}
 
@@ -558,8 +566,8 @@ public final class CucaDiagramFileMaker {
 		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER).getColor();
 		final String fontFamily = getSkinParam().getFontFamily(FontParam.FOOTER);
 		final int fontSize = getSkinParam().getFontSize(FontParam.FOOTER);
-		final PngTitler pngTitler = new PngTitler(titleColor, diagram.getFooter(), fontSize, fontFamily, diagram
-				.getFooterAlignement(), VerticalPosition.BOTTOM);
+		final PngTitler pngTitler = new PngTitler(titleColor, diagram.getFooter(), fontSize, fontFamily,
+				diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
 		return pngTitler.processImage(im, background, 3);
 	}
 
@@ -567,8 +575,8 @@ public final class CucaDiagramFileMaker {
 		final Color titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER).getColor();
 		final String fontFamily = getSkinParam().getFontFamily(FontParam.HEADER);
 		final int fontSize = getSkinParam().getFontSize(FontParam.HEADER);
-		final PngTitler pngTitler = new PngTitler(titleColor, diagram.getHeader(), fontSize, fontFamily, diagram
-				.getHeaderAlignement(), VerticalPosition.TOP);
+		final PngTitler pngTitler = new PngTitler(titleColor, diagram.getHeader(), fontSize, fontFamily,
+				diagram.getHeaderAlignement(), VerticalPosition.TOP);
 		return pngTitler.processImage(im, background, 3);
 	}
 
@@ -583,11 +591,11 @@ public final class CucaDiagramFileMaker {
 	}
 
 	private GraphvizMaker createDotMaker(Map<EntityType, DrawFile> staticImages,
-			Map<VisibilityModifier, DrawFile> visibilities, List<String> dotStrings, boolean isEps) throws IOException,
-			InterruptedException {
+			Map<VisibilityModifier, DrawFile> visibilities, List<String> dotStrings, FileFormat fileFormat)
+			throws IOException, InterruptedException {
 		if (diagram.getUmlDiagramType() == UmlDiagramType.STATE
 				|| diagram.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
-			new CucaDiagramSimplifier(diagram, dotStrings, isEps);
+			new CucaDiagramSimplifier(diagram, dotStrings, fileFormat);
 		}
 		final DotData dotData = new DotData(null, diagram.getLinks(), diagram.entities(), diagram.getUmlDiagramType(),
 				diagram.getSkinParam(), diagram.getRankdir(), diagram, diagram);
@@ -597,7 +605,7 @@ public final class CucaDiagramFileMaker {
 			dotData.putAllVisibilityImages(visibilities);
 		}
 
-		return new DotMaker(dotData, dotStrings, isEps);
+		return new DotMaker(dotData, dotStrings, fileFormat);
 	}
 
 	private void populateImages() throws IOException {
@@ -659,14 +667,13 @@ public final class CucaDiagramFileMaker {
 
 		final UGraphicSvg ug = new UGraphicSvg(true);
 		comp.drawU(ug, new Dimension(width, height), new SimpleContext2D(false));
-		
+
 		final File fEps = createTempFile("plantumlB", ".eps");
 		final PrintWriter pw = new PrintWriter(fEps);
 		final UGraphicEps uEps = new UGraphicEps(EpsStrategy.getDefault());
 		comp.drawU(uEps, new Dimension(width, height), new SimpleContext2D(false));
 		pw.print(uEps.getEPSCode());
 		pw.close();
-		
 
 		return new DrawFile(fPng, getSvg(ug), fEps);
 	}
@@ -701,7 +708,8 @@ public final class CucaDiagramFileMaker {
 		final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), getSkinParam()
 				.getCircledCharacterRadius(), font, stereotype.getColor(), classBorder, Color.BLACK);
 		return staticFiles.generateCircleCharacter(f, fEps, circledCharacter, classBackground);
-		//return new DrawFile(f, UGraphicG2d.getSvgString(circledCharacter), fEps);
+		// return new DrawFile(f, UGraphicG2d.getSvgString(circledCharacter),
+		// fEps);
 
 	}
 
@@ -710,7 +718,7 @@ public final class CucaDiagramFileMaker {
 	}
 
 	static public File createTempFile(String prefix, String suffix) throws IOException {
-		if (suffix.startsWith(".")==false) {
+		if (suffix.startsWith(".") == false) {
 			throw new IllegalArgumentException();
 		}
 		final File f = File.createTempFile(prefix, suffix);
@@ -727,8 +735,8 @@ public final class CucaDiagramFileMaker {
 			deltaY = 0;
 			populateImages();
 			populateImagesLink();
-			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(), staticFiles
-					.getVisibilityImages(), dotStrings, true);
+			final GraphvizMaker dotMaker = createDotMaker(staticFiles.getStaticImages(),
+					staticFiles.getVisibilityImages(), dotStrings, FileFormat.EPS);
 			final String dotString = dotMaker.createDotString();
 
 			if (OptionFlags.getInstance().isKeepTmpFiles()) {
@@ -742,7 +750,13 @@ public final class CucaDiagramFileMaker {
 			graphviz.createPng(baos);
 			baos.close();
 
-			final String eps = new String(baos.toByteArray(), "UTF-8");
+			dotMaker.clean();
+
+			final boolean isUnderline = dotMaker.isUnderline();
+			String eps = new String(baos.toByteArray(), "UTF-8");
+			if (isUnderline) {
+				eps = new UnderlineTrickEps(eps).getString();
+			}
 
 			// final Dimension2D dim = getDimensionSvg(svg);
 			//

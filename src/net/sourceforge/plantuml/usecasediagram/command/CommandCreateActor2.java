@@ -27,58 +27,48 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 5424 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.usecasediagram.command;
 
-import java.util.Arrays;
 import java.util.List;
 
+import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.sequencediagram.Message;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
 
-public class CommandArrow extends SingleLineCommand<SequenceDiagram> {
+public class CommandCreateActor2 extends SingleLineCommand<UsecaseDiagram> {
 
-	public CommandArrow(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram,
-				"(?i)^([\\p{L}0-9_.]+)\\s*([=-]+[>\\]]{1,2}|[<\\[]{1,2}[=-]+)\\s*([\\p{L}0-9_.]+)\\s*(?::\\s*(.*))?$");
+	public CommandCreateActor2(UsecaseDiagram usecaseDiagram) {
+		super(usecaseDiagram,
+				"(?i)^(?:actor\\s+)?([\\p{L}0-9_.]+)\\s+as\\s+(:[^:]+:|\"[^\"]+\")(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+	}
+
+	@Override
+	protected boolean isForbidden(String line) {
+		if (line.matches("^[\\p{L}0-9_.]+$")) {
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		Participant p1;
-		Participant p2;
+		// final EntityType type = EntityType.ACTOR;
+		final String code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
+		final String display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1));
+		final String stereotype = arg.get(2);
+		final Entity entity = (Entity) getSystem().getOrCreateClass(code);
+		entity.setDisplay(display);
 
-		final String arrow = StringUtils.manageArrowForSequence(arg.get(1));
-
-		if (arrow.endsWith(">")) {
-			p1 = getSystem().getOrCreateParticipant(arg.get(0));
-			p2 = getSystem().getOrCreateParticipant(arg.get(2));
-		} else if (arrow.startsWith("<")) {
-			p2 = getSystem().getOrCreateParticipant(arg.get(0));
-			p1 = getSystem().getOrCreateParticipant(arg.get(2));
-		} else {
-			throw new IllegalStateException(arg.toString());
+		if (stereotype != null) {
+			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
+					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
 		}
-		
-		final boolean full = (arrow.endsWith(">>") || arrow.startsWith("<<"))==false;
-
-		final boolean dotted = arrow.contains("--");
-
-		final List<String> labels;
-		if (arg.get(3) == null) {
-			labels = Arrays.asList("");
-		} else {
-			labels = StringUtils.getWithNewlines(arg.get(3));
-		}
-
-		getSystem().addMessage(new Message(p1, p2, labels, dotted, full, getSystem().getNextMessageNumber()));
 		return CommandExecutionResult.ok();
 	}
 

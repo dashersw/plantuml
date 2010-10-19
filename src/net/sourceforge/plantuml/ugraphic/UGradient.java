@@ -55,4 +55,20 @@ public class UGradient {
 		return color2;
 	}
 
+	public final Color getColor(double coeff) {
+		if (coeff > 1 || coeff < 0) {
+			throw new IllegalArgumentException("c=" + coeff);
+		}
+		final int vred = color2.getRed() - color1.getRed();
+		final int vgreen = color2.getGreen() - color1.getGreen();
+		final int vblue = color2.getBlue() - color1.getBlue();
+
+		final int red = color1.getRed() + (int) (coeff * vred);
+		final int green = color1.getGreen() + (int) (coeff * vgreen);
+		final int blue = color1.getBlue() + (int) (coeff * vblue);
+
+		return new Color(red, green, blue);
+
+	}
+
 }

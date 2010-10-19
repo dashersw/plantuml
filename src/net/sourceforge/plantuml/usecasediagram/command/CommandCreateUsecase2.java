@@ -29,7 +29,7 @@
  * Original Author:  Arnaud Roques
  *
  */
-package net.sourceforge.plantuml.componentdiagram.command;
+package net.sourceforge.plantuml.usecasediagram.command;
 
 import java.util.List;
 
@@ -37,17 +37,16 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
 
-public class CommandCreateActor2 extends SingleLineCommand<ComponentDiagram> {
+public class CommandCreateUsecase2 extends SingleLineCommand<UsecaseDiagram> {
 
-	public CommandCreateActor2(ComponentDiagram diagram) {
-		super(
-				diagram,
-				"(?i)^(?:actor\\s+)?([\\p{L}0-9_.]+|:[^:]+:|\"[^\"]+\")\\s*(?:as\\s+:?([\\p{L}0-9_.]+):?)?(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+	public CommandCreateUsecase2(UsecaseDiagram usecaseDiagram) {
+		super(usecaseDiagram,
+				"(?i)^(?:usecase\\s+)?([\\p{L}0-9_.]+|\\([^)]+\\))\\s*as\\s+(\"[^\"]+\"|\\([^)]+\\))(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
 	}
 
 	@Override
@@ -60,25 +59,17 @@ public class CommandCreateActor2 extends SingleLineCommand<ComponentDiagram> {
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final EntityType type = EntityType.ACTOR;
-		final String code;
-		final String display;
-		if (arg.get(1) == null) {
-			code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
-			display = code;
-		} else {
-			display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
-			code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1));
-		}
+		final EntityType type = EntityType.USECASE;
+		final String code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
+		final String display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1));
+
 		final String stereotype = arg.get(2);
 		final Entity entity = (Entity) getSystem().getOrCreateEntity(code, type);
 		entity.setDisplay(display);
-
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
 					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
 		}
 		return CommandExecutionResult.ok();
 	}
-
 }

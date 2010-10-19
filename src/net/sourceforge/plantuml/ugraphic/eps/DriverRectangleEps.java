@@ -31,9 +31,12 @@
  */
 package net.sourceforge.plantuml.ugraphic.eps;
 
+import java.awt.Color;
+
 import net.sourceforge.plantuml.eps.EpsGraphics;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
 import net.sourceforge.plantuml.ugraphic.UDriver;
+import net.sourceforge.plantuml.ugraphic.UGradient;
 import net.sourceforge.plantuml.ugraphic.UParam;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UShape;
@@ -53,13 +56,16 @@ public class DriverRectangleEps implements UDriver<EpsGraphics> {
 		final double ry = rect.getRy();
 		final double width = rect.getWidth();
 		final double height = rect.getHeight();
-		
-		eps.setStrokeColor(param.getColor());
-		eps.setFillColor(param.getBackcolor());
-		eps.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharrayEps());
-		
-		eps.epsRectangle(x, y, width, height, rx / 2, ry / 2);
 
+		final UGradient gr = param.getGradient();
+		if (gr == null) {
+			eps.setStrokeColor(param.getColor());
+			eps.setFillColor(param.getBackcolor());
+			eps.setStrokeWidth("" + param.getStroke().getThickness(), param.getStroke().getDasharrayEps());
+			eps.epsRectangle(x, y, width, height, rx / 2, ry / 2);
+		} else {
+			eps.epsRectangle(x, y, width, height, rx / 2, ry / 2, gr);
+		}
 
 	}
 }

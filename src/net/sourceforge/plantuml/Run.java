@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5269 $
+ * Revision $Revision: 5391 $
  *
  */
 package net.sourceforge.plantuml;
 
+import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -51,6 +52,9 @@ public class Run {
 
 	public static void main(String[] argsArray) throws IOException, InterruptedException {
 		final Option option = new Option(argsArray);
+		if (OptionFlags.getInstance().isVerbose()) {
+			Log.info("GraphicsEnvironment.isHeadless() " + GraphicsEnvironment.isHeadless());
+		}
 		if (OptionFlags.getInstance().isGui()) {
 			try {
 				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

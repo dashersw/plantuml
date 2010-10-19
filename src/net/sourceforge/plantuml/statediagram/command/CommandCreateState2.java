@@ -28,27 +28,31 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 5019 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.statediagram.command;
 
-public enum Direction {
-	RIGHT, LEFT, DOWN, UP;
+import java.util.List;
 
-	public Direction getInv() {
-		if (this == RIGHT) {
-			return LEFT;
-		}
-		if (this == LEFT) {
-			return RIGHT;
-		}
-		if (this == DOWN) {
-			return UP;
-		}
-		if (this == UP) {
-			return DOWN;
-		}
-		throw new IllegalStateException();
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.statediagram.StateDiagram;
+
+public class CommandCreateState2 extends SingleLineCommand<StateDiagram> {
+
+	public CommandCreateState2(StateDiagram diagram) {
+		super(diagram, "(?i)^(?:state\\s+)([\\p{L}0-9_.]+)\\s+as\\s+\"([^\"]+)\"$");
 	}
+
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final String code = arg.get(0);
+		final String display = arg.get(1);
+		final Entity ent = (Entity) getSystem().getOrCreateClass(code);
+		ent.setDisplay(display);
+		return CommandExecutionResult.ok();
+	}
+
 }

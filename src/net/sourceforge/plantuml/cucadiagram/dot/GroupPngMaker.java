@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5223 $
+ * Revision $Revision: 5385 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -47,6 +47,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -63,7 +64,7 @@ public final class GroupPngMaker {
 	private final CucaDiagram diagram;
 	private final Group group;
 	private final Rose rose = new Rose();
-	private final boolean isEps;
+	private final FileFormat fileFormat;
 
 	class InnerGroupHierarchy implements GroupHierarchy {
 
@@ -80,10 +81,10 @@ public final class GroupPngMaker {
 
 	}
 
-	public GroupPngMaker(CucaDiagram diagram, Group group, boolean isEps) throws IOException {
+	public GroupPngMaker(CucaDiagram diagram, Group group, FileFormat fileFormat) throws IOException {
 		this.diagram = diagram;
 		this.group = group;
-		this.isEps = isEps;
+		this.fileFormat = fileFormat;
 	}
 
 	public void createPng(OutputStream os, List<String> dotStrings) throws IOException, InterruptedException {
@@ -172,7 +173,7 @@ public final class GroupPngMaker {
 		// dotData.putAllStaticImages(staticImages);
 		// dotData.putAllImagesLink(imagesLink);
 
-		return new DotMaker(dotData, dotStrings, isEps);
+		return new DotMaker(dotData, dotStrings, fileFormat);
 	}
 
 	private List<Link> getPureInnerLinks() {
@@ -187,14 +188,5 @@ public final class GroupPngMaker {
 		}
 		return result;
 	}
-
-	// private File createTempFile(String prefix) throws IOException {
-	// final File f = File.createTempFile(prefix, ".png");
-	// Log.info("Creating temporary file: " + f);
-	// if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
-	// f.deleteOnExit();
-	// }
-	// return f;
-	// }
 
 }

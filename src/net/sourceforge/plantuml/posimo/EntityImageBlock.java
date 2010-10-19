@@ -57,7 +57,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicUtils;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 
-public class EntityImageBlock {
+public class EntityImageBlock implements IEntityImageBlock {
 
 	private final IEntity entity;
 	private final ISkinParam param;
