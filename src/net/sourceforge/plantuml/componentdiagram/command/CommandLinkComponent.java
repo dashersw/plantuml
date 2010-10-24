@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5019 $
+ * Revision $Revision: 5443 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram.command;
@@ -50,7 +50,11 @@ public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 		super(
 				diagram,
 				"(?i)^([\\p{L}0-9_.]+|:[^:]+:|\\[[^\\]*]+[^\\]]*\\]|\\(\\)\\s*[\\p{L}0-9_.]+|\\(\\)\\s*\"[^\"]+\")\\s*"
-						+ "(?:(([=-]+|\\.+)([\\]>]|\\|[>\\]])?)|(([\\[<]|[<\\[]\\|)?([=-]+|\\.+)))"
+						+ "(?:("
+						+ "([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*|\\.+(?:left|right|up|down|le?|ri?|up?|do?)?\\.*)([\\]>]|\\|[>\\]])?"
+						+ ")|("
+						+ "([\\[<]|[<\\[]\\|)?([=-]*(?:left|right|up|down|le?|ri?|up?|do?)?[=-]+|\\.*(?:left|right|up|down|le?|ri?|up?|do?)?\\.+)"
+						+ "))"
 						+ "\\s*([\\p{L}0-9_.]+|:[^:]+:|\\[[^\\]*]+[^\\]]*\\]|\\(\\)\\s*[\\p{L}0-9_.]+|\\(\\)\\s*\"[^\"]+\")\\s*(?::\\s*([^\"]+))?$");
 	}
 
@@ -62,7 +66,7 @@ public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 		if (getSystem().isGroup(arg.get(0)) || getSystem().isGroup(arg.get(7))) {
 			return CommandExecutionResult.error("Package can be only linked to other package");
 		}
-		
+
 		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(0));
 		final IEntity cl2 = getSystem().getOrCreateClass(arg.get(7));
 
@@ -73,7 +77,7 @@ public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 		getSystem().addLink(link);
 		return CommandExecutionResult.ok();
 	}
-	
+
 	private CommandExecutionResult executePackageLink(List<String> arg) {
 		final Group cl1 = getSystem().getGroup(arg.get(0));
 		final Group cl2 = getSystem().getGroup(arg.get(7));
@@ -81,13 +85,10 @@ public class CommandLinkComponent extends SingleLineCommand<ComponentDiagram> {
 		final LinkType linkType = arg.get(1) != null ? getLinkTypeNormal(arg) : getLinkTypeInv(arg);
 		final String queue = arg.get(1) != null ? arg.get(2) : arg.get(6);
 
-		final Link link = new Link(cl1.getEntityCluster(), cl2.getEntityCluster(), linkType, arg.get(8), queue
-				.length());
+		final Link link = new Link(cl1.getEntityCluster(), cl2.getEntityCluster(), linkType, arg.get(8), queue.length());
 		getSystem().addLink(link);
 		return CommandExecutionResult.ok();
 	}
-
-
 
 	private LinkType getLinkTypeNormal(List<String> arg) {
 		final String queue = arg.get(2);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5424 $
+ * Revision $Revision: 5494 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -798,11 +798,11 @@ final public class DotMaker implements GraphvizMaker {
 		} else if (type == EntityType.CIRCLE_START) {
 			final String color = getColorString(ColorParam.activityStart);
 			sb.append(entity.getUid() + " [fillcolor=" + color + ",color=" + color + ",style=\"filled\","
-					+ "shape=circle,width=.20,label=\"\"];");
+					+ "shape=circle,width=.20,height=.20,label=\"\"];");
 		} else if (type == EntityType.CIRCLE_END) {
 			final String color = getColorString(ColorParam.activityEnd);
 			sb.append(entity.getUid() + " [fillcolor=" + color + ",color=" + color + ",style=\"filled\","
-					+ "shape=doublecircle,width=.13,label=\"\"];");
+					+ "shape=doublecircle,width=.13,height=.13,label=\"\"];");
 		} else if (type == EntityType.POINT_FOR_ASSOCIATION) {
 			sb.append(entity.getUid() + " [width=.05,shape=point,color=" + getColorString(ColorParam.classBorder)
 					+ "];");

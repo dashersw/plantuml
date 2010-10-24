@@ -28,19 +28,20 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5495 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command.regex;
 
-public class Version {
+import java.util.Iterator;
+import java.util.Map;
 
-	public static int version() {
-		return 5494;
-	}
+public interface IRegex {
 
-	public static long compileTime() {
-		return 1287935836546L;
-	}
+	public String getPattern();
+
+	public int count();
+
+	public Map<String, RegexPartialMatch> createPartialMatch(Iterator<String> it);
 
 }

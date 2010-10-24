@@ -28,19 +28,57 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5495 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command.regex;
 
-public class Version {
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.regex.Pattern;
 
-	public static int version() {
-		return 5494;
+public class RegexLeaf implements IRegex {
+
+	private final Pattern pattern;
+	private final String name;
+
+	private int count = -1;
+
+	public RegexLeaf(String regex) {
+		this(null, regex);
 	}
 
-	public static long compileTime() {
-		return 1287935836546L;
+	public RegexLeaf(String name, String regex) {
+		this.pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getPattern() {
+		return pattern.pattern();
+	}
+
+	public int count() {
+		if (count == -1) {
+			count = pattern.matcher("").groupCount();
+		}
+		return count;
+	}
+
+	public Map<String, RegexPartialMatch> createPartialMatch(Iterator<String> it) {
+		final RegexPartialMatch m = new RegexPartialMatch(name);
+		for (int i = 0; i < count(); i++) {
+			final String group = it.next();
+			m.add(group);
+		}
+		if (name == null) {
+			return Collections.emptyMap();
+		}
+		return Collections.singletonMap(name, m);
 	}
 
 }

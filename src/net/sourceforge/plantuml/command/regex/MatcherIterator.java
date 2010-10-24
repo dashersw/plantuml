@@ -28,19 +28,33 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5495 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command.regex;
 
-public class Version {
+import java.util.Iterator;
+import java.util.regex.Matcher;
 
-	public static int version() {
-		return 5494;
+public class MatcherIterator implements Iterator<String> {
+
+	private int cpt = 1;
+	private final Matcher matcher;
+
+	MatcherIterator(Matcher matcher) {
+		this.matcher = matcher;
 	}
 
-	public static long compileTime() {
-		return 1287935836546L;
+	public boolean hasNext() {
+		return cpt <= matcher.groupCount();
+	}
+
+	public String next() {
+		return matcher.group(cpt++);
+	}
+
+	public void remove() {
+		throw new UnsupportedOperationException();
 	}
 
 }

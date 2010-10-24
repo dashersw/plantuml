@@ -28,19 +28,30 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5495 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command.regex;
 
-public class Version {
+import java.util.regex.Pattern;
 
-	public static int version() {
-		return 5494;
+public class RegexConcat extends RegexComposed implements IRegex {
+
+	private final Pattern full;
+
+	public RegexConcat(IRegex... partial) {
+		super(partial);
+		final StringBuilder sb = new StringBuilder();
+		for (IRegex p : partial) {
+			sb.append(p.getPattern());
+		}
+		this.full = Pattern.compile(sb.toString());
+	}
+	
+	@Override
+	protected Pattern getFull() {
+		return full;
 	}
 
-	public static long compileTime() {
-		return 1287935836546L;
-	}
 
 }

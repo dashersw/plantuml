@@ -42,7 +42,7 @@ import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor2;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase2;
-import net.sourceforge.plantuml.usecasediagram.command.CommandLinkUsecase;
+import net.sourceforge.plantuml.usecasediagram.command.CommandLinkUsecase2;
 import net.sourceforge.plantuml.usecasediagram.command.CommandMultilinesUsecaseNoteEntity;
 import net.sourceforge.plantuml.usecasediagram.command.CommandRankDirUsecase;
 
@@ -62,7 +62,8 @@ public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommonCommands(system);
 
 		addCommand(new CommandPage(system));
-		addCommand(new CommandLinkUsecase(system));
+		//addCommand(new CommandLinkUsecase(system));
+		addCommand(new CommandLinkUsecase2(system));
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));

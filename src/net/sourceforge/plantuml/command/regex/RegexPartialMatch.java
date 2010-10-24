@@ -28,19 +28,43 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5495 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command.regex;
 
-public class Version {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
-	public static int version() {
-		return 5494;
+public class RegexPartialMatch implements Iterable<String> {
+
+	private final List<String> data = new ArrayList<String>();
+	
+	public RegexPartialMatch(String name) {
+		
 	}
 
-	public static long compileTime() {
-		return 1287935836546L;
+	public void add(String group) {
+		data.add(group);
+	}
+
+	public int size() {
+		return data.size();
+	}
+
+	public String get(int i) {
+		return data.get(i);
+	}
+
+	public Iterator<String> iterator() {
+		return Collections.unmodifiableCollection(data).iterator();
+	}
+
+	@Override
+	public String toString() {
+		return "{" + data + "}";
 	}
 
 }
