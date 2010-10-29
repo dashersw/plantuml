@@ -28,21 +28,33 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3834 $
+ * Revision $Revision: 5506 $
  *
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.awt.Color;
+
 class AddStyle implements FontChange {
 
 	private final FontStyle style;
+	private final Color extendedColor;
 
-	AddStyle(FontStyle style) {
+	AddStyle(FontStyle style, Color extendedColor) {
 		this.style = style;
+		this.extendedColor = extendedColor;
+	}
+
+	public AddStyle(String s) {
+		this(FontStyle.getStyle(s), FontStyle.getStyle(s).getExtendedColor(s));
 	}
 
 	public FontConfiguration apply(FontConfiguration initial) {
-		return initial.add(style);
+		initial = initial.add(style);
+		if (extendedColor != null) {
+			initial = initial.changeExtendedColor(extendedColor);
+		}
+		return initial;
 	}
 
 }

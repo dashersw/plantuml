@@ -27,24 +27,28 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 5520 $
+ *
+ * Revision $Revision: 5401 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
+public class ScaleWidthAndHeight implements Scale {
 
-public interface FileMaker {
+	private final double maxWidth;
+	private final double maxHeight;
 
-	List<File> createMany(final File suggestedFile) throws IOException;
+	public ScaleWidthAndHeight(double maxWidth, double maxHeight) {
+		this.maxWidth = maxWidth;
+		this.maxHeight = maxHeight;
+	}
 
-	void createOne(OutputStream os, int index) throws IOException;
-	
-	public int getNbPages();
-
-
+	public double getScale(double width, double height) {
+		final double scale1 = maxWidth / width;
+		final double scale2 = maxHeight / height;
+//		if (scale1 > 1 && scale2 > 1) {
+//			return 1;
+//		}
+		return Math.min(scale1, scale2);
+	}
 }

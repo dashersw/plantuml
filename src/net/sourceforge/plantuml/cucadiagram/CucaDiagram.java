@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5386 $
+ * Revision $Revision: 5520 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -475,7 +475,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			this.portion = portion;
 			this.show = show;
 		}
+	}
 
+	@Override
+	public int getNbImages() {
+		return this.horizontalPages * this.verticalPages;
 	}
 
 }

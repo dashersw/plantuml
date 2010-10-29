@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5403 $
+ * Revision $Revision: 5520 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -54,9 +54,7 @@ import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.eps.EpsStrategy;
-import net.sourceforge.plantuml.eps.InkscapeUtils;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
@@ -138,6 +136,10 @@ public class SequenceDiagramFileMaker implements FileMaker {
 			positions.put(n, initializer.getYposition(dummyStringBounder, n));
 		}
 		pages = create(drawableSet, positions, sequenceDiagram.isShowFootbox(), sequenceDiagram.getTitle()).getPages();
+	}
+	
+	public int getNbPages() {
+		return pages.size();
 	}
 
 	private PageSplitter create(DrawableSet drawableSet, Map<Newpage, Double> positions, boolean showFootbox,
@@ -234,22 +236,29 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		}
 		return minsize;
 	}
+	
+	private double getScale(double width, double height) {
+		if (diagram.getScale()==null) {
+			return 1;
+		}
+		return diagram.getScale().getScale(width, height);
+	}
 
 	private double getImageWidthWithoutMinsize(SequenceDiagramArea area, boolean rotate) {
 		final double w;
 		if (rotate) {
-			w = area.getHeight() * diagram.getScale();
+			w = area.getHeight() * getScale(area.getWidth(), area.getHeight());
 		} else {
-			w = area.getWidth() * diagram.getScale();
+			w = area.getWidth() * getScale(area.getWidth(), area.getHeight());
 		}
 		return w;
 	}
 
 	private double getImageHeight(SequenceDiagramArea area, final Page page, boolean rotate) {
 		if (rotate) {
-			return area.getWidth() * diagram.getScale();
+			return area.getWidth() * getScale(area.getWidth(), area.getHeight());
 		}
-		return area.getHeight() * diagram.getScale();
+		return area.getHeight() * getScale(area.getWidth(), area.getHeight());
 	}
 
 	private UGraphic createImage(final int diagramWidth, final Page page, final int indice) {
@@ -292,13 +301,10 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				graphics2D.setTransform(at);
 			}
 			final AffineTransform scale = graphics2D.getTransform();
-			scale.scale(diagram.getScale(), diagram.getScale());
+			scale.scale(getScale(area.getWidth(), area.getHeight()), getScale(area.getWidth(), area.getHeight()));
 			graphics2D.setTransform(scale);
 			ug = new UGraphicG2d(graphics2D, builder.getBufferedImage());
-		} else if (fileFormat == FileFormat.SVG /*
-												 * || fileFormat ==
-												 * FileFormat.EPS_VIA_SVG
-												 */) {
+		} else if (fileFormat == FileFormat.SVG) {
 			if (backColor.equals(Color.WHITE)) {
 				ug = new UGraphicSvg(false);
 			} else {

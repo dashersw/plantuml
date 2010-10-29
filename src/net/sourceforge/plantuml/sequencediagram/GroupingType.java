@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4920 $
+ * Revision $Revision: 5523 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
@@ -45,6 +45,8 @@ public enum GroupingType {
 		} else if (s.equalsIgnoreCase("par")) {
 			return GroupingType.START;
 		} else if (s.equalsIgnoreCase("break")) {
+			return GroupingType.START;
+		} else if (s.equalsIgnoreCase("group")) {
 			return GroupingType.START;
 		} else if (s.equalsIgnoreCase("critical")) {
 			return GroupingType.START;

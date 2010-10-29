@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4696 $
+ * Revision $Revision: 5528 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -50,11 +50,13 @@ class GroupingTail extends GraphicalElement {
 	private final Component tail;
 	private final InGroupableList inGroupableList;
 
-	public GroupingTail(double currentY, double initY, double xpos,
-			Component body, Component tail, InGroupableList inGroupableList) {
+	public GroupingTail(double currentY, double initY, double xpos, Component body, Component tail,
+			InGroupableList inGroupableList) {
 		super(currentY);
-		if (currentY <= initY) {
-			throw new IllegalArgumentException();
+		if (currentY < initY) {
+			// throw new IllegalArgumentException("currentY=" + currentY + " initY=" + initY);
+			System.err.println("currentY=" + currentY + " initY=" + initY);
+
 		}
 		if (inGroupableList == null) {
 			throw new IllegalArgumentException();
@@ -75,13 +77,11 @@ class GroupingTail extends GraphicalElement {
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		// final double x1 = inGroupableList.getMinX(stringBounder);
-		final double x1 = inGroupableList.getBarStart().getCenterX(
-				stringBounder);
+		final double x1 = inGroupableList.getBarStart().getCenterX(stringBounder);
 		final double x2 = inGroupableList.getBarEnd().getCenterX(stringBounder);
 		// final double x2 = inGroupableList.getMaxX(stringBounder);
 		ug.translate(x1, initY);
-		final Dimension2D dimBody = new Dimension2DDouble(x2 - x1,
-				getPreferredHeight(stringBounder));
+		final Dimension2D dimBody = new Dimension2DDouble(x2 - x1, getPreferredHeight(stringBounder));
 		body.drawU(ug, dimBody, context);
 		tail.drawU(ug, dimBody, context);
 	}

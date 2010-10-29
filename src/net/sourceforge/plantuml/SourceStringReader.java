@@ -79,12 +79,21 @@ public class SourceStringReader {
 			return null;
 		}
 		try {
-			final PSystem system = blocks.get(0).getSystem();
-			system.createFile(os, numImage, fileFormat);
-			return system.getDescription();
+			for (BlockUml b : blocks) {
+				final PSystem system = b.getSystem();
+				final int nbInSystem = system.getNbImages();
+				if (numImage < nbInSystem) {
+					system.createFile(os, numImage, fileFormat);
+					return system.getDescription();
+				}
+				numImage -= nbInSystem;
+			}
 		} catch (InterruptedException e) {
 			return null;
 		}
+		Log.error("numImage is too big = ");
+		return null;
+
 	}
 
 	public final List<BlockUml> getBlocks() {

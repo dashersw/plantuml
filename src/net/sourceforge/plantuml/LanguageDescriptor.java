@@ -73,6 +73,7 @@ public class LanguageDescriptor {
 		keyword.add("break");
 		keyword.add("critical");
 		keyword.add("note");
+		keyword.add("group");
 		keyword.add("left");
 		keyword.add("right");
 		keyword.add("of");

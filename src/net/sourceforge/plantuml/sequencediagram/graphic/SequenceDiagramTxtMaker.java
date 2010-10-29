@@ -118,4 +118,8 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 		throw new UnsupportedOperationException();
 	}
 
+	public int getNbPages() {
+		return 1;
+	}
+
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5401 $
+ * Revision $Revision: 5503 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -66,6 +66,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -419,7 +420,7 @@ public final class CucaDiagramFileMaker {
 			im = addTitle(im, background);
 			im = addFooter(im, background);
 			im = addHeader(im, background);
-			im = rotateImage(im, diagram.getScale());
+			im = scaleImage(im, diagram.getScale());
 
 			if (diagram.isRotation()) {
 				im = PngRotation.process(im);
@@ -437,8 +438,11 @@ public final class CucaDiagramFileMaker {
 		return null;
 	}
 
-	private BufferedImage rotateImage(BufferedImage im, double scale) {
-		return PngScaler.scale(im, scale);
+	private BufferedImage scaleImage(BufferedImage im, Scale scale) {
+		if (scale==null) {
+			return im;
+		}
+		return PngScaler.scale(im, scale.getScale(im.getWidth(), im.getHeight()));
 	}
 
 	private byte[] getImageDataCmap(final String dotString, StringBuilder cmap2) throws IOException,

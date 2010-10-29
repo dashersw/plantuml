@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5269 $
+ * Revision $Revision: 5507 $
  */
 package net.sourceforge.plantuml;
 
@@ -121,7 +121,7 @@ public class PSystemError extends AbstractPSystem {
 			plainStrings.add(getSource().getLine(i));
 		}
 		final String errorLine = getSource().getLine(position);
-		htmlStrings.add("<w>" + StringUtils.hideComparatorCharacters(errorLine) + "</w>");
+		htmlStrings.add("<w:red>" + StringUtils.hideComparatorCharacters(errorLine) + "</w>");
 		plainStrings.add(StringUtils.hideComparatorCharacters(errorLine));
 		final StringBuilder underscore = new StringBuilder();
 		for (int i = 0; i < errorLine.length(); i++) {

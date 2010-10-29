@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3942 $
+ * Revision $Revision: 5506 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -44,9 +44,10 @@ public class FontConfiguration {
 	private final Font motherFont;
 	private final Color motherColor;
 	private final Color currentColor;
+	private final Color extendedColor;
 
 	public FontConfiguration(Font font, Color color) {
-		this(EnumSet.noneOf(FontStyle.class), font, color, font, color);
+		this(EnumSet.noneOf(FontStyle.class), font, color, font, color, null);
 	}
 	
 	@Override
@@ -55,36 +56,41 @@ public class FontConfiguration {
 	}
 
 	private FontConfiguration(EnumSet<FontStyle> styles, Font motherFont, Color motherColor, Font currentFont,
-			Color currentColor) {
+			Color currentColor, Color extendedColor) {
 		this.styles = styles;
 		this.currentFont = currentFont;
 		this.motherFont = motherFont;
 		this.currentColor = currentColor;
 		this.motherColor = motherColor;
+		this.extendedColor = extendedColor;
 	}
 
 	FontConfiguration changeColor(HtmlColor htmlColor) {
-		return new FontConfiguration(styles, motherFont, motherColor, currentFont, htmlColor.getColor());
+		return new FontConfiguration(styles, motherFont, motherColor, currentFont, htmlColor.getColor(), extendedColor);
+	}
+
+	FontConfiguration changeExtendedColor(Color newExtendedColor) {
+		return new FontConfiguration(styles, motherFont, motherColor, currentFont, currentColor, newExtendedColor);
 	}
 
 	FontConfiguration changeSize(float size) {
-		return new FontConfiguration(styles, motherFont, motherColor, currentFont.deriveFont(size), currentColor);
+		return new FontConfiguration(styles, motherFont, motherColor, currentFont.deriveFont(size), currentColor, extendedColor);
 	}
 
 	public FontConfiguration resetFont() {
-		return new FontConfiguration(styles, motherFont, motherColor, motherFont, motherColor);
+		return new FontConfiguration(styles, motherFont, motherColor, motherFont, motherColor, null);
 	}
 
 	FontConfiguration add(FontStyle style) {
 		final EnumSet<FontStyle> r = styles.clone();
 		r.add(style);
-		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor);
+		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor, extendedColor);
 	}
 
 	FontConfiguration remove(FontStyle style) {
 		final EnumSet<FontStyle> r = styles.clone();
 		r.remove(style);
-		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor);
+		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor, extendedColor);
 	}
 
 	public Font getFont() {
@@ -97,6 +103,10 @@ public class FontConfiguration {
 
 	public Color getColor() {
 		return currentColor;
+	}
+	
+	public Color getExtendedColor() {
+		return extendedColor;
 	}
 
 	public boolean containsStyle(FontStyle style) {

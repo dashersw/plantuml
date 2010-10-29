@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5347 $
+ * Revision $Revision: 5507 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -57,17 +57,14 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 		final FontConfiguration fontConfiguration = shape.getFontConfiguration();
 		final Font font = fontConfiguration.getFont();
 		g2d.setFont(font);
-		// g2d.setColor(param.getColor());
 		g2d.setColor(fontConfiguration.getColor());
-
-		// final Rectangle2D rect = fm.getStringBounds(shape.getText(), g2d);
-		// System.err.println("rect=" + rect);
-
-		// g2d.drawString(shape.getText(), (float) (x - rect.getMinX()), (float)
-		// (y - rect.getMinY()));
 		g2d.drawString(shape.getText(), (float) x, (float) y);
 
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				g2d.setColor(extended);
+			}
 			final Dimension2D dim = calculateDimension(StringBounderUtils.asStringBounder(g2d), font, shape.getText());
 			final int ypos = (int) (y + 2.5);
 			g2d.setStroke(new BasicStroke((float) 1.3));
@@ -77,8 +74,11 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 		if (fontConfiguration.containsStyle(FontStyle.WAVE)) {
 			final Dimension2D dim = calculateDimension(StringBounderUtils.asStringBounder(g2d), font, shape.getText());
 			final int ypos = (int) (y + 2.5) - 1;
-			g2d.setColor(Color.RED);
-			for (int i = (int) x; i < x + dim.getWidth(); i += 6) {
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				g2d.setColor(extended);
+			}
+			for (int i = (int) x; i < x + dim.getWidth() - 5; i += 6) {
 				g2d.drawLine(i, ypos - 0, i + 3, ypos + 1);
 				g2d.drawLine(i + 3, ypos + 1, i + 6, ypos - 0);
 			}
@@ -87,6 +87,10 @@ public class DriverTextG2d implements UDriver<Graphics2D> {
 			final Dimension2D dim = calculateDimension(StringBounderUtils.asStringBounder(g2d), font, shape.getText());
 			final FontMetrics fm = g2d.getFontMetrics(font);
 			final int ypos = (int) (y - fm.getDescent() - 0.5);
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				g2d.setColor(extended);
+			}
 			g2d.setStroke(new BasicStroke((float) 1.5));
 			g2d.drawLine((int) x, ypos, (int) (x + dim.getWidth()), ypos);
 			g2d.setStroke(new BasicStroke());

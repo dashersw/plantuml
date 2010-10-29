@@ -27,24 +27,21 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 5520 $
+ *
+ * Revision $Revision: 5401 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.List;
-
-public interface FileMaker {
-
-	List<File> createMany(final File suggestedFile) throws IOException;
-
-	void createOne(OutputStream os, int index) throws IOException;
+public class ScaleSimple implements Scale {
 	
-	public int getNbPages();
-
-
+	private final double scale;
+	
+	public ScaleSimple(double scale) {
+		this.scale = scale;
+	}
+	
+	public double getScale(double width, double height) {
+		return scale;
+	}
 }

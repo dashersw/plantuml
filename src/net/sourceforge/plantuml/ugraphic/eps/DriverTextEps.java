@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.ugraphic.eps;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -82,18 +83,38 @@ public class DriverTextEps implements UDriver<EpsGraphics> {
 		drawPathIterator(eps, x, y, t.getOutline(null).getPathIterator(null));
 
 		if (fontConfiguration.containsStyle(FontStyle.UNDERLINE)) {
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				eps.setStrokeColor(extended);
+			}
 			final Dimension2D dim = DriverTextG2d.calculateDimension(stringBounder, font, shape.getText());
-			// final int ypos = (int) (y + 2.5);
-			eps.setStrokeWidth("1", null);
-			// eps.epsLine(x, ypos, x + dim.getWidth(), ypos);
+			eps.setStrokeWidth("1.1", null);
 			eps.epsLine(x, y + 1.5, x + dim.getWidth(), y + 1.5);
+			eps.setStrokeWidth("1", null);
 		}
-
+		if (fontConfiguration.containsStyle(FontStyle.WAVE)) {
+			final Dimension2D dim = DriverTextG2d.calculateDimension(stringBounder, font, shape.getText());
+			final int ypos = (int) (y + 2.5) - 1;
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				eps.setStrokeColor(extended);
+			}
+			eps.setStrokeWidth("1.1", null);
+			for (int i = (int) x; i < x + dim.getWidth() - 5; i += 6) {
+				eps.epsLine(i, ypos - 0, i + 3, ypos + 1);
+				eps.epsLine(i + 3, ypos + 1, i + 6, ypos - 0);
+			}
+			eps.setStrokeWidth("1", null);
+		}
 		if (fontConfiguration.containsStyle(FontStyle.STRIKE)) {
+			final Color extended = fontConfiguration.getExtendedColor();
+			if (extended != null) {
+				eps.setStrokeColor(extended);
+			}
 			final Dimension2D dim = DriverTextG2d.calculateDimension(stringBounder, font, shape.getText());
 			final FontMetrics fm = g2dummy.getFontMetrics(font);
 			final int ypos = (int) (y - fm.getDescent() - 0.5);
-			eps.setStrokeWidth("1.5", null);
+			eps.setStrokeWidth("1.3", null);
 			eps.epsLine(x, ypos, x + dim.getWidth(), ypos);
 			eps.setStrokeWidth("1", null);
 		}

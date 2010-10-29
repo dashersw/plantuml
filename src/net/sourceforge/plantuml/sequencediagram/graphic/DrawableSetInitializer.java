@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5251 $
+ * Revision $Revision: 5528 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -267,11 +267,13 @@ class DrawableSetInitializer {
 		if (m.getType() != GroupingType.START) {
 			throw new IllegalStateException();
 		}
-		final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), m.getBackColorElement(), m
-				.getBackColorGeneral());
+		final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), m.getBackColorElement(),
+				m.getBackColorGeneral());
 		this.maxGrouping++;
+		final List<String> strings = m.getTitle().equals("group") ? Arrays.asList(m.getComment())
+				: Arrays.asList(m.getTitle(), m.getComment());
 		final Component header = drawableSet.getSkin().createComponent(ComponentType.GROUPING_HEADER, skinParam,
-				Arrays.asList(m.getTitle(), m.getComment()));
+				strings);
 		final InGroupableList inGroupableList = new InGroupableList(m, freeY);
 		for (InGroupableList other : inGroupableLists) {
 			other.addInGroupable(inGroupableList);
@@ -313,7 +315,8 @@ class DrawableSetInitializer {
 				// initY += before.getPreferredHeight(stringBounder);
 				// A cause de ComponentRoseGroupingHeader::getPaddingY() a
 				// supprimer
-				initY += 7;
+				// initY += 7;
+				initY += tail.getPreferredHeight(stringBounder);
 			}
 			element = new GroupingTail(freeY, initY, (m.getLevel() + 1) * groupingMargin, body, tail,
 					getTopGroupingStructure());

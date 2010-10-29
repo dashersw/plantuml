@@ -35,6 +35,7 @@ package net.sourceforge.plantuml.command;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.ScaleSimple;
 import net.sourceforge.plantuml.UmlDiagram;
 
 public class CommandScale extends SingleLineCommand<UmlDiagram> {
@@ -49,7 +50,7 @@ public class CommandScale extends SingleLineCommand<UmlDiagram> {
 		if (arg.get(1) != null) {
 			scale /= Double.parseDouble(arg.get(1));
 		}
-		getSystem().setScale(scale);
+		getSystem().setScale(new ScaleSimple(scale));
 		return CommandExecutionResult.ok();
 	}
 

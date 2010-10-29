@@ -28,13 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4920 $
+ * Revision $Revision: 5533 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
 import net.sourceforge.plantuml.graphic.HtmlColor;
@@ -46,15 +47,18 @@ public class CommandGrouping extends SingleLineCommand<SequenceDiagram> {
 	public CommandGrouping(SequenceDiagram sequenceDiagram) {
 		super(
 				sequenceDiagram,
-				"(?i)^(opt|alt|loop|par|break|critical|else|end)((?<!else)(?<!end)#\\w+)?(?:\\s+(#\\w+))?(?:\\s+(.*?))?$");
+				"(?i)^(opt|alt|loop|par|break|critical|else|end|group)((?<!else)(?<!end)#\\w+)?(?:\\s+(#\\w+))?(?:\\s+(.*?))?$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String type = arg.get(0);
+		final String type = arg.get(0).toLowerCase();
 		final HtmlColor colorElement = HtmlColor.getColorIfValid(arg.get(1));
 		final HtmlColor colorGeneral = HtmlColor.getColorIfValid(arg.get(2));
-		final String comment = arg.get(3);
+		String comment = arg.get(3);
+		if ("group".equals(type) && StringUtils.isEmpty(comment)) {
+			comment = "group";
+		}
 		final boolean result = getSystem().grouping(type, comment,
 				GroupingType.getType(type), colorGeneral, colorElement);
 		if (result == false) {

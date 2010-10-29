@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5400 $
+ * Revision $Revision: 5504 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -91,6 +91,8 @@ public abstract class AbstractUmlSystemCommandFactory implements PSystemCommandF
 		addCommand(new CommandMinwidth(system));
 		addCommand(new CommandRotate(system));
 		addCommand(new CommandScale(system));
+		addCommand(new CommandScaleWidthAndHeight(system));
+		addCommand(new CommandScaleWidthOrHeight(system));
 	}
 
 	protected final void addCommand(Command cmd) {

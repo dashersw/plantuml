@@ -314,5 +314,10 @@ public class SequenceDiagram extends UmlDiagram {
 	public final List<ParticipantEnglober> getParticipantEnglobers() {
 		return Collections.unmodifiableList(participantEnglobers);
 	}
+	
+	@Override
+	public int getNbImages() {
+		return getSequenceDiagramPngMaker(FileFormat.PNG).getNbPages();
+	}
 
 }

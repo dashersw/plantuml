@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4771 $
+ * Revision $Revision: 5520 $
  *
  */
 package net.sourceforge.plantuml;
@@ -72,6 +72,10 @@ public abstract class AbstractPSystem implements PSystem {
 
 	final public void setSource(UmlSource source) {
 		this.source = source;
+	}
+	
+	public int getNbImages() {
+		return 1;
 	}
 
 }

@@ -28,23 +28,28 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5520 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.command;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.List;
 
-public interface FileMaker {
+import net.sourceforge.plantuml.ScaleWidthAndHeight;
+import net.sourceforge.plantuml.UmlDiagram;
 
-	List<File> createMany(final File suggestedFile) throws IOException;
+public class CommandScaleWidthAndHeight extends SingleLineCommand<UmlDiagram> {
 
-	void createOne(OutputStream os, int index) throws IOException;
-	
-	public int getNbPages();
+	public CommandScaleWidthAndHeight(UmlDiagram diagram) {
+		super(diagram, "(?i)^scale\\s+([0-9.]+)\\s*[*x]\\s*([0-9.]+)$");
+	}
 
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final double width = Double.parseDouble(arg.get(0));
+		final double height = Double.parseDouble(arg.get(1));
+		getSystem().setScale(new ScaleWidthAndHeight(width, height));
+		return CommandExecutionResult.ok();
+	}
 
 }

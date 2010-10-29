@@ -28,13 +28,16 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4802 $
+ * Revision $Revision: 5507 $
  *
  */
 package net.sourceforge.plantuml.graphic;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.util.EnumSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum FontStyle {
 	PLAIN, ITALIC, BOLD, UNDERLINE, STRIKE, WAVE;
@@ -57,13 +60,25 @@ public enum FontStyle {
 			return "\\<[bB]\\>";
 		}
 		if (this == UNDERLINE) {
-			return "\\<[uU]\\>";
+			return "\\<[uU](?::(#[0-9a-fA-F]{6}|\\w+))?\\>";
 		}
 		if (this == WAVE) {
-			return "\\<[wW]\\>";
+			return "\\<[wW](?::(#[0-9a-fA-F]{6}|\\w+))?\\>";
 		}
 		if (this == STRIKE) {
-			return "\\<(?:s|S|strike|STRIKE|del|DEL)\\>";
+			return "\\<(?:s|S|strike|STRIKE|del|DEL)(?::(#[0-9a-fA-F]{6}|\\w+))?\\>";
+		}
+		return null;
+	}
+
+	Color getExtendedColor(String s) {
+		final Matcher m = Pattern.compile(getActivationPattern()).matcher(s);
+		if (m.find() == false || m.groupCount() != 1) {
+			return null;
+		}
+		final String color = m.group(1);
+		if (color!= null && HtmlColor.isValid(color)) {
+			return new HtmlColor(color).getColor();
 		}
 		return null;
 	}
