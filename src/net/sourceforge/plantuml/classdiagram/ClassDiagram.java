@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5084 $
+ * Revision $Revision: 5536 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -115,21 +115,29 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 	}
 
 	private String getShortName(String code) {
-		final int x = code.lastIndexOf('.');
-		if (x == -1) {
+		// final int x = code.lastIndexOf('.');
+		// if (x == -1) {
+		// return code;
+		// }
+		// return code.substring(x + 1);
+		final String namespace = getNamespace(code);
+		if (namespace == null) {
 			return code;
 		}
-		return code.substring(x + 1);
+		return code.substring(namespace.length() + 1);
 	}
 
 	private String getNamespace(String code) {
 		assert code.startsWith("\\") == false;
 		assert code.startsWith("~") == false;
-		final int x = code.lastIndexOf('.');
-		if (x == -1) {
-			return null;
-		}
-		return code.substring(0, x);
+		do {
+			final int x = code.lastIndexOf('.');
+			if (x == -1) {
+				return null;
+			}
+			code = code.substring(0, x);
+		} while (entityExist(code));
+		return code;
 	}
 
 	@Override

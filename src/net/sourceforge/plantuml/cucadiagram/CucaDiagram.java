@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5520 $
+ * Revision $Revision: 5536 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -164,6 +164,9 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	protected final Group getOrCreateGroupInternal(String code, String display, String namespace, GroupType type,
 			Group parent) {
+//		if (entityExist(code)) {
+//			throw new IllegalArgumentException("code=" + code);
+//		}
 		Group g = groups.get(code);
 		if (g == null) {
 			g = new Group(code, display, namespace, type, parent);
