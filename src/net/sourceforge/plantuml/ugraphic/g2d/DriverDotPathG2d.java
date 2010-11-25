@@ -33,7 +33,6 @@
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
 
-import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
 import net.sourceforge.plantuml.posimo.DotPath;
@@ -45,7 +44,7 @@ public class DriverDotPathG2d implements UDriver<Graphics2D> {
 
 	public void draw(UShape ushape, double x, double y, UParam param, Graphics2D g2d) {
 		final DotPath shape = (DotPath) ushape;
-		g2d.setStroke(new BasicStroke((float) param.getStroke().getThickness()));
+		DriverLineG2d.manageStroke(param, g2d);
 
 		if (param.getColor() != null) {
 			g2d.setColor(param.getColor());

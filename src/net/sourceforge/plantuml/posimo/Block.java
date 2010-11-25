@@ -46,11 +46,13 @@ public class Block implements Clusterable {
 	private final double height;
 	private double x;
 	private double y;
+	private final Cluster parent;
 
-	public Block(int uid, double width, double height) {
+	public Block(int uid, double width, double height, Cluster parent) {
 		this.uid = uid;
 		this.width = width;
 		this.height = height;
+		this.parent = parent;
 	}
 
 	@Override
@@ -67,8 +69,7 @@ public class Block implements Clusterable {
 	}
 
 	public Cluster getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		return parent;
 	}
 
 	public Point2D getPosition() {

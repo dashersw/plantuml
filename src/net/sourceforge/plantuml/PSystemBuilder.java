@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.componentdiagram.ComponentDiagramFactory;
 import net.sourceforge.plantuml.compositediagram.CompositeDiagramFactory;
 import net.sourceforge.plantuml.eggs.PSystemEggFactory;
 import net.sourceforge.plantuml.eggs.PSystemLostFactory;
+import net.sourceforge.plantuml.eggs.PSystemPathFactory;
 import net.sourceforge.plantuml.eggs.PSystemRIPFactory;
 import net.sourceforge.plantuml.objectdiagram.ObjectDiagramFactory;
 import net.sourceforge.plantuml.oregon.PSystemOregonFactory;
@@ -73,6 +74,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemEggFactory());
 		factories.add(new PSystemRIPFactory());
 		factories.add(new PSystemLostFactory());
+		factories.add(new PSystemPathFactory());
 		factories.add(new PSystemOregonFactory());
 
 		final List<PSystemError> errors = new ArrayList<PSystemError>();

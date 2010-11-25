@@ -35,7 +35,13 @@ package net.sourceforge.plantuml.cucadiagram;
 
 public enum LinkDecor {
 
-	NONE, EXTENDS, COMPOSITION, AGREGATION, ARROW, PLUS, SQUARRE;
+	NONE(2), EXTENDS(30), COMPOSITION(15), AGREGATION(15), ARROW(10), PLUS(0), SQUARRE(30);
+	
+	private final int size;
+	
+	private LinkDecor(int size) {
+		this.size = size;
+	}
 
 	public String getArrowDot() {
 		if (this == LinkDecor.NONE) {
@@ -53,6 +59,10 @@ public enum LinkDecor {
 		} else {
 			throw new UnsupportedOperationException();
 		}
+	}
+
+	public int getSize() {
+		return size;
 	}
 
 }

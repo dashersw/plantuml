@@ -146,6 +146,7 @@ public class BezierUtils {
 		final boolean contains1 = shape.contains(copy.x1, copy.y1);
 		final boolean contains2 = shape.contains(copy.x2, copy.y2);
 		if (contains1 ^ contains2 == false) {
+			//return new Point2D.Double(orig.x2, orig.y2);
 			throw new IllegalArgumentException();
 		}
 		while (true) {
@@ -159,8 +160,14 @@ public class BezierUtils {
 				copy.x2 = mx;
 				copy.y2 = my;
 			}
-			if (dist(copy) < 1) {
-				return new Point2D.Double(mx, my);
+			if (dist(copy) < 0.1) {
+				if (contains1) {
+					return new Point2D.Double(copy.x2, copy.y2);
+				}
+				if (contains2) {
+					return new Point2D.Double(copy.x1, copy.y1);
+				}
+				throw new IllegalStateException();
 			}
 		}
 	}

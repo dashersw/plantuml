@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3837 $
+ * Revision $Revision: 5546 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -50,6 +50,12 @@ public class DriverLineG2d implements UDriver<Graphics2D> {
 		final ULine shape = (ULine) ushape;
 
 		final Shape line = new Line2D.Double(x, y, x + shape.getDX(), y + shape.getDY());
+		manageStroke(param, g2d);
+		g2d.setColor(param.getColor());
+		g2d.draw(line);
+	}
+
+	static void manageStroke(UParam param, Graphics2D g2d) {
 		final UStroke stroke = param.getStroke();
 		final float thickness = (float) stroke.getThickness();
 		if (stroke.getDash() == 0) {
@@ -59,7 +65,5 @@ public class DriverLineG2d implements UDriver<Graphics2D> {
 			final float[] style = { dash, dash };
 			g2d.setStroke(new BasicStroke(thickness, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, style, 0));
 		}
-		g2d.setColor(param.getColor());
-		g2d.draw(line);
 	}
 }

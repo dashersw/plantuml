@@ -33,10 +33,8 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import java.awt.Color;
-import java.awt.geom.Line2D;
+import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.Collection;
 import java.util.Map;
 
@@ -47,9 +45,9 @@ import net.sourceforge.plantuml.cucadiagram.LinkStyle;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class PathDrawerInterface implements PathDrawer {
 
@@ -57,8 +55,8 @@ public class PathDrawerInterface implements PathDrawer {
 	private final ISkinParam param;
 	private final LinkType linkType;
 
-	public static PathDrawerInterface create(Rose rose, ISkinParam param, LinkType linkType) {
-		return new PathDrawerInterface(rose, param, linkType);
+	public static PathDrawerInterface create(ISkinParam param, LinkType linkType) {
+		return new PathDrawerInterface(new Rose(), param, linkType);
 	}
 
 	private PathDrawerInterface(Rose rose, ISkinParam param, LinkType linkType) {
@@ -68,78 +66,122 @@ public class PathDrawerInterface implements PathDrawer {
 	}
 
 	public void drawPathBefore(UGraphic ug, Positionable start, Positionable end, Path path) {
-		// final DotPath dotPath = path.getDotPath().manageRect(start, end);
-		final DotPath dotPath = path.getDotPath();
-		ug.draw(0, 0, dotPath);
+		// // final DotPath dotPath = path.getDotPath();
+		// // goDash(ug);
+		// // ug.draw(0, 0, dotPath);
+		// // noDash(ug);
+	}
 
+	private void noDash(UGraphic ug) {
+		ug.getParam().setStroke(new UStroke());
+	}
+
+	private void goDash(UGraphic ug) {
+		ug.getParam().setStroke(new UStroke(8, 1.0));
 	}
 
 	public void drawPathAfter(UGraphic ug, Positionable start, Positionable end, Path path) {
-		// final DotPath dotPath = path.getDotPath().manageRect(start, end);
-		final DotPath dotPath = path.getDotPath();
+		DotPath dotPath = path.getDotPath();
+		final Racorder racorder = new RacorderOrthogonal();
+		//final Racorder racorder = new RacorderInToCenter();
+		//final Racorder racorder = new RacorderFollowTangeante();
 
-		// final Point2D p1 = dotPath.getFrontierIntersection(start);
-		// final Point2D p2 = dotPath.getFrontierIntersection(end);
+		final Point2D endPath = dotPath.getEndPoint();
+		final DotPath in = racorder.getRacordIn(PositionableUtils.convert(end), dotPath.getEndTangeante());
+		// final Point2D inPoint = in.getFrontierIntersection(end);
+		final Point2D inPoint = in.getEndPoint();
+		// final double theta1_ = in.getEndAngle() + Math.PI / 2;
+		// System.err.println("theta1_=" + theta1_ + " " + theta1_ * 180 /
+		// Math.PI);
+		final double theta1 = atan2(endPath, inPoint);
+		// System.err.println("theta1=" + theta1 + " " + theta1 * 180 /
+		// Math.PI);
+		final Point2D middle1 = drawSymbol(ug, theta1, inPoint, linkType.getDecor1());
 
-		final Rectangle2D startRect = PositionableUtils.convert(start);
-		final double xstartCenter = startRect.getCenterX();
-		final double ystartCenter = startRect.getCenterY();
-		final Rectangle2D endRect = PositionableUtils.convert(end);
-		final double xendCenter = endRect.getCenterX();
-		final double yendCenter = endRect.getCenterY();
+		final Point2D startPath = dotPath.getStartPoint();
+		final DotPath out = racorder.getRacordOut(PositionableUtils.convert(start), dotPath.getStartTangeante());
+		// final Point2D outPoint = out.getFrontierIntersection(start);
+		final Point2D outPoint = out.getStartPoint();
+		// final double theta2_ = out.getStartAngle() - Math.PI / 2;
+		// System.err.println("theta2_=" + theta2_ + " " + theta2_ * 180 /
+		// Math.PI);
+		final double theta2 = atan2(startPath, outPoint);
+		// System.err.println("theta2=" + theta2 + " " + theta2 * 180 /
+		// Math.PI);
+		final Point2D middle2 = drawSymbol(ug, theta2, outPoint, linkType.getDecor2());
 
-		// final Point2D p1 = dotPath.getStartPoint();
-		// final Point2D p2 = dotPath.getEndPoint();
+		if (middle1 != null) {
+			final CubicCurve2D.Double after = getLine(endPath, middle1);
+			dotPath = dotPath.addAfter(after);
+			//dotPath = dotPath.addAfter(in);
+		}
 
-		final Point2D startCenter = new Point2D.Double(xstartCenter, ystartCenter);
-		final Point2D p1 = BezierUtils.intersect(new Line2D.Double(dotPath.getStartPoint(), startCenter), startRect);
-		final Point2D endCenter = new Point2D.Double(xendCenter, yendCenter);
-		final Point2D p2 = BezierUtils.intersect(new Line2D.Double(dotPath.getEndPoint(), endCenter), endRect);
-
-		if (linkType.getDecor1() == LinkDecor.SQUARRE) {
-			drawSquare(ug, p1.getX(), p1.getY());
-		}
-		if (linkType.getDecor2() == LinkDecor.SQUARRE) {
-			drawSquare(ug, p2.getX(), p2.getY());
-		}
-		if (linkType.getDecor1() == LinkDecor.EXTENDS) {
-			drawExtends(ug, p2.getX(), p2.getY(), startCenter);
-		}
-		if (linkType.getDecor2() == LinkDecor.EXTENDS) {
-			drawExtends(ug, p1.getX(), p1.getY(), endCenter);
-		}
-		if (linkType.getDecor1() == LinkDecor.AGREGATION) {
-			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
-			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-			drawDiamond(ug, p2.getX(), p2.getY(), startCenter);
-		}
-		if (linkType.getDecor2() == LinkDecor.AGREGATION) {
-			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
-			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-			drawDiamond(ug, p1.getX(), p1.getY(), endCenter);
-		}
-		if (linkType.getDecor1() == LinkDecor.COMPOSITION) {
-			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-			ug.getParam().setColor(null);
-			drawDiamond(ug, p2.getX(), p2.getY(), startCenter);
-		}
-		if (linkType.getDecor2() == LinkDecor.COMPOSITION) {
-			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-			ug.getParam().setColor(null);
-			drawDiamond(ug, p1.getX(), p1.getY(), endCenter);
+		if (middle2 != null) {
+			final CubicCurve2D.Double before = getLine(middle2, startPath);
+			dotPath = dotPath.addBefore(before);
+			//dotPath = dotPath.addBefore(out);
 		}
 
 		final LinkStyle style = linkType.getStyle();
 		if (style == LinkStyle.INTERFACE_PROVIDER || style == LinkStyle.INTERFACE_USER) {
 			final Decor decor = new DecorInterfaceProvider(style);
 			final Map<Point2D, Double> all = dotPath.somePoints();
-			final Point2D p = getFarest(p1, p2, all.keySet());
+			final Point2D p = getFarest(outPoint, inPoint, all.keySet());
 
 			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
 			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
 
 			decor.drawDecor(ug, p, all.get(p));
 		}
+
+		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+		if (linkType.isDashed()) {
+			goDash(ug);
+		}
+		ug.draw(0, 0, dotPath);
+		if (linkType.isDashed()) {
+			noDash(ug);
+		}
+	}
+
+	private double atan2(final Point2D endPath, final Point2D inPoint) {
+		final double y = -endPath.getX() + inPoint.getX();
+		final double x = endPath.getY() - inPoint.getY();
+		final double angle = Math.atan2(y, x);
+		System.err.println("x=" + x + " y=" + y + " angle=" + angle + " " + angle * 180.0 / Math.PI);
+		return angle;
+	}
+
+	private Point2D drawSymbol(UGraphic ug, double theta, final Point2D position, LinkDecor decor) {
+		Point2D middle1 = null;
+		// final double theta = Math.atan2(
+		// -direction.getX() + position.getX(), direction.getY()
+		// - position.getY());
+		if (decor == LinkDecor.SQUARRE) {
+			middle1 = drawSquare(ug, position.getX(), position.getY());
+		} else if (decor == LinkDecor.EXTENDS) {
+			middle1 = drawExtends(ug, position.getX(), position.getY(), theta);
+		} else if (decor == LinkDecor.AGREGATION) {
+			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
+			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+			middle1 = drawDiamond(ug, position.getX(), position.getY(), theta);
+		} else if (decor == LinkDecor.COMPOSITION) {
+			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+			ug.getParam().setColor(null);
+			middle1 = drawDiamond(ug, position.getX(), position.getY(), theta);
+		} else if (decor == LinkDecor.NONE) {
+			middle1 = position;
+		} else if (decor == LinkDecor.ARROW) {
+			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+			ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
+			middle1 = drawArrow(ug, position.getX(), position.getY(), theta);
+		}
+		return middle1;
+	}
+
+	private CubicCurve2D.Double getLine(final Point2D p1, Point2D p2) {
+		return new CubicCurve2D.Double(p1.getX(), p1.getY(), p1.getX(), p1.getY(), p2.getX(), p2.getY(), p2.getX(), p2
+				.getY());
 	}
 
 	private static Point2D getFarest(Point2D p1, Point2D p2, Collection<Point2D> all) {
@@ -163,27 +205,24 @@ public class PathDrawerInterface implements PathDrawer {
 		return result;
 	}
 
-	private void drawSquare(UGraphic ug, double centerX, double centerY) {
+	private Point2D drawSquare(UGraphic ug, double centerX, double centerY) {
 		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.classBackground).getColor());
 		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
 		final double width = 10;
 		final double height = 10;
 		ug.draw(centerX - width / 2, centerY - height / 2, new URectangle(width, height));
+		return new Point2D.Double(centerX, centerY);
 	}
 
-	private void drawExtends(UGraphic ug, double x, double y, Point2D pt) {
+	Point2D drawExtends(UGraphic ug, double x, double y, double theta) {
 		ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background).getColor());
 		ug.getParam().setColor(rose.getHtmlColor(param, ColorParam.classBorder).getColor());
 
 		final double width = 18;
 		final double height = 26;
 
-		// final Ellipse2D circle = new Ellipse2D.Double(x - height, y - height, height * 2, height * 2);
-		//
-		// final Point2D inter = path.getDotPath().getFrontierIntersection(circle, PositionableUtils.convert(start),
-		// PositionableUtils.convert(end));
-		final double theta = Math.atan2(-pt.getX() + x, pt.getY() - y);
-		// final double theta = 0;
+		// final double theta = Math.atan2(-pathPoint.getX() + x,
+		// pathPoint.getY() - y);
 
 		final UPolygon triangle = new UPolygon();
 		triangle.addPoint(0, 1);
@@ -192,25 +231,17 @@ public class PathDrawerInterface implements PathDrawer {
 		triangle.rotate(theta);
 		ug.draw(x, y, triangle);
 
-		ug.getParam().setColor(Color.BLACK);
 		final Point2D middle = BezierUtils.middle(triangle.getPoints().get(1), triangle.getPoints().get(2));
 		middle.setLocation(middle.getX() + x, middle.getY() + y);
-		// final ULine line = new ULine(pt.getX() - middle.getX(), pt.getY() - middle.getY());
-		final ULine line = new ULine(10, 10);
-		ug.draw(middle.getX(), middle.getY(), line);
+		return middle;
 	}
 
-	private void drawDiamond(UGraphic ug, double x, double y, Point2D pt) {
+	private Point2D drawDiamond(UGraphic ug, double x, double y, double theta) {
 		final double width = 10;
 		final double height = 14;
 
-		// final Ellipse2D circle = new Ellipse2D.Double(x - height, y - height, height * 2, height * 2);
-		//
-		// final Point2D inter = path.getDotPath().getFrontierIntersection(circle, PositionableUtils.convert(start),
-		// PositionableUtils.convert(end));
-		// final double theta = Math.atan2(-inter.getX() + x, inter.getY() - y);
-		final double theta = Math.atan2(-pt.getX() + x, pt.getY() - y);
-		// final double theta = 0;
+		// final double theta = Math.atan2(-pathPoint.getX() + x,
+		// pathPoint.getY() - y);
 
 		final UPolygon triangle = new UPolygon();
 		triangle.addPoint(0, 0);
@@ -219,6 +250,32 @@ public class PathDrawerInterface implements PathDrawer {
 		triangle.addPoint(width / 2, height / 2);
 		triangle.rotate(theta);
 		ug.draw(x, y, triangle);
+
+		final Point2D middle = triangle.getPoints().get(2);
+		middle.setLocation(middle.getX() + x, middle.getY() + y);
+		return middle;
+
+	}
+
+	private Point2D drawArrow(UGraphic ug, double x, double y, double theta) {
+		final double width = 12;
+		final double height = 10;
+		final double height2 = 4;
+
+		// final double theta = Math.atan2(-pathPoint.getX() + x,
+		// pathPoint.getY() - y);
+
+		final UPolygon triangle = new UPolygon();
+		triangle.addPoint(0, 0);
+		triangle.addPoint(-width / 2, height);
+		triangle.addPoint(0, height2);
+		triangle.addPoint(width / 2, height);
+		triangle.rotate(theta);
+		ug.draw(x, y, triangle);
+
+		final Point2D middle = triangle.getPoints().get(2);
+		middle.setLocation(middle.getX() + x, middle.getY() + y);
+		return middle;
 	}
 
 	private Point2D nullIfContained(Point2D p, Positionable start, Positionable end) {

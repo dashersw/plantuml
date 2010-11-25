@@ -37,29 +37,26 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.geom.Dimension2D;
 
+import net.sourceforge.plantuml.ColorParam;
+import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.rose.Rose;
 
 abstract class AbstractEntityImage2 implements IEntityImageBlock {
 
 	private final IEntity entity;
+	private final ISkinParam skinParam;
+	
+	private final Rose rose = new Rose();
 
-	final private Color red = new Color(Integer.parseInt("A80036", 16));
-	final private Color yellow = new Color(Integer.parseInt("FEFECE", 16));
-	private final Color yellowNote = new Color(Integer.parseInt("FBFB77", 16));
-
-	final private Font font14 = new Font("SansSerif", Font.PLAIN, 14);
-	final private Font font17 = new Font("Courier", Font.BOLD, 17);
-	final private Color green = new Color(Integer.parseInt("ADD1B2", 16));
-	final private Color violet = new Color(Integer.parseInt("B4A7E5", 16));
-	final private Color blue = new Color(Integer.parseInt("A9DCDF", 16));
-	final private Color rose = new Color(Integer.parseInt("EB937F", 16));
-
-	public AbstractEntityImage2(IEntity entity) {
+	public AbstractEntityImage2(IEntity entity, ISkinParam skinParam) {
 		if (entity == null) {
 			throw new IllegalArgumentException("entity null");
 		}
 		this.entity = entity;
+		this.skinParam = skinParam;
 	}
 
 	public abstract Dimension2D getDimension(StringBounder stringBounder);
@@ -68,39 +65,19 @@ abstract class AbstractEntityImage2 implements IEntityImageBlock {
 		return entity;
 	}
 
-	protected final Color getRed() {
-		return red;
+	protected Font getFont(FontParam fontParam) {
+		return skinParam.getFont(fontParam);
 	}
 
-	protected final Color getYellow() {
-		return yellow;
+	protected Color getFontColor(FontParam fontParam) {
+		return skinParam.getFontHtmlColor(fontParam).getColor();
 	}
 
-	protected final Font getFont17() {
-		return font17;
+	protected final Color getColor(ColorParam colorParam) {
+		return rose.getHtmlColor(skinParam, colorParam).getColor();
 	}
 
-	protected final Font getFont14() {
-		return font14;
-	}
-
-	protected final Color getGreen() {
-		return green;
-	}
-
-	protected final Color getViolet() {
-		return violet;
-	}
-
-	protected final Color getBlue() {
-		return blue;
-	}
-
-	protected final Color getRose() {
-		return rose;
-	}
-
-	protected final Color getYellowNote() {
-		return yellowNote;
+	protected final ISkinParam getSkinParam() {
+		return skinParam;
 	}
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5494 $
+ * Revision $Revision: 5581 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -125,6 +125,9 @@ final public class DotMaker implements GraphvizMaker {
 
 	private void initPrintWriter(StringBuilder sb) {
 
+		Log.info("Entities = " + data.getEntities().size());
+		final boolean huge = data.getEntities().size() > 800;
+
 		sb.append("digraph unix {");
 		if (isJunit == false) {
 			for (String s : dotStrings) {
@@ -132,11 +135,14 @@ final public class DotMaker implements GraphvizMaker {
 			}
 		}
 		sb.append("bgcolor=\"" + data.getSkinParam().getBackgroundColor().getAsHtml() + "\";");
-		sb.append("ratio=auto;");
+		if (huge) {
+			sb.append("size=\"400,400;\"");
+		} else {
+			sb.append("ratio=auto;");
+			// sb.append("concentrate=true;");
+		}
 		sb.append("compound=true;");
 		sb.append("remincross=true;");
-		// sb.append("concentrate=true;");
-		// pw.println("size=\"40,40;\"");
 		sb.append("searchsize=500;");
 		if (data.getRankdir() == Rankdir.LEFT_TO_RIGHT) {
 			sb.append("rankdir=LR;");
@@ -631,10 +637,10 @@ final public class DotMaker implements GraphvizMaker {
 	}
 
 	private void eventuallySameRank(StringBuilder sb, Group entityPackage, Link link) {
-//		if (workAroundDotBug()) {
-//			throw new UnsupportedOperationException("workAroundDotBug");
-//			// return;
-//		}
+		// if (workAroundDotBug()) {
+		// throw new UnsupportedOperationException("workAroundDotBug");
+		// // return;
+		// }
 		final int len = link.getLength();
 		if (len == 1 && link.getEntity1().getParent() == entityPackage
 				&& link.getEntity2().getParent() == entityPackage) {

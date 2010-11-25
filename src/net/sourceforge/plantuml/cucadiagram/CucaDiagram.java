@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5536 $
+ * Revision $Revision: 5584 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -54,7 +54,7 @@ import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
-import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker4;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 
@@ -279,7 +279,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			return createPng2(suggestedFile);
 		}
 		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE || (BETA && getUmlDiagramType() == UmlDiagramType.CLASS)) {
-			final CucaDiagramFileMaker4 maker = new CucaDiagramFileMaker4(this);
+			final CucaDiagramFileMakerBeta maker = new CucaDiagramFileMakerBeta(this);
 			return maker.createFile(suggestedFile, getDotStrings(), fileFormat);
 		}
 		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this);
@@ -291,7 +291,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return maker.createFiles(suggestedFile);
 	}
 
-	public static boolean BETA = false;
+	public static boolean BETA;
 
 	final public void createFile(OutputStream os, int index, FileFormat fileFormat) throws IOException {
 		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
@@ -300,7 +300,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		}
 
 		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE) {
-			final CucaDiagramFileMaker4 maker = new CucaDiagramFileMaker4(this);
+			final CucaDiagramFileMakerBeta maker = new CucaDiagramFileMakerBeta(this);
 			try {
 				maker.createFile(os, getDotStrings(), fileFormat);
 			} catch (InterruptedException e) {
@@ -484,5 +484,5 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	public int getNbImages() {
 		return this.horizontalPages * this.verticalPages;
 	}
-
+	
 }
