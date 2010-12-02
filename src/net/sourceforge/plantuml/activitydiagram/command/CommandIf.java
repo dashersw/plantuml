@@ -58,7 +58,7 @@ public class CommandIf extends SingleLineCommand<ActivityDiagram> {
 	protected CommandExecutionResult executeArg(List<String> arg) {
 		final IEntity entity1 = CommandLinkActivity2.getEntity(getSystem(), arg, true);
 
-		getSystem().startIf();
+		getSystem().startIf(null);
 
 		int lenght = 2;
 

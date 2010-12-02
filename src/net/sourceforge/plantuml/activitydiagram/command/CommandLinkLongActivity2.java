@@ -84,7 +84,9 @@ public class CommandLinkLongActivity2 extends CommandMultilines<ActivityDiagram>
 
 		final List<String> lineLast = StringUtils.getSplit(getEnding(), lines.get(lines.size() - 1));
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {
-			sb.append("\\n");
+			if (sb.toString().endsWith("\\n") == false) {
+				sb.append("\\n");
+			}
 			sb.append(lineLast.get(0));
 		}
 

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5190 $
+ * Revision $Revision: 5717 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -36,7 +36,7 @@ package net.sourceforge.plantuml.activitydiagram;
 import net.sourceforge.plantuml.activitydiagram.command.CommandElse;
 import net.sourceforge.plantuml.activitydiagram.command.CommandEndPartition;
 import net.sourceforge.plantuml.activitydiagram.command.CommandEndif;
-import net.sourceforge.plantuml.activitydiagram.command.CommandIf;
+import net.sourceforge.plantuml.activitydiagram.command.CommandIf2;
 import net.sourceforge.plantuml.activitydiagram.command.CommandInnerConcurrent;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity2;
 import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity2;
@@ -72,7 +72,7 @@ public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandNoteOnActivityLink(system));
 		addCommand(new CommandMultilinesNoteActivityLink(system));
 		
-		addCommand(new CommandIf(system));
+		addCommand(new CommandIf2(system));
 		addCommand(new CommandElse(system));
 		addCommand(new CommandEndif(system));
 		addCommand(new CommandInnerConcurrent(system));

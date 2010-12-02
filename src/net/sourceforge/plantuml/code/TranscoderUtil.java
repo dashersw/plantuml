@@ -28,16 +28,15 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5669 $
+ * Revision $Revision: 5667 $
  *
  */
 package net.sourceforge.plantuml.code;
 
-import java.io.IOException;
+public class TranscoderUtil {
 
-public interface Transcoder {
+	public static Transcoder getDefaultTranscoder() {
+		return new TranscoderSmart();
+	}
 
-	public String encode(String text) throws IOException;
-
-	public String decode(String code) throws IOException;
 }

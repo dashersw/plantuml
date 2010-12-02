@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5378 $
+ * Revision $Revision: 5694 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -42,12 +42,13 @@ import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Member;
 
 public final class CucaDiagramSimplifier {
 
@@ -82,6 +83,14 @@ public final class CucaDiagramSimplifier {
 					}
 					computeImageGroup(g, proxy, dotStrings);
 					diagram.overideGroup(g, proxy);
+					
+					for (IEntity sub : g.entities().values()) {
+						final DrawFile subImage = sub.getImageFile();
+						if (subImage!=null) {
+							proxy.addSubImage(subImage);
+						}
+					}
+					
 					changed = true;
 				}
 			}
@@ -97,6 +106,11 @@ public final class CucaDiagramSimplifier {
 			fos = new FileOutputStream(f);
 			maker.createPng(fos, dotStrings);
 			final String svg = maker.createSvg(dotStrings);
+//			final Pattern pImage = Pattern.compile("(?i)<image\\W[^>]*>");
+//			final Matcher mImage = pImage.matcher(svg);
+//			if (mImage.find()) {
+//				throw new IllegalStateException();
+//			}
 			entity.setImageFile(new DrawFile(f, svg));
 		} finally {
 			if (fos != null) {

@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.code.Transcoder;
+import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.preproc.Defines;
 
 public class SourceFileReader {
@@ -119,7 +120,7 @@ public class SourceFileReader {
 
 	public List<String> getEncodedUrl() throws IOException, InterruptedException {
 		final List<String> result = new ArrayList<String>();
-		final Transcoder transcoder = new Transcoder();
+		final Transcoder transcoder = TranscoderUtil.getDefaultTranscoder();
 		for (BlockUml blockUml : builder.getBlockUmls()) {
 			final String source = blockUml.getSystem().getSource().getPlainString();
 			final String encoded = transcoder.encode(source);

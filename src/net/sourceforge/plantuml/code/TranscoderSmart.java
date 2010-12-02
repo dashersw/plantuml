@@ -28,16 +28,27 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5669 $
+ * Revision $Revision: 5667 $
  *
  */
 package net.sourceforge.plantuml.code;
 
 import java.io.IOException;
 
-public interface Transcoder {
+public class TranscoderSmart implements Transcoder {
 
-	public String encode(String text) throws IOException;
-
-	public String decode(String code) throws IOException;
+	private final Transcoder oldOne = new TranscoderImpl(new AsciiEncoder(), new CompressionHuffman());
+	private final Transcoder zlib = new TranscoderImpl(new AsciiEncoder(), new CompressionZlib());
+	
+	
+	public String decode(String code) throws IOException {
+		try {
+			return zlib.decode(code);
+		} catch (Exception ex) {
+			return oldOne.decode(code);
+		}
+	}
+	public String encode(String text) throws IOException {
+		return zlib.encode(text);
+	}
 }

@@ -72,20 +72,30 @@ public class CommandLinkActivity2 extends SingleLineCommand<ActivityDiagram> {
 			return system.getEnd();
 		}
 		if (arg.get(1) != null) {
-			return system.getOrCreate(arg.get(1), arg.get(1), EntityType.ACTIVITY);
+			return system.getOrCreate(arg.get(1), arg.get(1), getTypeIfExisting(system, arg.get(1)));
 		}
 		if (arg.get(2) != null) {
 			return system.getOrCreate(arg.get(2), arg.get(2), EntityType.SYNCHRO_BAR);
 		}
 		if (arg.get(3) != null) {
 			final String code = arg.get(4) == null ? arg.get(3) : arg.get(4);
-			return system.getOrCreate(code, arg.get(3), EntityType.ACTIVITY);
+			return system.getOrCreate(code, arg.get(3), getTypeIfExisting(system, code));
 		}
 		if (start && arg.get(0) == null && arg.get(1) == null && arg.get(2) == null && arg.get(3) == null
 				&& arg.get(4) == null) {
 			return system.getLastEntityConsulted();
 		}
 		throw new UnsupportedOperationException();
+	}
+
+	static EntityType getTypeIfExisting(ActivityDiagram system, String code) {
+		if (system.entityExist(code)) {
+			final IEntity ent = system.entities().get(code);
+			if (ent.getType() == EntityType.BRANCH) {
+				return EntityType.BRANCH;
+			}
+		}
+		return EntityType.ACTIVITY;
 	}
 
 	@Override

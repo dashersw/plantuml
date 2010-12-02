@@ -66,18 +66,30 @@ public class DrawFile {
 
 	public DrawFile(File fPng, String svg, File fEps) {
 		this(new Unlazy<File>(fPng), new Unlazy<String>(svg), new Unlazy<File>(fEps));
+		if (svg.contains("\\")) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public DrawFile(File fPng, String svg, Lazy<File> eps) {
 		this(new Unlazy<File>(fPng), new Unlazy<String>(svg), eps);
+		if (svg.contains("\\")) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public DrawFile(Lazy<File> png, String svg, Lazy<File> eps) {
 		this(png, new Unlazy<String>(svg), eps);
+		if (svg.contains("\\")) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public DrawFile(File f, String svg) {
 		this(f, svg, (File) null);
+		if (svg.contains("\\")) {
+			throw new IllegalArgumentException();
+		}
 	}
 
 	public File getPngOrEps(boolean isEps) throws IOException {

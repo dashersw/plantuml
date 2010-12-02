@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5385 $
+ * Revision $Revision: 5694 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -44,6 +44,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -143,7 +145,33 @@ public final class GroupPngMaker {
 
 			String svg = new String(baos.toByteArray(), "UTF-8");
 			svg = removeSvgXmlHeader(svg);
-			return svg;
+			
+//			// Image management
+//			final Pattern pImage = Pattern.compile("(?i)<image\\W[^>]*>");
+//			final Matcher mImage = pImage.matcher(svg);
+//			final StringBuffer sb = new StringBuffer();
+//			while (mImage.find()) {
+//				final String image = mImage.group(0);
+//				final String href = CucaDiagramFileMaker.getValue(image, "href");
+//				final double widthSvg = Double.parseDouble(CucaDiagramFileMaker.getValuePx(image, "width"));
+//				final double heightSvg = Double.parseDouble(CucaDiagramFileMaker.getValuePx(image, "height"));
+//				final double x = Double.parseDouble(CucaDiagramFileMaker.getValue(image, "x")) + 20;
+//				final double y = Double.parseDouble(CucaDiagramFileMaker.getValue(image, "y")) + 20;
+//				// final DrawFile drawFile = getDrawFileFromHref(href);
+////				final int widthPng = drawFile.getWidthPng();
+////				final int heightPng = drawFile.getHeightPng();
+////				String svg2 = drawFile.getSvg();
+////				final String scale = CucaDiagramFileMaker.getScale(widthSvg, heightSvg, widthPng, heightPng);
+////				svg2 = svg2
+////						.replaceFirst("<[gG]>", "<g transform=\"translate(" + 0 + " " + 0 + ") " + scale + "\">");
+//				String svg2 = "<text>toto</text>";
+//				svg2 = "<svg x=\"" + x + "\" y=\"" + y + "\">" + svg2 + "</svg>";
+//				mImage.appendReplacement(sb, svg2);
+//			}
+//			mImage.appendTail(sb);
+//			svg = sb.toString();
+			
+			return svg.replace('\\', '/');
 
 		} finally {
 			cleanTemporaryFiles(imageFiles);
