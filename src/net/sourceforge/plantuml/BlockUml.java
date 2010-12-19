@@ -52,7 +52,7 @@ class BlockUml {
 	}
 
 	BlockUml(List<String> strings) {
-		final String s0 = strings.get(0);
+		final String s0 = strings.get(0).trim();
 		if (s0.startsWith("@startuml") == false) {
 			throw new IllegalArgumentException();
 		}
@@ -63,7 +63,7 @@ class BlockUml {
 		if (OptionFlags.getInstance().isWord()) {
 			return null;
 		}
-		final Matcher m = pattern1.matcher(data.get(0));
+		final Matcher m = pattern1.matcher(data.get(0).trim());
 		final boolean ok = m.find();
 		if (ok == false) {
 			return null;

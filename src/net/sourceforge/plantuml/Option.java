@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5343 $
+ * Revision $Revision: 5794 $
  *
  */
 package net.sourceforge.plantuml;
@@ -259,6 +259,10 @@ public class Option {
 
 	public final boolean isSyntax() {
 		return syntax;
+	}
+
+	public FileFormatOption getFileFormatOption() {
+		return new FileFormatOption(getFileFormat());
 	}
 
 }

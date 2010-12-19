@@ -55,7 +55,8 @@ public class CommandCreateEntityClassMultilines extends CommandMultilines<ClassD
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
+		StringUtils.trim(lines);
+		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
 		final Entity entity = executeArg0(line0);
 		if (entity == null) {
 			return CommandExecutionResult.error("No such entity");
@@ -83,7 +84,7 @@ public class CommandCreateEntityClassMultilines extends CommandMultilines<ClassD
 		final Entity entity = getSystem().createEntity(code, display, type);
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
-					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
+					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
 		}
 		return entity;
 	}

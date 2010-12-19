@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5694 $
+ * Revision $Revision: 5781 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -44,13 +44,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.FileUtils;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.OptionFlags;
+import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
@@ -59,13 +60,11 @@ import net.sourceforge.plantuml.cucadiagram.GroupHierarchy;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.png.PngIO;
-import net.sourceforge.plantuml.skin.rose.Rose;
 
 public final class GroupPngMaker {
 
 	private final CucaDiagram diagram;
 	private final Group group;
-	private final Rose rose = new Rose();
 	private final FileFormat fileFormat;
 
 	class InnerGroupHierarchy implements GroupHierarchy {
@@ -145,32 +144,42 @@ public final class GroupPngMaker {
 
 			String svg = new String(baos.toByteArray(), "UTF-8");
 			svg = removeSvgXmlHeader(svg);
-			
-//			// Image management
-//			final Pattern pImage = Pattern.compile("(?i)<image\\W[^>]*>");
-//			final Matcher mImage = pImage.matcher(svg);
-//			final StringBuffer sb = new StringBuffer();
-//			while (mImage.find()) {
-//				final String image = mImage.group(0);
-//				final String href = CucaDiagramFileMaker.getValue(image, "href");
-//				final double widthSvg = Double.parseDouble(CucaDiagramFileMaker.getValuePx(image, "width"));
-//				final double heightSvg = Double.parseDouble(CucaDiagramFileMaker.getValuePx(image, "height"));
-//				final double x = Double.parseDouble(CucaDiagramFileMaker.getValue(image, "x")) + 20;
-//				final double y = Double.parseDouble(CucaDiagramFileMaker.getValue(image, "y")) + 20;
-//				// final DrawFile drawFile = getDrawFileFromHref(href);
-////				final int widthPng = drawFile.getWidthPng();
-////				final int heightPng = drawFile.getHeightPng();
-////				String svg2 = drawFile.getSvg();
-////				final String scale = CucaDiagramFileMaker.getScale(widthSvg, heightSvg, widthPng, heightPng);
-////				svg2 = svg2
-////						.replaceFirst("<[gG]>", "<g transform=\"translate(" + 0 + " " + 0 + ") " + scale + "\">");
-//				String svg2 = "<text>toto</text>";
-//				svg2 = "<svg x=\"" + x + "\" y=\"" + y + "\">" + svg2 + "</svg>";
-//				mImage.appendReplacement(sb, svg2);
-//			}
-//			mImage.appendTail(sb);
-//			svg = sb.toString();
-			
+
+			// // Image management
+			// final Pattern pImage = Pattern.compile("(?i)<image\\W[^>]*>");
+			// final Matcher mImage = pImage.matcher(svg);
+			// final StringBuffer sb = new StringBuffer();
+			// while (mImage.find()) {
+			// final String image = mImage.group(0);
+			// final String href = CucaDiagramFileMaker.getValue(image, "href");
+			// final double widthSvg =
+			// Double.parseDouble(CucaDiagramFileMaker.getValuePx(image,
+			// "width"));
+			// final double heightSvg =
+			// Double.parseDouble(CucaDiagramFileMaker.getValuePx(image,
+			// "height"));
+			// final double x =
+			// Double.parseDouble(CucaDiagramFileMaker.getValue(image, "x")) +
+			// 20;
+			// final double y =
+			// Double.parseDouble(CucaDiagramFileMaker.getValue(image, "y")) +
+			// 20;
+			// // final DrawFile drawFile = getDrawFileFromHref(href);
+			// // final int widthPng = drawFile.getWidthPng();
+			// // final int heightPng = drawFile.getHeightPng();
+			// // String svg2 = drawFile.getSvg();
+			// // final String scale = CucaDiagramFileMaker.getScale(widthSvg,
+			// heightSvg, widthPng, heightPng);
+			// // svg2 = svg2
+			// // .replaceFirst("<[gG]>", "<g transform=\"translate(" + 0 + " "
+			// + 0 + ") " + scale + "\">");
+			// String svg2 = "<text>toto</text>";
+			// svg2 = "<svg x=\"" + x + "\" y=\"" + y + "\">" + svg2 + "</svg>";
+			// mImage.appendReplacement(sb, svg2);
+			// }
+			// mImage.appendTail(sb);
+			// svg = sb.toString();
+
 			return svg.replace('\\', '/');
 
 		} finally {
@@ -188,15 +197,19 @@ public final class GroupPngMaker {
 	private void cleanTemporaryFiles(final Map<Entity, File> imageFiles) {
 		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			for (File f : imageFiles.values()) {
-				StaticFiles.delete(f);
+				FileUtils.delete(f);
 			}
 		}
 	}
 
 	GraphvizMaker createDotMaker(List<String> dotStrings) {
 		final List<Link> links = getPureInnerLinks();
-		final DotData dotData = new DotData(group, links, group.entities(), diagram.getUmlDiagramType(), diagram
-				.getSkinParam(), group.getRankdir(), new InnerGroupHierarchy());
+		ISkinParam skinParam = diagram.getSkinParam();
+		if (OptionFlags.PBBACK && group.getBackColor() != null) {
+			skinParam = new SkinParamBackcolored(skinParam, null, group.getBackColor());
+		} 
+		final DotData dotData = new DotData(group, links, group.entities(), diagram.getUmlDiagramType(), skinParam,
+				group.getRankdir(), new InnerGroupHierarchy());
 		// dotData.putAllImages(images);
 		// dotData.putAllStaticImages(staticImages);
 		// dotData.putAllImagesLink(imagesLink);

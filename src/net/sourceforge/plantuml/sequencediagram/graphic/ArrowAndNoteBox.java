@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4855 $
+ * Revision $Revision: 5730 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -56,10 +56,10 @@ class ArrowAndNoteBox extends Arrow implements InGroupable {
 		final double diffHeightArrow = myHeight - arrowHeight;
 		final double diffHeightNote = myHeight - noteHeight;
 		if (diffHeightArrow > 0) {
-			arrow.pushToDown(-diffHeightArrow / 2);
+			arrow.pushToDown(diffHeightArrow / 2);
 		}
 		if (diffHeightNote > 0) {
-			noteBox.pushToDown(-diffHeightNote / 2);
+			noteBox.pushToDown(diffHeightNote / 2);
 		}
 	}
 

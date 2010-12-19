@@ -63,6 +63,10 @@ public abstract class EntityUtils {
 				return ent.getStereotype();
 			}
 
+			public void setStereotype(Stereotype stereotype) {
+				ent.setStereotype(stereotype);
+			}
+
 			public EntityType getType() {
 				return ent.getType();
 			}

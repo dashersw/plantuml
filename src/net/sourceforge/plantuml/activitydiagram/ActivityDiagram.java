@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5717 $
+ * Revision $Revision: 5721 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -150,9 +150,6 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public final void setLastEntityConsulted(IEntity lastEntityConsulted) {
 		this.lastEntityConsulted = lastEntityConsulted;
-	}
-
-	public final void setAcceptOldSyntaxForBranch(boolean acceptOldSyntaxForBranch) {
 	}
 
 	public IEntity createInnerActivity() {

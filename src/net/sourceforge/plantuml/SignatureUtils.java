@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 3883 $
+ * Revision $Revision: 5789 $
  *
  */
 package net.sourceforge.plantuml;
@@ -58,7 +58,8 @@ public class SignatureUtils {
 	}
 
 	public static String getSignatureWithoutImgSrc(String s) {
-		return getSignature(purge(s));
+		s = getSignature(purge(s));
+		return s;
 	}
 
 	public static String purge(String s) {

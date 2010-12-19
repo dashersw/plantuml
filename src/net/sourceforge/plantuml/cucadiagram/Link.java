@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5649 $
+ * Revision $Revision: 5794 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -38,7 +38,6 @@ import java.awt.Font;
 import java.awt.geom.Dimension2D;
 import java.util.Arrays;
 
-import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;

@@ -56,11 +56,6 @@ public class CommandLinkActivity2 extends SingleLineCommand<ActivityDiagram> {
 						+ "(?:(\\(\\*\\)|\\{)|([\\p{L}0-9_.]+)|(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)|\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?)$");
 	}
 
-	@Override
-	protected void actionIfCommandValid() {
-		getSystem().setAcceptOldSyntaxForBranch(false);
-	}
-
 	static IEntity getEntity(ActivityDiagram system, List<String> arg, final boolean start) {
 		if ("{".equals(arg.get(0))) {
 			return system.createInnerActivity();

@@ -57,17 +57,10 @@ public class CommandLinkLongActivity2 extends CommandMultilines<ActivityDiagram>
 				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?$");
 	}
 
-	@Override
-	protected void actionIfCommandValid() {
-		getSystem().setAcceptOldSyntaxForBranch(false);
-	}
-
 	public CommandExecutionResult execute(List<String> lines) {
+		StringUtils.trim(lines);
 
-		// final IEntity lastEntityConsulted =
-		// getSystem().getLastEntityConsulted();
-
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
+		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
 		final IEntity entity1 = CommandLinkActivity2.getEntity(getSystem(), line0, true);
 		final StringBuilder sb = new StringBuilder();
 
@@ -75,12 +68,22 @@ public class CommandLinkLongActivity2 extends CommandMultilines<ActivityDiagram>
 			sb.append(line0.get(7));
 			sb.append("\\n");
 		}
-		for (int i = 1; i < lines.size() - 1; i++) {
-			sb.append(lines.get(i));
-			if (i < lines.size() - 2) {
+		
+		final List<String> sublines = lines.subList(1, lines.size() - 1);
+		
+		for (int i = 0; i < sublines.size(); i++) {
+			sb.append(sublines.get(i));
+			if (i < sublines.size() - 1) {
 				sb.append("\\n");
 			}
 		}
+
+//		for (int i = 1; i < lines.size() - 1; i++) {
+//			sb.append(lines.get(i));
+//			if (i < lines.size() - 2) {
+//				sb.append("\\n");
+//			}
+//		}
 
 		final List<String> lineLast = StringUtils.getSplit(getEnding(), lines.get(lines.size() - 1));
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {

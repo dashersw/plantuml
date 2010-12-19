@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5354 $
+ * Revision $Revision: 5794 $
  *
  */
 package net.sourceforge.plantuml.ant;
@@ -145,7 +145,7 @@ public class PlantuTask extends Task {
 	private void processingSingleFile(final File f) throws IOException, InterruptedException {
 		this.log("Processing " + f.getAbsolutePath());
 		final SourceFileReader sourceFileReader = new SourceFileReader(new Defines(), f, option.getOutputDir(), option
-				.getConfig(), option.getCharset(), option.getFileFormat());
+				.getConfig(), option.getCharset(), option.getFileFormatOption());
 		final Collection<GeneratedImage> result = sourceFileReader.getGeneratedImages();
 		for (GeneratedImage g : result) {
 			this.log(g + " " + g.getDescription());

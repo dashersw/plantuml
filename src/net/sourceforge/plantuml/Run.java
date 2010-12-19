@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5669 $
+ * Revision $Revision: 5810 $
  *
  */
 package net.sourceforge.plantuml;
@@ -114,7 +114,7 @@ public class Run {
 				Log.error("InterruptedException " + e);
 			}
 		} else if (option.isPipe()) {
-			final String result = sourceStringReader.generateImage(ps, 0, option.getFileFormat());
+			final String result = sourceStringReader.generateImage(ps, 0, option.getFileFormatOption());
 		}
 	}
 
@@ -128,7 +128,7 @@ public class Run {
 			System.out.println("------------------------");
 		} else {
 			final SourceFileReader sourceFileReader = new SourceFileReader(option.getDefaultDefines(), f, option
-					.getOutputDir(), option.getConfig(), option.getCharset(), option.getFileFormat());
+					.getOutputDir(), option.getConfig(), option.getCharset(), option.getFileFormatOption());
 			if (option.isComputeurl()) {
 				final List<String> urls = sourceFileReader.getEncodedUrl();
 				for (String s : urls) {

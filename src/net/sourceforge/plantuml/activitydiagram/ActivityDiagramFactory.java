@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5717 $
+ * Revision $Revision: 5726 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -38,8 +38,8 @@ import net.sourceforge.plantuml.activitydiagram.command.CommandEndPartition;
 import net.sourceforge.plantuml.activitydiagram.command.CommandEndif;
 import net.sourceforge.plantuml.activitydiagram.command.CommandIf2;
 import net.sourceforge.plantuml.activitydiagram.command.CommandInnerConcurrent;
-import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity2;
-import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity2;
+import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity3;
+import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity3;
 import net.sourceforge.plantuml.activitydiagram.command.CommandMultilinesNoteActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandMultilinesNoteActivityLink;
 import net.sourceforge.plantuml.activitydiagram.command.CommandNoteActivity;
@@ -61,10 +61,10 @@ public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommonCommands(system);
 
-		addCommand(new CommandLinkActivity2(system));
+		addCommand(new CommandLinkActivity3(system));
 		addCommand(new CommandPartition(system));
 		addCommand(new CommandEndPartition(system));
-		addCommand(new CommandLinkLongActivity2(system));
+		addCommand(new CommandLinkLongActivity3(system));
 
 		addCommand(new CommandNoteActivity(system));
 		addCommand(new CommandMultilinesNoteActivity(system));

@@ -81,7 +81,6 @@ public class CommandIf extends SingleLineCommand<ActivityDiagram> {
 
 		getSystem().addLink(link);
 
-		getSystem().setAcceptOldSyntaxForBranch(false);
 		return CommandExecutionResult.ok();
 	}
 

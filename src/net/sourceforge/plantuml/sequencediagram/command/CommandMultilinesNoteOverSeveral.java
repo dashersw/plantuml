@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4762 $
+ * Revision $Revision: 5751 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
@@ -49,12 +49,12 @@ public class CommandMultilinesNoteOverSeveral extends CommandMultilines<Sequence
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0));
+		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
 
 		final Participant p1 = getSystem().getOrCreateParticipant(line0.get(0));
 		final Participant p2 = getSystem().getOrCreateParticipant(line0.get(1));
 
-		final List<String> strings = lines.subList(1, lines.size() - 1);
+		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
 		if (strings.size() > 0) {
 			final Note note = new Note(p1, p2, strings);
 			note.setSpecificBackcolor(line0.get(2));

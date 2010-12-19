@@ -66,7 +66,7 @@ public class GraphicsPath {
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
 		
-		final UGraphicG2d ug = new UGraphicG2d(g2d, im);
+		final UGraphicG2d ug = new UGraphicG2d(g2d, im, 1.0);
 		ug.getParam().setColor(Color.BLACK);
 		final UMotif motif = new UMotif(path);
 		motif.drawHorizontal(ug, 20, 20, 1);

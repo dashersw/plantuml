@@ -33,7 +33,6 @@
  */
 package net.sourceforge.plantuml.activitydiagram.command;
 
-import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.plantuml.Direction;
@@ -45,7 +44,6 @@ import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -61,46 +59,24 @@ public class CommandIf2 extends SingleLineCommand2<ActivityDiagram> {
 	}
 
 	static RegexConcat getRegexConcat() {
-		return new RegexConcat(new RegexLeaf("^"), new RegexOr("FIRST", true, new RegexLeaf("STAR", "(\\(\\*\\))"),
-				new RegexLeaf("CODE", "([\\p{L}0-9_.]+)"), new RegexLeaf("BAR",
-						"(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)"), new RegexLeaf("QUOTED",
-						"\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?")), new RegexLeaf("\\s*"), new RegexLeaf("ARROW",
-				"([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*\\>)?"), new RegexLeaf("\\s*"), new RegexLeaf(
-				"BRACKET", "(?:\\[([^\\]*]+[^\\]]*)\\])?"), new RegexLeaf("\\s*"), new RegexLeaf("IF",
-				"if\\s*\"([^\"]*)\"\\s*(?:as\\s+([\\p{L}0-9_.]+)\\s+)?then$"));
+		return new RegexConcat(new RegexLeaf("^"),
+					new RegexOr("FIRST", true,
+							new RegexLeaf("STAR", "(\\(\\*\\))"),
+							new RegexLeaf("CODE", "([\\p{L}0-9_.]+)"),
+							new RegexLeaf("BAR", "(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)"),
+							new RegexLeaf("QUOTED", "\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?")),
+					new RegexLeaf("\\s*"),
+					new RegexLeaf("ARROW", "([=-]+(?:left|right|up|down|le?|ri?|up?|do?)?[=-]*\\>)?"),
+					new RegexLeaf("\\s*"),
+					new RegexLeaf("BRACKET", "(?:\\[([^\\]*]+[^\\]]*)\\])?"),
+					new RegexLeaf("\\s*"),
+					new RegexLeaf("IF", "if\\s*\"([^\"]*)\"\\s*(?:as\\s+([\\p{L}0-9_.]+)\\s+)?then$"));
 	}
 
-	static IEntity getEntity(ActivityDiagram system, Map<String, RegexPartialMatch> arg, final boolean start) {
-
-		// if ("{".equals(arg2.get(0))) {
-		// return system.createInnerActivity();
-		// }
-		if (arg.get("STAR").get(0) != null) {
-			if (start) {
-				return system.getStart();
-			}
-			return system.getEnd();
-		}
-		if (arg.get("CODE").get(0) != null) {
-			return system.getOrCreate(arg.get("CODE").get(0), arg.get("CODE").get(0),
-					CommandLinkActivity2.getTypeIfExisting(system, arg.get("CODE").get(0)));
-		}
-		if (arg.get("BAR").get(0) != null) {
-			return system.getOrCreate(arg.get("BAR").get(0), arg.get("BAR").get(0), EntityType.SYNCHRO_BAR);
-		}
-		if (arg.get("QUOTED").get(0) != null) {
-			final String code = arg.get("QUOTED").get(1) == null ? arg.get("QUOTED").get(0) : arg.get("QUOTED").get(1);
-			return system.getOrCreate(code, arg.get("QUOTED").get(0), CommandLinkActivity2.getTypeIfExisting(system, code));
-		}
-		if (arg.get("FIRST").get(0) == null) {
-			return system.getLastEntityConsulted();
-		}
-		throw new UnsupportedOperationException();
-	}
 
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
-		final IEntity entity1 = getEntity(getSystem(), arg, true);
+		final IEntity entity1 = CommandLinkActivity3.getEntity(getSystem(), arg, true);
 
 		getSystem().startIf(arg.get("IF").get(1));
 
@@ -124,7 +100,6 @@ public class CommandIf2 extends SingleLineCommand2<ActivityDiagram> {
 
 		getSystem().addLink(link);
 
-		getSystem().setAcceptOldSyntaxForBranch(false);
 		return CommandExecutionResult.ok();
 	}
 

@@ -56,6 +56,8 @@ public interface IEntity extends Imaged, SpecificBackcolorable {
 	
 	public Stereotype getStereotype();
 
+	public void setStereotype(Stereotype stereotype);
+	
 	public List<Member> methods2();
 
 	public String getCode();
