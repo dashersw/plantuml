@@ -63,7 +63,7 @@ final public class CommandLinkClass2 extends SingleLineCommand2<AbstractClassOrO
 
 	static RegexConcat getRegexConcat(UmlDiagramType umlDiagramType) {
 		return new RegexConcat(
-				new RegexLeaf("HEADER", "^(?:@(\\d+)\\s+)?"),
+				new RegexLeaf("HEADER", "^(?:@([\\d.]+)\\s+)?"),
 				new RegexOr(
 						new RegexLeaf("ENT1", "(?:" + optionalKeywords(umlDiagramType) + "\\s+)?"
 								+ "(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*|\"[^\"]+\")\\s*(\\<\\<.*\\>\\>)?"),
@@ -187,7 +187,7 @@ final public class CommandLinkClass2 extends SingleLineCommand2<AbstractClassOrO
 			// }
 			// }
 		} else {
-			link.setWeight(Integer.parseInt(arg0));
+			link.setWeight(Double.parseDouble(arg0));
 		}
 	}
 

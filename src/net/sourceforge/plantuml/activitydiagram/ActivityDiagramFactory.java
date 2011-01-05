@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5726 $
+ * Revision $Revision: 5847 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -36,10 +36,10 @@ package net.sourceforge.plantuml.activitydiagram;
 import net.sourceforge.plantuml.activitydiagram.command.CommandElse;
 import net.sourceforge.plantuml.activitydiagram.command.CommandEndPartition;
 import net.sourceforge.plantuml.activitydiagram.command.CommandEndif;
-import net.sourceforge.plantuml.activitydiagram.command.CommandIf2;
+import net.sourceforge.plantuml.activitydiagram.command.CommandIf;
 import net.sourceforge.plantuml.activitydiagram.command.CommandInnerConcurrent;
-import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity3;
-import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity3;
+import net.sourceforge.plantuml.activitydiagram.command.CommandLinkActivity;
+import net.sourceforge.plantuml.activitydiagram.command.CommandLinkLongActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandMultilinesNoteActivity;
 import net.sourceforge.plantuml.activitydiagram.command.CommandMultilinesNoteActivityLink;
 import net.sourceforge.plantuml.activitydiagram.command.CommandNoteActivity;
@@ -61,10 +61,10 @@ public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommonCommands(system);
 
-		addCommand(new CommandLinkActivity3(system));
+		addCommand(new CommandLinkActivity(system));
 		addCommand(new CommandPartition(system));
 		addCommand(new CommandEndPartition(system));
-		addCommand(new CommandLinkLongActivity3(system));
+		addCommand(new CommandLinkLongActivity(system));
 
 		addCommand(new CommandNoteActivity(system));
 		addCommand(new CommandMultilinesNoteActivity(system));
@@ -72,10 +72,10 @@ public class ActivityDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandNoteOnActivityLink(system));
 		addCommand(new CommandMultilinesNoteActivityLink(system));
 		
-		addCommand(new CommandIf2(system));
+		addCommand(new CommandIf(system));
 		addCommand(new CommandElse(system));
 		addCommand(new CommandEndif(system));
-		addCommand(new CommandInnerConcurrent(system));
+		// addCommand(new CommandInnerConcurrent(system));
 	}
 
 }

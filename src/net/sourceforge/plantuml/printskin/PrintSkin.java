@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5794 $
+ * Revision $Revision: 5872 $
  *
  */
 package net.sourceforge.plantuml.printskin;
@@ -77,14 +77,14 @@ class PrintSkin extends AbstractPSystem {
 		final List<File> result = Arrays.asList(suggestedFile);
 		final BufferedImage im = createImage();
 
-		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), suggestedFile);
+		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), suggestedFile, 96);
 		return result;
 
 	}
 
 	public void createFile(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
 		final BufferedImage im = createImage();
-		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), os);
+		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), os, 96);
 	}
 
 	private BufferedImage createImage() {

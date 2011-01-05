@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5781 $
+ * Revision $Revision: 5872 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -116,7 +116,7 @@ public final class GroupPngMaker {
 			// Color.BLACK).process();
 			// }
 
-			PngIO.write(im, os, diagram.getMetadata());
+			PngIO.write(im, os, diagram.getMetadata(), 96);
 		} finally {
 			cleanTemporaryFiles(imageFiles);
 		}

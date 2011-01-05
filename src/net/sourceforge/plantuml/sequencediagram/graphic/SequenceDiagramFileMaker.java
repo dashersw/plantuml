@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5811 $
+ * Revision $Revision: 5872 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -169,7 +169,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 			if (createImage instanceof UGraphicG2d) {
 				final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
 				Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
-				PngIO.write(im, f, diagram.getMetadata());
+				PngIO.write(im, f, diagram.getMetadata(), diagram.getDpi(fileFormatOption));
 			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.SVG) {
 				final UGraphicSvg svg = (UGraphicSvg) createImage;
 				final FileOutputStream fos = new FileOutputStream(f);
@@ -217,7 +217,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(index), index);
 		if (createImage instanceof UGraphicG2d) {
 			final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
-			PngIO.write(im, os, diagram.getMetadata());
+			PngIO.write(im, os, diagram.getMetadata(), diagram.getDpi(fileFormatOption));
 		} else if (createImage instanceof UGraphicSvg) {
 			final UGraphicSvg svg = (UGraphicSvg) createImage;
 			svg.createXml(os);

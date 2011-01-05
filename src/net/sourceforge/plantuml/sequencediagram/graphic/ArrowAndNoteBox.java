@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5730 $
+ * Revision $Revision: 5870 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -133,6 +133,5 @@ class ArrowAndNoteBox extends Arrow implements InGroupable {
 	public LivingParticipantBox getParticipantAt(StringBounder stringBounder, NotePosition position) {
 		return arrow.getParticipantAt(stringBounder, position);
 	}
-
-
+	
 }

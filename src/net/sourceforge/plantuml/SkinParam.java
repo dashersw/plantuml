@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5825 $
+ * Revision $Revision: 5845 $
  *
  */
 package net.sourceforge.plantuml;
@@ -140,18 +140,18 @@ public class SkinParam implements ISkinParam {
 			checkStereotype(stereotype);
 			final String value2 = getValue(param.name() + "fontname" + stereotype);
 			if (value2 != null) {
-				return value2;
+				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value2);
 			}
 		}
 		// Times, Helvetica, Courier or Symbol
 		String value = getValue(param.name() + "fontname");
 		if (value != null) {
-			return value;
+			return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
 		}
 		if (param != FontParam.CIRCLED_CHARACTER) {
 			value = getValue("defaultfontname");
 			if (value != null) {
-				return value;
+				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
 			}
 		}
 		return param.getDefaultFamily();

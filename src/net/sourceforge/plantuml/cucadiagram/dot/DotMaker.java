@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5823 $
+ * Revision $Revision: 5847 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -130,11 +130,11 @@ final public class DotMaker implements GraphvizMaker {
 		final boolean huge = data.getEntities().size() > 800;
 
 		sb.append("digraph unix {");
-		if (isJunit == false) {
+		//if (isJunit == false) {
 			for (String s : dotStrings) {
 				sb.append(s);
 			}
-		}
+		// }
 		sb.append("bgcolor=\"" + data.getSkinParam().getBackgroundColor().getAsHtml() + "\";");
 		if (huge) {
 			sb.append("size=\"400,400;\"");

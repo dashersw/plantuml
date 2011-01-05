@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5823 $
+ * Revision $Revision: 5872 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -154,7 +154,7 @@ public final class CucaDiagramFileMaker {
 
 		if (fileFormat == FileFormat.PNG) {
 			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(), diagram
-					.getVerticalPages(), diagram.getMetadata()).getFiles();
+					.getVerticalPages(), diagram.getMetadata(), diagram.getDpi(fileFormatOption)).getFiles();
 			for (File f : result) {
 				Log.info("Creating file: " + f);
 			}
@@ -214,8 +214,8 @@ public final class CucaDiagramFileMaker {
 
 		try {
 			deltaY = 0;
-			populateImages(diagram.getDpiFactor(fileFormatOption));
-			populateImagesLink(diagram.getDpiFactor(fileFormatOption));
+			populateImages(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
+			populateImagesLink(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
 			final GraphvizMaker dotMaker = createDotMaker(dotStrings, fileFormatOption);
 			final String dotString = dotMaker.createDotString();
 
@@ -411,8 +411,8 @@ public final class CucaDiagramFileMaker {
 
 		final StringBuilder cmap = new StringBuilder();
 		try {
-			populateImages(diagram.getDpiFactor(fileFormatOption));
-			populateImagesLink(diagram.getDpiFactor(fileFormatOption));
+			populateImages(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
+			populateImagesLink(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
 			final GraphvizMaker dotMaker = createDotMaker(dotStrings, fileFormatOption);
 			final String dotString = dotMaker.createDotString();
 
@@ -457,7 +457,7 @@ public final class CucaDiagramFileMaker {
 				im = PngRotation.process(im);
 			}
 			im = PngSizer.process(im, diagram.getMinwidth());
-			PngIO.write(im, os, diagram.getMetadata());
+			PngIO.write(im, os, diagram.getMetadata(), diagram.getDpi(fileFormatOption));
 		} finally {
 			cleanTemporaryFiles(diagram.entities().values());
 			cleanTemporaryFiles(diagram.getLinks());
@@ -649,31 +649,31 @@ public final class CucaDiagramFileMaker {
 		return new DotMaker(dotData, dotStrings, fileFormat);
 	}
 
-	private void populateImages(double dpiFactor) throws IOException {
+	private void populateImages(double dpiFactor, int dpi) throws IOException {
 		for (Entity entity : diagram.entities().values()) {
-			final DrawFile f = createImage(entity, dpiFactor);
+			final DrawFile f = createImage(entity, dpiFactor, dpi);
 			if (f != null) {
 				entity.setImageFile(f);
 			}
 		}
 	}
 
-	private void populateImagesLink(double dpiFactor) throws IOException {
+	private void populateImagesLink(double dpiFactor, int dpi) throws IOException {
 		for (Link link : diagram.getLinks()) {
 			final String note = link.getNote();
 			if (note == null) {
 				continue;
 			}
-			final DrawFile f = createImageForNote(note, null, dpiFactor);
+			final DrawFile f = createImageForNote(note, null, dpiFactor, dpi);
 			if (f != null) {
 				link.setImageFile(f);
 			}
 		}
 	}
 
-	DrawFile createImage(Entity entity, double dpiFactor) throws IOException {
+	DrawFile createImage(Entity entity, double dpiFactor, int dpi) throws IOException {
 		if (entity.getType() == EntityType.NOTE) {
-			return createImageForNote(entity.getDisplay(), entity.getSpecificBackColor(), dpiFactor);
+			return createImageForNote(entity.getDisplay(), entity.getSpecificBackColor(), dpiFactor, dpi);
 		}
 		if (entity.getType() == EntityType.ACTOR) {
 			return createImageForActor(entity, dpiFactor);
@@ -688,7 +688,7 @@ public final class CucaDiagramFileMaker {
 		return null;
 	}
 
-	private DrawFile createImageForNote(String display, HtmlColor backColor, double dpiFactor) throws IOException {
+	private DrawFile createImageForNote(String display, HtmlColor backColor, double dpiFactor, int dpi) throws IOException {
 		final File fPng = FileUtils.createTempFile("plantumlB", ".png");
 
 		final Rose skin = new Rose();
@@ -706,7 +706,7 @@ public final class CucaDiagramFileMaker {
 		final Graphics2D g2d = builder.getGraphics2D();
 
 		comp.drawU(new UGraphicG2d(g2d, null, dpiFactor), new Dimension(width, height), new SimpleContext2D(false));
-		PngIO.write(im, fPng);
+		PngIO.write(im, fPng, dpi);
 		g2d.dispose();
 
 		final UGraphicSvg ug = new UGraphicSvg(true);
@@ -853,8 +853,8 @@ public final class CucaDiagramFileMaker {
 
 		try {
 			deltaY = 0;
-			populateImages(diagram.getDpiFactor(fileFormatOption));
-			populateImagesLink(diagram.getDpiFactor(fileFormatOption));
+			populateImages(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
+			populateImagesLink(diagram.getDpiFactor(fileFormatOption), diagram.getDpi(fileFormatOption));
 			final GraphvizMaker dotMaker = createDotMaker(dotStrings, fileFormatOption);
 			final String dotString = dotMaker.createDotString();
 

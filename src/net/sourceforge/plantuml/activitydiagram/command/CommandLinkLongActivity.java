@@ -53,9 +53,9 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
-public class CommandLinkLongActivity3 extends CommandMultilines2<ActivityDiagram> {
+public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram> {
 
-	public CommandLinkLongActivity3(final ActivityDiagram diagram) {
+	public CommandLinkLongActivity(final ActivityDiagram diagram) {
 		super(
 				diagram,
 				getRegexConcat(),
@@ -86,7 +86,7 @@ public class CommandLinkLongActivity3 extends CommandMultilines2<ActivityDiagram
 	public CommandExecutionResult execute(List<String> lines) {
 		StringUtils.trim(lines);
 		final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
-		final IEntity entity1 = CommandLinkActivity3.getEntity(getSystem(), line0, true);
+		final IEntity entity1 = CommandLinkActivity.getEntity(getSystem(), line0, true);
 		if (line0.get("STEREOTYPE").get(0) != null) {
 			entity1.setStereotype(new Stereotype(line0.get("STEREOTYPE").get(0)));
 		}

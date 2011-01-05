@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5811 $
+ * Revision $Revision: 5877 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -58,6 +58,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
+import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 
 public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, PortionShower {
 
@@ -278,6 +279,10 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			return createFilesTxt(suggestedFile, fileFormat);
 		}
 
+		if (fileFormat.name().startsWith("XMI")) {
+			return createFilesXmi(suggestedFile, fileFormat);
+		}
+
 		if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
 			return createPng2(suggestedFile);
 		}
@@ -287,6 +292,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		}
 		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this);
 		return maker.createFile(suggestedFile, getDotStrings(), fileFormatOption);
+	}
+
+	private List<File> createFilesXmi(File suggestedFile, FileFormat fileFormat) throws IOException {
+		final CucaDiagramXmiMaker maker = new CucaDiagramXmiMaker(this, fileFormat);
+		return maker.createFiles(suggestedFile);
 	}
 
 	private List<File> createFilesTxt(File suggestedFile, FileFormat fileFormat) throws IOException {

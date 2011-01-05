@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-class BlockUml {
+public class BlockUml {
 
 	private final List<String> data;
 	private PSystem system;

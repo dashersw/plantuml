@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5794 $
+ * Revision $Revision: 5877 $
  *
  */
 package net.sourceforge.plantuml.ant;
@@ -198,6 +198,15 @@ public class PlantUmlTask extends Task {
 	}
 
 	public void setFormat(String s) {
+		if ("xmi".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.XMI_STANDARD);
+		}
+		if ("xmi:argo".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.XMI_ARGO);
+		}
+		if ("xmi:start".equalsIgnoreCase(s)) {
+			option.setFileFormat(FileFormat.XMI_STAR);
+		}
 		if ("eps".equalsIgnoreCase(s)) {
 			option.setFileFormat(FileFormat.EPS);
 		}

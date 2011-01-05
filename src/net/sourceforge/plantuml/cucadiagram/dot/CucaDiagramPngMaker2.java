@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5810 $
+ * Revision $Revision: 5872 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -177,7 +177,7 @@ public final class CucaDiagramPngMaker2 {
 			}
 		}
 
-		return new PngSplitter(pngFile, diagram.getHorizontalPages(), diagram.getVerticalPages(), diagram.getMetadata())
-				.getFiles();
+		return new PngSplitter(pngFile, diagram.getHorizontalPages(), diagram.getVerticalPages(),
+				diagram.getMetadata(), 96).getFiles();
 	}
 }

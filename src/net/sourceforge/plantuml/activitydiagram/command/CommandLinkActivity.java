@@ -51,9 +51,9 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
-public class CommandLinkActivity3 extends SingleLineCommand2<ActivityDiagram> {
+public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 
-	public CommandLinkActivity3(ActivityDiagram diagram) {
+	public CommandLinkActivity(ActivityDiagram diagram) {
 		super(
 				diagram, getRegexConcat());
 	}
@@ -140,7 +140,7 @@ public class CommandLinkActivity3 extends SingleLineCommand2<ActivityDiagram> {
 		}
 		final String code = arg.get("CODE" + suf).get(0);
 		if (code != null) {
-			return system.getOrCreate(code, code, CommandLinkActivity2.getTypeIfExisting(system, code));
+			return system.getOrCreate(code, code, getTypeIfExisting(system, code));
 		}
 		final String bar = arg.get("BAR" + suf).get(0);
 		if (bar != null) {
@@ -149,7 +149,7 @@ public class CommandLinkActivity3 extends SingleLineCommand2<ActivityDiagram> {
 		final RegexPartialMatch quoted = arg.get("QUOTED" + suf);
 		if (quoted.get(0) != null) {
 			final String quotedCode = quoted.get(1) == null ? quoted.get(0) : quoted.get(1);
-			return system.getOrCreate(quotedCode, quoted.get(0), CommandLinkActivity2.getTypeIfExisting(system,
+			return system.getOrCreate(quotedCode, quoted.get(0), getTypeIfExisting(system,
 					quotedCode));
 		}
 		final String first = arg.get("FIRST" + suf).get(0);
@@ -158,6 +158,7 @@ public class CommandLinkActivity3 extends SingleLineCommand2<ActivityDiagram> {
 		}
 		throw new UnsupportedOperationException();
 	}
+	
 
 	static EntityType getTypeIfExisting(ActivityDiagram system, String code) {
 		if (system.entityExist(code)) {

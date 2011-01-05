@@ -79,7 +79,7 @@ public final class CucaDiagramFileMakerBeta {
 
 		if (fileFormat == FileFormat.PNG) {
 			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(), diagram
-					.getVerticalPages(), diagram.getMetadata()).getFiles();
+					.getVerticalPages(), diagram.getMetadata(), 96).getFiles();
 			for (File f : result) {
 				Log.info("Creating file: " + f);
 			}
@@ -130,7 +130,7 @@ public final class CucaDiagramFileMakerBeta {
 
 		playField.drawInternal(ug);
 
-		PngIO.write(im, os);
+		PngIO.write(im, os, 96);
 
 	}
 

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5794 $
+ * Revision $Revision: 5848 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -60,7 +60,7 @@ public class Link implements Imaged {
 	private DrawFile imageFile;
 	private String note;
 	private boolean invis = false;
-	private int weight = 1;
+	private double weight = 1.0;
 
 	private final String labeldistance;
 	private final String labelangle;
@@ -177,11 +177,11 @@ public class Link implements Imaged {
 		return qualifier2;
 	}
 
-	public final int getWeight() {
+	public final double getWeight() {
 		return weight;
 	}
 
-	public final void setWeight(int weight) {
+	public final void setWeight(double weight) {
 		this.weight = weight;
 	}
 
