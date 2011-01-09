@@ -27,31 +27,42 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 4636 $
+ *
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.activitydiagram2.command;
 
-import net.sourceforge.plantuml.sequencediagram.MessageExoType;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import java.util.Map;
 
-public class CommandExoArrowLeft extends CommandExoArrowAny {
+import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 
-	public CommandExoArrowLeft(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram,
-				"(?i)^(\\[?[=-]+>{1,2}|\\[?\\<{1,2}[=-]+)\\s*([\\p{L}0-9_.]+|\"[^\"]+\")\\s*(?::\\s*(.*))?$", 0, 1);
+public class CommandEndif2 extends SingleLineCommand2<ActivityDiagram2> {
+
+	public CommandEndif2(ActivityDiagram2 diagram) {
+		super(diagram, getRegexConcat());
 	}
 
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^"),
+					new RegexLeaf("endif"),
+					new RegexLeaf("$"));
+	}
+
+
 	@Override
-	MessageExoType getMessageExoType(String arrow) {
-		if (arrow.contains(">")) {
-			return MessageExoType.FROM_LEFT;
+	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
+		if (getSystem().getLastEntityConsulted() == null) {
+			return CommandExecutionResult.error("No if for this endif");
 		}
-		if (arrow.contains("<")) {
-			return MessageExoType.TO_LEFT;
-		}
-		throw new IllegalArgumentException(arrow);
+		getSystem().endif();
+
+		return CommandExecutionResult.ok();
 	}
 
 }

@@ -58,7 +58,7 @@ abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
 	@Override
 	final protected CommandExecutionResult executeArg(List<String> arg) {
 		final String arrow = StringUtils.manageArrowForSequence(arg.get(posArrow));
-		final Participant p = getSystem().getOrCreateParticipant(arg.get(posParticipant));
+		final Participant p = getSystem().getOrCreateParticipant(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(posParticipant)));
 
 		final boolean full = (arrow.endsWith(">>") || arrow.startsWith("<<")) == false;
 		final boolean dotted = arrow.contains("--");
@@ -76,20 +76,22 @@ abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
 		return CommandExecutionResult.ok();
 	}
 
-	final MessageExoType getMessageExoType(String arrow) {
-		if (arrow.startsWith("[") && arrow.endsWith(">")) {
-			return MessageExoType.FROM_LEFT;
-		}
-		if (arrow.startsWith("[<")) {
-			return MessageExoType.TO_LEFT;
-		}
-		if (arrow.startsWith("<") && arrow.endsWith("]")) {
-			return MessageExoType.FROM_RIGHT;
-		}
-		if (arrow.endsWith(">]")) {
-			return MessageExoType.TO_RIGHT;
-		}
-		throw new IllegalArgumentException(arrow);
-	}
+	abstract MessageExoType getMessageExoType(String arrow);
+
+//	final MessageExoType getMessageExoType(String arrow) {
+//		if (arrow.startsWith("[") && arrow.endsWith(">")) {
+//			return MessageExoType.FROM_LEFT;
+//		}
+//		if (arrow.startsWith("[<")) {
+//			return MessageExoType.TO_LEFT;
+//		}
+//		if (arrow.startsWith("<") && arrow.endsWith("]")) {
+//			return MessageExoType.FROM_RIGHT;
+//		}
+//		if (arrow.endsWith(">]")) {
+//			return MessageExoType.TO_RIGHT;
+//		}
+//		throw new IllegalArgumentException(arrow);
+//	}
 
 }

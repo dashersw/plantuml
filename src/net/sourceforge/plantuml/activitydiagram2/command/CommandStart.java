@@ -27,58 +27,30 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 5424 $
+ *
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.activitydiagram2.command;
 
-import java.util.Arrays;
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.sequencediagram.Message;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandArrow extends SingleLineCommand<SequenceDiagram> {
+public class CommandStart extends SingleLineCommand<ActivityDiagram2> {
 
-	public CommandArrow(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram,
-				"(?i)^([\\p{L}0-9_.]+)\\s*([=-]+[>\\]]{1,2}|[<\\[]{1,2}[=-]+)\\s*([\\p{L}0-9_.]+)\\s*(?::\\s*(.*))?$");
+	public CommandStart(ActivityDiagram2 diagram) {
+		super(diagram, "(?i)^start$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		Participant p1;
-		Participant p2;
-
-		final String arrow = StringUtils.manageArrowForSequence(arg.get(1));
-
-		if (arrow.endsWith(">")) {
-			p1 = getSystem().getOrCreateParticipant(arg.get(0));
-			p2 = getSystem().getOrCreateParticipant(arg.get(2));
-		} else if (arrow.startsWith("<")) {
-			p2 = getSystem().getOrCreateParticipant(arg.get(0));
-			p1 = getSystem().getOrCreateParticipant(arg.get(2));
-		} else {
-			throw new IllegalStateException(arg.toString());
+		if (getSystem().entities().size() > 0) {
+			return CommandExecutionResult.error("Cannot start this here");
 		}
-		
-		final boolean full = (arrow.endsWith(">>") || arrow.startsWith("<<"))==false;
-
-		final boolean dotted = arrow.contains("--");
-
-		final List<String> labels;
-		if (arg.get(3) == null) {
-			labels = Arrays.asList("");
-		} else {
-			labels = StringUtils.getWithNewlines(arg.get(3));
-		}
-
-		getSystem().addMessage(new Message(p1, p2, labels, dotted, full, getSystem().getNextMessageNumber()));
+		getSystem().start();
 		return CommandExecutionResult.ok();
 	}
 

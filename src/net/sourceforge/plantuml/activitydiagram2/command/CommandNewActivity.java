@@ -28,49 +28,29 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5728 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.classdiagram.command;
+package net.sourceforge.plantuml.activitydiagram2.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.classdiagram.ClassDiagram;
+import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.Entity;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
-public class CommandCreateEntityClass extends SingleLineCommand<ClassDiagram> {
+public class CommandNewActivity extends SingleLineCommand<ActivityDiagram2> {
 
-	public CommandCreateEntityClass(ClassDiagram diagram) {
-		super(
-				diagram,
-				"(?i)^(interface|enum|abstract\\s+class|abstract|class)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?$");
+	public CommandNewActivity(ActivityDiagram2 diagram) {
+		super(diagram, "(?i)^\"([^\"]+)\"$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String arg0 = arg.get(0).toUpperCase();
-		final EntityType type = EntityType.getEntityType(arg0);
-		final String code = arg.get(2);
-		final String display = arg.get(1);
-		final String stereotype = arg.get(3);
-		final Entity entity;
-		if (getSystem().entityExist(code)) {
-			// return CommandExecutionResult.error("Class already exists : "
-			// + code);
-			entity = (Entity) getSystem().getOrCreateEntity(code, type);
-			entity.muteToType(type);
-		} else {
-			entity = getSystem().createEntity(code, display, type);
+		if (getSystem().entities().size() == 0) {
+			return CommandExecutionResult.error("Missing start keyword");
 		}
-		if (stereotype != null) {
-			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
-					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
-		}
+		getSystem().newActivity(arg.get(0));
 		return CommandExecutionResult.ok();
 	}
 
