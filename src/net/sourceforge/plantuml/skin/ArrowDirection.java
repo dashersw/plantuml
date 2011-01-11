@@ -28,33 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4636 $
+ * Revision $Revision: 5191 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.skin;
 
-import java.util.List;
-
-import net.sourceforge.plantuml.skin.ArrowConfiguration;
-
-public class MessageExo extends AbstractMessage {
-
-	final private MessageExoType type;
-	final private Participant participant;
-
-	public MessageExo(Participant p, MessageExoType type, List<String> label, ArrowConfiguration arrowConfiguration,
-			String messageNumber) {
-		super(label, arrowConfiguration, messageNumber);
-		this.participant = p;
-		this.type = type;
-	}
-
-	public Participant getParticipant() {
-		return participant;
-	}
-
-	public final MessageExoType getType() {
-		return type;
-	}
-
+public enum ArrowDirection {
+	LEFT_TO_RIGHT_NORMAL, RIGHT_TO_LEFT_REVERSE, SELF
 }
