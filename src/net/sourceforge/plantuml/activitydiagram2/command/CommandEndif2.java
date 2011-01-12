@@ -57,9 +57,9 @@ public class CommandEndif2 extends SingleLineCommand2<ActivityDiagram2> {
 
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
-		if (getSystem().getLastEntityConsulted() == null) {
-			return CommandExecutionResult.error("No if for this endif");
-		}
+//		if (getSystem().getLastEntityConsulted() == null) {
+//			return CommandExecutionResult.error("No if for this endif");
+//		}
 		getSystem().endif();
 
 		return CommandExecutionResult.ok();

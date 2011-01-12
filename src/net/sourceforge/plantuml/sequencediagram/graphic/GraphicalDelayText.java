@@ -41,36 +41,40 @@ import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-class GraphicalDivider extends GraphicalElement {
+class GraphicalDelayText extends GraphicalElement {
 
-	private final Component comp;
+	private final Component compText;
 
-	public GraphicalDivider(double startingY, Component comp) {
+	public GraphicalDelayText(double startingY, Component compText) {
 		super(startingY);
-		this.comp = comp;
+		this.compText = compText;
 	}
 
 	@Override
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
 		ug.translate(0, getStartingY());
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+		final Dimension2D dim = new Dimension2DDouble(maxX, compText.getPreferredHeight(stringBounder));
+		compText.drawU(ug, dim, context);
 	}
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
+		return compText.getPreferredHeight(stringBounder);
 	}
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
+		return compText.getPreferredWidth(stringBounder);
 	}
 
 	@Override
 	public double getStartingX(StringBounder stringBounder) {
 		return 0;
+	}
+
+	public double getEndingY(StringBounder stringBounder) {
+		return getStartingY() + compText.getPreferredHeight(stringBounder);
 	}
 
 }

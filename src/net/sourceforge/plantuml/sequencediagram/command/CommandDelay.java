@@ -28,49 +28,30 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3916 $
+ * Revision $Revision: 5158 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.sequencediagram.command;
 
-import java.awt.geom.Dimension2D;
+import java.util.Collections;
+import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-class GraphicalDivider extends GraphicalElement {
+public class CommandDelay extends SingleLineCommand<SequenceDiagram> {
 
-	private final Component comp;
-
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public CommandDelay(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram, "(?i)^\\.{3}(?:(.*)\\.{3})?$$");
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final List<String> strings = arg.get(0) == null ? Collections.<String> emptyList() : StringUtils
+				.getWithNewlines(arg.get(0));
+		getSystem().delay(strings);
+		return CommandExecutionResult.ok();
 	}
-
-	@Override
-	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
-	}
-
-	@Override
-	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
-	}
-
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
-	}
-
 }

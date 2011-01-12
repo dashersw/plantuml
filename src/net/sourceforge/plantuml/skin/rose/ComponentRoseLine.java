@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4167 $
+ * Revision $Revision: 5937 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -53,7 +53,7 @@ public class ComponentRoseLine extends AbstractComponent {
 	@Override
 	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse) {
 		ug.getParam().setColor(color);
-		stroke(ug, 5);
+		stroke(ug, 5, 5);
 		final int x = (int) (dimensionToUse.getWidth() / 2);
 		ug.draw(x, 0, new ULine(0, dimensionToUse.getHeight()));
 		ug.getParam().setStroke(new UStroke());

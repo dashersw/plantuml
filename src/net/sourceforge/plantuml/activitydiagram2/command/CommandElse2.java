@@ -27,50 +27,42 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 3916 $
+ *
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.activitydiagram2.command;
 
-import java.awt.geom.Dimension2D;
+import java.util.Map;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 
-class GraphicalDivider extends GraphicalElement {
+public class CommandElse2 extends SingleLineCommand2<ActivityDiagram2> {
 
-	private final Component comp;
-
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public CommandElse2(ActivityDiagram2 diagram) {
+		super(diagram, getRegexConcat());
 	}
 
-	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^"),
+					new RegexLeaf("else"),
+					new RegexLeaf("$"));
 	}
 
-	@Override
-	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
-	}
 
 	@Override
-	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
-	}
+	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
+//		if (getSystem().getLastEntityConsulted() == null) {
+//			return CommandExecutionResult.error("No if for this endif");
+//		}
+		getSystem().else2();
 
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
+		return CommandExecutionResult.ok();
 	}
 
 }

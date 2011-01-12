@@ -28,49 +28,46 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3916 $
+ * Revision $Revision: 5937 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.skin.rose;
 
+import java.awt.Color;
 import java.awt.geom.Dimension2D;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
+import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.ULine;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 
-class GraphicalDivider extends GraphicalElement {
+public class ComponentRoseDelayLine extends AbstractComponent {
 
-	private final Component comp;
+	private final Color color;
 
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public ComponentRoseDelayLine(Color color) {
+		this.color = color;
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse) {
+		ug.getParam().setColor(color);
+		//stroke(ug, 0.4, 2.5);
+		stroke(ug, 0.2, 1.5);
+		final int x = (int) (dimensionToUse.getWidth() / 2);
+		ug.draw(x, 0, new ULine(0, dimensionToUse.getHeight()));
+		ug.getParam().setStroke(new UStroke());
 	}
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
+		return 20;
 	}
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
-	}
-
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
+		return 1;
 	}
 
 }

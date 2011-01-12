@@ -28,49 +28,23 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3916 $
+ * Revision $Revision: 3835 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.sequencediagram;
 
-import java.awt.geom.Dimension2D;
+import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+public class Delay implements Event {
 
-class GraphicalDivider extends GraphicalElement {
+	private final List<String> text;
 
-	private final Component comp;
-
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public Delay(List<String> text) {
+		this.text = text;
 	}
 
-	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
-	}
-
-	@Override
-	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
-	}
-
-	@Override
-	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
-	}
-
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
+	public final List<String> getText() {
+		return text;
 	}
 
 }

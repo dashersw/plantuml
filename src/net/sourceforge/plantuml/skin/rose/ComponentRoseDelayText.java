@@ -28,49 +28,50 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3916 $
+ * Revision $Revision: 3837 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.skin.rose;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.geom.Dimension2D;
+import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
+import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.skin.AbstractTextualComponent;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-class GraphicalDivider extends GraphicalElement {
+public class ComponentRoseDelayText extends AbstractTextualComponent {
 
-	private final Component comp;
-
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public ComponentRoseDelayText(Color fontColor, Font font, List<? extends CharSequence> stringsToDisplay) {
+		super(stringsToDisplay, fontColor, font, HorizontalAlignement.CENTER, 4, 4, 4);
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
+	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse) {
+		final TextBlock textBlock = getTextBlock();
 		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+		final double textWidth = getTextWidth(stringBounder);
+		final double textHeight = getTextHeight(stringBounder);
+
+		final double xpos = (dimensionToUse.getWidth() - textWidth) / 2;
+		final double ypos = (dimensionToUse.getHeight() - textHeight) / 2;
+
+		ug.getParam().setColor(getFontColor());
+		textBlock.drawU(ug, xpos, ypos + getMarginY());
 	}
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
+		return getTextHeight(stringBounder) + 20;
 	}
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
-	}
-
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
+		return getTextWidth(stringBounder) + 30;
 	}
 
 }

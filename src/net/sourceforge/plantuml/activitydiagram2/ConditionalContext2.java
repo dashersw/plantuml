@@ -28,49 +28,54 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3916 $
+ * Revision $Revision: 3828 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.activitydiagram2;
 
-import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.skin.Component;
-import net.sourceforge.plantuml.skin.Context2D;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.Direction;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 
-class GraphicalDivider extends GraphicalElement {
+public class ConditionalContext2 {
 
-	private final Component comp;
+	private IEntity pending;
+	private final IEntity branch;
+	private final Direction direction;
+	private final ConditionalContext2 parent;
 
-	public GraphicalDivider(double startingY, Component comp) {
-		super(startingY);
-		this.comp = comp;
+	public ConditionalContext2(ConditionalContext2 parent, IEntity branch, Direction direction) {
+		if (branch.getType() != EntityType.BRANCH) {
+			throw new IllegalArgumentException();
+		}
+		this.branch = branch;
+		this.direction = direction;
+		this.parent = parent;
+		this.pending = branch;
 	}
 
-	@Override
-	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
-		ug.translate(0, getStartingY());
-		final StringBounder stringBounder = ug.getStringBounder();
-		final Dimension2D dim = new Dimension2DDouble(maxX, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+	public Direction getDirection() {
+		return direction;
 	}
 
-	@Override
-	public double getPreferredHeight(StringBounder stringBounder) {
-		return comp.getPreferredHeight(stringBounder);
+	public final ConditionalContext2 getParent() {
+		return parent;
 	}
 
-	@Override
-	public double getPreferredWidth(StringBounder stringBounder) {
-		return comp.getPreferredWidth(stringBounder);
+	public final IEntity getPending() {
+		return pending;
 	}
 
-	@Override
-	public double getStartingX(StringBounder stringBounder) {
-		return 0;
+	public final void setPending(IEntity pending) {
+		this.pending = pending;
+	}
+
+	public final IEntity getBranch() {
+		return branch;
 	}
 
 }
