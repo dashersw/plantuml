@@ -28,30 +28,40 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 4975 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram2.command;
+package net.sourceforge.plantuml.suggest;
 
-import java.util.List;
+public class VariatorAddTwoChar extends VariatorIteratorAdaptor {
 
-import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
+	private final String data;
+	private final char toAdd;
+	private int i;
+	private int j = 1;
 
-public class CommandStart extends SingleLineCommand<ActivityDiagram2> {
-
-	public CommandStart(ActivityDiagram2 diagram) {
-		super(diagram, "(?i)^start$");
+	public VariatorAddTwoChar(String data, char toAdd) {
+		this.data = data;
+		this.toAdd = toAdd;
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		if (getSystem().entities().size() > 0) {
-			return CommandExecutionResult.error("Cannot start this here");
-		}
-		getSystem().start();
-		return CommandExecutionResult.ok();
-	}
+	Variator getVariator() {
+		return new Variator() {
+			public String getData() {
+				if (i >= data.length()) {
+					return null;
+				}
+				return data.substring(0, i) + toAdd + data.substring(i, j) + toAdd + data.substring(j);
+			}
 
+			public void nextStep() {
+				j++;
+				if (j > data.length()) {
+					i++;
+					j = i + 1;
+				}
+			}
+		};
+	}
 }
