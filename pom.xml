@@ -35,7 +35,7 @@
 
     <groupId>net.sourceforge.plantuml</groupId>
     <artifactId>plantuml</artifactId>
-    <version>6035-SNAPSHOT</version>
+    <version>6035</version>
     <packaging>jar</packaging>
 
     <name>PlantUML</name>
@@ -75,9 +75,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/trunk</connection>
-        <developerConnection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/trunk</developerConnection>
-        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml/trunk</url>
+        <connection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/tags/plantuml-6035</connection>
+        <developerConnection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/tags/plantuml-6035</developerConnection>
+        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml/tags/plantuml-6035</url>
     </scm>
 
     <issueManagement>
