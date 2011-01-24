@@ -75,8 +75,9 @@
     </licenses>
 
     <scm>
-        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml/tags/plantuml-6035</url>
-        <connection>https://plantuml.svn.sourceforge.net/svnroot/plantuml/tags/plantuml-6035</connection>
+        <connection>https://plantuml.svn.sourceforge.net/svnroot/plantuml</connection>
+        <developerConnection>https://plantuml.svn.sourceforge.net/svnroot/plantuml</developerConnection>
+        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml</url>
     </scm>
 
     <issueManagement>
