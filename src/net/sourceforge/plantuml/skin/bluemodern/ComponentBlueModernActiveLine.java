@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4167 $
+ * Revision $Revision: 6053 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
@@ -46,7 +46,7 @@ public class ComponentBlueModernActiveLine extends AbstractComponent {
 	private final int shadowview = 3;
 	private final Color foregroundColor;
 
-	public ComponentBlueModernActiveLine(Color foregroundColor) {
+	public ComponentBlueModernActiveLine(Color foregroundColor, boolean closeUp, boolean closeDown) {
 		this.foregroundColor = foregroundColor;
 	}
 
@@ -62,7 +62,7 @@ public class ComponentBlueModernActiveLine extends AbstractComponent {
 
 		ug.getParam().setColor(foregroundColor);
 		ug.getParam().setBackcolor(foregroundColor);
-		ug.draw(x, 0, new URectangle(getPreferredWidth(stringBounder), (dimensionToUse.getHeight() - shadowview)));
+		ug.draw(x, 0, new URectangle(getPreferredWidth(stringBounder), dimensionToUse.getHeight() - shadowview));
 	}
 
 	@Override

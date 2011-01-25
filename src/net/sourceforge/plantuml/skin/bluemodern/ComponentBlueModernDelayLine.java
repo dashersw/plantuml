@@ -28,10 +28,10 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6046 $
+ * Revision $Revision: 4169 $
  *
  */
-package net.sourceforge.plantuml.skin.rose;
+package net.sourceforge.plantuml.skin.bluemodern;
 
 import java.awt.Color;
 import java.awt.geom.Dimension2D;
@@ -40,59 +40,36 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractComponent;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.URectangle;
+import net.sourceforge.plantuml.ugraphic.UStroke;
 
-public class ComponentRoseActiveLine extends AbstractComponent {
+public class ComponentBlueModernDelayLine extends AbstractComponent {
 
-	private final Color foregroundColor;
-	private final Color lifeLineBackground;
-	private final boolean closeUp;
-	private final boolean closeDown;
+	private final Color color;
 
-	public ComponentRoseActiveLine(Color foregroundColor, Color lifeLineBackground, boolean closeUp, boolean closeDown) {
-		this.foregroundColor = foregroundColor;
-		this.lifeLineBackground = lifeLineBackground;
-		this.closeUp = closeUp;
-		this.closeDown = closeDown;
+	public ComponentBlueModernDelayLine(Color color) {
+		this.color = color;
 	}
 
+	@Override
 	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse) {
-		final StringBounder stringBounder = ug.getStringBounder();
-		final int x = (int) (dimensionToUse.getWidth() - getPreferredWidth(stringBounder)) / 2;
-
-		final URectangle rect = new URectangle(getPreferredWidth(stringBounder), dimensionToUse.getHeight());
-		if (closeUp && closeDown) {
-			ug.getParam().setBackcolor(lifeLineBackground);
-			ug.getParam().setColor(foregroundColor);
-			ug.draw(x, 0, rect);
-			return;
-		}
-		ug.getParam().setBackcolor(lifeLineBackground);
-		ug.getParam().setColor(lifeLineBackground);
-		ug.draw(x, 0, rect);
-		ug.getParam().setColor(foregroundColor);
-
-		final ULine vline = new ULine(0, dimensionToUse.getHeight());
-		ug.draw(x, 0, vline);
-		ug.draw(x + getPreferredWidth(stringBounder), 0, vline);
-		
-		final ULine hline = new ULine(getPreferredWidth(stringBounder), 0);
-		if (closeUp) {
-			ug.draw(x, 0, hline);
-		}
-		if (closeDown) {
-			ug.draw(x, dimensionToUse.getHeight(), hline);
-		}
+		ug.getParam().setColor(color);
+		ug.getParam().setBackcolor(color);
+		stroke(ug, 1, 4);
+		final int x = (int) (dimensionToUse.getWidth() / 2);
+		ug.setAntiAliasing(false);
+		ug.draw(x + 1, 0, new ULine(0, dimensionToUse.getHeight()));
+		ug.setAntiAliasing(true);
+		ug.getParam().setStroke(new UStroke());
 	}
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return 0;
+		return 20;
 	}
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return 10;
+		return 2;
 	}
 
 }
