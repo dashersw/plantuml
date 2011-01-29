@@ -50,7 +50,7 @@ public class CommandElse2 extends SingleLineCommand2<ActivityDiagram2> {
 
 	static RegexConcat getRegexConcat() {
 		return new RegexConcat(new RegexLeaf("^"),
-					new RegexLeaf("else"),
+					new RegexLeaf("WHEN", "(?:else\\s*(?:when\\s+(.*))?)?"),
 					new RegexLeaf("$"));
 	}
 
@@ -60,7 +60,7 @@ public class CommandElse2 extends SingleLineCommand2<ActivityDiagram2> {
 //		if (getSystem().getLastEntityConsulted() == null) {
 //			return CommandExecutionResult.error("No if for this endif");
 //		}
-		getSystem().else2();
+		getSystem().else2(arg.get("WHEN").get(0));
 
 		return CommandExecutionResult.ok();
 	}

@@ -42,47 +42,26 @@ import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 
-public class CommandIf2 extends SingleLineCommand2<ActivityDiagram2> {
+public class CommandBar2 extends SingleLineCommand2<ActivityDiagram2> {
 
-	public CommandIf2(ActivityDiagram2 diagram) {
+	public CommandBar2(ActivityDiagram2 diagram) {
 		super(diagram, getRegexConcat());
 	}
 
 	static RegexConcat getRegexConcat() {
-		return new RegexConcat(new RegexLeaf("^"),
-					new RegexLeaf("if"),
-					new RegexLeaf("\\s*"),
-					new RegexLeaf("TEST", "[\"(](.+)[\")]"),
-					new RegexLeaf("\\s*"),
-					new RegexLeaf("WHEN", "(?:then\\s*(?:when\\s+(.*))?)?"),
-					new RegexLeaf("$"));
+		return new RegexConcat(new RegexLeaf("^"), //
+				new RegexLeaf("==+"), //
+				new RegexLeaf("BAR", "\\s*(.*?)\\s*"), //
+				new RegexLeaf("==+"),//
+				new RegexLeaf("$"));
 	}
-
 
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
-//
-		getSystem().startIf(arg.get("TEST").get(0), arg.get("WHEN").get(0));
-//
-//		int lenght = 2;
-//
-//		if (arg.get("ARROW").get(0) != null) {
-//			final String arrow = StringUtils.manageArrowForCuca(arg.get("ARROW").get(0));
-//			lenght = arrow.length() - 1;
-//		}
-//
-//		final IEntity branch = getSystem().getCurrentContext().getBranch();
-//
-//		Link link = new Link(entity1, branch, new LinkType(LinkDecor.ARROW, LinkDecor.NONE), arg.get("BRACKET").get(0),
-//				lenght, null, arg.get("IF").get(0), getSystem().getLabeldistance(), getSystem().getLabelangle());
-//		if (arg.get("ARROW").get(0) != null) {
-//			final Direction direction = StringUtils.getArrowDirection(arg.get("ARROW").get(0));
-//			if (direction == Direction.LEFT || direction == Direction.UP) {
-//				link = link.getInv();
-//			}
-//		}
-//
-//		getSystem().addLink(link);
+		// if (getSystem().getLastEntityConsulted() == null) {
+		// return CommandExecutionResult.error("No if for this endif");
+		// }
+		getSystem().bar(arg.get("BAR").get(0));
 
 		return CommandExecutionResult.ok();
 	}

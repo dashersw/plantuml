@@ -28,35 +28,34 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5721 $
- *
+ * Revision $Revision: 5794 $
+ * 
  */
-package net.sourceforge.plantuml.activitydiagram2;
+package net.sourceforge.plantuml;
 
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-public class PendingLink {
+public class FileWatcher {
 
-	private final IEntity entityFrom;
-	private final String gotoLabel;
-	private final String linkLabel;
+	private final Map<File, Long> modified2 = new HashMap<File, Long>();
 
-	public PendingLink(IEntity entityFrom, String gotoLabel, String linkLabel) {
-		this.entityFrom = entityFrom;
-		this.gotoLabel = gotoLabel;
-		this.linkLabel = linkLabel;
+	public FileWatcher(Set<File> files) {
+		for (File f : files) {
+			modified2.put(f, f.lastModified());
+		}
 	}
 
-	public final IEntity getEntityFrom() {
-		return entityFrom;
-	}
-
-	public final String getGotoLabel() {
-		return gotoLabel;
-	}
-
-	public final String getLinkLabel() {
-		return linkLabel;
+	public boolean hasChanged() {
+		for (Map.Entry<File, Long> ent : modified2.entrySet()) {
+			final long nowModified = ent.getKey().lastModified();
+			if (ent.getValue().longValue() != nowModified) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
