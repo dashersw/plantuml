@@ -28,13 +28,25 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6097 $
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.command;
 
-public interface Event {
+import java.util.List;
 
-	boolean dealWith(Participant someone);
+import net.sourceforge.plantuml.UmlDiagram;
+
+public class CommandHideUnlinked extends SingleLineCommand<UmlDiagram> {
+
+	public CommandHideUnlinked(UmlDiagram diagram) {
+		super(diagram, "(?i)^(hide|show)\\s+unlinked$");
+	}
+
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		getSystem().setHideUnlinkedData(arg.get(0).equalsIgnoreCase("hide"));
+		return CommandExecutionResult.ok();
+	}
 
 }

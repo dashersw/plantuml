@@ -28,13 +28,50 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6097 $
+ * Revision $Revision: 4836 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
 
-public interface Event {
+import java.util.ArrayList;
+import java.util.List;
 
-	boolean dealWith(Participant someone);
+public class ParticipantEngloberContexted {
+
+	final private ParticipantEnglober participantEnglober;
+	final private List<Participant> participants = new ArrayList<Participant>();
+
+	public ParticipantEngloberContexted(ParticipantEnglober participantEnglober, Participant first) {
+		this.participantEnglober = participantEnglober;
+		this.participants.add(first);
+	}
+
+	public final ParticipantEnglober getParticipantEnglober() {
+		return participantEnglober;
+	}
+	
+	public boolean contains(Participant p) {
+		return participants.contains(p);
+	}
+
+	public void add(Participant p) {
+		if (participants.contains(p)) {
+			throw new IllegalArgumentException();
+		}
+		participants.add(p);
+	}
+
+	public final Participant getFirst2() {
+		return participants.get(0);
+	}
+
+	public final Participant getLast2() {
+		return participants.get(participants.size() - 1);
+	}
+	
+	@Override
+	public String toString() {
+		return super.toString()+" "+participants;
+	}
 
 }
