@@ -64,5 +64,7 @@ public interface ISkinParam {
 	public boolean isMonochrome();
 	
 	public int getDpi();
+	
+	public boolean useOctagonForActivity();
 
 }

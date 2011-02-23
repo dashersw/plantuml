@@ -28,19 +28,31 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6142 $
+ * Revision $Revision: 6109 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.sequencediagram.command;
 
-public class Version {
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-	public static int version() {
-		return 6141;
+public class CommandParticipantA3 extends CommandParticipant {
+
+	public CommandParticipantA3(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram, getRegexConcat());
 	}
 
-	public static long compileTime() {
-		return 1298495043843L;
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^"), //
+				new RegexLeaf("TYPE", "(participant|actor)"), //
+				new RegexLeaf("\\s+"), //
+				new RegexLeaf("FULL", "([\\p{L}0-9_.]+)\\s+as\\s+"), //
+				new RegexLeaf("CODE", "([\\p{L}0-9_.]+)"), //
+				new RegexLeaf("STEREO", "(?:\\s*(\\<\\<.*\\>\\>))?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("COLOR", "(#\\w+)?"), // 
+				new RegexLeaf("$"));
 	}
 
 }
