@@ -28,41 +28,37 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6192 $
+ * Revision $Revision: 5751 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.activitydiagram2.command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.CommandMultilines;
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+public class CommandNewMultilinesActivity2 extends CommandMultilines<ActivityDiagram2> {
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-		// return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge
-		// [fontsize=11,labelfontsize=11];",
-		// "node [fontsize=11,height=.35,width=.55];");
-
-		final List<String> def = Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11,height=.35,width=.55];");
-		if (getPragma().isDefine("graphattributes")==false) {
-			return def;
-		}
-		final String attribute = getPragma().getValue("graphattributes");
-		final List<String> result = new ArrayList<String>(def);
-		result.add(attribute);
-		return Collections.unmodifiableList(result);
+	public CommandNewMultilinesActivity2(final ActivityDiagram2 system) {
+		super(system, "(?i)^[\"<].*$", "(?i)^.*[\">]$");
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	public final CommandExecutionResult execute(List<String> lines) {
+		if (getSystem().entities().size() == 0) {
+			return CommandExecutionResult.error("Missing start keyword");
+		}
+
+		if (getSystem().isReachable() == false) {
+			return CommandExecutionResult.error("Unreachable statement");
+		}
+		String s = StringUtils.getMergedLines(lines);
+		s = s.substring(1, s.length() - 2);
+
+		getSystem().newActivity(s);
+		return CommandExecutionResult.ok();
 	}
 
 }

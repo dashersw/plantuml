@@ -27,42 +27,41 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 6192 $
+ * 
+ * Revision $Revision: 5424 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.postit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+public class CommandCreatePostIt extends SingleLineCommand2<PostItDiagram> {
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-		// return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge
-		// [fontsize=11,labelfontsize=11];",
-		// "node [fontsize=11,height=.35,width=.55];");
-
-		final List<String> def = Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11,height=.35,width=.55];");
-		if (getPragma().isDefine("graphattributes")==false) {
-			return def;
-		}
-		final String attribute = getPragma().getValue("graphattributes");
-		final List<String> result = new ArrayList<String>(def);
-		result.add(attribute);
-		return Collections.unmodifiableList(result);
+	public CommandCreatePostIt(PostItDiagram diagram) {
+		super(diagram, getRegexConcat());
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^"), //
+				new RegexLeaf("post[- ]?it\\s+"), //
+				new RegexLeaf("ID", "([-\\p{L}0-9_./]+)"), //
+				new RegexLeaf("\\s+"), // 
+				new RegexLeaf("TEXT", ":?(.*)?$"));
+	}
+
+	@Override
+	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
+		final String id = arg.get("ID").get(0);
+		final String text = arg.get("TEXT").get(0);
+		getSystem().createPostIt(id, StringUtils.getWithNewlines(text));
+		return CommandExecutionResult.ok();
 	}
 
 }

@@ -27,42 +27,35 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 6192 $
+ * 
+ * Revision $Revision: 4167 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.postit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.graphic.StringBounder;
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+public class AreaLayoutFixedWidth implements AreaLayout {
 
-	abstract public IEntity getOrCreateClass(String code);
+	public Map<PostIt, Point2D> getPositions(Collection<PostIt> all, StringBounder stringBounder) {
+		double x = 0;
+		double y = 0;
+		final Map<PostIt, Point2D> result = new LinkedHashMap<PostIt, Point2D>();
 
-	final protected List<String> getDotStrings() {
-		// return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge
-		// [fontsize=11,labelfontsize=11];",
-		// "node [fontsize=11,height=.35,width=.55];");
-
-		final List<String> def = Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11,height=.35,width=.55];");
-		if (getPragma().isDefine("graphattributes")==false) {
-			return def;
+		for (PostIt p : all) {
+			result.put(p, new Point2D.Double(x, y));
+			final Dimension2D dim = p.getDimension(stringBounder);
+			x += dim.getWidth() + 10;
 		}
-		final String attribute = getPragma().getValue("graphattributes");
-		final List<String> result = new ArrayList<String>(def);
-		result.add(attribute);
-		return Collections.unmodifiableList(result);
-	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+		return Collections.unmodifiableMap(result);
 	}
 
 }

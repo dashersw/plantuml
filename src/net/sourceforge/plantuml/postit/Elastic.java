@@ -27,42 +27,18 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 6192 $
+ * 
+ * Revision $Revision: 4167 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.postit;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import net.sourceforge.plantuml.graphic.StringBounder;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public interface Elastic {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+	double widthWhenHeightIs(double height, StringBounder stringBounder);
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-		// return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge
-		// [fontsize=11,labelfontsize=11];",
-		// "node [fontsize=11,height=.35,width=.55];");
-
-		final List<String> def = Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11,height=.35,width=.55];");
-		if (getPragma().isDefine("graphattributes")==false) {
-			return def;
-		}
-		final String attribute = getPragma().getValue("graphattributes");
-		final List<String> result = new ArrayList<String>(def);
-		result.add(attribute);
-		return Collections.unmodifiableList(result);
-	}
-
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
-	}
+	double heightWhenWidthIs(double width, StringBounder stringBounder);
 
 }

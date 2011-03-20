@@ -27,42 +27,50 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 6192 $
+ * 
+ * Revision $Revision: 3835 $
  *
  */
-package net.sourceforge.plantuml.classdiagram;
+package net.sourceforge.plantuml.preproc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public class StartumlExtractReader implements ReadLine {
 
-public abstract class AbstractEntityDiagram extends CucaDiagram {
+	private final ReadLine raw;
 
-	abstract public IEntity getOrCreateClass(String code);
-
-	final protected List<String> getDotStrings() {
-		// return Arrays.asList("nodesep=.5;", "ranksep=0.8;", "edge
-		// [fontsize=11,labelfontsize=11];",
-		// "node [fontsize=11,height=.35,width=.55];");
-
-		final List<String> def = Arrays.asList("nodesep=.35;", "ranksep=0.8;", "edge [fontsize=11,labelfontsize=11];",
-				"node [fontsize=11,height=.35,width=.55];");
-		if (getPragma().isDefine("graphattributes")==false) {
-			return def;
+	public StartumlExtractReader(File f, int num) throws FileNotFoundException {
+		if (num < 0) {
+			throw new IllegalArgumentException();
 		}
-		final String attribute = getPragma().getValue("graphattributes");
-		final List<String> result = new ArrayList<String>(def);
-		result.add(attribute);
-		return Collections.unmodifiableList(result);
+		raw = getReadLine(f);
 	}
 
-	final public String getDescription() {
-		return "(" + entities().size() + " entities)";
+	static public boolean containsStartuml(File f) throws IOException {
+		ReadLine r = null;
+		try {
+			r = getReadLine(f);
+		} finally {
+			if (r != null) {
+				r.close();
+			}
+		}
+		return false;
+	}
+
+	private static ReadLine getReadLine(File f) throws FileNotFoundException {
+		return new UncommentReadLine(new ReadLineReader(new FileReader(f)));
+	}
+
+	public String readLine() throws IOException {
+		return raw.readLine();
+	}
+
+	public void close() throws IOException {
+		raw.close();
 	}
 
 }
