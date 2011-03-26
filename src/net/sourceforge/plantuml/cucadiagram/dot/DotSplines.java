@@ -28,23 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5957 $
+ * Revision $Revision: 6222 $
  *
  */
-package net.sourceforge.plantuml.command;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-import java.util.List;
-
-import net.sourceforge.plantuml.UmlDiagram;
-
-public class CommandMultilinesComment extends CommandMultilines<UmlDiagram> {
-
-	public CommandMultilinesComment(final UmlDiagram diagram) {
-		super(diagram, "(?i)^\\s*/'.*$", "(?i)^.*'/\\s*$");
-	}
-
-	public CommandExecutionResult execute(List<String> lines) {
-		return CommandExecutionResult.ok();
-	}
+public enum DotSplines {
+	POLYLINE, ORTHO, SPLINES
 
 }

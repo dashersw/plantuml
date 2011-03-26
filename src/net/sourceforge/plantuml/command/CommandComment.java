@@ -27,76 +27,25 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 4768 $
+ * 
+ * Revision $Revision: 4762 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.command;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-final public class UmlSource {
+import net.sourceforge.plantuml.UmlDiagram;
 
-	final private List<String> source = new ArrayList<String>();
+public class CommandComment extends SingleLineCommand<UmlDiagram> {
 
-	@Deprecated
-	public UmlSource(UmlSource start) {
-		this.source.addAll(start.source);
+	public CommandComment(UmlDiagram diagram) {
+		super(diagram, "(?i)^\\s*('.*||/'.*'/\\s*)$");
 	}
 
-	public UmlSource(List<String> source) {
-		this.source.addAll(source);
-	}
-
-	@Deprecated
-	public UmlSource() {
-	}
-
-	public Iterator<String> iterator() {
-		return source.iterator();
-	}
-
-	@Deprecated
-	public void append(String s) {
-		source.add(s);
-	}
-
-	public String getPlainString() {
-		final StringBuilder sb = new StringBuilder();
-		for (String s : source) {
-			sb.append(s);
-			sb.append('\n');
-		}
-		return sb.toString();
-	}
-
-	public String getLine(int n) {
-		return source.get(n);
-	}
-
-	public int getSize() {
-		return source.size();
-	}
-
-	public boolean isEmpty() {
-		for (String s : source) {
-			if (BlockUmlBuilder.isArobaseStartuml(s)) {
-				continue;
-			}
-			if (BlockUmlBuilder.isArobaseEnduml(s)) {
-				continue;
-			}
-			if (s.matches("\\s*'.*")) {
-				continue;
-			}
-			if (s.trim().length() != 0) {
-				return false;
-			}
-		}
-		return true;
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		return CommandExecutionResult.ok();
 	}
 
 }

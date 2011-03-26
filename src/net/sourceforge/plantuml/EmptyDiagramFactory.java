@@ -28,28 +28,31 @@
  *
  * Original Author:  Arnaud Roques
  *
+ * Revision $Revision: 5890 $
+ *
  */
-package net.sourceforge.plantuml.usecasediagram.command;
+package net.sourceforge.plantuml;
 
-import java.util.List;
+import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
+import net.sourceforge.plantuml.command.CommandComment;
+import net.sourceforge.plantuml.command.CommandMultilinesComment;
+import net.sourceforge.plantuml.command.CommandNope;
 
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
+public class EmptyDiagramFactory extends AbstractUmlSystemCommandFactory {
 
-public class CommandSetStrategy extends SingleLineCommand<CucaDiagram> {
+	private PSystemError system;
 
-	public CommandSetStrategy(CucaDiagram diagram) {
-		super(
-				diagram,
-				"(?i)^layout with neato$");
+	public PSystemError getSystem() {
+		return system;
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		getSystem().setStrategy(GraphvizLayoutStrategy.NEATO);
-		return CommandExecutionResult.ok();
+	protected void initCommands() {
+		// system = new PSystemError();
+
+		addCommand(new CommandNope(null));
+		addCommand(new CommandComment(null));
+		addCommand(new CommandMultilinesComment(null));
 	}
 
 }
