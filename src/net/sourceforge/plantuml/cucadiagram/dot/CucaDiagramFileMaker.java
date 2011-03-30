@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6241 $
+ * Revision $Revision: 6284 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -93,7 +93,6 @@ import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngScaler;
 import net.sourceforge.plantuml.png.PngSizer;
-import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.png.PngTitler;
 import net.sourceforge.plantuml.skin.CircleInterface;
 import net.sourceforge.plantuml.skin.Component;
@@ -134,37 +133,37 @@ public final class CucaDiagramFileMaker {
 		return name.replaceAll("(?i)\\.png$", ".cmapx");
 	}
 
-	public List<File> createFile(File suggested, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException {
-
-		final FileFormat fileFormat = fileFormatOption.getFileFormat();
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(suggested);
-			final String cmap = createFile(os, dotStrings, fileFormatOption);
-			if (diagram.hasUrl() && fileFormat == FileFormat.PNG) {
-				final File cmapFile = new File(changeName(suggested.getAbsolutePath()));
-				final PrintWriter pw = new PrintWriter(cmapFile);
-				pw.print(cmap);
-				pw.close();
-			}
-		} finally {
-			if (os != null) {
-				os.close();
-			}
-		}
-
-		if (fileFormat == FileFormat.PNG) {
-			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(), diagram
-					.getVerticalPages(), diagram.getMetadata(), diagram.getDpi(fileFormatOption)).getFiles();
-			for (File f : result) {
-				Log.info("Creating file: " + f);
-			}
-			return result;
-		}
-		Log.info("Creating file: " + suggested);
-		return Arrays.asList(suggested);
-	}
+//	public List<File> createFile(File suggested, List<String> dotStrings, FileFormatOption fileFormatOption)
+//			throws IOException, InterruptedException {
+//
+//		final FileFormat fileFormat = fileFormatOption.getFileFormat();
+//		OutputStream os = null;
+//		try {
+//			os = new FileOutputStream(suggested);
+//			final String cmap = createFile(os, dotStrings, fileFormatOption);
+//			if (diagram.hasUrl() && fileFormat == FileFormat.PNG) {
+//				final File cmapFile = new File(changeName(suggested.getAbsolutePath()));
+//				final PrintWriter pw = new PrintWriter(cmapFile);
+//				pw.print(cmap);
+//				pw.close();
+//			}
+//		} finally {
+//			if (os != null) {
+//				os.close();
+//			}
+//		}
+//
+//		if (fileFormat == FileFormat.PNG) {
+//			final List<File> result = new PngSplitter(suggested, diagram.getHorizontalPages(), diagram
+//					.getVerticalPages(), diagram.getMetadata(), diagram.getDpi(fileFormatOption)).getFiles();
+//			for (File f : result) {
+//				Log.info("Creating file: " + f);
+//			}
+//			return result;
+//		}
+//		Log.info("Creating file: " + suggested);
+//		return Arrays.asList(suggested);
+//	}
 
 	static private void traceDotString(String dotString) throws IOException {
 		final File f = new File("dottmpfile" + UniqueSequence.getValue() + ".tmp");

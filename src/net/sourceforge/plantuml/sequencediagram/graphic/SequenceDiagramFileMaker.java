@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6208 $
+ * Revision $Revision: 6287 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -69,7 +69,6 @@ import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.ParticipantEnglober;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -105,9 +104,6 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		for (Participant p : sequenceDiagram.participants().values()) {
 			initializer.addParticipant(p, sequenceDiagram.getEnglober(p));
 		}
-//		for (ParticipantEnglober englober : sequenceDiagram.getParticipantEnglobers()) {
-//			initializer.addParticipantEnglober(englober);
-//		}
 
 		for (Event ev : sequenceDiagram.events()) {
 			initializer.addEvent(ev);
@@ -156,62 +152,44 @@ public class SequenceDiagramFileMaker implements FileMaker {
 				newpageHeight, title);
 	}
 
-	public List<File> createMany(final File suggestedFile) throws IOException {
-		final List<File> result = new ArrayList<File>();
-		final FileFormat fileFormat = fileFormatOption.getFileFormat();
-		if (fileFormat == FileFormat.ATXT) {
-			throw new UnsupportedOperationException();
-		}
-		for (int i = 0; i < pages.size(); i++) {
-			final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(i), i);
-			final File f = computeFilename(suggestedFile, i, fileFormat);
-			Log.info("Creating file: " + f);
-			if (createImage instanceof UGraphicG2d) {
-				final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
-				Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
-				PngIO.write(im, f, diagram.getMetadata(), diagram.getDpi(fileFormatOption));
-			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.SVG) {
-				final UGraphicSvg svg = (UGraphicSvg) createImage;
-				final FileOutputStream fos = new FileOutputStream(f);
-				try {
-					svg.createXml(fos);
-				} finally {
-					fos.close();
-				}
-				// } else if (createImage instanceof UGraphicSvg && fileFormat
-				// == FileFormat.EPS_VIA_SVG) {
-				// final File svgFile =
-				// CucaDiagramFileMaker.createTempFile("seq", ".svg");
-				// final UGraphicSvg svg = (UGraphicSvg) createImage;
-				// final FileOutputStream fos = new FileOutputStream(svgFile);
-				// try {
-				// svg.createXml(fos);
-				// } finally {
-				// fos.close();
-				// }
-				// try {
-				// InkscapeUtils.create().createEps(svgFile, f);
-				// } catch (InterruptedException e) {
-				// e.printStackTrace();
-				// Log.error("Error "+e);
-				// throw new IOException(e.toString());
-				// }
-			} else if (createImage instanceof UGraphicEps) {
-				final UGraphicEps eps = (UGraphicEps) createImage;
-				final FileWriter fw = new FileWriter(f);
-				try {
-					fw.write(eps.getEPSCode());
-				} finally {
-					fw.close();
-				}
-			} else {
-				throw new IllegalStateException();
-			}
-			Log.info("File size : " + f.length());
-			result.add(f);
-		}
-		return result;
-	}
+//	public List<File> createManyRRMV(final File suggestedFile) throws IOException {
+//		final List<File> result = new ArrayList<File>();
+//		final FileFormat fileFormat = fileFormatOption.getFileFormat();
+//		if (fileFormat == FileFormat.ATXT) {
+//			throw new UnsupportedOperationException();
+//		}
+//		for (int i = 0; i < pages.size(); i++) {
+//			final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(i), i);
+//			final File f = computeFilename(suggestedFile, i, fileFormat);
+//			Log.info("Creating file: " + f);
+//			if (createImage instanceof UGraphicG2d) {
+//				final BufferedImage im = ((UGraphicG2d) createImage).getBufferedImage();
+//				Log.info("Image size " + im.getWidth() + " x " + im.getHeight());
+//				PngIO.write(im, f, diagram.getMetadata(), diagram.getDpi(fileFormatOption));
+//			} else if (createImage instanceof UGraphicSvg && fileFormat == FileFormat.SVG) {
+//				final UGraphicSvg svg = (UGraphicSvg) createImage;
+//				final FileOutputStream fos = new FileOutputStream(f);
+//				try {
+//					svg.createXml(fos);
+//				} finally {
+//					fos.close();
+//				}
+//			} else if (createImage instanceof UGraphicEps) {
+//				final UGraphicEps eps = (UGraphicEps) createImage;
+//				final FileWriter fw = new FileWriter(f);
+//				try {
+//					fw.write(eps.getEPSCode());
+//				} finally {
+//					fw.close();
+//				}
+//			} else {
+//				throw new IllegalStateException();
+//			}
+//			Log.info("File size : " + f.length());
+//			result.add(f);
+//		}
+//		return result;
+//	}
 
 	public void createOne(OutputStream os, int index) throws IOException {
 		final UGraphic createImage = createImage((int) fullDimension.getWidth(), pages.get(index), index);

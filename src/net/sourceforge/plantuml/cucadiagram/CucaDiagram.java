@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6229 $
+ * Revision $Revision: 6285 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,6 +60,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
+import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 
@@ -272,33 +274,37 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	abstract protected List<String> getDotStrings();
 
-	final public List<File> createFiles(File suggestedFile, FileFormatOption fileFormatOption) throws IOException,
-			InterruptedException {
+	// final public List<File> createFiles(File suggestedFile, FileFormatOption
+	// fileFormatOption) throws IOException,
+	// InterruptedException {
+	//
+	// final FileFormat fileFormat = fileFormatOption.getFileFormat();
+	//
+	// if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
+	// return createFilesTxt(suggestedFile, fileFormat);
+	// }
+	//
+	// if (fileFormat.name().startsWith("XMI")) {
+	// return createFilesXmi(suggestedFile, fileFormat);
+	// }
+	//
+	// if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
+	// return createPng2(suggestedFile);
+	// }
+	// if (getUmlDiagramType() == UmlDiagramType.COMPOSITE || (BETA &&
+	// getUmlDiagramType() == UmlDiagramType.CLASS)) {
+	// final CucaDiagramFileMakerBeta maker = new
+	// CucaDiagramFileMakerBeta(this);
+	// return maker.createFile(suggestedFile, getDotStrings(), fileFormat);
+	// }
+	// final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this);
+	// return maker.createFile(suggestedFile, getDotStrings(),
+	// fileFormatOption);
+	// }
 
-		final FileFormat fileFormat = fileFormatOption.getFileFormat();
-
-		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
-			return createFilesTxt(suggestedFile, fileFormat);
-		}
-
-		if (fileFormat.name().startsWith("XMI")) {
-			return createFilesXmi(suggestedFile, fileFormat);
-		}
-
-		if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
-			return createPng2(suggestedFile);
-		}
-		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE || (BETA && getUmlDiagramType() == UmlDiagramType.CLASS)) {
-			final CucaDiagramFileMakerBeta maker = new CucaDiagramFileMakerBeta(this);
-			return maker.createFile(suggestedFile, getDotStrings(), fileFormat);
-		}
-		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this);
-		return maker.createFile(suggestedFile, getDotStrings(), fileFormatOption);
-	}
-
-	private List<File> createFilesXmi(File suggestedFile, FileFormat fileFormat) throws IOException {
+	private void createFilesXmi(OutputStream suggestedFile, FileFormat fileFormat) throws IOException {
 		final CucaDiagramXmiMaker maker = new CucaDiagramXmiMaker(this, fileFormat);
-		return maker.createFiles(suggestedFile);
+		maker.createFiles(suggestedFile);
 	}
 
 	private List<File> createFilesTxt(File suggestedFile, FileFormat fileFormat) throws IOException {
@@ -307,11 +313,43 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	public static boolean BETA;
+	
+	@Override
+	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException, InterruptedException {
+		List<File> result = super.exportDiagrams(suggestedFile, fileFormat);
+		
+		if (fileFormat.getFileFormat() == FileFormat.PNG) {
+			result = new PngSplitter(suggestedFile, this.getHorizontalPages(), this
+					.getVerticalPages(), this.getMetadata(), this.getDpi(fileFormat)).getFiles();
+		}
+		return result;
 
-	final public void createFile(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
+	}
+
+
+	@Override
+	final protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
 			createFilesTxt(os, index, fileFormat);
+			return;
+		}
+
+		if (fileFormat.name().startsWith("XMI")) {
+			createFilesXmi(os, fileFormat);
+			return;
+		}
+		//
+		// if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
+		// return createPng2(suggestedFile);
+		// }
+		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE || (BETA && getUmlDiagramType() == UmlDiagramType.CLASS)) {
+			final CucaDiagramFileMakerBeta maker = new CucaDiagramFileMakerBeta(this);
+			try {
+				maker.createFile(os, getDotStrings(), fileFormat);
+			} catch (InterruptedException e) {
+				throw new IOException(e.toString());
+			}
 			return;
 		}
 

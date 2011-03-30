@@ -32,6 +32,7 @@
 package net.sourceforge.plantuml.sequencediagram;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DecimalFormat;
@@ -45,6 +46,7 @@ import java.util.Map;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -164,11 +166,34 @@ public class SequenceDiagram extends UmlDiagram {
 		return new SequenceDiagramFileMaker(this, skin, fileFormatOption);
 	}
 
-	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException {
-		return getSequenceDiagramPngMaker(fileFormat).createMany(suggestedFile);
+	// public List<File> exportDiagrams(File suggestedFile, FileFormatOption
+	// fileFormat) throws IOException {
+	// return
+	// getSequenceDiagramPngMaker(fileFormat).createManyRRMV(suggestedFile);
+	// }
+
+	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException {
+
+		final List<File> result = new ArrayList<File>();
+		final int nbImages = getNbImages();
+		for (int i = 0; i < nbImages; i++) {
+
+			final File f = SequenceDiagramFileMaker.computeFilename(suggestedFile, i, fileFormat.getFileFormat());
+			Log.info("Creating file: " + f);
+			final FileOutputStream fos = new FileOutputStream(f);
+			try {
+				exportDiagram(fos, i, fileFormat);
+			} finally {
+				fos.close();
+			}
+			Log.info("File size : " + f.length());
+			result.add(f);
+		}
+		return result;
 	}
 
-	public void createFile(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+	@Override
+	protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
 		getSequenceDiagramPngMaker(fileFormat).createOne(os, index);
 	}
 
@@ -268,11 +293,11 @@ public class SequenceDiagram extends UmlDiagram {
 		return UmlDiagramType.SEQUENCE;
 	}
 
-//	private Participant boxStart;
-//	private List<String> boxStartComment;
-//	private HtmlColor boxColor;
-//	private boolean boxPending = false;
-	
+	// private Participant boxStart;
+	// private List<String> boxStartComment;
+	// private HtmlColor boxColor;
+	// private boolean boxPending = false;
+
 	private ParticipantEnglober participantEnglober;
 
 	public void boxStart(List<String> comment, HtmlColor color) {
@@ -293,30 +318,31 @@ public class SequenceDiagram extends UmlDiagram {
 		return participantEnglober != null;
 	}
 
-//	private Participant next(Participant p) {
-//		if (p == null) {
-//			return participants.values().iterator().next();
-//		}
-//		for (final Iterator<Participant> it = participants.values().iterator(); it.hasNext();) {
-//			final Participant current = it.next();
-//			if (current == p && it.hasNext()) {
-//				return it.next();
-//			}
-//		}
-//		throw new IllegalArgumentException("p=" + p.getCode());
-//	}
-//
-//	private Participant getLastParticipant() {
-//		Participant result = null;
-//		for (Participant p : participants.values()) {
-//			result = p;
-//		}
-//		return result;
-//	}
-//
-//	public final List<ParticipantEnglober> getParticipantEnglobers() {
-//		return Collections.unmodifiableList(participantEnglobers);
-//	}
+	// private Participant next(Participant p) {
+	// if (p == null) {
+	// return participants.values().iterator().next();
+	// }
+	// for (final Iterator<Participant> it = participants.values().iterator();
+	// it.hasNext();) {
+	// final Participant current = it.next();
+	// if (current == p && it.hasNext()) {
+	// return it.next();
+	// }
+	// }
+	// throw new IllegalArgumentException("p=" + p.getCode());
+	// }
+	//
+	// private Participant getLastParticipant() {
+	// Participant result = null;
+	// for (Participant p : participants.values()) {
+	// result = p;
+	// }
+	// return result;
+	// }
+	//
+	// public final List<ParticipantEnglober> getParticipantEnglobers() {
+	// return Collections.unmodifiableList(participantEnglobers);
+	// }
 
 	@Override
 	public int getNbImages() {
@@ -333,7 +359,7 @@ public class SequenceDiagram extends UmlDiagram {
 
 	private void remove(Participant p) {
 		final boolean ok = participants.values().remove(p);
-		if (ok==false) {
+		if (ok == false) {
 			throw new IllegalArgumentException();
 		}
 		participantEnglobers2.remove(p);

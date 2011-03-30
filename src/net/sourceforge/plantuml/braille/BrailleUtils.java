@@ -27,22 +27,16 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 6287 $
+ *
+ * Revision $Revision: 6170 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.graphic;
+package net.sourceforge.plantuml.braille;
 
-import java.io.IOException;
-import java.io.OutputStream;
+public class BrailleUtils {
 
-public interface FileMaker {
-
-	// List<File> createManyRRMV(final File suggestedFile) throws IOException;
-
-	void createOne(OutputStream os, int index) throws IOException;
-	
-	public int getNbPages();
-
+	public static boolean isBraille(char c) {
+		return Character.UnicodeBlock.of(c) == Character.UnicodeBlock.BRAILLE_PATTERNS;
+	}
 
 }

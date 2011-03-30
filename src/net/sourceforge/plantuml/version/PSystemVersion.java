@@ -69,21 +69,21 @@ public class PSystemVersion extends AbstractPSystem {
 		}
 	}
 
-	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
-			InterruptedException {
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(suggestedFile);
-			getGraphicStrings().writeImage(os, fileFormat);
-		} finally {
-			if (os != null) {
-				os.close();
-			}
-		}
-		return Arrays.asList(suggestedFile);
-	}
+//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
+//			InterruptedException {
+//		OutputStream os = null;
+//		try {
+//			os = new FileOutputStream(suggestedFile);
+//			getGraphicStrings().writeImage(os, fileFormat);
+//		} finally {
+//			if (os != null) {
+//				os.close();
+//			}
+//		}
+//		return Arrays.asList(suggestedFile);
+//	}
 
-	public void createFile(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+	public void exportDiagram(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
 		getGraphicStrings().writeImage(os, fileFormat);
 	}
 

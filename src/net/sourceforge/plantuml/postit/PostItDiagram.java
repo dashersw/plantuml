@@ -68,7 +68,8 @@ public class PostItDiagram extends UmlDiagram {
 		throw new UnsupportedOperationException();
 	}
 
-	public void createFile(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
+	@Override
+	final protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
 		final UGraphic ug = createImage(fileFormatOption);
 		drawU(ug);
 		if (ug instanceof UGraphicG2d) {
@@ -83,19 +84,19 @@ public class PostItDiagram extends UmlDiagram {
 		}
 	}
 
-	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormatOption) throws IOException,
-			InterruptedException {
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(suggestedFile);
-			createFile(os, 0, fileFormatOption);
-		} finally {
-			if (os != null) {
-				os.close();
-			}
-		}
-		return Arrays.asList(suggestedFile);
-	}
+//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormatOption) throws IOException,
+//			InterruptedException {
+//		OutputStream os = null;
+//		try {
+//			os = new FileOutputStream(suggestedFile);
+//			createFile(os, 0, fileFormatOption);
+//		} finally {
+//			if (os != null) {
+//				os.close();
+//			}
+//		}
+//		return Arrays.asList(suggestedFile);
+//	}
 
 	public String getDescription() {
 		return "Board of post-it";
@@ -120,7 +121,7 @@ public class PostItDiagram extends UmlDiagram {
 	}
 
 	void drawU(UGraphic ug) {
-		getDefaultArea().drawU(ug);
+		getDefaultArea().drawU(ug, width);
 	}
 
 	private UGraphic createImage(FileFormatOption fileFormatOption) {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5999 $
+ * Revision $Revision: 6285 $
  */
 package net.sourceforge.plantuml;
 
@@ -79,24 +79,24 @@ public class PSystemError extends AbstractPSystem {
 		this(source, Collections.singletonList(singleError));
 	}
 
-	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
-			InterruptedException {
-		if (suggestedFile.exists() && suggestedFile.isDirectory()) {
-			throw new IllegalArgumentException("File is a directory " + suggestedFile);
-		}
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(suggestedFile);
-			getPngError().writeImage(os, getMetadata(), fileFormat);
-		} finally {
-			if (os != null) {
-				os.close();
-			}
-		}
-		return Arrays.asList(suggestedFile);
-	}
+//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
+//			InterruptedException {
+//		if (suggestedFile.exists() && suggestedFile.isDirectory()) {
+//			throw new IllegalArgumentException("File is a directory " + suggestedFile);
+//		}
+//		OutputStream os = null;
+//		try {
+//			os = new FileOutputStream(suggestedFile);
+//			getPngError().writeImage(os, getMetadata(), fileFormat);
+//		} finally {
+//			if (os != null) {
+//				os.close();
+//			}
+//		}
+//		return Arrays.asList(suggestedFile);
+//	}
 
-	public void createFile(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+	public void exportDiagram(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
 		getPngError().writeImage(os, getMetadata(), fileFormat);
 	}
 

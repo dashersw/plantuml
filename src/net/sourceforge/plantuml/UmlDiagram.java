@@ -28,11 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6097 $
+ * Revision $Revision: 6285 $
  *
  */
 package net.sourceforge.plantuml;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -150,5 +152,16 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	public final void setHideUnlinkedData(boolean hideUnlinkedData) {
 		this.hideUnlinkedData = hideUnlinkedData;
 	}
+
+	final public void exportDiagram(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
+		if (getSkinParam().getValue("flashcode") != null) {
+			final String s = getSource().getPlainString();
+			throw new UnsupportedOperationException(s);
+		}
+		exportDiagramInternal(os, index, fileFormatOption);
+	}
+
+	protected abstract void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption)
+			throws IOException;
 
 }
