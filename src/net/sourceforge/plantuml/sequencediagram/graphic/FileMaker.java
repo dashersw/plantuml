@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6287 $
+ * Revision $Revision: 6383 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -43,6 +43,8 @@ public interface FileMaker {
 	void createOne(OutputStream os, int index) throws IOException;
 	
 	public int getNbPages();
+
+	void appendCmap(StringBuilder cmap);
 
 
 }

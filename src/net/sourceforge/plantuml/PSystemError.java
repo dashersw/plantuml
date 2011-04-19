@@ -28,17 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6285 $
+ * Revision $Revision: 6453 $
  */
 package net.sourceforge.plantuml;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -96,7 +93,7 @@ public class PSystemError extends AbstractPSystem {
 //		return Arrays.asList(suggestedFile);
 //	}
 
-	public void exportDiagram(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat) throws IOException {
 		getPngError().writeImage(os, getMetadata(), fileFormat);
 	}
 

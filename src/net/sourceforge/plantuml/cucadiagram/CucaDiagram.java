@@ -28,12 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6285 $
+ * Revision $Revision: 6453 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -53,7 +55,6 @@ import java.util.TreeMap;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
@@ -313,22 +314,41 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	public static boolean BETA;
-	
+
 	@Override
-	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException, InterruptedException {
-		List<File> result = super.exportDiagrams(suggestedFile, fileFormat);
-		
+	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException,
+			InterruptedException {
+		if (suggestedFile.exists() && suggestedFile.isDirectory()) {
+			throw new IllegalArgumentException("File is a directory " + suggestedFile);
+		}
+
+		final StringBuilder cmap = new StringBuilder();
+		OutputStream os = null;
+		try {
+			os = new FileOutputStream(suggestedFile);
+			this.exportDiagram(os, cmap, 0, fileFormat);
+		} finally {
+			if (os != null) {
+				os.close();
+			}
+		}
+		List<File> result = Arrays.asList(suggestedFile);
+
+		if (this.hasUrl() && cmap.length() > 0) {
+			exportCmap(suggestedFile, cmap);
+		}
+
 		if (fileFormat.getFileFormat() == FileFormat.PNG) {
-			result = new PngSplitter(suggestedFile, this.getHorizontalPages(), this
-					.getVerticalPages(), this.getMetadata(), this.getDpi(fileFormat)).getFiles();
+			result = new PngSplitter(suggestedFile, this.getHorizontalPages(), this.getVerticalPages(), this
+					.getMetadata(), this.getDpi(fileFormat)).getFiles();
 		}
 		return result;
 
 	}
 
-
 	@Override
-	final protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
+	final protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
+			FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
 			createFilesTxt(os, index, fileFormat);
@@ -363,9 +383,12 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			}
 			return;
 		}
-		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this);
+		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this, flashcodes);
 		try {
-			maker.createFile(os, getDotStrings(), fileFormatOption);
+			final String cmapResult = maker.createFile(os, getDotStrings(), fileFormatOption);
+			if (cmapResult != null && cmap != null) {
+				cmap.append(cmapResult);
+			}
 		} catch (InterruptedException e) {
 			Log.error(e.toString());
 			throw new IOException(e.toString());

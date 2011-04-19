@@ -33,12 +33,8 @@
  */
 package net.sourceforge.plantuml.eggs;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
 
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -65,7 +61,7 @@ public class PSystemPath extends AbstractPSystem {
 //		return Arrays.asList(suggestedFile);
 //	}
 
-	public void exportDiagram(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
+	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat) throws IOException {
 		path.writeImage(os);
 	}
 

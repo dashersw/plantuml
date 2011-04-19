@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6285 $
+ * Revision $Revision: 6302 $
  *
  */
 package net.sourceforge.plantuml;
@@ -42,7 +42,7 @@ public interface PSystem {
 
 	List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormatOption) throws IOException, InterruptedException;
 
-	void exportDiagram(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException;
+	void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormatOption) throws IOException;
 	
 	int getNbImages();
 

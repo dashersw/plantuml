@@ -36,11 +36,8 @@ package net.sourceforge.plantuml.postit;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +66,7 @@ public class PostItDiagram extends UmlDiagram {
 	}
 
 	@Override
-	final protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormatOption) throws IOException {
+	final protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException {
 		final UGraphic ug = createImage(fileFormatOption);
 		drawU(ug);
 		if (ug instanceof UGraphicG2d) {

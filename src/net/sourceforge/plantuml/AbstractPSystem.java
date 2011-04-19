@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6285 $
+ * Revision $Revision: 6302 $
  *
  */
 package net.sourceforge.plantuml;
@@ -91,7 +91,7 @@ public abstract class AbstractPSystem implements PSystem {
 		OutputStream os = null;
 		try {
 			os = new FileOutputStream(suggestedFile);
-			this.exportDiagram(os, 0, fileFormat);
+			this.exportDiagram(os, null, 0, fileFormat);
 		} finally {
 			if (os != null) {
 				os.close();

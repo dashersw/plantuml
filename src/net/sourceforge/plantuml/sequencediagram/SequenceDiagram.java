@@ -31,6 +31,7 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -155,7 +156,7 @@ public class SequenceDiagram extends UmlDiagram {
 		return Collections.unmodifiableList(events);
 	}
 
-	private FileMaker getSequenceDiagramPngMaker(FileFormatOption fileFormatOption) {
+	private FileMaker getSequenceDiagramPngMaker(FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) {
 
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 
@@ -163,7 +164,7 @@ public class SequenceDiagram extends UmlDiagram {
 			return new SequenceDiagramTxtMaker(this, fileFormat);
 		}
 
-		return new SequenceDiagramFileMaker(this, skin, fileFormatOption);
+		return new SequenceDiagramFileMaker(this, skin, fileFormatOption, flashcodes);
 	}
 
 	// public List<File> exportDiagrams(File suggestedFile, FileFormatOption
@@ -181,10 +182,14 @@ public class SequenceDiagram extends UmlDiagram {
 			final File f = SequenceDiagramFileMaker.computeFilename(suggestedFile, i, fileFormat.getFileFormat());
 			Log.info("Creating file: " + f);
 			final FileOutputStream fos = new FileOutputStream(f);
+			final StringBuilder cmap = new StringBuilder();
 			try {
-				exportDiagram(fos, i, fileFormat);
+				exportDiagram(fos, cmap, i, fileFormat);
 			} finally {
 				fos.close();
+			}
+			if (this.hasUrl() && cmap.length() > 0) {
+				exportCmap(suggestedFile, cmap);
 			}
 			Log.info("File size : " + f.length());
 			result.add(f);
@@ -193,8 +198,13 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	@Override
-	protected void exportDiagramInternal(OutputStream os, int index, FileFormatOption fileFormat) throws IOException {
-		getSequenceDiagramPngMaker(fileFormat).createOne(os, index);
+	protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat,
+			List<BufferedImage> flashcodes) throws IOException {
+		final FileMaker sequenceDiagramPngMaker = getSequenceDiagramPngMaker(fileFormat, flashcodes);
+		sequenceDiagramPngMaker.createOne(os, index);
+		if (this.hasUrl() && fileFormat.getFileFormat() == FileFormat.PNG) {
+			sequenceDiagramPngMaker.appendCmap(cmap);
+		}
 	}
 
 	private LifeEvent pendingCreate = null;
@@ -346,7 +356,7 @@ public class SequenceDiagram extends UmlDiagram {
 
 	@Override
 	public int getNbImages() {
-		return getSequenceDiagramPngMaker(new FileFormatOption(FileFormat.PNG)).getNbPages();
+		return getSequenceDiagramPngMaker(new FileFormatOption(FileFormat.PNG), null).getNbPages();
 	}
 
 	public void removeHiddenParticipants() {
@@ -386,6 +396,34 @@ public class SequenceDiagram extends UmlDiagram {
 
 	public ParticipantEnglober getEnglober(Participant p) {
 		return participantEnglobers2.get(p);
+	}
+
+	private boolean autoactivate;
+
+	public final void setAutoactivate(boolean autoactivate) {
+		this.autoactivate = autoactivate;
+	}
+
+	public final boolean isAutoactivate() {
+		return autoactivate;
+	}
+
+	public boolean hasUrl() {
+		for (Participant p : participants.values()) {
+			if (p.getUrl() != null) {
+				return true;
+			}
+		}
+		for (Event ev : events) {
+			if (ev.getUrl() != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void addReference(Reference ref) {
+		events.add(ref);
 	}
 
 }

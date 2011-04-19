@@ -34,12 +34,9 @@
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.awt.geom.Dimension2D;
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.List;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.asciiart.TextSkin;
@@ -125,6 +122,9 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 
 	public int getNbPages() {
 		return 1;
+	}
+
+	public void appendCmap(StringBuilder cmap) {
 	}
 
 }
