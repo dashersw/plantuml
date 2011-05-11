@@ -87,7 +87,7 @@ final public class PSystemSingleBuilder {
 	}
 
 	private void executeUmlBasic(PSystemBasicFactory systemFactory) throws IOException {
-		systemFactory.reset();
+		systemFactory.init();
 		while (hasNext()) {
 			final String s = next();
 			if (StartUtils.isArobaseEndDiagram(s)) {
@@ -127,7 +127,7 @@ final public class PSystemSingleBuilder {
 	}
 
 	private void executeUmlCommand(PSystemCommandFactory systemFactory) throws IOException {
-		systemFactory.reset();
+		systemFactory.init();
 		while (hasNext()) {
 			final String s = next();
 			if (StartUtils.isArobaseEndDiagram(s)) {
@@ -150,7 +150,7 @@ final public class PSystemSingleBuilder {
 			final CommandControl commandControl = systemFactory.isValid(Arrays.asList(s));
 			if (commandControl == CommandControl.NOT_OK) {
 				final ErrorUml err = new ErrorUml(ErrorUmlType.SYNTAX_ERROR, "Syntax Error?", nb - 1);
-				if (OptionFlags.SUGGEST) {
+				if (OptionFlags.getInstance().isUseSuggestEngine()) {
 					final SuggestEngine engine = new SuggestEngine(source, systemFactory);
 					final SuggestEngineResult result = engine.tryToSuggest();
 					if (result.getStatus() == SuggestEngineStatus.ONE_SUGGESTION) {

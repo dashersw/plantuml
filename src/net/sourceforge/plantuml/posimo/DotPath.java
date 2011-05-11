@@ -326,9 +326,9 @@ public class DotPath implements UShape {
 			} else if (bez.y1 == bez.y2) {
 				area.drawHLine('-', (int) (bez.y1 / pixelYPerChar), (int) (bez.x1 / pixelXPerChar),
 						(int) (bez.x2 / pixelXPerChar));
-			} else {
+			} /*else {
 				throw new UnsupportedOperationException("bez=" + toString(bez));
-			}
+			}*/
 		}
 	}
 

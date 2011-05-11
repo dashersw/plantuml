@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6453 $
+ * Revision $Revision: 6513 $
  *
  */
 package net.sourceforge.plantuml.sudoku;

@@ -105,11 +105,11 @@ public final class CucaDiagramFileMakerBeta {
 
 	private void createPng(OutputStream os, List<String> dotStrings) throws IOException, InterruptedException {
 
-		final Color background = diagram.getSkinParam().getBackgroundColor().getColor();
+		final Color background = diagram.getColorMapper().getMappedColor(diagram.getSkinParam().getBackgroundColor());
 		EmptyImageBuilder builder = new EmptyImageBuilder(10, 10, background);
 		BufferedImage im = builder.getBufferedImage();
 		Graphics2D g2d = builder.getGraphics2D();
-		UGraphicG2d ug = new UGraphicG2d(g2d, im, 1.0);
+		UGraphicG2d ug = new UGraphicG2d(diagram.getColorMapper(), g2d, im, 1.0);
 		final PlayField playField = new PlayField(diagram.getSkinParam());
 
 		final Collection<IEntity> entities = getFirstLevelEntities();
@@ -126,7 +126,7 @@ public final class CucaDiagramFileMakerBeta {
 		im = builder.getBufferedImage();
 		g2d = builder.getGraphics2D();
 		g2d.translate(10, 0);
-		ug = new UGraphicG2d(g2d, im, 1.0);
+		ug = new UGraphicG2d(diagram.getColorMapper(), g2d, im, 1.0);
 
 		playField.drawInternal(ug);
 

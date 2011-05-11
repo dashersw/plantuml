@@ -28,32 +28,23 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4826 $
+ * Revision $Revision: 4912 $
  *
  */
-package net.sourceforge.plantuml.eps;
+package net.sourceforge.plantuml.ugraphic;
 
-import java.io.File;
+import java.awt.Color;
 
-public class InkscapeUtils {
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-	private static boolean isWindows() {
-		return File.separatorChar == '\\';
-	}
+public class ColorMapperMonochrome implements ColorMapper {
 
-	public static Inkscape create() {
-		if (isWindows()) {
-			return new InkscapeWindows();
+	public Color getMappedColor(HtmlColor htmlColor) {
+		if (htmlColor == null) {
+			return null;
 		}
-		return new InkscapeLinux();
+		final Color color = new ColorMapperIdentity().getMappedColor(htmlColor);
+		final int grayScale = (int) (color.getRed() * .3 + color.getGreen() * .59 + color.getBlue() * .11);
+		return new Color(grayScale, grayScale, grayScale);
 	}
-
-	public static String getenvInkscape() {
-		final String env = System.getProperty("INKSCAPE");
-		if (env != null) {
-			return env;
-		}
-		return System.getenv("INKSCAPE");
-	}
-
 }

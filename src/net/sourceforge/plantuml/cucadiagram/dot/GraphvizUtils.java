@@ -28,23 +28,28 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6200 $
+ * Revision $Revision: 6663 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.imageio.ImageIO;
+
 import net.sourceforge.plantuml.StringUtils;
 
 public class GraphvizUtils {
 
+	private static final String TMP_TEST_FILENAME = "testdottmp42";
 	private static int DOT_VERSION_LIMIT = 226;
 
 	private static boolean isWindows() {
@@ -73,6 +78,14 @@ public class GraphvizUtils {
 			return env;
 		}
 		return System.getenv("GRAPHVIZ_DOT");
+	}
+
+	public static String getenvLogData() {
+		final String env = System.getProperty("PLANTUML_LOGDATA");
+		if (StringUtils.isNotEmpty(env)) {
+			return env;
+		}
+		return System.getenv("PLANTUML_LOGDATA");
 	}
 
 	private static String dotVersion = null;
@@ -154,10 +167,16 @@ public class GraphvizUtils {
 						result.add(bold + "Warning : Your dot installation seems old");
 						result.add(bold + "Some diagrams may have issues");
 					} else {
-						result.add(bold + "Installation seems OK");
+						String err = getTestCreateSimpleFile();
+						if (err == null) {
+							result.add(bold + "Installation seems OK. PNG generation OK");
+						} else {
+							result.add(red + err);
+						}
 					}
 				}
 			} catch (Exception e) {
+				result.add(red + e.toString());
 				e.printStackTrace();
 			}
 		} else {
@@ -166,7 +185,36 @@ public class GraphvizUtils {
 
 		return Collections.unmodifiableList(result);
 	}
-	
+
+	static String getTestCreateSimpleFile() throws IOException, InterruptedException {
+		final Graphviz graphviz = GraphvizUtils.create("", "png");
+		final File f = new File(TMP_TEST_FILENAME + ".dot");
+		final File fout = new File(TMP_TEST_FILENAME + ".png");
+		f.delete();
+		fout.delete();
+		try {
+			final PrintWriter pw = new PrintWriter(f);
+			pw.println("digraph foo { test; }");
+			pw.close();
+			graphviz.testFile(f.getName(), fout.getName());
+			f.delete();
+			if (fout.exists() == false) {
+				return "Error: dot cannot generated PNG file. Check you dot installation.";
+			}
+			if (fout.length() == 0) {
+				return "Error: dot generates empty PNG file. Check you dot installation.";
+			}
+			try {
+				ImageIO.read(fout);
+			} catch (IOException e) {
+				return "Error: dot generates unreadable PNG file. Check you dot installation.";
+			}
+			return null;
+		} finally {
+			fout.delete();
+		}
+	}
+
 	public static OS getOS() {
 		if (isWindows()) {
 			return new OSWindows();

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6482 $
+ * Revision $Revision: 6633 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,6 +67,8 @@ public class Entity implements IEntity {
 	private Url url2;
 
 	private boolean top;
+	
+	private final int index = UniqueSequence.getValue();
 
 	public final boolean isTop() {
 		return top;
@@ -204,7 +207,7 @@ public class Entity implements IEntity {
 		if (type == EntityType.GROUP) {
 			return display + "(" + getType() + ")" + this.container;
 		}
-		return display + "(" + getType() + ")";
+		return display + "(" + getType() + ") " + xposition+ " " +getUid();
 	}
 
 	public void muteToCluster(Group newGroup) {
@@ -234,8 +237,8 @@ public class Entity implements IEntity {
 		return specificBackcolor;
 	}
 
-	public void setSpecificBackcolor(String s) {
-		this.specificBackcolor = HtmlColor.getColorIfValid(s);
+	public void setSpecificBackcolor(HtmlColor color) {
+		this.specificBackcolor = color;
 	}
 
 	public final Url getUrl() {
@@ -260,13 +263,17 @@ public class Entity implements IEntity {
 		return uid.equals(other.getUid());
 	}
 
-	private final List<DrawFile> subImages = new ArrayList<DrawFile>();
+	private final Set<DrawFile> subImages = new HashSet<DrawFile>();
 
 	public void addSubImage(DrawFile subImage) {
 		if (subImage == null) {
 			throw new IllegalArgumentException();
 		}
 		subImages.add(subImage);
+	}
+
+	public void addSubImage(Entity other) {
+		subImages.addAll(other.subImages);
 	}
 
 	public DrawFile getImageFile(File searched) throws IOException {
@@ -281,6 +288,12 @@ public class Entity implements IEntity {
 		return null;
 	}
 
+	public void cleanSubImage() {
+		for (DrawFile f : subImages) {
+			f.deleteDrawFile();
+		}
+	}
+
 	private boolean nearDecoration = false;
 
 	public final boolean hasNearDecoration() {
@@ -289,6 +302,30 @@ public class Entity implements IEntity {
 
 	public final void setNearDecoration(boolean nearDecoration) {
 		this.nearDecoration = nearDecoration;
+	}
+
+	public int compareTo(IEntity other) {
+		if (this.index > other.getIndex()) {
+			return 1;
+		}
+		if (this.index < other.getIndex()) {
+			return -1;
+		}
+		return 0;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+	
+	private int xposition;
+
+	public int getXposition() {
+		return xposition;
+	}
+
+	public void setXposition(int pos) {
+		xposition = pos;
 	}
 
 }

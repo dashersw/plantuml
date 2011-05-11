@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UGradient;
 
 public class EpsGraphics {
@@ -102,6 +103,9 @@ public class EpsGraphics {
 		}
 		if (y > maxY) {
 			maxY = (int) (y + 1);
+		}
+		if (urlArea != null) {
+			urlArea.ensureVisible((int) Math.round(x), (int) Math.round(y));
 		}
 	}
 
@@ -285,7 +289,16 @@ public class EpsGraphics {
 		}
 	}
 
-	public void epsRectangle(double x, double y, double width, double height, double rx, double ry, UGradient gr) {
+	public void epsUrlLink(int x, int y, int width, int height, String url) {
+		append("[ /Rect [ " + x + " " + y + " " + (x + width) + " " + (y + height) + " ]", true);
+		append("/Border [ 0 0 0 ]", true);
+		append("/Action << /Subtype /URI /URI (" + url + ") >>", true);
+		append("/Subtype /Link", true);
+		append("/ANN pdfmark", true);
+	}
+
+	public void epsRectangle(double x, double y, double width, double height, double rx, double ry, UGradient gr,
+			ColorMapper mapper) {
 		checkCloseDone();
 		ensureVisible(x, y);
 		ensureVisible(x + width, y + height);
@@ -293,8 +306,8 @@ public class EpsGraphics {
 
 		if (rx == 0 && ry == 0) {
 			simplerectUsed = true;
-			appendColorShort(gr.getColor1());
-			appendColorShort(gr.getColor2());
+			appendColorShort(mapper.getMappedColor(gr.getColor1()));
+			appendColorShort(mapper.getMappedColor(gr.getColor2()));
 			append(format(width) + " " + format(height) + " " + format(x) + " " + format(y), true);
 			append("100 -1 1 {", true);
 			append("100 div", true);
@@ -316,8 +329,8 @@ public class EpsGraphics {
 			append("initclip", true);
 		} else {
 			roundrectUsed = true;
-			appendColorShort(gr.getColor1());
-			appendColorShort(gr.getColor2());
+			appendColorShort(mapper.getMappedColor(gr.getColor1()));
+			appendColorShort(mapper.getMappedColor(gr.getColor2()));
 			append(format(width) + " " + format(height) + " " + format(x) + " " + format(y) + " "
 					+ format((rx + ry) / 2), true);
 			append("100 -1 1 {", true);
@@ -527,6 +540,49 @@ public class EpsGraphics {
 
 	protected final double getDashSpace() {
 		return dashSpace;
+	}
+
+	static class UrlArea {
+		private final String url;
+		private int xmin = Integer.MAX_VALUE;
+		private int xmax = Integer.MIN_VALUE;
+		private int ymin = Integer.MAX_VALUE;
+		private int ymax = Integer.MIN_VALUE;
+
+		UrlArea(String url) {
+			this.url = url;
+		}
+
+		void ensureVisible(int x, int y) {
+			if (x < xmin) {
+				xmin = x;
+			}
+			if (x > xmax) {
+				xmax = x;
+			}
+			if (y < ymin) {
+				ymin = y;
+			}
+			if (y > ymax) {
+				ymax = y;
+			}
+		}
+	}
+
+	private UrlArea urlArea;
+
+	public void closeLink() {
+		if (urlArea != null && urlArea.xmin != Integer.MAX_VALUE) {
+			final int width = urlArea.xmax - urlArea.xmin;
+			final int height = urlArea.ymax - urlArea.ymin;
+			assert width >= 0 && height >= 0;
+			epsUrlLink(urlArea.xmin, urlArea.ymin, width, height, urlArea.url);
+		}
+		this.urlArea = null;
+	}
+
+	public void openLink(String url) {
+		this.urlArea = new UrlArea(url);
 	}
 
 }

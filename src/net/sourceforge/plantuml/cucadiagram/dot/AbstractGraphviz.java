@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6104 $
+ * Revision $Revision: 6599 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -97,6 +97,8 @@ abstract class AbstractGraphviz implements Graphviz {
 			p = new ProcessRunner(cmd);
 			p.run(dotString.getBytes(), os);
 			Log.info("Ending process ok");
+		} catch (InterruptedException e) {
+			Log.error("Interrupted");
 		} catch (Throwable e) {
 			e.printStackTrace();
 			Log.error("Error: " + e);
@@ -128,6 +130,11 @@ abstract class AbstractGraphviz implements Graphviz {
 
 	final public String dotVersion() throws IOException, InterruptedException {
 		final String cmd = getCommandLineVersion();
+		return executeCmd(cmd);
+	}
+
+	public String testFile(String dotfilename, String outfile) throws IOException, InterruptedException {
+		final String cmd = getCommandLine() + "-o" + outfile + " " + dotfilename;
 		return executeCmd(cmd);
 	}
 

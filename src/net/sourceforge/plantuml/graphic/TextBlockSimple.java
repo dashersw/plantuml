@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6353 $
+ * Revision $Revision: 6577 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -41,6 +41,7 @@ import java.util.List;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmbededDiagram;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 
 class TextBlockSimple implements TextBlock {
@@ -81,7 +82,7 @@ class TextBlockSimple implements TextBlock {
 		return new Dimension2DDouble(width, height);
 	}
 
-	public void drawTOBEREMOVED(Graphics2D g2d, double x, double y) {
+	public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
 		final Dimension2D dimText = getTextDimension(StringBounderUtils.asStringBounder(g2d));
 
 		for (Line line : lines) {
@@ -92,7 +93,7 @@ class TextBlockSimple implements TextBlock {
 						- line.calculateDimension(StringBounderUtils.asStringBounder(g2d)).getWidth();
 				deltaX = diff / 2.0;
 			}
-			line.draw(g2d, x + deltaX, y);
+			line.draw(colorMapper, g2d, x + deltaX, y);
 			y += line.calculateDimension(StringBounderUtils.asStringBounder(g2d)).getHeight();
 		}
 	}

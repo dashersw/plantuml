@@ -44,10 +44,9 @@ public class PSystemDitaaFactory implements PSystemBasicFactory {
 
 	public PSystemDitaaFactory(DiagramType diagramType) {
 		this.diagramType = diagramType;
-		reset();
 	}
 
-	public void reset() {
+	public void init() {
 		data = null;
 		if (diagramType == DiagramType.UML) {
 			first = true;

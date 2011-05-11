@@ -27,33 +27,27 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 4826 $
  *
+ * Revision $Revision: 6549 $
+ * 
  */
-package net.sourceforge.plantuml.eps;
+package net.sourceforge.plantuml;
 
-import java.io.File;
+import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 
-class InkscapeLinux extends AbstractInkscape {
 
-	@Override
-	protected File specificExe() {
-		final File usrLocalBin = new File("/usr/local/bin/inkscape");
-		if (usrLocalBin.exists()) {
-			return usrLocalBin;
-		}
-
-		final File usrBin = new File("/usr/bin/inkscape");
-		if (usrBin.exists()) {
-			return usrBin;
-		}
-		return null;
+public enum AlignParam {
+	
+	SEQUENCE_MESSAGE_ALIGN(HorizontalAlignement.LEFT),
+	SEQUENCE_REFERENCE_ALIGN(HorizontalAlignement.CENTER);
+	
+	private final HorizontalAlignement defaultValue;
+	
+	private AlignParam(HorizontalAlignement defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 
-	@Override
-	protected void appendFilePath(final StringBuilder sb, File file) {
-		sb.append(file.getAbsolutePath());
+	public final HorizontalAlignement getDefaultValue() {
+		return defaultValue;
 	}
-
 }

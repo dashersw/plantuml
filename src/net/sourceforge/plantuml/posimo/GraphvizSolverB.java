@@ -170,11 +170,7 @@ public class GraphvizSolverB {
 				p.setLabelPosition(x, y);
 				minMax.manage(x, y);
 			}
-
 		}
-
-		System.err.println("minMax=" + minMax);
-
 		return new Dimension2DDouble(width, height);
 	}
 

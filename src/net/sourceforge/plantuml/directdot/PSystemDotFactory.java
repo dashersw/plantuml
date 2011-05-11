@@ -44,10 +44,9 @@ public class PSystemDotFactory implements PSystemBasicFactory {
 
 	public PSystemDotFactory(DiagramType diagramType) {
 		this.diagramType = diagramType;
-		reset();
 	}
 
-	public void reset() {
+	public void init() {
 		data = null;
 		first = true;
 	}

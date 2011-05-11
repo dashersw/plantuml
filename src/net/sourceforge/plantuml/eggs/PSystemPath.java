@@ -38,13 +38,14 @@ import java.io.OutputStream;
 
 import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
+import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 
 public class PSystemPath extends AbstractPSystem {
 	
 	private final GraphicsPath path;
 
 	public PSystemPath(String s) {
-		this.path = new GraphicsPath(s);
+		this.path = new GraphicsPath(new ColorMapperIdentity(), s);
 	}
 
 

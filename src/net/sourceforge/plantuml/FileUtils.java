@@ -41,30 +41,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 
 public class FileUtils {
-
-	private static final Collection<DrawFile> toDelete = new ArrayList<DrawFile>();
-
-	public static void deleteOnExit(DrawFile file) {
-		if (toDelete.isEmpty()) {
-			Runtime.getRuntime().addShutdownHook(new Thread() {
-				@Override
-				public void run() {
-					if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
-						for (DrawFile f : toDelete) {
-							f.delete();
-						}
-					}
-				}
-			});
-		}
-		toDelete.add(file);
-	}
 
 	public static File getTmpDir() {
 		final File tmpDir = new File(System.getProperty("java.io.tmpdir"));
@@ -104,6 +82,28 @@ public class FileUtils {
 		}
 		final InputStream fis = new BufferedInputStream(new FileInputStream(src));
 		final OutputStream fos = new BufferedOutputStream(new FileOutputStream(dest));
+		int lu;
+		while ((lu = fis.read()) != -1) {
+			fos.write(lu);
+		}
+		fos.close();
+		fis.close();
+	}
+
+	static public void copyToStream(File src, OutputStream os) throws IOException {
+		final InputStream fis = new BufferedInputStream(new FileInputStream(src));
+		final OutputStream fos = new BufferedOutputStream(os);
+		int lu;
+		while ((lu = fis.read()) != -1) {
+			fos.write(lu);
+		}
+		fos.close();
+		fis.close();
+	}
+
+	static public void copyToStream(InputStream is, OutputStream os) throws IOException {
+		final InputStream fis = new BufferedInputStream(is);
+		final OutputStream fos = new BufferedOutputStream(os);
 		int lu;
 		while ((lu = fis.read()) != -1) {
 			fos.write(lu);

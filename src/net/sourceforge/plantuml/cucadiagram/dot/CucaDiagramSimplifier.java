@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6169 $
+ * Revision $Revision: 6577 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -83,7 +83,8 @@ public final class CucaDiagramSimplifier {
 					} else {
 						throw new IllegalStateException();
 					}
-					final Entity proxy = new Entity("#" + g.getCode(), g.getDisplay(), type, g.getParent(), diagram.getHides());
+					final Entity proxy = new Entity("#" + g.getCode(), g.getDisplay(), type, g.getParent(),
+							diagram.getHides());
 					if (type == EntityType.STATE) {
 						manageBackColorForState(diagram, g, proxy);
 					}
@@ -92,6 +93,17 @@ public final class CucaDiagramSimplifier {
 					}
 					computeImageGroup(g, proxy, dotStrings);
 					diagram.overideGroup(g, proxy);
+					if (proxy.getImageFile() != null) {
+						diagram.ensureDelete(proxy.getImageFile());
+					}
+
+//					final IEntity entityCluster = g.getEntityCluster();
+//					if (entityCluster != null && entityCluster.getImageFile() != null) {
+//						proxy.addSubImage(entityCluster.getImageFile());
+//					}
+//					if (entityCluster != null) {
+//						proxy.addSubImage((Entity) entityCluster);
+//					}
 
 					for (IEntity sub : g.entities().values()) {
 						final DrawFile subImage = sub.getImageFile();
@@ -106,31 +118,11 @@ public final class CucaDiagramSimplifier {
 		} while (changed);
 	}
 
-	private void manageBackColorForState(CucaDiagram diagram, Group g, final Entity proxy) {
-		if (OptionFlags.PBBACK == false) {
-			return;
-		}
-		if (g.getBackColor() != null) {
-			proxy.setSpecificBackcolor(g.getBackColor().getAsHtml());
-			return;
-		}
-		assert g.getBackColor() == null;
-		if (g.getStereotype() != null) {
-			proxy.setStereotype(new Stereotype(g.getStereotype()));
-		}
-		//PBBACK
-		final Rose rose = new Rose();
-		final HtmlColor back = rose.getHtmlColor(diagram.getSkinParam(), ColorParam.stateBackground, g.getStereotype());
-//		final HtmlColor back = diagram.getSkinParam().getHtmlColor(ColorParam.stateBackground, g.getStereotype());
-//		if (back != null) {
-//			proxy.setSpecificBackcolor(back.getAsHtml());
-//		}
-		assert g.getBackColor() == null;
-		g.setBackColor(back);
-	}
-
 	private void computeImageGroup(final Group group, final Entity entity, List<String> dotStrings) throws IOException,
 			FileNotFoundException, InterruptedException {
+		if (group.entities().size()==0) {
+			return;
+		}
 		final GroupPngMaker maker = new GroupPngMaker(diagram, group, fileFormat);
 		final File f = FileUtils.createTempFile("inner", ".png");
 		FileOutputStream fos = null;
@@ -149,6 +141,29 @@ public final class CucaDiagramSimplifier {
 				fos.close();
 			}
 		}
+	}
+
+	private void manageBackColorForState(CucaDiagram diagram, Group g, final Entity proxy) {
+		if (OptionFlags.PBBACK == false) {
+			return;
+		}
+		if (g.getBackColor() != null) {
+			proxy.setSpecificBackcolor(g.getBackColor());
+			return;
+		}
+		assert g.getBackColor() == null;
+		if (g.getStereotype() != null) {
+			proxy.setStereotype(new Stereotype(g.getStereotype()));
+		}
+		// PBBACK
+		final Rose rose = new Rose();
+		final HtmlColor back = rose.getHtmlColor(diagram.getSkinParam(), ColorParam.stateBackground, g.getStereotype());
+		// final HtmlColor back = diagram.getSkinParam().getHtmlColor(ColorParam.stateBackground, g.getStereotype());
+		// if (back != null) {
+		// proxy.setSpecificBackcolor(back.getAsHtml());
+		// }
+		assert g.getBackColor() == null;
+		g.setBackColor(back);
 	}
 
 }

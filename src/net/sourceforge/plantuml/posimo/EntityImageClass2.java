@@ -33,8 +33,6 @@
  */
 package net.sourceforge.plantuml.posimo;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.Dimension2D;
 import java.util.Collection;
 
@@ -51,11 +49,13 @@ import net.sourceforge.plantuml.graph.MethodsOrFieldsArea2;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategyX1Y2Y3;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
+import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGroup;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -72,7 +72,7 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 	public EntityImageClass2(IEntity entity, ISkinParam skinParam, Collection<Link> links) {
 		super(entity, skinParam);
 		this.name = TextBlockUtils.create(StringUtils.getWithNewlines(entity.getDisplay()), new FontConfiguration(
-				getFont(FontParam.CLASS), Color.BLACK), HorizontalAlignement.CENTER);
+				getFont(FontParam.CLASS), HtmlColor.BLACK), HorizontalAlignement.CENTER);
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;
@@ -91,10 +91,10 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 	private CircledCharacter getCircledCharacter(IEntity entity) {
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype != null && stereotype.getCharacter() != 0) {
-			final Color classBorder = getColor(ColorParam.classBorder);
-			final Font font = getFont(FontParam.CIRCLED_CHARACTER);
+			final HtmlColor classBorder = getColor(ColorParam.classBorder);
+			final UFont font = getFont(FontParam.CIRCLED_CHARACTER);
 			return new CircledCharacter(stereotype.getCharacter(), getSkinParam().getCircledCharacterRadius(), font,
-					stereotype.getColor(), classBorder, getFontColor(FontParam.CIRCLED_CHARACTER));
+					stereotype.getHtmlColor(), classBorder, getFontColor(FontParam.CIRCLED_CHARACTER));
 		}
 		if (entity.getType() == EntityType.ABSTRACT_CLASS) {
 			return new CircledCharacter('A', getSkinParam().getCircledCharacterRadius(),

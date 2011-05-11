@@ -60,8 +60,7 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 		}
 		final String circleAbsolutePath;
 		if (getData().showPortion(EntityPortion.CIRCLED_CHARACTER, getEntity())) {
-			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile
-					.getPngOrEps(getFileFormat() == FileFormat.EPS));
+			circleAbsolutePath = StringUtils.getPlateformDependentAbsolutePath(cFile.getPngOrEps(getFileFormat()));
 		} else {
 			circleAbsolutePath = null;
 		}
@@ -74,7 +73,8 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 		final String stereo = getEntity().getStereotype() == null ? null : getEntity().getStereotype().getLabel();
 
 		if (showFields == false && showMethods == false) {
-			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true, BorderMode.NO_BORDER_CELLSPACING));
+			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
+					BorderMode.NO_BORDER_CELLSPACING));
 		} else {
 			sb.append("<TABLE BGCOLOR=" + getColorString(ColorParam.classBackground, stereo) + " COLOR="
 					+ getColorString(ColorParam.classBorder, stereo)
@@ -96,8 +96,8 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 				final boolean hasStatic = hasStatic(getEntity().getFieldsToDisplay());
 				sb.append("<TR ALIGN=\"LEFT\"><TD " + getWitdh55() + " ALIGN=\"LEFT\">");
 				for (Member att : getEntity().getFieldsToDisplay()) {
-					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic,
-							getColorString(ColorParam.classBackground, stereo), true));
+					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic, getColorString(
+							ColorParam.classBackground, stereo), true));
 					sb.append("<BR ALIGN=\"LEFT\"/>");
 				}
 				sb.append("</TD></TR>");
@@ -110,8 +110,8 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 				final boolean hasStatic = hasStatic(getEntity().getMethodsToDisplay());
 				sb.append("<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">");
 				for (Member att : getEntity().getMethodsToDisplay()) {
-					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic,
-							getColorString(ColorParam.classBackground, stereo), true));
+					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic, getColorString(
+							ColorParam.classBackground, stereo), true));
 					sb.append("<BR ALIGN=\"LEFT\"/>");
 				}
 				sb.append("</TD></TR>");

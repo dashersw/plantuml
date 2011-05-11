@@ -202,7 +202,7 @@ public class SequenceDiagram extends UmlDiagram {
 			List<BufferedImage> flashcodes) throws IOException {
 		final FileMaker sequenceDiagramPngMaker = getSequenceDiagramPngMaker(fileFormat, flashcodes);
 		sequenceDiagramPngMaker.createOne(os, index);
-		if (this.hasUrl() && fileFormat.getFileFormat() == FileFormat.PNG) {
+		if (cmap != null && this.hasUrl() && fileFormat.getFileFormat() == FileFormat.PNG) {
 			sequenceDiagramPngMaker.appendCmap(cmap);
 		}
 	}

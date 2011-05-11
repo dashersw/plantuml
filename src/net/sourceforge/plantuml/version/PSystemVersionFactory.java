@@ -41,11 +41,7 @@ public class PSystemVersionFactory implements PSystemBasicFactory {
 
 	private PSystemVersion system;
 
-	public PSystemVersionFactory() {
-		reset();
-	}
-
-	public void reset() {
+	public void init() {
 	}
 
 	public boolean executeLine(String line) {

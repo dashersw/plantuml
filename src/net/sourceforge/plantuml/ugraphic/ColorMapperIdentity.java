@@ -35,7 +35,14 @@ package net.sourceforge.plantuml.ugraphic;
 
 import java.awt.Color;
 
-public interface ColorChanger {
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-	Color getChangedColor(Color color);
+public class ColorMapperIdentity implements ColorMapper {
+
+	public Color getMappedColor(HtmlColor color) {
+		if (color == null) {
+			return null;
+		}
+		return color.getColor999();
+	}
 }

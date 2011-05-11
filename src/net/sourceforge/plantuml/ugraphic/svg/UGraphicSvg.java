@@ -31,7 +31,6 @@
  */
 package net.sourceforge.plantuml.ugraphic.svg;
 
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
@@ -40,16 +39,17 @@ import java.io.OutputStream;
 
 import javax.xml.transform.TransformerException;
 
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UClip;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
+import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UImage;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPath;
@@ -64,16 +64,16 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 
 	private final StringBounder stringBounder;
 
-	public UGraphicSvg(String backcolor, boolean textAsPath) {
-		this(new SvgGraphics(backcolor), textAsPath);
+	public UGraphicSvg(ColorMapper colorMapper, String backcolor, boolean textAsPath) {
+		this(colorMapper, new SvgGraphics(backcolor), textAsPath);
 	}
 
-	public UGraphicSvg(boolean textAsPath) {
-		this(new SvgGraphics(), textAsPath);
+	public UGraphicSvg(ColorMapper colorMapper, boolean textAsPath) {
+		this(colorMapper, new SvgGraphics(), textAsPath);
 	}
 
-	private UGraphicSvg(SvgGraphics svg, boolean textAsPath) {
-		super(svg);
+	private UGraphicSvg(ColorMapper colorMapper, SvgGraphics svg, boolean textAsPath) {
+		super(colorMapper, svg);
 		stringBounder = StringBounderUtils.asStringBounder(imDummy);
 		registerDriver(URectangle.class, new DriverRectangleSvg(this));
 		textAsPath = false;
@@ -113,20 +113,20 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 		return clip;
 	}
 
-	public void centerCharOld(double x, double y, char c, Font font) {
-		final UText uText = new UText("" + c, new FontConfiguration(font, getParam().getColor()));
-		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
-		draw(x - unusedSpace.getCenterX() + getTranslateX(), y - unusedSpace.getCenterY() + getTranslateY(), uText);
-	}
+//	public void centerCharOld(double x, double y, char c, Font font) {
+//		final UText uText = new UText("" + c, new FontConfiguration(font, getParam().getColor()));
+//		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
+//		draw(x - unusedSpace.getCenterX() + getTranslateX(), y - unusedSpace.getCenterY() + getTranslateY(), uText);
+//	}
 
-	public void centerChar(double x, double y, char c, Font font) {
+	public void centerChar(double x, double y, char c, UFont font) {
 		final UnusedSpace unusedSpace = UnusedSpace.getUnusedSpace(font, c);
 
 		final double xpos = x - unusedSpace.getCenterX() - 0.5;
 		final double ypos = y - unusedSpace.getCenterY() - 0.5;
 
-		final TextLayout t = new TextLayout("" + c, font, imDummy.getFontRenderContext());
-		getGraphicObject().setStrokeColor(HtmlColor.getAsHtml(getParam().getColor()));
+		final TextLayout t = new TextLayout("" + c, font.getFont(), imDummy.getFontRenderContext());
+		getGraphicObject().setStrokeColor(StringUtils.getAsHtml(getColorMapper().getMappedColor(getParam().getColor())));
 		DriverTextAsPathSvg.drawPathIterator(getGraphicObject(), xpos + getTranslateX(), ypos + getTranslateY(), t
 				.getOutline(null).getPathIterator(null));
 	}

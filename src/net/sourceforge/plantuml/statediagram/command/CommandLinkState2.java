@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.statediagram.StateDiagram;
 
 public class CommandLinkState2 extends SingleLineCommand2<StateDiagram> {
@@ -86,13 +87,13 @@ public class CommandLinkState2 extends SingleLineCommand2<StateDiagram> {
 			cl1.setStereotype(new Stereotype(arg.get("ENT1").get(1)));
 		}
 		if (arg.get("ENT1").get(2) != null) {
-			cl1.setSpecificBackcolor(arg.get("ENT1").get(2));
+			cl1.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get("ENT1").get(2)));
 		}
 		if (arg.get("ENT2").get(1) != null) {
 			cl2.setStereotype(new Stereotype(arg.get("ENT2").get(1)));
 		}
 		if (arg.get("ENT2").get(2) != null) {
-			cl2.setSpecificBackcolor(arg.get("ENT2").get(2));
+			cl2.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get("ENT2").get(2)));
 		}
 
 		String queue = arg.get("ARROW").get(1) + arg.get("ARROW").get(4);

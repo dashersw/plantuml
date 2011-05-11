@@ -80,7 +80,7 @@ final public class SuggestEngine {
 	}
 
 	private SuggestEngineResult executeUmlCommand() throws IOException {
-		systemFactory.reset();
+		systemFactory.init();
 		while (hasNext()) {
 			final String s = next();
 			if (StartUtils.isArobaseEndDiagram(s)) {

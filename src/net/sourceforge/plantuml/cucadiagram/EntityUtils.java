@@ -92,7 +92,7 @@ public abstract class EntityUtils {
 				return ent.getSpecificBackColor();
 			}
 
-			public void setSpecificBackcolor(String specificBackcolor) {
+			public void setSpecificBackcolor(HtmlColor specificBackcolor) {
 				throw new UnsupportedOperationException();
 			}
 
@@ -133,6 +133,22 @@ public abstract class EntityUtils {
 
 			public void setNearDecoration(boolean nearDecoration) {
 				ent.setNearDecoration(nearDecoration);
+			}
+
+			public int compareTo(IEntity other) {
+				return ent.compareTo(other);
+			}
+
+			public int getIndex() {
+				return ent.getIndex();
+			}
+
+			public int getXposition() {
+				return ent.getXposition();
+			}
+
+			public void setXposition(int pos) {
+				ent.setXposition(pos);
 			}
 
 		};

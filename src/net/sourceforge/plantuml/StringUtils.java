@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6110 $
+ * Revision $Revision: 6573 $
  *
  */
 package net.sourceforge.plantuml;
 
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -212,32 +213,6 @@ public class StringUtils {
 		return s;
 	}
 
-	// private static String cleanLineFromSource(String s) {
-	// if (s.startsWith("\uFEFF")) {
-	// s = s.substring(1);
-	// }
-	// if (s.startsWith("~~")) {
-	// s = s.substring("~~".length());
-	// }
-	// // if (s.startsWith(" * ")) {
-	// // s = s.substring(" * ".length());
-	// // }
-	// s = s.replaceFirst("^\\s+\\* ", "");
-	// if (s.equals(" *")) {
-	// s = "";
-	// }
-	// s = s.trim();
-	// while (s.startsWith(" ") || s.startsWith("/") || s.startsWith("\t") ||
-	// s.startsWith("%") || s.startsWith("/*")) {
-	// if (s.startsWith("/*")) {
-	// s = s.substring(2).trim();
-	// } else {
-	// s = s.substring(1).trim();
-	// }
-	// }
-	// return s;
-	// }
-
 	public static boolean isCJK(char c) {
 		final Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
 		System.err.println(block);
@@ -329,8 +304,7 @@ public class StringUtils {
 
 	public static String uncommentSource(String source) {
 		final StringReader sr = new StringReader(source);
-		final UncommentReadLine un = new UncommentReadLine(new ReadLineReader(
-				sr));
+		final UncommentReadLine un = new UncommentReadLine(new ReadLineReader(sr));
 		final StringBuilder sb = new StringBuilder();
 		String s = null;
 		try {
@@ -359,6 +333,31 @@ public class StringUtils {
 			return false;
 		}
 		return true;
-		
 	}
+
+	public static List<String> splitComma(String s) {
+		s = s.trim();
+		if (s.matches("([\\p{L}0-9_.]+|\"[^\"]+\")(\\s*,\\s*([\\p{L}0-9_.]+|\"[^\"]+\"))*") == false) {
+			throw new IllegalArgumentException();
+		}
+		final List<String> result = new ArrayList<String>();
+		final Pattern p = Pattern.compile("([\\p{L}0-9_.]+|\"[^\"]+\")");
+		final Matcher m = p.matcher(s);
+		while (m.find()) {
+			result.add(eventuallyRemoveStartingAndEndingDoubleQuote(m.group(0)));
+		}
+		return Collections.unmodifiableList(result);
+	}
+	
+	public static String getAsHtml(Color color) {
+		if (color == null) {
+			throw new IllegalArgumentException();
+		}
+		final int v = 0xFFFFFF & color.getRGB();
+		String s = "000000" + Integer.toHexString(v).toUpperCase();
+		s = s.substring(s.length() - 6);
+		return "#" + s;
+	}
+
+
 }

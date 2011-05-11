@@ -28,15 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4826 $
+ * Revision $Revision: 3837 $
  *
  */
-package net.sourceforge.plantuml.eps;
+package net.sourceforge.plantuml.ugraphic;
 
-import java.io.File;
-import java.io.IOException;
-
-public interface Inkscape {
-
-	public void createEps(File svg, File eps) throws IOException, InterruptedException;
+public enum UFontContext {
+	JAVA, EPS, SVG, DOT, SYSTEM, PNG
 }

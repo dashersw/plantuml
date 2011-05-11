@@ -33,7 +33,6 @@
  */
 package net.sourceforge.plantuml.eggs;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -49,6 +48,8 @@ import net.sourceforge.plantuml.AbstractPSystem;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.graphic.GraphicPosition;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.ugraphic.UFont;
 
 public class PSystemRIP extends AbstractPSystem {
 
@@ -90,8 +91,8 @@ public class PSystemRIP extends AbstractPSystem {
 	}
 
 	private GraphicStrings getGraphicStrings() throws IOException {
-		final Font font = new Font("SansSerif", Font.PLAIN, 12);
-		return new GraphicStrings(strings, font, Color.BLACK, Color.WHITE, image, GraphicPosition.BOTTOM, false);
+		final UFont font = new UFont("SansSerif", Font.PLAIN, 12);
+		return new GraphicStrings(strings, font, HtmlColor.BLACK, HtmlColor.WHITE, image, GraphicPosition.BOTTOM, false);
 	}
 
 	public String getDescription() {

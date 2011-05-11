@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6302 $
+ * Revision $Revision: 6514 $
  *
  */
 package net.sourceforge.plantuml;
@@ -38,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -79,12 +80,13 @@ public abstract class AbstractPSystem implements PSystem {
 	final public void setSource(UmlSource source) {
 		this.source = source;
 	}
-	
+
 	public int getNbImages() {
 		return 1;
 	}
-	
-	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException, InterruptedException {
+
+	public List<File> exportDiagrams(File suggestedFile, FileFormatOption fileFormat) throws IOException,
+			InterruptedException {
 		if (suggestedFile.exists() && suggestedFile.isDirectory()) {
 			throw new IllegalArgumentException("File is a directory " + suggestedFile);
 		}
@@ -99,7 +101,12 @@ public abstract class AbstractPSystem implements PSystem {
 		}
 		return Arrays.asList(suggestedFile);
 	}
-	
 
-	
+	public List<String> getTitle() {
+		if (source == null) {
+			return Collections.emptyList();
+		}
+		return source.getTitle();
+	}
+
 }

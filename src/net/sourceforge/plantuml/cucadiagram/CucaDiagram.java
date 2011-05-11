@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6453 $
+ * Revision $Revision: 6641 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -61,8 +62,10 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
+import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 
 public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, PortionShower {
@@ -70,6 +73,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
+	//private final Map<String, Entity> entities = new LinkedHashMap<String, Entity>();
 	private final Map<String, Entity> entities = new TreeMap<String, Entity>();
 	private final Map<IEntity, Integer> nbLinks = new HashMap<IEntity, Integer>();
 
@@ -149,6 +153,9 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			}
 		}
 		entities.put(proxy.getCode(), proxy);
+		// if (proxy.getImageFile() != null) {
+		// proxy.addSubImage(proxy.getImageFile());
+		// }
 	}
 
 	final public Collection<Group> getChildrenGroups(Group parent) {
@@ -351,7 +358,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
-			createFilesTxt(os, index, fileFormat);
+			try {
+				createFilesTxt(os, index, fileFormat);
+			} catch (Throwable t) {
+				t.printStackTrace(new PrintStream(os));
+			}
 			return;
 		}
 
@@ -574,4 +585,45 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	public final Set<VisibilityModifier> getHides() {
 		return Collections.unmodifiableSet(hides);
 	}
+
+	public void clean() throws IOException {
+		for (Imaged entity : entities().values()) {
+			cleanTemporaryFiles(entity);
+		}
+		for (Imaged entity : getLinks()) {
+			cleanTemporaryFiles(entity);
+		}
+		for (Group g : groups.values()) {
+			final IEntity entity = g.getEntityCluster();
+			if (entity != null) {
+				cleanTemporaryFiles(entity);
+			}
+		}
+		for (DrawFile f : ensureDeletes) {
+			f.deleteDrawFile();
+		}
+	}
+
+	private void cleanTemporaryFiles(Imaged entity) {
+		if (entity.getImageFile() != null) {
+			entity.getImageFile().deleteDrawFile();
+		}
+		if (entity instanceof Entity) {
+			((Entity) entity).cleanSubImage();
+		}
+	}
+
+	private final Set<DrawFile> ensureDeletes = new HashSet<DrawFile>();
+
+	public void ensureDelete(DrawFile imageFile) {
+		if (imageFile == null) {
+			throw new IllegalArgumentException();
+		}
+		ensureDeletes.add(imageFile);
+	}
+
+	public ColorMapper getColorMapper() {
+		return getSkinParam().getColorMapper();
+	}
+
 }
