@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6663 $
+ * Revision $Revision: 6695 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -746,15 +746,15 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 	}
 
 	class EntityComparator2 implements Comparator<IEntity> {
-		private final Map<IEntity, Boolean> map;
+		private final Map<IEntity, Integer> map;
 
-		public EntityComparator2(Map<IEntity, Boolean> map) {
+		public EntityComparator2(Map<IEntity, Integer> map) {
 			this.map = map;
 		}
 
 		public int compare(IEntity e1, IEntity e2) {
-			final Boolean b1 = map.get(e1);
-			final Boolean b2 = map.get(e2);
+			final Integer b1 = map.get(e1);
+			final Integer b2 = map.get(e2);
 			final int cmp = b1.compareTo(b2);
 			if (cmp != 0) {
 				return -cmp;
@@ -763,17 +763,17 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 		}
 	}
 
-	private Map<IEntity, Boolean> getMap(Collection<? extends IEntity> entities2) {
-		final Map<IEntity, Boolean> map = new HashMap<IEntity, Boolean>();
+	private Map<IEntity, Integer> getMap(Collection<? extends IEntity> entities2) {
+		final Map<IEntity, Integer> map = new HashMap<IEntity, Integer>();
 		for (IEntity ent : entities2) {
-			map.put(ent, false);
+			map.put(ent, Integer.valueOf(0));
 		}
 		for (Link link : getData().getLinks()) {
 			if (link.isConstraint() == false) {
-				map.put(link.getEntity2(), true);
+				map.put(link.getEntity2(), Integer.valueOf(1));
 			} else if (link.getLength()==1 && link.isInverted()) {
 //				map.put(link.getEntity2(), true);
-				map.put(link.getEntity1(), true);
+				map.put(link.getEntity1(), Integer.valueOf(1));
 			}
 			
 		}
@@ -783,9 +783,10 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 	private void printEntities(StringBuilder sb, Collection<? extends IEntity> entities2) throws IOException {
 		final List<IEntity> entities = new ArrayList<IEntity>(entities2);
 		// Collections.sort(entities, new EntityComparator());
-		Collections.sort(entities, new EntityComparator2(getMap(entities2)));
+		//if (getData().getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
+			Collections.sort(entities, new EntityComparator2(getMap(entities2)));
+		//}
 		// Collections.sort(entities);
-		// System.err.println("ent=" + entities);
 		final Set<IEntity> lollipops = new HashSet<IEntity>();
 		final Set<IEntity> lollipopsFriends = new HashSet<IEntity>();
 		for (IEntity entity : entities) {

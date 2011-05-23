@@ -28,37 +28,22 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4762 $
+ * Revision $Revision: 4771 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml;
 
+import java.io.IOException;
 import java.util.List;
 
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
+public interface ISourceFileReader {
 
-public class CommandElse extends SingleLineCommand<ActivityDiagram> {
+	public List<GeneratedImage> getGeneratedImages() throws IOException, InterruptedException;
+	
+	public List<String> getEncodedUrl() throws IOException, InterruptedException;
+	
+	public boolean hasError() throws IOException, InterruptedException;
 
-	public CommandElse(ActivityDiagram diagram) {
-		super(diagram, "(?i)^else$");
-	}
 
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		if (getSystem().getLastEntityConsulted() == null) {
-			return CommandExecutionResult.error("No if for this else");
-		}
-		if (getSystem().getCurrentContext() == null) {
-			return CommandExecutionResult.error("No if for this else");
-		}
-		final IEntity branch = getSystem().getCurrentContext().getBranch();
-
-		getSystem().setLastEntityConsulted(branch);
-
-		return CommandExecutionResult.ok();
-	}
 
 }

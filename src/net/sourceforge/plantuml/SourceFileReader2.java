@@ -49,45 +49,23 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.preproc.Defines;
 
-public class SourceFileReader implements ISourceFileReader {
+public class SourceFileReader2 implements ISourceFileReader {
 
 	private final File file;
-	private final File outputDirectory;
+	private final File outputFile;
 
 	private final BlockUmlBuilder builder;
 	private FileFormatOption fileFormatOption;
 
-	public SourceFileReader(File file) throws IOException {
-		this(file, file.getAbsoluteFile().getParentFile());
-	}
-
-	public SourceFileReader(final File file, File outputDirectory) throws IOException {
-		this(new Defines(), file, outputDirectory, Collections.<String> emptyList(), null, new FileFormatOption(
-				FileFormat.PNG));
-	}
-
-	public SourceFileReader(final File file, File outputDirectory, FileFormatOption fileFormatOption)
-			throws IOException {
-		this(new Defines(), file, outputDirectory, Collections.<String> emptyList(), null, fileFormatOption);
-	}
-
-	public SourceFileReader(Defines defines, final File file, File outputDirectory, List<String> config,
+	public SourceFileReader2(Defines defines, final File file, File outputFile, List<String> config,
 			String charset, FileFormatOption fileFormatOption) throws IOException {
 		this.file = file;
 		this.fileFormatOption = fileFormatOption;
+		this.outputFile = outputFile;
 		if (file.exists() == false) {
 			throw new IllegalArgumentException();
 		}
 		FileSystem.getInstance().setCurrentDir(file.getAbsoluteFile().getParentFile());
-		if (outputDirectory == null) {
-			outputDirectory = file.getAbsoluteFile().getParentFile();
-		} else if (outputDirectory.isAbsolute() == false) {
-			outputDirectory = FileSystem.getInstance().getFile(outputDirectory.getName());
-		}
-		if (outputDirectory.exists() == false) {
-			outputDirectory.mkdirs();
-		}
-		this.outputDirectory = outputDirectory;
 
 		builder = new BlockUmlBuilder(config, defines, getReader(charset), file.getAbsoluteFile().getParentFile());
 	}
@@ -104,18 +82,10 @@ public class SourceFileReader implements ISourceFileReader {
 	public List<GeneratedImage> getGeneratedImages() throws IOException, InterruptedException {
 		Log.info("Reading file: " + file);
 
-		int cpt = 0;
 		final List<GeneratedImage> result = new ArrayList<GeneratedImage>();
 
 		for (BlockUml blockUml : builder.getBlockUmls()) {
-			String newName = blockUml.getFilename();
-
-			if (newName == null) {
-				newName = fileFormatOption.getFileFormat().changeName(file.getName(), cpt++);
-			}
-
-			final File suggested = new File(outputDirectory, newName);
-			suggested.getParentFile().mkdirs();
+			final File suggested = outputFile;
 
 			final PSystem system = blockUml.getSystem();
 			OptionFlags.getInstance().logData(file, system);

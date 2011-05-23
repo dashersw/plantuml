@@ -28,23 +28,68 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6696 $
+ * Revision $Revision: 6054 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
-enum LifeSegmentVariation {
-	LARGER, SMALLER;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-	public int apply(int v) {
-		if (this == LARGER) {
-			return v + 1;
+class Stairs {
+
+	private final List<Double> ys = new ArrayList<Double>();
+	private final List<Integer> values = new ArrayList<Integer>();
+	private final Map<Double, Integer> cache = new HashMap<Double, Integer>();
+
+	public void addStep(double y, int value) {
+		assert ys.size() == values.size();
+		if (ys.size() > 0) {
+			final double lastY = ys.get(ys.size() - 1);
+			if (y < lastY) {
+				throw new IllegalArgumentException();
+			}
+			if (lastY == y) {
+				values.set(ys.size() - 1, value);
+				cache.clear();
+				return;
+			}
 		}
-		assert this == SMALLER;
-		if (v == 0) {
+		ys.add(y);
+		values.add(value);
+		cache.clear();
+	}
+
+	public int getValue(double y) {
+		Integer result = cache.get(y);
+		if (result == null) {
+			result = getValueSlow(y);
+			cache.put(y, result);
+		}
+		return result;
+	}
+
+	private int getValueSlow(double y) {
+		final int idx = Collections.binarySearch(ys, y);
+		if (idx >= 0) {
+			return values.get(idx);
+		}
+		final int insertPoint = -idx - 1;
+		if (insertPoint == 0) {
 			return 0;
 		}
-		return v - 1;
+		return values.get(insertPoint - 1);
+	}
+
+	public int getLastValue() {
+		final int size = values.size();
+		if (size == 0) {
+			return 0;
+		}
+		return values.get(size - 1);
 	}
 
 }

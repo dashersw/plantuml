@@ -125,7 +125,8 @@ abstract class DotCommon {
 	static String unicode(String s) {
 		final StringBuilder result = new StringBuilder();
 		for (char c : s.toCharArray()) {
-			if (c > 127 || c == '&') {
+			if (c > 127 || c == '&' || c == '|') {
+			// if (c > 127 || c == '&') {
 				final int i = c;
 				result.append("&#" + i + ";");
 			} else {

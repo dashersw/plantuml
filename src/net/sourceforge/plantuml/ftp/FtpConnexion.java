@@ -56,20 +56,25 @@ public class FtpConnexion {
 		this.user = user;
 	}
 
-	public void addIncoming(String fileName, String data) {
+	public synchronized void addIncoming(String fileName, String data) {
 		if (fileName.startsWith("/")) {
 			throw new IllegalArgumentException();
 		}
 		incoming.put(fileName, data);
 	}
+	
+	public void removeOutgoing(String fileName) {
+		outgoing.remove(fileName);
+	}
 
-	public Collection<String> getFiles() {
+
+	public synchronized Collection<String> getFiles() {
 		final List<String> result = new ArrayList<String>(incoming.keySet());
 		result.addAll(outgoing.keySet());
 		return Collections.unmodifiableCollection(result);
 	}
 
-	public byte[] getData(String fileName) {
+	public synchronized byte[] getData(String fileName) {
 		if (fileName.startsWith("/")) {
 			throw new IllegalArgumentException();
 		}
@@ -84,7 +89,7 @@ public class FtpConnexion {
 		return new byte[0];
 	}
 
-	public int getSize(String fileName) {
+	public synchronized int getSize(String fileName) {
 		if (fileName.startsWith("/")) {
 			throw new IllegalArgumentException();
 		}
@@ -106,10 +111,14 @@ public class FtpConnexion {
 		final SourceStringReader sourceStringReader = new SourceStringReader(incoming.get(fileName));
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		final FileFormat format = FileFormat.PNG;
+		final String pngFileName = format.changeName(fileName, 0);
 		final String ok = sourceStringReader.generateImage(baos, new FileFormatOption(format));
 		if (ok != null) {
-			outgoing.put(format.changeName(fileName, 0), baos.toByteArray());
+			synchronized (this) {
+				outgoing.put(pngFileName, baos.toByteArray());
+			}
 		}
 	}
+
 
 }

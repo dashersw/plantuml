@@ -47,10 +47,16 @@ import java.util.concurrent.Executors;
 public class FtpServer {
 
 	private final Map<String, FtpConnexion> datas = new TreeMap<String, FtpConnexion>();
-	private final ExecutorService exeImage = Executors.newFixedThreadPool(20);
+	private final ExecutorService exeImage = Executors.newFixedThreadPool(2);
+	
+	private final int listenPort;
 
 	private int portFree = 10042;
 	private String ip;
+	
+	public FtpServer(int listenPort) {
+		this.listenPort = listenPort;
+	}
 
 	public synchronized int getFreePort() {
 		portFree++;
@@ -59,7 +65,7 @@ public class FtpServer {
 	}
 
 	public void go() throws IOException {
-		final ServerSocket s = new ServerSocket(100);
+		final ServerSocket s = new ServerSocket(listenPort);
 		final ExecutorService exe = Executors.newCachedThreadPool();
 		while (true) {
 			final Socket incoming = s.accept();
@@ -94,12 +100,11 @@ public class FtpServer {
 		System.out.println("Server Started...");
 		System.out.println("Waiting for connections...");
 		System.out.println(" ");
-		new FtpServer().go();
+		new FtpServer(100).go();
 	}
 
 	public void processImage(final FtpConnexion connexion, final String name) {
 		exeImage.submit(new Runnable() {
-			@Override
 			public void run() {
 				try {
 					connexion.processImage(name);

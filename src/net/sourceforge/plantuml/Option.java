@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6615 $
+ * Revision $Revision: 6702 $
  *
  */
 package net.sourceforge.plantuml;
@@ -61,8 +61,11 @@ public class Option {
 	private boolean pattern = false;
 	private boolean duration = false;
 	private int nbThreads = 0;
+	private int ftpPort = -1;
 
 	private File outputDir = null;
+	private File outputFile = null;
+	
 	private final List<String> result = new ArrayList<String>();
 
 	public Option() {
@@ -111,6 +114,12 @@ public class Option {
 					continue;
 				}
 				outputDir = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
+			} else if (s.equalsIgnoreCase("-ofile")) {
+				i++;
+				if (i == arg.length) {
+					continue;
+				}
+				outputFile = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-graphvizdot") || s.equalsIgnoreCase("-graphviz_dot")) {
 				i++;
 				if (i == arg.length) {
@@ -220,10 +229,21 @@ public class Option {
 				OptionFlags.getInstance().setFailOnError(true);
 			} else if (s.equalsIgnoreCase("-printfonts")) {
 				OptionFlags.getInstance().setPrintFonts(true);
+			} else if (s.toLowerCase().startsWith("-ftp")) {
+				final int x = s.indexOf(':');
+				if (x == -1) {
+					this.ftpPort = 4242;
+				} else {
+					this.ftpPort = Integer.parseInt(s.substring(x + 1));
+				}
 			} else {
 				result.add(s);
 			}
 		}
+	}
+
+	public int getFtpPort() {
+		return ftpPort;
 	}
 
 	public void initConfig(String filename) throws IOException {
@@ -356,6 +376,10 @@ public class Option {
 
 	public final void setCheckOnly(boolean checkOnly) {
 		this.checkOnly = checkOnly;
+	}
+
+	public final File getOutputFile() {
+		return outputFile;
 	}
 
 }

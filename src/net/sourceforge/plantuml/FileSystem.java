@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 4929 $
+ * Revision $Revision: 6690 $
  *
  */
 package net.sourceforge.plantuml;
@@ -40,7 +40,7 @@ public class FileSystem {
 
 	private final static FileSystem singleton = new FileSystem();
 
-	private File currentDir;
+	private final ThreadLocal<File> currentDir = new ThreadLocal<File>();
 
 	private FileSystem() {
 		reset();
@@ -55,15 +55,15 @@ public class FileSystem {
 			throw new IllegalArgumentException();
 		}
 		Log.info("Setting current dir: " + dir);
-		this.currentDir = dir;
+		this.currentDir.set(dir);
 	}
 
 	public File getCurrentDir() {
-		return this.currentDir;
+		return this.currentDir.get();
 	}
 
 	public File getFile(String nameOrPath) throws IOException {
-		return new File(currentDir.getAbsoluteFile(), nameOrPath).getCanonicalFile();
+		return new File(currentDir.get().getAbsoluteFile(), nameOrPath).getCanonicalFile();
 	}
 
 	public void reset() {

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6625 $
+ * Revision $Revision: 6703 $
  *
  */
 package net.sourceforge.plantuml;
@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.code.Transcoder;
 import net.sourceforge.plantuml.code.TranscoderUtil;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.componentdiagram.ComponentDiagramFactory;
+import net.sourceforge.plantuml.ftp.FtpServer;
 import net.sourceforge.plantuml.objectdiagram.ObjectDiagramFactory;
 import net.sourceforge.plantuml.png.MetadataTag;
 import net.sourceforge.plantuml.preproc.Defines;
@@ -75,6 +76,12 @@ public class Run {
 			printFonts();
 			return;
 		}
+
+		if (option.getFtpPort() != -1) {
+			goFtp(option);
+			return;
+		}
+
 		boolean error = false;
 		if (option.isPattern()) {
 			managePattern();
@@ -99,6 +106,13 @@ public class Run {
 			Log.error("Some diagram description contains errors");
 			System.exit(1);
 		}
+	}
+
+	private static void goFtp(Option option) throws IOException {
+		final int ftpPort = option.getFtpPort();
+		System.err.println("ftpPort=" + ftpPort);
+		final FtpServer ftpServer = new FtpServer(ftpPort);
+		ftpServer.go();
 	}
 
 	static void printFonts() {
@@ -270,8 +284,14 @@ public class Run {
 			System.out.println("------------------------");
 			return false;
 		}
-		final SourceFileReader sourceFileReader = new SourceFileReader(option.getDefaultDefines(), f, option
-				.getOutputDir(), option.getConfig(), option.getCharset(), option.getFileFormatOption());
+		final ISourceFileReader sourceFileReader;
+		if (option.getOutputFile() == null) {
+			sourceFileReader = new SourceFileReader(option.getDefaultDefines(), f, option.getOutputDir(), option
+					.getConfig(), option.getCharset(), option.getFileFormatOption());
+		} else {
+			sourceFileReader = new SourceFileReader2(option.getDefaultDefines(), f, option.getOutputFile(), option
+					.getConfig(), option.getCharset(), option.getFileFormatOption());
+		}
 		if (option.isComputeurl()) {
 			final List<String> urls = sourceFileReader.getEncodedUrl();
 			for (String s : urls) {

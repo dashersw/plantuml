@@ -49,6 +49,7 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.StringTokenizer;
 
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileUtils;
 
 class FtpLoop implements Runnable {
@@ -81,12 +82,12 @@ class FtpLoop implements Runnable {
 	// http://forum.hardware.fr/hfr/Programmation/VB-VBA-VBS/transfert-sujet_59989_1.htm
 	// http://www.excel-downloads.com/forum/104130-telechargement-ftp-via-vba.html
 	// http://www.pcreview.co.uk/forums/ftp-vba-macro-t949945.html
-	private void runInternal() throws IOException {
-		System.err.println("Starting Loop");
+	private void runInternal() throws IOException, InterruptedException {
+		localLog("Starting Loop");
 		myOut("220 PlantUML");
 		while (true) {
 			final String s = br.readLine();
-			System.err.println("s=" + s);
+			localLog("s=" + s);
 			if (s == null) {
 				pw.close();
 				br.close();
@@ -99,7 +100,7 @@ class FtpLoop implements Runnable {
 		}
 	}
 
-	private boolean manage(final String cmd) throws UnknownHostException, IOException {
+	private boolean manage(final String cmd) throws UnknownHostException, IOException, InterruptedException {
 		final String upper = cmd.toUpperCase();
 		if (upper.startsWith("USER")) {
 			myOut("331 Password required");
@@ -116,15 +117,15 @@ class FtpLoop implements Runnable {
 			myOut("250 \"" + dir + "\" is new working directory..");
 		} else if (upper.startsWith("TYPE")) {
 			myOut("200 Command okay.");
-			// System.err.println("type=" + s);
+			// localLog("type=" + s);
 		} else if (upper.startsWith("PORT")) {
 			mode = Mode.ACTIF;
 			final StringTokenizer st = new StringTokenizer(cmd, " ,");
 			st.nextToken();
 			ipClient = st.nextToken() + "." + st.nextToken() + "." + st.nextToken() + "." + st.nextToken();
 			port = Integer.parseInt(st.nextToken()) * 256 + Integer.parseInt(st.nextToken());
-			// System.err.println("ipClient=" + ipClient);
-			// System.err.println("port=" + port);
+			// localLog("ipClient=" + ipClient);
+			// localLog("port=" + port);
 
 			myOut("200 Command okay.");
 		} else if (upper.startsWith("LIST")) {
@@ -145,9 +146,9 @@ class FtpLoop implements Runnable {
 			final int p1 = port / 256;
 			final int p2 = port % 256;
 			assert port == p1 * 256 + p2;
-			System.err.println("adr=" + incoming.getInetAddress().getHostAddress());
+			localLog("adr=" + incoming.getInetAddress().getHostAddress());
 			final String ipServer = ftpServer.getIpServer();
-			System.err.println("server=" + ipServer);
+			localLog("server=" + ipServer);
 			myOut("227 Entering Passive Mode (" + ipServer.replace('.', ',') + "," + p1 + "," + p2 + ").");
 			ipClient = ipServer;
 		} else if (upper.startsWith("RETR")) {
@@ -166,16 +167,27 @@ class FtpLoop implements Runnable {
 		return false;
 	}
 
-	private void retr(final String fileName, Socket soc) throws UnknownHostException, IOException {
+	private void localLog(String s) {
+	}
+
+	private void retr(final String fileName, Socket soc) throws UnknownHostException, IOException, InterruptedException {
 		final OutputStream os = soc.getOutputStream();
-		os.write(connexion.getData(fileName));
+		byte[] data = null;
+		do {
+			data = connexion.getData(fileName);
+			if (data.length == 0) {
+				Thread.sleep(200L);
+			}
+		} while (data.length == 0);
+
+		os.write(data);
 		os.flush();
 		os.close();
 		soc.close();
 		myOut("226 Transfer complete.");
 	}
 
-	private void retrPassif(final String s) throws UnknownHostException, IOException {
+	private void retrPassif(final String s) throws UnknownHostException, IOException, InterruptedException {
 		String fileName = s.substring("STOR ".length());
 		fileName = removeStartingsSlash(fileName);
 		myOut("150 Opening");
@@ -185,7 +197,7 @@ class FtpLoop implements Runnable {
 		ss.close();
 	}
 
-	private void retrActif(final String s) throws UnknownHostException, IOException {
+	private void retrActif(final String s) throws UnknownHostException, IOException, InterruptedException {
 		String fileName = s.substring("STOR ".length());
 		fileName = removeStartingsSlash(fileName);
 		myOut("150 Opening");
@@ -222,6 +234,9 @@ class FtpLoop implements Runnable {
 		FileUtils.copyToStream(is, baos);
 		myOut("226 Transfer complete.");
 		final String data = new String(baos.toByteArray());
+		final FileFormat format = FileFormat.PNG;
+		final String pngFileName = format.changeName(fileName, 0);
+		connexion.removeOutgoing(pngFileName);
 		connexion.addIncoming(fileName, data);
 
 		ftpServer.processImage(connexion, fileName);
@@ -250,12 +265,12 @@ class FtpLoop implements Runnable {
 				total += (connexion.getSize(n) + 511) / 512;
 			}
 			listing.println("total " + total);
-			// System.err.println(total);
+			// localLog(total);
 			for (String n : files) {
 				final String ls = String.format("%10s %4d %-8s %-8s %8d %3s %2s %5s %s", "-rw-rw-r--", 1, "plantuml",
 						"plantuml", connexion.getSize(n), "Sep", 28, 2006, n);
 				listing.println(ls);
-				// System.err.println(ls);
+				// localLog(ls);
 			}
 		}
 		listing.flush();
@@ -272,7 +287,6 @@ class FtpLoop implements Runnable {
 		pw.flush();
 	}
 
-	@Override
 	public void run() {
 		try {
 			runInternal();
