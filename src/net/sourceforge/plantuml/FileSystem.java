@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6690 $
+ * Revision $Revision: 6908 $
  *
  */
 package net.sourceforge.plantuml;
@@ -63,7 +63,11 @@ public class FileSystem {
 	}
 
 	public File getFile(String nameOrPath) throws IOException {
-		return new File(currentDir.get().getAbsoluteFile(), nameOrPath).getCanonicalFile();
+		final File dir = currentDir.get();
+		if (dir == null) {
+			return new File(nameOrPath).getCanonicalFile();
+		}
+		return new File(dir.getAbsoluteFile(), nameOrPath).getCanonicalFile();
 	}
 
 	public void reset() {

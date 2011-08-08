@@ -46,7 +46,7 @@ public class PSystemDotFactory implements PSystemBasicFactory {
 		this.diagramType = diagramType;
 	}
 
-	public void init() {
+	public void init(String startLine) {
 		data = null;
 		first = true;
 	}

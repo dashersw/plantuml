@@ -51,7 +51,7 @@ import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 
 public final class EpsTitler {
 
-	private final List<String> text;
+	private final List<? extends CharSequence> text;
 	private final HorizontalAlignement horizontalAlignement;
 	private final VerticalPosition verticalPosition;
 	private final int margin;
@@ -59,7 +59,7 @@ public final class EpsTitler {
 	private final EpsStrategy epsStrategy;
 	private final ColorMapper colorMapper;
 
-	public EpsTitler(ColorMapper colorMapper, EpsStrategy epsStrategy, HtmlColor textColor, List<String> text, int fontSize, String fontFamily,
+	public EpsTitler(ColorMapper colorMapper, EpsStrategy epsStrategy, HtmlColor textColor, List<? extends CharSequence> text, int fontSize, String fontFamily,
 			HorizontalAlignement horizontalAlignement, VerticalPosition verticalPosition, int margin) {
 		this.text = text;
 		this.colorMapper = colorMapper;

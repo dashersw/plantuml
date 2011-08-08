@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6573 $
+ * Revision $Revision: 6923 $
  *
  */
 package net.sourceforge.plantuml;
@@ -80,7 +80,7 @@ public class StringUtils {
 		return Collections.unmodifiableList(result);
 	}
 
-	public static String getMergedLines(List<String> strings) {
+	public static String getMergedLines(List<? extends CharSequence> strings) {
 		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < strings.size(); i++) {
 			sb.append(strings.get(i));
@@ -106,6 +106,10 @@ public class StringUtils {
 
 	public static boolean isNotEmpty(String input) {
 		return input != null && input.trim().length() > 0;
+	}
+
+	public static boolean isNotEmpty(List<? extends CharSequence> input) {
+		return input != null && input.size() > 0;
 	}
 
 	public static boolean isEmpty(String input) {
@@ -353,11 +357,44 @@ public class StringUtils {
 		if (color == null) {
 			throw new IllegalArgumentException();
 		}
-		final int v = 0xFFFFFF & color.getRGB();
+		return getAsHtml(color.getRGB());
+	}
+	
+	public static String getAsHtml(int color) {
+		final int v = 0xFFFFFF & color;
 		String s = "000000" + Integer.toHexString(v).toUpperCase();
 		s = s.substring(s.length() - 6);
 		return "#" + s;
 	}
+	
+	public static String getUid(String uid1, int uid2) {
+		return uid1 + String.format("%04d", uid2);
+	}
+	
+	
+	public static List<CharSequence> manageEmbededDiagrams(final List<String> strings) {
+		final List<CharSequence> result = new ArrayList<CharSequence>();
+		final Iterator<String> it = strings.iterator();
+		while (it.hasNext()) {
+			CharSequence s = it.next();
+			if (s.equals("{{")) {
+				final List<String> other = new ArrayList<String>();
+				other.add("@startuml");
+				while (it.hasNext()) {
+					String s2 = it.next();
+					if (s2.equals("}}")) {
+						break;
+					}
+					other.add(s2);
+				}
+				other.add("@enduml");
+				s = new EmbededDiagram(other);
+			}
+			result.add(s);
+		}
+		return result;
+	}
+
 
 
 }

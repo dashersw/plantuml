@@ -125,6 +125,7 @@ public class EpsGraphics {
 		header.append("gsave\n");
 		header.append("0 " + maxY + " translate\n");
 		header.append("1 -1 scale\n");
+
 		if (setcolorgradientUsed) {
 			header.append(setcolorgradient.getPostStringDefinition());
 		}
@@ -182,6 +183,24 @@ public class EpsGraphics {
 
 	private double dashVisible = 0;
 	private double dashSpace = 0;
+
+	public void newpathDot(boolean dashed) {
+		checkCloseDone();
+		append(strokeWidth + " setlinewidth", true);
+		appendColor(color);
+
+		if (dashed) {
+			append("[9 9] 0 setdash", true);
+		}
+		append("newpath", true);
+	}
+
+	public void closepathDot(boolean dashed) {
+		append("stroke", true);
+		if (dashed) {
+			append("[] 0 setdash", true);
+		}
+	}
 
 	public void epsLine(double x1, double y1, double x2, double y2) {
 		ensureVisible(x1, y1);
@@ -434,6 +453,24 @@ public class EpsGraphics {
 			throw new IllegalArgumentException(s);
 		}
 		body.append(s + "\n");
+	}
+
+	// final public void linetoNoMacro(double x1, double y1) {
+	// append(format(x1) + " " + format(y1) + " lineto", true);
+	// ensureVisible(x1, y1);
+	// }
+	//
+	final public void movetoNoMacro(double x1, double y1) {
+		append(format(x1) + " " + format(y1) + " moveto", true);
+		ensureVisible(x1, y1);
+	}
+
+	final public void curvetoNoMacro(double x1, double y1, double x2, double y2, double x3, double y3) {
+		append(format(x1) + " " + format(y1) + " " + format(x2) + " " + format(y2) + " " + format(x3) + " "
+				+ format(y3) + " curveto", true);
+		ensureVisible(x1, y1);
+		ensureVisible(x2, y2);
+		ensureVisible(x3, y3);
 	}
 
 	// FONT

@@ -28,11 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6590 $
+ * Revision $Revision: 6934 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,6 +134,19 @@ public class Stereotype implements CharSequence {
 
 	public final UFont getCircledFont() {
 		return circledFont;
+	}
+
+	public List<String> getLabels() {
+		if (label==null) {
+			return null;
+		}
+		final List<String> result = new ArrayList<String>();
+		final Pattern p = Pattern.compile("\\<\\<.*?\\>\\>");
+		final Matcher m = p.matcher(label);
+		while (m.find()) {
+			result.add(m.group());
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 }

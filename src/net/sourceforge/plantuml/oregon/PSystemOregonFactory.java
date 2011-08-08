@@ -44,7 +44,7 @@ public class PSystemOregonFactory implements PSystemBasicFactory {
 	private PSystemOregon system;
 	private List<String> inputs;
 
-	public void init() {
+	public void init(String startLine) {
 		inputs = null;
 	}
 

@@ -53,7 +53,7 @@ public class CommandCreateState2 extends SingleLineCommand<StateDiagram> {
 		final String code = arg.get(0);
 		final String display = arg.get(1);
 		final Entity ent = (Entity) getSystem().getOrCreateClass(code);
-		ent.setDisplay(display);
+		ent.setDisplay2(display);
 
 		final String stereotype = arg.get(2);
 		if (stereotype != null) {

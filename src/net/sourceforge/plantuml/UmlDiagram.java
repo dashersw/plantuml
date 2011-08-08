@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6611 $
+ * Revision $Revision: 6922 $
  *
  */
 package net.sourceforge.plantuml;
@@ -67,7 +67,7 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 
 	private int minwidth = Integer.MAX_VALUE;
 
-	private List<String> title;
+	private List<? extends CharSequence> title;
 	private List<String> header;
 	private List<String> footer;
 	private HorizontalAlignement headerAlignement = HorizontalAlignement.RIGHT;
@@ -77,11 +77,11 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 
 	private final SkinParam skinParam = new SkinParam();
 
-	final public void setTitle(List<String> strings) {
+	final public void setTitle(List<? extends CharSequence> strings) {
 		this.title = strings;
 	}
 
-	final public List<String> getTitle() {
+	final public List<? extends CharSequence> getTitle() {
 		return title;
 	}
 

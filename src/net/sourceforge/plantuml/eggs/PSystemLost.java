@@ -53,19 +53,6 @@ public class PSystemLost extends AbstractPSystem {
 		strings.add("Thank you for choosing Oceanic Airlines.");
 	}
 
-//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException, InterruptedException {
-//		OutputStream os = null;
-//		try {
-//			os = new FileOutputStream(suggestedFile);
-//			getGraphicStrings().writeImage(os, fileFormat);
-//		} finally {
-//			if (os != null) {
-//				os.close();
-//			}
-//		}
-//		return Arrays.asList(suggestedFile);
-//	}
-
 	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat) throws IOException {
 		getGraphicStrings().writeImage(os, fileFormat);
 	}

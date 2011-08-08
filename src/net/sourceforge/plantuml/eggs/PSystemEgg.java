@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6591 $
+ * Revision $Revision: 6710 $
  *
  */
 package net.sourceforge.plantuml.eggs;
@@ -56,19 +56,6 @@ public class PSystemEgg extends AbstractPSystem {
 			strings.add(st.nextToken());
 		}
 	}
-
-//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException, InterruptedException {
-//		OutputStream os = null;
-//		try {
-//			os = new FileOutputStream(suggestedFile);
-//			getGraphicStrings().writeImage(os, fileFormat);
-//		} finally {
-//			if (os != null) {
-//				os.close();
-//			}
-//		}
-//		return Arrays.asList(suggestedFile);
-//	}
 
 	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat) throws IOException {
 		getGraphicStrings().writeImage(os, fileFormat);

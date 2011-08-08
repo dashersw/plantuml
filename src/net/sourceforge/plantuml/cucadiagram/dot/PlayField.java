@@ -117,7 +117,7 @@ public final class PlayField {
 				// final IEntityImageBlock title = createClusterTitle();
 				// final Frame frame = new Frame(StringUtils.getWithNewlines(ent.getDisplay()), Color.BLACK, skinParam
 				// .getFont(FontParam.CLASS), rose.getHtmlColor(skinParam, ColorParam.classBorder).getColor());
-				final Frame frame = new Frame(StringUtils.getWithNewlines(ent.getDisplay()), skinParam);
+				final Frame frame = new Frame(ent.getDisplay2(), skinParam);
 				frames.put(ent, frame);
 				// final Dimension2D dimTitle =
 				// title.getDimension(stringBounder);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6590 $
+ * Revision $Revision: 6837 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -47,12 +47,27 @@ public class FontConfiguration {
 	private final HtmlColor extendedColor;
 
 	public FontConfiguration(UFont font, HtmlColor color) {
-		this(EnumSet.noneOf(FontStyle.class), font, color, font, color, null);
+		this(getStyles(font), font, color, font, color, null);
 	}
-	
+
+	private static EnumSet<FontStyle> getStyles(UFont font) {
+		final boolean bold = font.isBold();
+		final boolean italic = font.isItalic();
+		if (bold && italic) {
+			return EnumSet.of(FontStyle.ITALIC, FontStyle.BOLD);
+		}
+		if (bold) {
+			return EnumSet.of(FontStyle.BOLD);
+		}
+		if (italic) {
+			return EnumSet.of(FontStyle.ITALIC);
+		}
+		return EnumSet.noneOf(FontStyle.class);
+	}
+
 	@Override
 	public String toString() {
-		return styles.toString()+" "+currentColor;
+		return styles.toString() + " " + currentColor;
 	}
 
 	private FontConfiguration(EnumSet<FontStyle> styles, UFont motherFont, HtmlColor motherColor, UFont currentFont,
@@ -74,7 +89,8 @@ public class FontConfiguration {
 	}
 
 	FontConfiguration changeSize(float size) {
-		return new FontConfiguration(styles, motherFont, motherColor, currentFont.deriveSize(size), currentColor, extendedColor);
+		return new FontConfiguration(styles, motherFont, motherColor, currentFont.deriveSize(size), currentColor,
+				extendedColor);
 	}
 
 	public FontConfiguration resetFont() {
@@ -85,6 +101,10 @@ public class FontConfiguration {
 		final EnumSet<FontStyle> r = styles.clone();
 		r.add(style);
 		return new FontConfiguration(r, motherFont, motherColor, currentFont, currentColor, extendedColor);
+	}
+
+	public FontConfiguration italic() {
+		return add(FontStyle.ITALIC);
 	}
 
 	FontConfiguration remove(FontStyle style) {
@@ -104,7 +124,7 @@ public class FontConfiguration {
 	public HtmlColor getColor() {
 		return currentColor;
 	}
-	
+
 	public HtmlColor getExtendedColor() {
 		return extendedColor;
 	}

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6576 $
+ * Revision $Revision: 6859 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -69,6 +69,7 @@ public class DriverRectangleG2d implements UDriver<Graphics2D> {
 			}
 			if (param.getColor() != null) {
 				g2d.setColor(mapper.getMappedColor(param.getColor()));
+				DriverLineG2d.manageStroke(param, g2d);
 				g2d.draw(rect);
 			}
 		} else {

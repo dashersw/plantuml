@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6593 $
+ * Revision $Revision: 6866 $
  *
  */
 package net.sourceforge.plantuml;
@@ -137,7 +137,7 @@ public class SkinParam implements ISkinParam {
 			value = getValue("defaultfontsize");
 		}
 		if (value == null || value.matches("\\d+") == false) {
-			return param.getDefaultSize();
+			return param.getDefaultSize(this);
 		}
 		return Integer.parseInt(value);
 	}
@@ -195,7 +195,7 @@ public class SkinParam implements ISkinParam {
 			value = getValue("defaultfontstyle");
 		}
 		if (value == null) {
-			return param.getDefaultFontStyle();
+			return param.getDefaultFontStyle(this);
 		}
 		int result = Font.PLAIN;
 		if (value.toLowerCase().contains("bold")) {

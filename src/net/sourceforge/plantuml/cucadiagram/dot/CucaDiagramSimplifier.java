@@ -28,15 +28,17 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6577 $
+ * Revision $Revision: 6710 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -125,9 +127,9 @@ public final class CucaDiagramSimplifier {
 		}
 		final GroupPngMaker maker = new GroupPngMaker(diagram, group, fileFormat);
 		final File f = FileUtils.createTempFile("inner", ".png");
-		FileOutputStream fos = null;
+		OutputStream fos = null;
 		try {
-			fos = new FileOutputStream(f);
+			fos = new BufferedOutputStream(new FileOutputStream(f));
 			maker.createPng(fos, dotStrings);
 			final String svg = maker.createSvg(dotStrings);
 			// final Pattern pImage = Pattern.compile("(?i)<image\\W[^>]*>");

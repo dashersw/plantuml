@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.skin.rose.Rose;
+import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGraphicUtils;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -77,8 +78,8 @@ public class EntityImageBlock implements IEntityImageBlock {
 		this.rose = rose;
 		this.links = links;
 
-		if (StringUtils.isNotEmpty(entity.getDisplay())) {
-			this.name = TextBlockUtils.create(StringUtils.getWithNewlines(entity.getDisplay()), new FontConfiguration(
+		if (StringUtils.isNotEmpty(entity.getDisplay2())) {
+			this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(
 					param.getFont(titleParam, null), HtmlColor.BLACK), HorizontalAlignement.CENTER);
 		} else {
 			this.name = null;
@@ -140,7 +141,7 @@ public class EntityImageBlock implements IEntityImageBlock {
 
 		// this.frame = new Frame(StringUtils.getWithNewlines(entity.getDisplay()), Color.BLACK, param
 		// .getFont(FontParam.CLASS), rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-		this.frame = new Frame(StringUtils.getWithNewlines(entity.getDisplay()), param);
+		this.frame = new Frame(entity.getDisplay2(), param);
 
 	}
 
@@ -162,7 +163,7 @@ public class EntityImageBlock implements IEntityImageBlock {
 		} else {
 			// final Frame frame = new Frame(StringUtils.getWithNewlines(entity.getDisplay()), Color.BLACK, param
 			// .getFont(FontParam.CLASS), rose.getHtmlColor(param, ColorParam.classBorder).getColor());
-			final Frame frame = new Frame(StringUtils.getWithNewlines(entity.getDisplay()), param);
+			final Frame frame = new Frame(entity.getDisplay2(), param);
 
 			ug.getParam().setBackcolor(rose.getHtmlColor(param, ColorParam.background));
 			ug.getParam().setColor(null);
@@ -183,4 +184,9 @@ public class EntityImageBlock implements IEntityImageBlock {
 					yTheoricalPosition + 0 + frame.getPreferredHeight(ug.getStringBounder())));
 		}
 	}
+	
+	public ShapeType getShapeType() {
+		return ShapeType.RECTANGLE;
+	}
+
 }

@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
+import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.svg.SvgGraphics;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
@@ -87,6 +88,7 @@ public class UGraphicSvg extends AbstractUGraphic<SvgGraphics> implements ClipCo
 		registerDriver(UEllipse.class, new DriverEllipseSvg());
 		registerDriver(UImage.class, new DriverImageSvg());
 		registerDriver(UPath.class, new DriverPathSvg(this));
+		registerDriver(DotPath.class, new DriverDotPathSvg());
 	}
 
 	public SvgGraphics getSvgGraphics() {

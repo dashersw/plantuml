@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6703 $
+ * Revision $Revision: 6750 $
  *
  */
 package net.sourceforge.plantuml;
@@ -139,7 +139,7 @@ public class Run {
 	}
 
 	private static void printPattern(AbstractUmlSystemCommandFactory factory) {
-		factory.init();
+		factory.init(null);
 		System.out.println();
 		System.out.println(factory.getClass().getSimpleName().replaceAll("Factory", ""));
 		for (String s : factory.getDescription()) {

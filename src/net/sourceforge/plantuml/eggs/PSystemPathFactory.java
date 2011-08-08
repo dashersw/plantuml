@@ -43,7 +43,7 @@ public class PSystemPathFactory implements PSystemBasicFactory {
 
 	private PSystemPath system;
 
-	public void init() {
+	public void init(String startLine) {
 	}
 
 	final private static Pattern p = Pattern

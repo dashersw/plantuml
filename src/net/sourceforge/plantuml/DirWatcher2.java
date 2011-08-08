@@ -84,11 +84,16 @@ public class DirWatcher2 {
 				modifieds.put(f, new FileWatcher(Collections.singleton(f)));
 				final Future<List<GeneratedImage>> value = executorService.submit(new Callable<List<GeneratedImage>>() {
 					public List<GeneratedImage> call() throws Exception {
-						final List<GeneratedImage> generatedImages = sourceFileReader.getGeneratedImages();
-						final Set<File> files = new HashSet<File>(sourceFileReader.getIncludedFiles());
-						files.add(f);
-						modifieds.put(f, new FileWatcher(files));
-						return Collections.unmodifiableList(generatedImages);
+						try {
+							final List<GeneratedImage> generatedImages = sourceFileReader.getGeneratedImages();
+							final Set<File> files = new HashSet<File>(sourceFileReader.getIncludedFiles());
+							files.add(f);
+							modifieds.put(f, new FileWatcher(files));
+							return Collections.unmodifiableList(generatedImages);
+						} catch (Exception e) {
+							e.printStackTrace();
+							return Collections.emptyList();
+						}
 					}
 				});
 				result.put(f, value);

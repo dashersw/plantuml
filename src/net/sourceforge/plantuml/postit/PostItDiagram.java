@@ -83,20 +83,6 @@ public class PostItDiagram extends UmlDiagram {
 		}
 	}
 
-	// public List<File> createFiles(File suggestedFile, FileFormatOption fileFormatOption) throws IOException,
-	// InterruptedException {
-	// OutputStream os = null;
-	// try {
-	// os = new FileOutputStream(suggestedFile);
-	// createFile(os, 0, fileFormatOption);
-	// } finally {
-	// if (os != null) {
-	// os.close();
-	// }
-	// }
-	// return Arrays.asList(suggestedFile);
-	// }
-
 	public String getDescription() {
 		return "Board of post-it";
 	}

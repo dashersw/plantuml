@@ -56,7 +56,7 @@ import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class Frame implements Component {
 
-	private final List<String> name;
+	private final List<? extends CharSequence> name;
 	private final ISkinParam skinParam;
 	private final Rose rose = new Rose();
 
@@ -64,7 +64,7 @@ public class Frame implements Component {
 	// private final Color lineColor;
 	// private final Font font;
 
-	public Frame(List<String> name, ISkinParam skinParam) {
+	public Frame(List<? extends CharSequence> name, ISkinParam skinParam) {
 		this.name = name;
 		this.skinParam = skinParam;
 		// this.textColor = textColor;

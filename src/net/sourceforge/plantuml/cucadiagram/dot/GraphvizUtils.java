@@ -28,13 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6663 $
+ * Revision $Revision: 6713 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -45,6 +44,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
 
 public class GraphvizUtils {
@@ -58,15 +58,22 @@ public class GraphvizUtils {
 
 	@Deprecated
 	public static Graphviz create(String dotString, String... type) {
+		final AbstractGraphviz result;
 		if (isWindows()) {
-			return new GraphvizWindows(dotString, type);
+			result = new GraphvizWindows(dotString, type);
+		} else {
+			result = new GraphvizLinux(dotString, type);
 		}
-		return new GraphvizLinux(dotString, type);
+		if (OptionFlags.GRAPHVIZCACHE && DotMaker.isJunit()) {
+			return new GraphvizCached(result);
+		}
+		return result;
 	}
 
-	public static Graphviz create2(GraphvizLayoutStrategy strategy, String dotString, String... type) {
-		return new AbstractGraphviz2(getOS(), strategy, dotString, type);
-	}
+	// public static Graphviz create2(GraphvizLayoutStrategy strategy, String
+	// dotString, String... type) {
+	// return new AbstractGraphviz2(getOS(), strategy, dotString, type);
+	// }
 
 	static public File getDotExe() {
 		return create(null, "png").getDotExe();

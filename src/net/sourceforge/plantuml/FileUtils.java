@@ -41,8 +41,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FileUtils {
+
+	private static AtomicInteger counter;
+
+	public static void resetCounter() {
+		counter = new AtomicInteger(0);
+	}
 
 	public static File getTmpDir() {
 		final File tmpDir = new File(System.getProperty("java.io.tmpdir"));
@@ -68,7 +75,16 @@ public class FileUtils {
 		if (suffix.startsWith(".") == false) {
 			throw new IllegalArgumentException();
 		}
-		final File f = File.createTempFile(prefix, suffix);
+		if (prefix == null) {
+			throw new IllegalArgumentException();
+		}
+		final File f;
+		if (counter == null) {
+			f = File.createTempFile(prefix, suffix);
+		} else {
+			final String name = prefix + counter.addAndGet(1) + suffix;
+			f = new File(name);
+		}
 		Log.info("Creating temporary file: " + f);
 		if (OptionFlags.getInstance().isKeepTmpFiles() == false) {
 			f.deleteOnExit();

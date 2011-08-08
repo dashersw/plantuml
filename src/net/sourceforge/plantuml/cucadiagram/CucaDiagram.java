@@ -28,12 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6641 $
+ * Revision $Revision: 6892 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +57,7 @@ import java.util.TreeMap;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.UmlDiagram;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
@@ -63,8 +65,10 @@ import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
+import net.sourceforge.plantuml.cucadiagram.dot.ICucaDiagramFileMaker;
 import net.sourceforge.plantuml.png.PngSplitter;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
+import net.sourceforge.plantuml.svek.CucaDiagramFileMakerSvek;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.xmi.CucaDiagramXmiMaker;
 
@@ -73,8 +77,9 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
-	//private final Map<String, Entity> entities = new LinkedHashMap<String, Entity>();
-	private final Map<String, Entity> entities = new TreeMap<String, Entity>();
+	private final Map<String, Entity> entities = new LinkedHashMap<String, Entity>();
+	// private final Map<String, Entity> entities = new TreeMap<String,
+	// Entity>();
 	private final Map<IEntity, Integer> nbLinks = new HashMap<IEntity, Integer>();
 
 	private final List<Link> links = new ArrayList<Link>();
@@ -227,7 +232,10 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	}
 
 	final public Map<String, Entity> entities() {
-		return Collections.unmodifiableMap(entities);
+		if (OptionFlags.SVEK) {
+			return Collections.unmodifiableMap(entities);
+		}
+		return Collections.unmodifiableMap(new TreeMap<String, Entity>(entities));
 	}
 
 	final public void addLink(Link link) {
@@ -282,6 +290,16 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	abstract protected List<String> getDotStrings();
 
+	final public String[] getDotStringSkek() {
+		final List<String> result = new ArrayList<String>();
+		for (String s : getDotStrings()) {
+			if (s.startsWith("nodesep") || s.startsWith("ranksep")) {
+				result.add(s);
+			}
+		}
+		return result.toArray(new String[result.size()]);
+	}
+
 	// final public List<File> createFiles(File suggestedFile, FileFormatOption
 	// fileFormatOption) throws IOException,
 	// InterruptedException {
@@ -332,7 +350,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		final StringBuilder cmap = new StringBuilder();
 		OutputStream os = null;
 		try {
-			os = new FileOutputStream(suggestedFile);
+			os = new BufferedOutputStream(new FileOutputStream(suggestedFile));
 			this.exportDiagram(os, cmap, 0, fileFormat);
 		} finally {
 			if (os != null) {
@@ -394,7 +412,12 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			}
 			return;
 		}
-		final CucaDiagramFileMaker maker = new CucaDiagramFileMaker(this, flashcodes);
+		final ICucaDiagramFileMaker maker;
+		if (OptionFlags.SVEK) {
+			maker = new CucaDiagramFileMakerSvek(this, flashcodes);
+		} else {
+			maker = new CucaDiagramFileMaker(this, flashcodes);
+		}
 		try {
 			final String cmapResult = maker.createFile(os, getDotStrings(), fileFormatOption);
 			if (cmapResult != null && cmap != null) {

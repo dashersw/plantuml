@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6663 $
+ * Revision $Revision: 6922 $
  *
  */
 package net.sourceforge.plantuml;
@@ -44,6 +44,8 @@ import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 public class OptionFlags {
 
 	static public final boolean PBBACK = false;
+	static public final boolean GRAPHVIZCACHE = false;
+	static public final boolean SVEK = false;
 
 	void reset() {
 		reset(false);
@@ -218,7 +220,7 @@ public class OptionFlags {
 				ps = new PrintStream(new FileOutputStream(logData, true));
 				ps.println("Start of " + file.getName());
 				ps.println(systemError.getDescription());
-				for (String t : systemError.getTitle()) {
+				for (CharSequence t : systemError.getTitle()) {
 					ps.println(t);
 				}
 				systemError.print(ps);

@@ -287,7 +287,7 @@ public class DrawFile {
 						for (DrawFile f : toDelete) {
 							final int cnt = f.useCounter.get();
 							if (cnt != 0) {
-								Log.error("useCounter " + cnt + " for " + f);
+								Log.info("Warning: useCounter " + cnt + " for " + f);
 							}
 							f.deleteNow();
 						}

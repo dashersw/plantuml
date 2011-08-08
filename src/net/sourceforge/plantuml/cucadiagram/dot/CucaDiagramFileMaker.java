@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6607 $
+ * Revision $Revision: 6939 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -106,7 +106,7 @@ import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 
-public final class CucaDiagramFileMaker {
+public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 
 	private final CucaDiagram diagram;
 	private final List<BufferedImage> flashcodes;
@@ -318,7 +318,7 @@ public final class CucaDiagramFileMaker {
 		final Graphviz graphviz = GraphvizUtils.create(dotString, "svg");
 
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		graphviz.createPng(baos);
+		graphviz.createFile(baos);
 		baos.close();
 		dotMaker.clean();
 
@@ -487,7 +487,7 @@ public final class CucaDiagramFileMaker {
 		final Graphviz graphviz = GraphvizUtils.create(dotString, "cmapx", getPngType());
 
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		graphviz.createPng(baos);
+		graphviz.createFile(baos);
 		baos.close();
 
 		final byte[] allData = baos.toByteArray();
@@ -531,7 +531,7 @@ public final class CucaDiagramFileMaker {
 		final Graphviz graphviz = GraphvizUtils.create(dotString, getPngType());
 
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		graphviz.createPng(baos);
+		graphviz.createFile(baos);
 		baos.close();
 
 		final byte[] imageData = baos.toByteArray();
@@ -606,8 +606,8 @@ public final class CucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.HEADER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getHeader(), fontSize, fontFamily,
-				diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
+		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getHeader(), fontSize, fontFamily, diagram
+				.getHeaderAlignement(), VerticalPosition.TOP, 3);
 	}
 
 	private SvgTitler getFooterSvgTitler() throws IOException {
@@ -615,8 +615,8 @@ public final class CucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.FOOTER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getFooter(), fontSize, fontFamily,
-				diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
+		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getFooter(), fontSize, fontFamily, diagram
+				.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
 	}
 
 	private String addTitleEps(EpsStrategy epsStrategy, String eps) throws IOException {
@@ -636,8 +636,8 @@ public final class CucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.FOOTER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor,
-				diagram.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
+		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor, diagram
+				.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
 		return epsTitler.addTitleEps(eps);
 	}
 
@@ -646,8 +646,8 @@ public final class CucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.HEADER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor,
-				diagram.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
+		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor, diagram
+				.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
 		this.deltaY += epsTitler.getHeight();
 		return epsTitler.addTitleEps(eps);
 	}
@@ -685,7 +685,7 @@ public final class CucaDiagramFileMaker {
 	DrawFile createImage(Entity entity, FileFormatOption option) throws IOException {
 		final double dpiFactor = diagram.getDpiFactor(option);
 		if (entity.getType() == EntityType.NOTE) {
-			return createImageForNote(entity.getDisplay(), entity.getSpecificBackColor(), option, entity.getParent());
+			return createImageForNote(entity.getDisplay2(), entity.getSpecificBackColor(), option, entity.getParent());
 		}
 		if (entity.getType() == EntityType.ACTOR) {
 			return createImageForActor(entity, dpiFactor);
@@ -700,14 +700,14 @@ public final class CucaDiagramFileMaker {
 		return null;
 	}
 
-	private DrawFile createImageForNote(String display, HtmlColor noteBackColor, final FileFormatOption option,
+	private DrawFile createImageForNote(List<? extends CharSequence> display2, HtmlColor noteBackColor, final FileFormatOption option,
 			Group parent) throws IOException {
 
 		final Rose skin = new Rose();
 
 		final ISkinParam skinParam = new SkinParamBackcolored(getSkinParam(), noteBackColor);
 		final Component comp = skin
-				.createComponent(ComponentType.NOTE, skinParam, StringUtils.getWithNewlines(display));
+				.createComponent(ComponentType.NOTE, skinParam, display2);
 
 		final double dpiFactor = diagram.getDpiFactor(option);
 		final int width = (int) (comp.getPreferredWidth(stringBounder) * dpiFactor);
@@ -747,8 +747,8 @@ public final class CucaDiagramFileMaker {
 			public File getNow() throws IOException {
 				final File fEps = FileUtils.createTempFile("plantumlB", ".eps");
 				final PrintWriter pw = new PrintWriter(fEps);
-				final UGraphicEps uEps = new UGraphicEps(getSkinParam().getColorMapper(),
-						getEpsStrategy(option.getFileFormat()));
+				final UGraphicEps uEps = new UGraphicEps(getSkinParam().getColorMapper(), getEpsStrategy(option
+						.getFileFormat()));
 				comp.drawU(uEps, new Dimension(width, height), new SimpleContext2D(false));
 				pw.print(uEps.getEPSCode());
 				pw.close();
@@ -908,7 +908,7 @@ public final class CucaDiagramFileMaker {
 			final Graphviz graphviz = GraphvizUtils.create(dotString, "eps");
 
 			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			graphviz.createPng(baos);
+			graphviz.createFile(baos);
 			baos.close();
 
 			dotMaker.clean();
@@ -1033,7 +1033,7 @@ public final class CucaDiagramFileMaker {
 
 	private void populateImagesLink(FileFormatOption option) throws IOException {
 		for (Link link : diagram.getLinks()) {
-			final String note = link.getNote();
+			final List<? extends CharSequence> note = link.getNote();
 			if (note == null) {
 				continue;
 			}
@@ -1053,7 +1053,7 @@ public final class CucaDiagramFileMaker {
 				sb.append(s);
 				sb.append("\n");
 				s = st.nextToken();
-				if (s.equalsIgnoreCase("grestore") == false) {
+				if (s.equalsIgnoreCase("grestore") == false && st.hasMoreTokens()) {
 					s = st.nextToken();
 					if (s.equalsIgnoreCase("grestore") == false) {
 						throw new IllegalStateException();

@@ -91,11 +91,12 @@ abstract class DotCommon {
 		final String stereo = entity.getStereotype() == null ? null : entity.getStereotype().getLabel();
 		if (isThereLabel(stereotype)) {
 			sb.append("<BR ALIGN=\"LEFT\"/>");
-			sb.append(manageHtmlIB(stereotype.getLabel(), classes ? FontParam.CLASS_STEREOTYPE
-					: FontParam.OBJECT_STEREOTYPE, stereo));
-			sb.append("<BR/>");
+			for (String st : stereotype.getLabels()) {
+				sb.append(manageHtmlIB(st, classes ? FontParam.CLASS_STEREOTYPE : FontParam.OBJECT_STEREOTYPE, stereo));
+				sb.append("<BR/>");
+			}
 		}
-		String display = entity.getDisplay();
+		String display = StringUtils.getMergedLines(entity.getDisplay2());
 		final boolean italic = entity.getType() == EntityType.ABSTRACT_CLASS
 				|| entity.getType() == EntityType.INTERFACE;
 		if (italic) {
@@ -126,7 +127,7 @@ abstract class DotCommon {
 		final StringBuilder result = new StringBuilder();
 		for (char c : s.toCharArray()) {
 			if (c > 127 || c == '&' || c == '|') {
-			// if (c > 127 || c == '&') {
+				// if (c > 127 || c == '&') {
 				final int i = c;
 				result.append("&#" + i + ";");
 			} else {
@@ -221,7 +222,7 @@ abstract class DotCommon {
 	}
 
 	protected final int getLonguestHeader(IEntity entity) {
-		int result = entity.getDisplay().length();
+		int result = StringUtils.getMergedLines(entity.getDisplay2()).length();
 		final Stereotype stereotype = getStereotype(entity);
 		if (isThereLabel(stereotype)) {
 			final int size = stereotype.getLabel().length();

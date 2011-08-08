@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6591 $
+ * Revision $Revision: 6932 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -55,7 +55,7 @@ import net.sourceforge.plantuml.graphic.Text;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UFont;
 
-final class DotExpression {
+public final class DotExpression {
 
 	private final StringBuilder sb = new StringBuilder();
 
@@ -73,7 +73,7 @@ final class DotExpression {
 
 	private boolean hasImg;
 
-	DotExpression(ColorMapper colorMapper, String html, int defaultFontSize, HtmlColor color, String fontFamily,
+	public DotExpression(ColorMapper colorMapper, String html, int defaultFontSize, HtmlColor color, String fontFamily,
 			int style, FileFormat fileFormat) {
 		if (html.contains("\n")) {
 			throw new IllegalArgumentException(html);

@@ -40,7 +40,7 @@ public class PSystemLostFactory implements PSystemBasicFactory {
 
 	private PSystemLost system;
 
-	public void init() {
+	public void init(String startLine) {
 	}
 
 	public boolean executeLine(String line) {

@@ -40,6 +40,7 @@ import java.util.List;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.svek.IEntityImage;
 
 public abstract class EntityUtils {
 
@@ -52,8 +53,8 @@ public abstract class EntityUtils {
 				return ent.getFieldsToDisplay();
 			}
 
-			public String getDisplay() {
-				return ent.getDisplay();
+			public List<? extends CharSequence> getDisplay2() {
+				return ent.getDisplay2();
 			}
 
 			public Group getParent() {
@@ -139,16 +140,16 @@ public abstract class EntityUtils {
 				return ent.compareTo(other);
 			}
 
-			public int getIndex() {
-				return ent.getIndex();
-			}
-
 			public int getXposition() {
 				return ent.getXposition();
 			}
 
 			public void setXposition(int pos) {
 				ent.setXposition(pos);
+			}
+
+			public IEntityImage getSvekImage() {
+				return ent.getSvekImage();
 			}
 
 		};

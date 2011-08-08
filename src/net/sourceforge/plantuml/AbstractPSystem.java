@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6514 $
+ * Revision $Revision: 6922 $
  *
  */
 package net.sourceforge.plantuml;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -92,7 +93,7 @@ public abstract class AbstractPSystem implements PSystem {
 		}
 		OutputStream os = null;
 		try {
-			os = new FileOutputStream(suggestedFile);
+			os = new BufferedOutputStream(new FileOutputStream(suggestedFile));
 			this.exportDiagram(os, null, 0, fileFormat);
 		} finally {
 			if (os != null) {
@@ -102,7 +103,7 @@ public abstract class AbstractPSystem implements PSystem {
 		return Arrays.asList(suggestedFile);
 	}
 
-	public List<String> getTitle() {
+	public List<? extends CharSequence> getTitle() {
 		if (source == null) {
 			return Collections.emptyList();
 		}

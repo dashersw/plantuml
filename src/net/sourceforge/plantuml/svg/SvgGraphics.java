@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6600 $
+ * Revision $Revision: 6910 $
  *
  */
 package net.sourceforge.plantuml.svg;
@@ -330,13 +330,13 @@ public class SvgGraphics {
 	private Transformer getTransformer() throws TransformerException {
 		// Get a TransformerFactory object.
 		final TransformerFactory xformFactory = TransformerFactory.newInstance();
-//		try {
-//			final Class<?> factoryClass = Class
-//					.forName("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-//			xformFactory = (TransformerFactory) factoryClass.newInstance();
-//		} catch (Exception e) {
-//			xformFactory = TransformerFactory.newInstance();
-//		}
+		// try {
+		// final Class<?> factoryClass = Class
+		// .forName("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
+		// xformFactory = (TransformerFactory) factoryClass.newInstance();
+		// } catch (Exception e) {
+		// xformFactory = TransformerFactory.newInstance();
+		// }
 		Log.info("TransformerFactory=" + xformFactory.getClass());
 
 		// Get an XSL Transformer object.
@@ -362,7 +362,7 @@ public class SvgGraphics {
 		// Document object
 		final DOMSource source = new DOMSource(document);
 
-		String style = "width:" + maxX + ";height:" + maxY + ";";
+		String style = "width:" + maxX + "px;height:" + maxY + "px;";
 		if (backcolor != null) {
 			style += "background:" + backcolor + ";";
 		}
@@ -399,6 +399,9 @@ public class SvgGraphics {
 			} else if (type == USegmentType.SEG_QUADTO) {
 				sb.append("Q" + (coord[0] + x) + "," + (coord[1] + y) + " " + (coord[2] + x) + "," + (coord[3] + y)
 						+ " ");
+			} else if (type == USegmentType.SEG_CUBICTO) {
+				sb.append("C" + (coord[0] + x) + "," + (coord[1] + y) + " " + (coord[2] + x) + "," + (coord[3] + y)
+						+ " " + (coord[4] + x) + "," + (coord[5] + y) + " ");
 			} else if (type == USegmentType.SEG_CLOSE) {
 				// Nothing
 			} else {
@@ -409,6 +412,7 @@ public class SvgGraphics {
 		final Element elt = (Element) document.createElement("path");
 		elt.setAttribute("d", sb.toString());
 		elt.setAttribute("style", getStyle());
+		elt.setAttribute("fill", fill);
 		getG().appendChild(elt);
 		ensureVisible(x, y);
 	}

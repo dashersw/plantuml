@@ -71,7 +71,7 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 
 	public EntityImageClass2(IEntity entity, ISkinParam skinParam, Collection<Link> links) {
 		super(entity, skinParam);
-		this.name = TextBlockUtils.create(StringUtils.getWithNewlines(entity.getDisplay()), new FontConfiguration(
+		this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(
 				getFont(FontParam.CLASS), HtmlColor.BLACK), HorizontalAlignement.CENTER);
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype == null || stereotype.getLabel() == null) {
@@ -128,9 +128,8 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
 		final Dimension2D dimMethods = methods.calculateDimension(stringBounder);
 		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
-		final double width = Math.max(
-				Math.max(dimMethods.getWidth() + 2 * xMarginFieldsOrMethod, dimFields.getWidth() + 2
-						* xMarginFieldsOrMethod), dimTitle.getWidth() + 2 * xMarginCircle);
+		final double width = Math.max(Math.max(dimMethods.getWidth() + 2 * xMarginFieldsOrMethod, dimFields.getWidth()
+				+ 2 * xMarginFieldsOrMethod), dimTitle.getWidth() + 2 * xMarginCircle);
 		final double height = getMethodOrFieldHeight(dimMethods) + getMethodOrFieldHeight(dimFields)
 				+ dimTitle.getHeight();
 		return new Dimension2DDouble(width, height);
@@ -152,8 +151,8 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 		if (circledCharacter == null) {
 			return nameAndStereo;
 		}
-		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(
-				nameAndStereo.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
+		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(nameAndStereo
+				.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
 	}
 
 	private Dimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {

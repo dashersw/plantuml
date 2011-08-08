@@ -43,6 +43,7 @@ import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.UnusedSpace;
+import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.skin.UDrawable;
 import net.sourceforge.plantuml.ugraphic.AbstractUGraphic;
 import net.sourceforge.plantuml.ugraphic.ClipContainer;
@@ -76,7 +77,7 @@ public class UGraphicEps extends AbstractUGraphic<EpsGraphics> implements ClipCo
 		registerDriver(UPolygon.class, new DriverPolygonEps(this));
 		registerDriver(UEllipse.class, new DriverEllipseEps());
 		registerDriver(UImage.class, new DriverImageEps());
-		// registerDriver(UPath.class, new DriverPathSvg(this));
+		registerDriver(DotPath.class, new DriverDotPathEps());
 	}
 
 	public void close() {

@@ -40,14 +40,13 @@ import java.util.List;
 import net.sourceforge.plantuml.SpecificBackcolorable;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
+import net.sourceforge.plantuml.svek.IEntityImage;
 
 public interface IEntity extends Imaged, SpecificBackcolorable, Comparable<IEntity> {
 
-	public int getIndex();
-
 	public Group getParent();
 
-	public String getDisplay();
+	public List<? extends CharSequence> getDisplay2();
 
 	public EntityType getType();
 
@@ -78,5 +77,7 @@ public interface IEntity extends Imaged, SpecificBackcolorable, Comparable<IEnti
 	public int getXposition();
 
 	public void setXposition(int pos);
+
+	public IEntityImage getSvekImage();
 
 }

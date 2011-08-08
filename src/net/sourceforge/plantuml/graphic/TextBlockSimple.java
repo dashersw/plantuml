@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6577 $
+ * Revision $Revision: 6936 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -36,6 +36,7 @@ package net.sourceforge.plantuml.graphic;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -52,7 +53,7 @@ class TextBlockSimple implements TextBlock {
 			HorizontalAlignement horizontalAlignement) {
 		for (CharSequence s : texts) {
 			if (s instanceof Stereotype) {
-				lines.add(createLineForStereotype(fontConfiguration, (Stereotype) s, horizontalAlignement));
+				lines.addAll(createLinesForStereotype(fontConfiguration, (Stereotype) s, horizontalAlignement));
 			} else if (s instanceof EmbededDiagram) {
 				lines.add(new EmbededSystemLine((EmbededDiagram) s));
 			} else {
@@ -61,10 +62,14 @@ class TextBlockSimple implements TextBlock {
 		}
 	}
 
-	private SingleLine createLineForStereotype(FontConfiguration fontConfiguration, Stereotype s,
+	private List<SingleLine> createLinesForStereotype(FontConfiguration fontConfiguration, Stereotype s,
 			HorizontalAlignement horizontalAlignement) {
 		assert s.getLabel() != null;
-		return new SingleLine(s.getLabel(), fontConfiguration.add(FontStyle.ITALIC), horizontalAlignement);
+		final List<SingleLine> result = new ArrayList<SingleLine>();
+		for (String st : s.getLabels()) {
+			result.add(new SingleLine(st, fontConfiguration.add(FontStyle.ITALIC), horizontalAlignement));
+		}
+		return Collections.unmodifiableList(result);
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {

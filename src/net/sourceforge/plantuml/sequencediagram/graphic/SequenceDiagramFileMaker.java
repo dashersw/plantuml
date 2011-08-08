@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6594 $
+ * Revision $Revision: 6922 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -144,7 +144,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 	}
 
 	private PageSplitter create(DrawableSet drawableSet, Map<Newpage, Double> positions, boolean showFootbox,
-			List<String> title) {
+			List<? extends CharSequence> title) {
 
 		final double headerHeight = drawableSet.getHeadHeight(dummyStringBounder);
 		final double tailHeight = drawableSet.getTailHeight(dummyStringBounder, showFootbox);

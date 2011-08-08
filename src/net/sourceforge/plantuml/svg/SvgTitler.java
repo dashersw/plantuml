@@ -53,14 +53,14 @@ import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 
 public final class SvgTitler {
 
-	private final List<String> text;
+	private final List<? extends CharSequence> text;
 	private final HorizontalAlignement horizontalAlignement;
 	private final VerticalPosition verticalPosition;
 	private final int margin;
 	private final TextBlock textBloc;
 	private final ColorMapper colorMapper;
 
-	public SvgTitler(ColorMapper colorMapper, HtmlColor textColor, List<String> text, int fontSize, String fontFamily,
+	public SvgTitler(ColorMapper colorMapper, HtmlColor textColor, List<? extends CharSequence> text, int fontSize, String fontFamily,
 			HorizontalAlignement horizontalAlignement, VerticalPosition verticalPosition, int margin) {
 		this.text = text;
 		this.colorMapper = colorMapper;

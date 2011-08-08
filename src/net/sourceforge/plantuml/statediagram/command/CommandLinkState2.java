@@ -62,7 +62,8 @@ public class CommandLinkState2 extends SingleLineCommand2<StateDiagram> {
 				new RegexLeaf("^"), // 
 				getStatePattern("ENT1"), //
 				new RegexLeaf("\\s*"), // 
-				new RegexLeaf("ARROW",
+				new RegexLeaf(
+						"ARROW",
 						"((-+)(left|right|up|down|le?|ri?|up?|do?)?(?:\\[((?:#\\w+|dotted|dashed|bold)(?:,#\\w+|,dotted|,dashed|,bold)*)\\])?(-*)\\>)"),
 				new RegexLeaf("\\s*"), // 
 				getStatePattern("ENT2"), //
@@ -72,7 +73,8 @@ public class CommandLinkState2 extends SingleLineCommand2<StateDiagram> {
 	}
 
 	private static RegexLeaf getStatePattern(String name) {
-		return new RegexLeaf(name, "([\\p{L}0-9_.]+|\\[\\*\\])\\s*(\\<\\<.*\\>\\>)?\\s*(#\\w+)?");
+		return new RegexLeaf(name,
+				"([\\p{L}0-9_.]+|[\\p{L}0-9_.]+\\[H\\]|\\[\\*\\]|\\[H\\])\\s*(\\<\\<.*\\>\\>)?\\s*(#\\w+)?");
 	}
 
 	@Override
@@ -140,12 +142,21 @@ public class CommandLinkState2 extends SingleLineCommand2<StateDiagram> {
 		if (code.startsWith("[*]")) {
 			return getSystem().getStart();
 		}
+		if (code.equalsIgnoreCase("[H]")) {
+			return getSystem().getHistorical();
+		}
+		if (code.endsWith("[H]")) {
+			return getSystem().getHistorical(code.substring(0, code.length() - 3));
+		}
 		return getSystem().getOrCreateClass(code);
 	}
 
 	private IEntity getEntityEnd(String code) {
 		if (code.startsWith("[*]")) {
 			return getSystem().getEnd();
+		}
+		if (code.endsWith("[H]")) {
+			return getSystem().getHistorical(code.substring(0, code.length() - 3));
 		}
 		return getSystem().getOrCreateClass(code);
 	}

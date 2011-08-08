@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6581 $
+ * Revision $Revision: 6750 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -82,7 +82,7 @@ public abstract class AbstractUmlSystemCommandFactory implements PSystemCommandF
 		throw new IllegalArgumentException();
 	}
 
-	final public void init() {
+	final public void init(String startLine) {
 		cmds = new ArrayList<Command>();
 		initCommands();
 	}

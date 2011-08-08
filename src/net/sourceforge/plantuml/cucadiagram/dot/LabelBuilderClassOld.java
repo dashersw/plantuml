@@ -45,6 +45,8 @@ import net.sourceforge.plantuml.cucadiagram.Member;
 
 class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBuilder {
 
+	private BorderMode mode = BorderMode.NO_BORDER_CELLSPACING_OLD;
+
 	LabelBuilderClassOld(FileFormat fileFormat, DotData data, IEntity entity) {
 		super(fileFormat, data, entity);
 	}
@@ -74,7 +76,7 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 
 		if (showFields == false && showMethods == false) {
 			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
-					BorderMode.NO_BORDER_CELLSPACING));
+					mode));
 		} else {
 			sb.append("<TABLE BGCOLOR=" + getColorString(ColorParam.classBackground, stereo) + " COLOR="
 					+ getColorString(ColorParam.classBorder, stereo)
@@ -120,6 +122,10 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 			sb.append("</TABLE>");
 		}
 		// sb.append(">");
+	}
+
+	public void patch() {
+		mode = BorderMode.NO_BORDER_CELLSPACING_NEW;
 	}
 
 }

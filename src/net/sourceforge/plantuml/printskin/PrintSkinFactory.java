@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6581 $
+ * Revision $Revision: 6750 $
  *
  */
 package net.sourceforge.plantuml.printskin;
@@ -44,7 +44,7 @@ public class PrintSkinFactory implements PSystemBasicFactory {
 
 	private PrintSkin system;
 
-	public void init() {
+	public void init(String startLine) {
 	}
 
 	public PrintSkin getSystem() {

@@ -66,7 +66,7 @@ class AbstractGraphviz2 implements Graphviz {
 	}
 
 
-	final public void createPng(OutputStream os) throws IOException, InterruptedException {
+	final public void createFile(OutputStream os) throws IOException, InterruptedException {
 		if (dotString == null) {
 			throw new IllegalArgumentException();
 		}

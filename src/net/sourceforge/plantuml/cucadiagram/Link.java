@@ -28,15 +28,18 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6655 $
+ * Revision $Revision: 6939 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 import java.awt.geom.Dimension2D;
 import java.util.Arrays;
+import java.util.List;
 
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
+import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -59,7 +62,10 @@ public class Link implements Imaged {
 	final private String uid = "LNK" + UniqueSequence.getValue();
 
 	private DrawFile imageFile;
-	private String note;
+
+	private List<? extends CharSequence> note;
+	private Position notePosition;
+
 	private boolean invis = false;
 	private double weight = 1.0;
 
@@ -110,12 +116,12 @@ public class Link implements Imaged {
 	}
 
 	public Link getInv() {
-//		if (getLength() == 1) {
-//			final int x = cl1.getXposition();
-//			cl2.setXposition(x-1);
-//		}
-		final Link result = new Link(cl2, cl1, type.getInv(), label, length, qualifier2, qualifier1, labeldistance, labelangle,
-				specificColor);
+		// if (getLength() == 1) {
+		// final int x = cl1.getXposition();
+		// cl2.setXposition(x-1);
+		// }
+		final Link result = new Link(cl2, cl1, type.getInv(), label, length, qualifier2, qualifier1, labeldistance,
+				labelangle, specificColor);
 		result.inverted = true;
 		return result;
 	}
@@ -232,12 +238,22 @@ public class Link implements Imaged {
 		this.weight = weight;
 	}
 
-	public final String getNote() {
+	public final List<? extends CharSequence> getNote() {
 		return note;
 	}
 
-	public final void setNote(String note) {
+	public final Position getNotePosition() {
+		return notePosition;
+	}
+
+	public final void addNote(List<? extends CharSequence> note, Position position) {
 		this.note = note;
+		this.notePosition = position;
+	}
+
+	public final void addNote(String n, Position position) {
+		this.note = StringUtils.getWithNewlines(n);
+		this.notePosition = position;
 	}
 
 	public DrawFile getImageFile() {
@@ -338,5 +354,4 @@ public class Link implements Imaged {
 	public final void setConstraint(boolean constraint) {
 		this.constraint = constraint;
 	}
-
 }

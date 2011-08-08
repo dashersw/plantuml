@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6591 $
+ * Revision $Revision: 6922 $
  *
  */
 package net.sourceforge.plantuml.png;
@@ -55,14 +55,14 @@ import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 public class PngTitler {
 
 	private final HtmlColor textColor;
-	private final List<String> text;
+	private final List<? extends CharSequence> text;
 	private final int fontSize;
 	private final String fontFamily;
 	private final HorizontalAlignement horizontalAlignement;
 	private final VerticalPosition verticalPosition;
 	private final ColorMapper colorMapper;
 
-	public PngTitler(ColorMapper colorMapper, HtmlColor textColor, List<String> text, int fontSize, String fontFamily,
+	public PngTitler(ColorMapper colorMapper, HtmlColor textColor, List<? extends CharSequence> text, int fontSize, String fontFamily,
 			HorizontalAlignement horizontalAlignement, VerticalPosition verticalPosition) {
 		this.textColor = textColor;
 		this.colorMapper = colorMapper;
@@ -99,7 +99,7 @@ public class PngTitler {
 		return TextBlockUtils.create(text, new FontConfiguration(normalFont, textColor), horizontalAlignement);
 	}
 
-	static private BufferedImage addTitle(ColorMapper colorMapper, BufferedImage im, HtmlColor background, HtmlColor textColor, List<String> text,
+	static private BufferedImage addTitle(ColorMapper colorMapper, BufferedImage im, HtmlColor background, HtmlColor textColor, List<? extends CharSequence> text,
 			int fontSize, String fontFamily, HorizontalAlignement horizontalAlignement,
 			VerticalPosition verticalPosition, int margin) {
 

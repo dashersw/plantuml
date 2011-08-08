@@ -33,6 +33,7 @@
  */
 package net.sourceforge.plantuml;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class SourceStringReader {
 	}
 
 	public String generateImage(File f) throws IOException {
-		final FileOutputStream os = new FileOutputStream(f);
+		final OutputStream os = new BufferedOutputStream(new FileOutputStream(f));
 		final String result = generateImage(os, 0);
 		os.close();
 		return result;

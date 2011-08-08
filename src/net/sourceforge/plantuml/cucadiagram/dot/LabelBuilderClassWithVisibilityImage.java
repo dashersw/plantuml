@@ -69,7 +69,7 @@ class LabelBuilderClassWithVisibilityImage extends LabelBuilderObjectOrClass imp
 		// sb.append("<");
 		if (showFields == false && showMethods == false) {
 			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
-					BorderMode.NO_BORDER_CELLSPACING));
+					BorderMode.NO_BORDER_CELLSPACING_OLD));
 		} else {
 			final String stereo = getEntity().getStereotype() == null ? null : getEntity().getStereotype().getLabel();
 			final int longuestHeader = getLonguestHeader(getEntity());

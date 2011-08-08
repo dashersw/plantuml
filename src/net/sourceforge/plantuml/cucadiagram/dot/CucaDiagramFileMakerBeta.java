@@ -37,6 +37,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,7 +70,7 @@ public final class CucaDiagramFileMakerBeta {
 			InterruptedException {
 		OutputStream os = null;
 		try {
-			os = new FileOutputStream(suggested);
+			os = new BufferedOutputStream(new FileOutputStream(suggested));
 			createFile(os, dotStrings, fileFormat);
 		} finally {
 			if (os != null) {

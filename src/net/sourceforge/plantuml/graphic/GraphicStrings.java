@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6591 $
+ * Revision $Revision: 6937 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -48,17 +48,22 @@ import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.directdot.DotText;
+import net.sourceforge.plantuml.eps.EpsStrategy;
 import net.sourceforge.plantuml.png.PngIO;
+import net.sourceforge.plantuml.svek.IEntityImage;
+import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UImage;
+import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
 
-public class GraphicStrings {
+public class GraphicStrings implements IEntityImage {
 
 	private final HtmlColor background;
 
@@ -120,6 +125,15 @@ public class GraphicStrings {
 			final UGraphicTxt txt = new UGraphicTxt();
 			drawU(txt);
 			txt.getCharArea().print(new PrintStream(os));
+		} else if (fileFormat == FileFormat.EPS) {
+			final UGraphicEps ug = new UGraphicEps(colorMapper, EpsStrategy.getDefault2());
+			drawU(ug);
+			os.write(ug.getEPSCode().getBytes());
+		} else if (fileFormat == FileFormat.DOT) {
+			final DotText dotText = new DotText(strings, HtmlColor.getColorIfValid("#33FF02"), HtmlColor.BLACK);
+			final StringBuilder sb = new StringBuilder();
+			dotText.generateDot(sb);
+			os.write(sb.toString().getBytes());
 		} else {
 			throw new UnsupportedOperationException();
 		}
@@ -159,6 +173,24 @@ public class GraphicStrings {
 			}
 		}
 		return size;
+	}
+
+	public void drawU(UGraphic ug, double theoricalPosition, double theoricalPosition2) {
+		drawU(ug);
+	}
+
+	public Dimension2D getDimension(StringBounder stringBounder) {
+		final TextBlock textBlock = TextBlockUtils.create(strings, new FontConfiguration(font, green),
+				HorizontalAlignement.LEFT);
+		return textBlock.calculateDimension(stringBounder);
+	}
+
+	public ShapeType getShapeType() {
+		return ShapeType.RECTANGLE;
+	}
+
+	public HtmlColor getBackcolor() {
+		return background;
 	}
 
 }
