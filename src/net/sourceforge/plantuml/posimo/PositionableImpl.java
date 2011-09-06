@@ -27,51 +27,36 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 3837 $
  *
+ * Revision $Revision: 4236 $
+ * 
  */
-package net.sourceforge.plantuml.swing;
+package net.sourceforge.plantuml.posimo;
 
-import net.sourceforge.plantuml.GeneratedImage;
+import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 
-class SimpleLine implements Comparable<SimpleLine> {
+public class PositionableImpl implements Positionable {
 
-	private final GeneratedImage generatedImage;
+	private final Point2D pos;
 
-	public SimpleLine(GeneratedImage generatedImage) {
-		this.generatedImage = generatedImage;
+	private final Dimension2D dim;
+
+	public PositionableImpl(double x, double y, Dimension2D dim) {
+		this.pos = new Point2D.Double(x, y);
+		this.dim = dim;
 	}
 
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder(generatedImage.getPngFile().getName());
-		sb.append(" ");
-		sb.append(generatedImage.getDescription());
-		return sb.toString();
+	public PositionableImpl(Point2D pt, Dimension2D dim) {
+		this(pt.getX(), pt.getY(), dim);
 	}
 
-	@Override
-	public int hashCode() {
-		return generatedImage.hashCode();
+	public Point2D getPosition() {
+		return pos;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		final SimpleLine this2 = (SimpleLine) obj;
-		return this2.generatedImage.equals(this.generatedImage);
-	}
-
-	public boolean exists() {
-		return generatedImage.getPngFile().exists();
-	}
-
-	public int compareTo(SimpleLine this2) {
-		return this.generatedImage.compareTo(this2.generatedImage);
-	}
-
-	public GeneratedImage getGeneratedImage() {
-		return generatedImage;
+	public Dimension2D getSize() {
+		return dim;
 	}
 
 }
