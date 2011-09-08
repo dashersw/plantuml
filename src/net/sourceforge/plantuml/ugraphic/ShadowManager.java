@@ -28,33 +28,50 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7225 $
+ * Revision $Revision: 6590 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.ugraphic;
 
-import java.util.List;
+import java.awt.Color;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.sequencediagram.LifeEventType;
-import net.sourceforge.plantuml.sequencediagram.Participant;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+public class ShadowManager {
+	
+	// http://www.w3schools.com/svg/svg_feoffset.asp
 
-public class CommandActivate extends SingleLineCommand<SequenceDiagram> {
+	private final int c1;
+	private final int c2;
 
-	public CommandActivate(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^(activate|deactivate|destroy|create)\\s+([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*(#\\w+)?$");
+	public ShadowManager(int c1, int c2) {
+		this.c1 = c1;
+		this.c2 = c2;
 	}
 
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		final LifeEventType type = LifeEventType.valueOf(arg.get(0).toUpperCase());
-		final Participant p = getSystem().getOrCreateParticipant(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1)));
-		getSystem().activate(p, type, HtmlColor.getColorIfValid(arg.get(2)));
-		return CommandExecutionResult.ok();
+	public double[] getShadowDeltaPoints(double deltaShadow, double diff, double[] points) {
+		double cx = 0;
+		double cy = 0;
+		for (int i = 0; i < points.length; i += 2) {
+			cx += points[i];
+			cy += points[i + 1];
+		}
+		final int nbPoints = points.length / 2;
+
+		cx = cx / nbPoints;
+		cy = cy / nbPoints;
+
+		final double[] result = new double[points.length];
+		for (int i = 0; i < result.length; i += 2) {
+			final double diffx = points[i] > cx ? -diff : diff;
+			final double diffy = points[i + 1] > cy ? -diff : diff;
+			result[i] = points[i] + diffx + deltaShadow;
+			result[i + 1] = points[i + 1] + diffy + deltaShadow;
+		}
+		return result;
+	}
+
+	public Color getColor(double delta, double total) {
+		final int c = (int) (c2 + 1.0 * delta / total * (c1 - c2));
+		return new Color(c, c, c);
 	}
 
 }

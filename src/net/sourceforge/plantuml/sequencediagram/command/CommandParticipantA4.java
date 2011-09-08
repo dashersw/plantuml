@@ -28,33 +28,31 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7225 $
+ * Revision $Revision: 6109 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
 
-import java.util.List;
-
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.sequencediagram.LifeEventType;
-import net.sourceforge.plantuml.sequencediagram.Participant;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandActivate extends SingleLineCommand<SequenceDiagram> {
+public class CommandParticipantA4 extends CommandParticipant {
 
-	public CommandActivate(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^(activate|deactivate|destroy|create)\\s+([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*(#\\w+)?$");
+	public CommandParticipantA4(SequenceDiagram sequenceDiagram) {
+		super(sequenceDiagram, getRegexConcat());
 	}
 
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		final LifeEventType type = LifeEventType.valueOf(arg.get(0).toUpperCase());
-		final Participant p = getSystem().getOrCreateParticipant(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(1)));
-		getSystem().activate(p, type, HtmlColor.getColorIfValid(arg.get(2)));
-		return CommandExecutionResult.ok();
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^"), //
+				new RegexLeaf("TYPE", "(participant|actor)"), //
+				new RegexLeaf("\\s+"), //
+				new RegexLeaf("CODE", "\"([^\"]+)\""), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("STEREO", "(?:\\s*(\\<\\<.*\\>\\>))?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("COLOR", "(#\\w+)?"), // 
+				new RegexLeaf("$"));
 	}
 
 }

@@ -41,9 +41,14 @@ import net.sourceforge.plantuml.ugraphic.UShape;
 public class DriverEllipseEps implements UDriver<EpsGraphics> {
 
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, EpsGraphics eps) {
-		final UEllipse rect = (UEllipse) ushape;
-		final double width = rect.getWidth();
-		final double height = rect.getHeight();
+		final UEllipse shape = (UEllipse) ushape;
+		final double width = shape.getWidth();
+		final double height = shape.getHeight();
+
+		// Shadow
+		if (shape.getDeltaShadow() != 0) {
+			eps.epsEllipseShadow(x + width / 2, y + height / 2, width / 2, height / 2, shape.getDeltaShadow());
+		}
 
 		eps.setFillColor(mapper.getMappedColor(param.getBackcolor()));
 		eps.setStrokeColor(mapper.getMappedColor(param.getColor()));
