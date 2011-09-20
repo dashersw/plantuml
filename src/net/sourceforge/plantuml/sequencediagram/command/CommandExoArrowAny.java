@@ -64,7 +64,7 @@ abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
 		final Participant p = getSystem().getOrCreateParticipant(
 				StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(posParticipant)));
 
-		final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<") || arrow.contains("//")
+		final boolean sync = arrow.contains(">>") || arrow.contains("<<") || arrow.contains("//")
 				|| arrow.contains("\\\\");
 		final boolean dotted = arrow.contains("--");
 

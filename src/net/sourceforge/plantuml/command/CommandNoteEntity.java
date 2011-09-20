@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6575 $
+ * Revision $Revision: 7241 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -67,8 +67,10 @@ final public class CommandNoteEntity extends SingleLineCommand<AbstractEntityDia
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
 		if (position == Position.RIGHT) {
 			link = new Link(cl1, note, type, null, 1);
+			link.setHorizontalSolitary(true);
 		} else if (position == Position.LEFT) {
 			link = new Link(note, cl1, type, null, 1);
+			link.setHorizontalSolitary(true);
 		} else if (position == Position.BOTTOM) {
 			link = new Link(cl1, note, type, null, 2);
 		} else if (position == Position.TOP) {

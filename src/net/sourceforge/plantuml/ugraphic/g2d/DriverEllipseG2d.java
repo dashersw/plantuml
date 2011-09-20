@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7143 $
+ * Revision $Revision: 7240 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -55,7 +55,7 @@ public class DriverEllipseG2d extends DriverShadowedG2d implements UDriver<Graph
 
 			// Shadow
 			if (shape.getDeltaShadow() != 0) {
-				drawShadow(g2d, ellipse, x, y, shape.getDeltaShadow());
+				drawShadow(g2d, ellipse, shape.getDeltaShadow());
 			}
 
 			if (param.getBackcolor() != null) {

@@ -28,12 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4681 $
+ * Revision $Revision: 7236 $
  *
  */
 package net.sourceforge.plantuml.ugraphic;
 
-public class ULine implements UShape {
+public class ULine extends AbstractShadowable {
 
 	private final double dx;
 	private final double dy;

@@ -645,6 +645,10 @@ public class Line implements Moveable {
 		return opale;
 	}
 
+	public boolean isHorizontalSolitary() {
+		return link.isHorizontalSolitary();
+	}
+
 	// public void moveSvek(double deltaX, double deltaY) {
 	// if (startTailLabelXY != null) {
 	// startTailLabelXY.moveSvek(deltaX, deltaY);

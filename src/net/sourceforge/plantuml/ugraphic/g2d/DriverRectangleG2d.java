@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7143 $
+ * Revision $Revision: 7240 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -63,7 +63,7 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<Gra
 
 		// Shadow
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, rect, x, y, shape.getDeltaShadow());
+			drawShadow(g2d, rect, shape.getDeltaShadow());
 		}
 
 		final UGradient gr = param.getGradient();

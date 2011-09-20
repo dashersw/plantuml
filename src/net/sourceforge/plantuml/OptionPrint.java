@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6626 $
+ * Revision $Revision: 7253 $
  *
  */
 package net.sourceforge.plantuml;
@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
+import net.sourceforge.plantuml.version.PSystemVersion;
 import net.sourceforge.plantuml.version.Version;
 
 public class OptionPrint {
@@ -80,6 +81,7 @@ public class OptionPrint {
 		System.err.println("    -e[x]clude pattern\tTo exclude files that match the provided pattern");
 		System.err.println("    -metadata\t\tTo retrieve PlantUML sources from PNG images");
 		System.err.println("    -version\t\tTo display information about PlantUML and Java versions");
+		System.err.println("    -checkversion\tTo check if a newer version is available for download");
 		System.err.println("    -v[erbose]\t\tTo have log information");
 		System.err.println("    -quiet\t\tTo NOT print error message into the console");
 		System.err.println("    -forcegd\t\tTo force dot to use GD PNG library");
@@ -98,8 +100,9 @@ public class OptionPrint {
 		System.err.println("    -failonerror\tTo stop processing if syntax error in diagram occurs");
 		System.err.println("    -pattern\t\tTo print the list of Regular Expression used by PlantUML");
 		System.err.println("    -duration\t\tTo print the duration of complete diagrams processing");
-		System.err.println("    -nbthread N\tTo use (N) threads for processing");
+		System.err.println("    -nbthread N\t\tTo use (N) threads for processing");
 		System.err.println("    -nbthread auto\tTo use " + Option.defaultNbThreads() + " threads for processing");
+		System.err.println("    -author[s]\t\tTo print information about PlantUML authors");
 		System.err.println();
 		System.err.println("If needed, you can setup the environment variable GRAPHVIZ_DOT.");
 		exit();
@@ -122,12 +125,38 @@ public class OptionPrint {
 		exit();
 	}
 
+	public static void checkVersion() throws InterruptedException {
+		System.err.println("PlantUML version " + Version.version() + " (" + new Date(Version.compileTime()) + ")");
+		System.err.println();
+		final int lastversion = PSystemVersion.extractDownloadableVersion(null, null);
+		if (lastversion == -1) {
+			System.err.println("Error");
+			System.err.println("Cannot connect to http://plantuml.sourceforge.net/");
+			System.err.println("Maybe you should set your proxy ?");
+		} else if (lastversion == 0) {
+			System.err.println("Error");
+			System.err.println("Cannot retrieve last version from http://plantuml.sourceforge.net/");
+		} else {
+			System.err.println("Last available version for download : " + lastversion);
+			System.err.println();
+			if (Version.version() >= lastversion) {
+				System.err.println("Your version is up to date.");
+			} else {
+				System.err.println("A newer version is available for download.");
+			}
+		}
+
+		exit();
+	}
+
 	public static void printAbout() throws InterruptedException {
+		// Duplicate in PSystemVersion
 		System.err.println("PlantUML version " + Version.version() + " (" + new Date(Version.compileTime()) + ")");
 		System.err.println();
 		System.err.println("Original idea: Arnaud Roques");
 		System.err.println("Word Macro: Alain Bertucat & Matthieu Sabatier");
 		System.err.println("Eclipse Plugin: Claude Durif & Anne Pecoil");
+		System.err.println("Servlet & XWiki: Maxime Sinclair");
 		System.err.println("Site design: Raphael Cotisson");
 		System.err.println();
 		System.err.println("http://plantuml.sourceforge.net");

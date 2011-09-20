@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7064 $
+ * Revision $Revision: 7258 $
  *
  */
 package net.sourceforge.plantuml;
@@ -328,6 +328,9 @@ public class StringUtils {
 	public static boolean isDiagramCacheable(String uml) {
 		uml = uml.toLowerCase();
 		if (uml.startsWith("@startuml\nversion\n")) {
+			return false;
+		}
+		if (uml.startsWith("@startuml\ncheckversion")) {
 			return false;
 		}
 		if (uml.startsWith("@startuml\ntestdot\n")) {

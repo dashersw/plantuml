@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7112 $
+ * Revision $Revision: 7244 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -122,7 +122,7 @@ class DrawableSetInitializer {
 			}
 		}
 
-		final Collection<ParticipantBox> col = new ArrayList<ParticipantBox>();
+		final List<ParticipantBox> col = new ArrayList<ParticipantBox>();
 		for (LivingParticipantBox livingParticipantBox : drawableSet.getAllLivingParticipantBox()) {
 			col.add(livingParticipantBox.getParticipantBox());
 		}
@@ -309,10 +309,12 @@ class DrawableSetInitializer {
 		drawableSet.addEvent(divider, graphicalDivider);
 	}
 
-	private void prepareDelay(StringBounder stringBounder, Delay delay, Collection<ParticipantBox> participants) {
+	private void prepareDelay(StringBounder stringBounder, Delay delay, List<ParticipantBox> participants) {
 		final Component compText = drawableSet.getSkin().createComponent(ComponentType.DELAY_TEXT,
 				drawableSet.getSkinParam(), delay.getText());
-		final GraphicalDelayText graphicalDivider = new GraphicalDelayText(freeY, compText);
+		final ParticipantBox first = participants.get(0);
+		final ParticipantBox last = participants.get(participants.size()-1);
+		final GraphicalDelayText graphicalDivider = new GraphicalDelayText(freeY, compText, first, last);
 		for (ParticipantBox p : participants) {
 			p.addDelay(graphicalDivider);
 		}

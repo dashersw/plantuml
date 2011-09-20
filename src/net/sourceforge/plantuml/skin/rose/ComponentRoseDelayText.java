@@ -47,7 +47,7 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 public class ComponentRoseDelayText extends AbstractTextualComponent {
 
 	public ComponentRoseDelayText(HtmlColor fontColor, UFont font, List<? extends CharSequence> stringsToDisplay) {
-		super(stringsToDisplay, fontColor, font, HorizontalAlignement.CENTER, 4, 4, 4);
+		super(stringsToDisplay, fontColor, font, HorizontalAlignement.CENTER, 0, 0, 4);
 	}
 
 	@Override
@@ -71,7 +71,7 @@ public class ComponentRoseDelayText extends AbstractTextualComponent {
 
 	@Override
 	public double getPreferredWidth(StringBounder stringBounder) {
-		return getTextWidth(stringBounder) + 30;
+		return getPureTextWidth(stringBounder);
 	}
 
 }

@@ -277,7 +277,7 @@ public class EpsGraphics {
 			}
 			append("closepath eofill", true);
 		}
-		
+
 		if (color != null) {
 			append(strokeWidth + " setlinewidth", true);
 			appendColor(color);
@@ -458,13 +458,16 @@ public class EpsGraphics {
 	public void epsEllipse(double x, double y, double xRadius, double yRadius) {
 		checkCloseDone();
 		ensureVisible(x + xRadius, y + yRadius);
+		double scale = 1;
 		if (xRadius != yRadius) {
-			throw new UnsupportedOperationException();
+			scale = yRadius / xRadius;
+			append("gsave", true);
+			append("1 " + format(scale) + " scale", true);
 		}
 		if (fillcolor != null) {
 			appendColor(fillcolor);
 			append("newpath", true);
-			append(format(x) + " " + format(y) + " " + format(xRadius) + " 0 360 arc", true);
+			append(format(x) + " " + format(y / scale) + " " + format(xRadius) + " 0 360 arc", true);
 			append("closepath eofill", true);
 		}
 
@@ -472,9 +475,14 @@ public class EpsGraphics {
 			append(strokeWidth + " setlinewidth", true);
 			appendColor(color);
 			append("newpath", true);
-			append(format(x) + " " + format(y) + " " + format(xRadius) + " 0 360 arc", true);
+			append(format(x) + " " + format(y / scale) + " " + format(xRadius) + " 0 360 arc", true);
 			append("closepath stroke", true);
 		}
+
+		if (scale != 1) {
+			append("grestore", true);
+		}
+
 	}
 
 	protected void appendColor(Color c) {

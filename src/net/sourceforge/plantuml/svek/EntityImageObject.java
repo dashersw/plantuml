@@ -61,13 +61,16 @@ public class EntityImageObject extends AbstractEntityImage {
 	final private TextBlock name;
 	final private TextBlock stereo;
 	// final private MethodsOrFieldsArea2 methods;
-	final private MethodsOrFieldsArea2 fields;
+	final private TextBlock fields2;
+
+	// final private MethodsOrFieldsArea2 fields;
 
 	public EntityImageObject(IEntity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
 		final Stereotype stereotype = entity.getStereotype();
-		this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(getFont(FontParam.OBJECT,
-				stereotype), getFontColor(FontParam.OBJECT, stereotype)), HorizontalAlignement.CENTER);
+		this.name = TextBlockUtils.withMargin(TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(
+				getFont(FontParam.OBJECT, stereotype), getFontColor(FontParam.OBJECT, stereotype)),
+				HorizontalAlignement.CENTER), 2, 2);
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;
 		} else {
@@ -75,9 +78,9 @@ public class EntityImageObject extends AbstractEntityImage {
 					new FontConfiguration(getFont(FontParam.OBJECT_STEREOTYPE, stereotype), getFontColor(
 							FontParam.OBJECT_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
 		}
-		// this.methods = new MethodsOrFieldsArea2(entity.getMethodsToDisplay(),
-		// FontParam.OBJECT_ATTRIBUTE, skinParam);
-		this.fields = new MethodsOrFieldsArea2(entity.getFieldsToDisplay(), FontParam.OBJECT_ATTRIBUTE, skinParam);
+		this.fields2 = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getFieldsToDisplay(),
+				FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
+
 	}
 
 	private int xMarginFieldsOrMethod = 5;
@@ -86,9 +89,7 @@ public class EntityImageObject extends AbstractEntityImage {
 	@Override
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
-		// final Dimension2D dimMethods =
-		// methods.calculateDimension(stringBounder);
-		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
+		final Dimension2D dimFields = fields2.calculateDimension(stringBounder);
 		final double width = Math.max(dimFields.getWidth() + 2 * xMarginFieldsOrMethod, dimTitle.getWidth() + 2
 				* xMarginCircle);
 		final double height = getMethodOrFieldHeight(dimFields) + dimTitle.getHeight();
@@ -153,7 +154,7 @@ public class EntityImageObject extends AbstractEntityImage {
 		ug.getParam().setStroke(new UStroke(1.5));
 		ug.draw(x, y, new ULine(widthTotal, 0));
 		ug.getParam().setStroke(new UStroke());
-		fields.drawU(ug, x + xMarginFieldsOrMethod, y);
+		fields2.drawU(ug, x + xMarginFieldsOrMethod, y);
 
 	}
 

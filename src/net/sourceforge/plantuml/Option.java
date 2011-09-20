@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6702 $
+ * Revision $Revision: 7252 $
  *
  */
 package net.sourceforge.plantuml;
@@ -65,7 +65,7 @@ public class Option {
 
 	private File outputDir = null;
 	private File outputFile = null;
-	
+
 	private final List<String> result = new ArrayList<String>();
 
 	public Option() {
@@ -166,9 +166,6 @@ public class Option {
 				initConfig(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
 			} else if (s.equalsIgnoreCase("-computeurl") || s.equalsIgnoreCase("-encodeurl")) {
 				this.computeurl = true;
-			} else if (s.startsWith("-c")) {
-				s = s.substring(2);
-				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
 			} else if (s.startsWith("-x")) {
 				s = s.substring(2);
 				excludes.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
@@ -209,6 +206,8 @@ public class Option {
 				this.decodeurl = true;
 			} else if (s.equalsIgnoreCase("-version")) {
 				OptionPrint.printVersion();
+			} else if (s.equalsIgnoreCase("-checkversion")) {
+				OptionPrint.checkVersion();
 			} else if (s.startsWith("-D")) {
 				manageDefine(s.substring(2));
 			} else if (s.startsWith("-S")) {
@@ -236,6 +235,9 @@ public class Option {
 				} else {
 					this.ftpPort = Integer.parseInt(s.substring(x + 1));
 				}
+			} else if (s.startsWith("-c")) {
+				s = s.substring(2);
+				config.add(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(s));
 			} else {
 				result.add(s);
 			}

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7221 $
+ * Revision $Revision: 7241 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -376,6 +376,16 @@ public class Link implements Imaged {
 			}
 		}
 		return nb == 1;
+	}
+	
+	private boolean horizontalSolitary;
+
+	public final void setHorizontalSolitary(boolean horizontalSolitary) {
+		this.horizontalSolitary = horizontalSolitary;
+	}
+
+	public final boolean isHorizontalSolitary() {
+		return horizontalSolitary;
 	}
 
 }

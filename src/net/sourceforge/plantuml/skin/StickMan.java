@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6577 $
+ * Revision $Revision: 7236 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -112,13 +112,19 @@ public class StickMan implements UDrawable {
 		final double centerX = startX + headDiam / 2;
 
 		final ULine body = new ULine(0, bodyLenght);
-
 		final ULine arms = new ULine(armsLenght * 2, 0);
 
 		final double y = headDiam + thickness + bodyLenght;
 
 		final ULine legs1 = new ULine(-legsX, legsY);
 		final ULine legs2 = new ULine(legsX, legsY);
+		if (deltaShadow != 0) {
+			head.setDeltaShadow(deltaShadow);
+			body.setDeltaShadow(deltaShadow);
+			arms.setDeltaShadow(deltaShadow);
+			legs1.setDeltaShadow(deltaShadow);
+			legs2.setDeltaShadow(deltaShadow);
+		}
 
 		ug.getParam().setBackcolor(backgroundColor);
 		ug.getParam().setColor(foregroundColor);
@@ -140,4 +146,9 @@ public class StickMan implements UDrawable {
 		return headDiam + bodyLenght + legsY + 2 * thickness;
 	}
 
+	private double deltaShadow;
+
+	public void setDeltaShadow(double deltaShadow) {
+		this.deltaShadow = deltaShadow;
+	}
 }

@@ -66,6 +66,9 @@ public class EntityImageActor extends AbstractEntityImage {
 				HorizontalAlignement.CENTER);
 		this.stickman = new StickMan(getColor(ColorParam.usecaseActorBackground, getStereo()), getColor(
 				ColorParam.usecaseActorBorder, getStereo()));
+		if (skinParam.shadowing()) {
+			this.stickman.setDeltaShadow(4.0);
+		}
 
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;

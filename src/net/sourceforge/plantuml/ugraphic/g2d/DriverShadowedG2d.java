@@ -36,10 +36,15 @@ package net.sourceforge.plantuml.ugraphic.g2d;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 public class DriverShadowedG2d {
 
@@ -63,22 +68,24 @@ public class DriverShadowedG2d {
 
 	private final Color color = new Color(170, 170, 170);
 
-	protected void drawShadow(Graphics2D g2d, Shape shape, double x, double y, double deltaShadow) {
+	protected void drawShadow(Graphics2D g2d, Shape shape, double deltaShadow) {
 		// Shadow
 		final Rectangle2D bounds = shape.getBounds2D();
-		BufferedImage destination = new BufferedImage((int) (bounds.getWidth() + deltaShadow * 2 + 6), (int) (bounds
-				.getHeight()
+		BufferedImage destination = new BufferedImage((int) (bounds.getMaxX() + deltaShadow * 2 + 6), (int) (bounds
+				.getMaxY()
 				+ deltaShadow * 2 + 6), BufferedImage.TYPE_INT_ARGB);
 		final Graphics2D gg = destination.createGraphics();
 		gg.setColor(color);
-		gg.translate(deltaShadow - x, deltaShadow - y);
-		gg.fill(shape);
+		gg.translate(deltaShadow - bounds.getMinX(), deltaShadow - bounds.getMinY());
+		if (shape instanceof Line2D.Double) {
+			gg.draw(shape);
+		} else {
+			gg.fill(shape);
+		}
 		gg.dispose();
 		final ConvolveOp simpleBlur = convolveOp;
 		destination = simpleBlur.filter(destination, null);
-		g2d.drawImage(destination, (int) x, (int) y, null);
-		// Shadow
+		g2d.drawImage(destination, (int) bounds.getMinX(), (int) bounds.getMinY(), null);
 
 	}
-
 }
