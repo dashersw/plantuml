@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7237 $
+ * Revision $Revision: 7284 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.skin.ArrowDirection;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ComponentType;
 
 class Step1Message extends Step1Abstract {
@@ -69,8 +70,7 @@ class Step1Message extends Step1Abstract {
 		if (message.getNote() != null) {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(), message
 					.getSpecificBackColor());
-			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam,
-					message.getNote()));
+			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
 		}
 
 	}
@@ -199,8 +199,8 @@ class Step1Message extends Step1Abstract {
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withDotted();
 		}
-		if (m.getArrowConfiguration().isASync()) {
-			result = result.withAsync();
+		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
+			result = result.withHead(ArrowHead.ASYNC);
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		return result;
@@ -216,8 +216,11 @@ class Step1Message extends Step1Abstract {
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withDotted();
 		}
-		if (m.getArrowConfiguration().isASync()) {
-			result = result.withAsync();
+		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
+			result = result.withHead(ArrowHead.ASYNC);
+		}
+		if (m.getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
+			result = result.withHead(ArrowHead.CROSSX);
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		return result;

@@ -39,7 +39,6 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -49,7 +48,6 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class EntityImageLollipopInterface extends AbstractEntityImage {

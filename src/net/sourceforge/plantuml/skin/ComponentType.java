@@ -110,9 +110,9 @@ public class ComponentType {
 		return result;
 	}
 
-	public ComponentType withAsync() {
+	public ComponentType withHead(ArrowHead head) {
 		checkArrow();
-		return ComponentType.getArrow(arrowConfiguration.withAsync());
+		return ComponentType.getArrow(arrowConfiguration.withHead(head));
 	}
 
 	public ComponentType withDotted() {
@@ -154,7 +154,7 @@ public class ComponentType {
 		all.add(ComponentType.getArrow(ArrowDirection.SELF).withDotted());
 
 		for (ComponentType type : new ArrayList<ComponentType>(all)) {
-			all.add(type.withAsync());
+			all.add(type.withHead(ArrowHead.ASYNC));
 		}
 		
 		final List<ComponentType> simples = new ArrayList<ComponentType>(all);
@@ -164,6 +164,11 @@ public class ComponentType {
 		for (ComponentType type : simples) {
 			all.add(type.withPart(ArrowPart.BOTTOM_PART));
 		}
+
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withHead(ArrowHead.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withHead(ArrowHead.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDotted().withHead(ArrowHead.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDotted().withHead(ArrowHead.CROSSX));
 
 		all.addAll(nonArrows);
 		return Collections.unmodifiableCollection(all);

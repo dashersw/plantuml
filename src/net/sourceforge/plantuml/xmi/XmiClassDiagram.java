@@ -50,11 +50,13 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.Member;
 
 import org.w3c.dom.Document;
@@ -135,17 +137,32 @@ public class XmiClassDiagram {
 		return true;
 	}
 
+	public static String forXMI(String s) {
+		return s.replace(':', ' ');
+	}
+
 	private void addLink(Link link) {
-		final Element association = document.createElement("UML:Association");
 		final String assId = "ass" + UniqueSequence.getValue();
+		if ((link.getType().getDecor1() == LinkDecor.EXTENDS || link.getType().getDecor2() == LinkDecor.EXTENDS)
+				&& fileFormat == FileFormat.XMI_STAR) {
+			addExtension(link, assId);
+			return;
+		}
+		final Element association = document.createElement("UML:Association");
 		association.setAttribute("xmi.id", assId);
 		association.setAttribute("namespace", "model1");
+		if (link.getLabel() != null) {
+			association.setAttribute("name", forXMI(link.getLabel()));
+		}
 
 		final Element connection = document.createElement("UML:Association.connection");
 		final Element end1 = document.createElement("UML:AssociationEnd");
 		end1.setAttribute("xmi.id", "end" + UniqueSequence.getValue());
 		end1.setAttribute("association", assId);
 		end1.setAttribute("type", link.getEntity1().getUid());
+		if (link.getQualifier1() != null) {
+			end1.setAttribute("name", forXMI(link.getQualifier1()));
+		}
 		final Element endparticipant1 = document.createElement("UML:AssociationEnd.participant");
 		if (fileFormat == FileFormat.XMI_ARGO) {
 			if (done.contains(link.getEntity1())) {
@@ -153,6 +170,13 @@ public class XmiClassDiagram {
 			} else {
 				endparticipant1.appendChild(createEntityNode(link.getEntity1()));
 				done.add(link.getEntity1());
+			}
+		} else if (fileFormat == FileFormat.XMI_STAR) {
+			if (link.getType().getDecor2() == LinkDecor.COMPOSITION) {
+				end1.setAttribute("aggregation", "composite");
+			}
+			if (link.getType().getDecor2() == LinkDecor.AGREGATION) {
+				end1.setAttribute("aggregation", "aggregate");
 			}
 		}
 		end1.appendChild(endparticipant1);
@@ -162,6 +186,9 @@ public class XmiClassDiagram {
 		end2.setAttribute("xmi.id", "end" + UniqueSequence.getValue());
 		end2.setAttribute("association", assId);
 		end2.setAttribute("type", link.getEntity2().getUid());
+		if (link.getQualifier2() != null) {
+			end2.setAttribute("name", forXMI(link.getQualifier2()));
+		}
 		final Element endparticipant2 = document.createElement("UML:AssociationEnd.participant");
 		if (fileFormat == FileFormat.XMI_ARGO) {
 			if (done.contains(link.getEntity2())) {
@@ -170,12 +197,39 @@ public class XmiClassDiagram {
 				endparticipant2.appendChild(createEntityNode(link.getEntity2()));
 				done.add(link.getEntity2());
 			}
+		} else if (fileFormat == FileFormat.XMI_STAR) {
+			if (link.getType().getDecor1() == LinkDecor.COMPOSITION) {
+				end2.setAttribute("aggregation", "composite");
+			}
+			if (link.getType().getDecor1() == LinkDecor.AGREGATION) {
+				end2.setAttribute("aggregation", "aggregate");
+			}
 		}
 		end2.appendChild(endparticipant2);
 		connection.appendChild(end2);
 
 		association.appendChild(connection);
 
+		ownedElement.appendChild(association);
+
+	}
+
+	private void addExtension(Link link, String assId) {
+		final Element association = document.createElement("UML:Generalization");
+		association.setAttribute("xmi.id", assId);
+		association.setAttribute("namespace", "model1");
+		if (link.getLabel() != null) {
+			association.setAttribute("name", forXMI(link.getLabel()));
+		}
+		if (link.getType().getDecor1() == LinkDecor.EXTENDS) {
+			association.setAttribute("child", link.getEntity1().getUid());
+			association.setAttribute("parent", link.getEntity2().getUid());
+		} else if (link.getType().getDecor2() == LinkDecor.EXTENDS) {
+			association.setAttribute("child", link.getEntity2().getUid());
+			association.setAttribute("parent", link.getEntity1().getUid());
+		} else {
+			throw new IllegalStateException();
+		}
 		ownedElement.appendChild(association);
 
 	}

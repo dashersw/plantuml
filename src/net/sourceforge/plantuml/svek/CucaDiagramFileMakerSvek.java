@@ -131,12 +131,11 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 		} else {
 			throw new UnsupportedOperationException(fileFormat.toString());
 		}
-		
+
 		if (result instanceof DecorateEntityImage) {
 			deltaX += ((DecorateEntityImage) result).getDeltaX();
 			deltaY += ((DecorateEntityImage) result).getDeltaY();
 		}
-
 
 		if (diagram.hasUrl()) {
 			return cmapString(svek2, deltaX, deltaY);
@@ -215,11 +214,12 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 			backColor = diagram.getSkinParam().getColorMapper().getMappedColor(result.getBackcolor());
 		}
 
-		final EmptyImageBuilder builder = new EmptyImageBuilder((int) dim.getWidth(), (int) dim.getHeight(), backColor);
+		final double dpiFactor = diagram.getDpiFactor(fileFormatOption);
+		final EmptyImageBuilder builder = new EmptyImageBuilder((int) (dim.getWidth() * dpiFactor), (int) (dim
+				.getHeight() * dpiFactor), backColor);
 		final Graphics2D graphics2D = builder.getGraphics2D();
-
 		final UGraphic ug = new UGraphicG2d(diagram.getSkinParam().getColorMapper(), graphics2D, builder
-				.getBufferedImage(), 1.0);
+				.getBufferedImage(), dpiFactor);
 		result.drawU(ug, 0, 0);
 
 		final BufferedImage im = ((UGraphicG2d) ug).getBufferedImage();

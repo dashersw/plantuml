@@ -44,38 +44,36 @@ import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
-import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowHead;
-import net.sourceforge.plantuml.skin.ArrowPart;
 
-public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
+public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 
-	public CommandArrow(SequenceDiagram sequenceDiagram) {
+	public CommandArrowDestroy(SequenceDiagram sequenceDiagram) {
 		super(sequenceDiagram, getRegexConcat());
 	}
 
 	static RegexConcat getRegexConcat() {
-		return new RegexConcat(
-				new RegexLeaf("^"), //
+		return new RegexConcat(new RegexLeaf("^"), //
 				new RegexOr("PART1", //
 						new RegexLeaf("PART1CODE", "([\\p{L}0-9_.@]+)"), //
 						new RegexLeaf("PART1LONG", "\"([^\"]+)\""), //
 						new RegexLeaf("PART1LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), //
-						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")),
-				new RegexLeaf("\\s*"), //
-				new RegexLeaf("ARROW", "(\\$?([=-]+(>>?|//?|\\\\\\\\?)|(<<?|//?|\\\\\\\\?)[=-]+)\\$?)"), //
-				new RegexLeaf("\\s*"), // 
+						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
+						"\\s*"), //
+				new RegexLeaf("\\s+"), // 
+				new RegexLeaf("ARROW", "(\\$?([=-]+(>?x)|(x<?)[=-]+)\\$?)"), //
+				new RegexLeaf("\\s+"), // 
 				new RegexOr("PART2", // 
 						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), // 
 						new RegexLeaf("PART2LONG", "\"([^\"]+)\""), // 
 						new RegexLeaf("PART2LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), // 
-						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")),
-				new RegexLeaf("\\s*"), // 
+						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
+						"\\s*"), // 
 				new RegexLeaf("MESSAGE", "(?::\\s*(.*))?$"));
 	}
 
@@ -107,19 +105,19 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
 		boolean startDollar = arrow.startsWith("$");
 		boolean endDollar = arrow.endsWith("$");
-		arrow = arrow.replaceAll("\\$", "");
+		arrow = arrow.replaceAll("\\$", "").toLowerCase();
 
 		Participant p1;
 		Participant p2;
 		final boolean activatep2;
 		final boolean deactivatep1;
 
-		if (arrow.endsWith(">") || arrow.endsWith("\\") || arrow.endsWith("/")) {
+		if (arrow.endsWith("x")) {
 			p1 = getOrCreateParticipant(arg2, "PART1");
 			p2 = getOrCreateParticipant(arg2, "PART2");
 			activatep2 = endDollar;
 			deactivatep1 = startDollar;
-		} else if (arrow.startsWith("<") || arrow.startsWith("\\") || arrow.startsWith("/")) {
+		} else if (arrow.startsWith("x")) {
 			p2 = getOrCreateParticipant(arg2, "PART1");
 			p1 = getOrCreateParticipant(arg2, "PART2");
 			activatep2 = startDollar;
@@ -128,8 +126,8 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			throw new IllegalStateException(arg2.toString());
 		}
 
-		final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<") || arrow.contains("\\\\")
-				|| arrow.contains("//");
+//		final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<") || arrow.contains("\\\\")
+//				|| arrow.contains("//");
 
 		final boolean dotted = arrow.contains("--");
 
@@ -144,34 +142,35 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		if (dotted) {
 			config = config.withDotted();
 		}
-		if (sync) {
-			config = config.withHead(ArrowHead.ASYNC);
-		}
-		if (arrow.endsWith("\\") || arrow.startsWith("/")) {
-			config = config.withPart(ArrowPart.TOP_PART);
-		}
-		if (arrow.endsWith("/") || arrow.startsWith("\\")) {
-			config = config.withPart(ArrowPart.BOTTOM_PART);
-		}
+		config = config.withHead(ArrowHead.CROSSX);
+//		if (sync) {
+//			config = config.withAsync();
+//		}
+		// if (arrow.endsWith("\\") || arrow.startsWith("/")) {
+		// config = config.withPart(ArrowPart.TOP_PART);
+		// }
+		// if (arrow.endsWith("/") || arrow.startsWith("\\")) {
+		// config = config.withPart(ArrowPart.BOTTOM_PART);
+		// }
 
 		getSystem().addMessage(new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
 
-		if (getSystem().isAutoactivate()) {
-			if (p1 != p2 && config.getHead() == ArrowHead.NORMAL) {
-				if (config.isDotted()) {
-					getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
-				} else {
-					getSystem().activate(p2, LifeEventType.ACTIVATE, null);
-				}
-			}
-		} else {
-			if (deactivatep1) {
-				getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
-			}
-			if (activatep2) {
-				getSystem().activate(p2, LifeEventType.ACTIVATE, null);
-			}
-		}
+//		if (getSystem().isAutoactivate()) {
+//			if (p1 != p2 && config.isASync() == false) {
+//				if (config.isDotted()) {
+//					getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
+//				} else {
+//					getSystem().activate(p2, LifeEventType.ACTIVATE, null);
+//				}
+//			}
+//		} else {
+//			if (deactivatep1) {
+//				getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
+//			}
+//			if (activatep2) {
+//				getSystem().activate(p2, LifeEventType.ACTIVATE, null);
+//			}
+//		}
 		return CommandExecutionResult.ok();
 	}
 

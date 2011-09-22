@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7284 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
@@ -39,6 +39,7 @@ import java.util.List;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -81,7 +82,7 @@ public class ComponentBlueModernSelfArrow extends AbstractComponentBlueModernArr
 
 		final int delta = (int) getArrowOnlyHeight(stringBounder);
 
-		if (getArrowConfiguration().isASync()) {
+		if (getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 			ug.getParam().setStroke(new UStroke(1.5));
 			if (getArrowConfiguration().getPart() != ArrowPart.BOTTOM_PART) {
 				ug.draw(getArrowDeltaX2(), textHeight - getArrowDeltaY2() + delta, new ULine(-getArrowDeltaX2(),

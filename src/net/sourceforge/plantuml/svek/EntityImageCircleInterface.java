@@ -49,7 +49,6 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class EntityImageCircleInterface extends AbstractEntityImage {
@@ -102,7 +101,10 @@ public class EntityImageCircleInterface extends AbstractEntityImage {
 		final double circleX = (dimTotal.getWidth() - SIZE) / 2;
 		final double circleY = dimStereo.getHeight();
 
-		final UShape circle = new UEllipse(SIZE, SIZE);
+		final UEllipse circle = new UEllipse(SIZE, SIZE);
+		if (getSkinParam().shadowing()) {
+			circle.setDeltaShadow(4);
+		}
 		ug.getParam().setStroke(new UStroke(2));
 		ug.getParam().setColor(getColor(ColorParam.componentInterfaceBorder, getStereo()));
 		ug.getParam().setBackcolor(getColor(ColorParam.componentInterfaceBackground, getStereo()));

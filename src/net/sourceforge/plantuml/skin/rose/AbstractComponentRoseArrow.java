@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6590 $
+ * Revision $Revision: 7260 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -46,8 +46,6 @@ public abstract class AbstractComponentRoseArrow extends AbstractTextualComponen
 
 	private final int arrowDeltaX = 10;
 	private final int arrowDeltaY = 4;
-//	private final boolean dotted;
-//	private final boolean full;
 	private final HtmlColor foregroundColor;
 	private final ArrowConfiguration arrowConfiguration;
 
@@ -79,12 +77,5 @@ public abstract class AbstractComponentRoseArrow extends AbstractTextualComponen
 		return arrowConfiguration;
 	}
 
-//	final protected boolean isDotted() {
-//		return dotted;
-//	}
-//
-//	final protected boolean isFull() {
-//		return full;
-//	}
 
 }

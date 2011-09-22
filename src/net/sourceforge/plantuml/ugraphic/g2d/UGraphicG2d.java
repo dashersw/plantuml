@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7211 $
+ * Revision $Revision: 7270 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -81,7 +81,7 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> {
 		registerDriver(ULine.class, new DriverLineG2d());
 		registerDriver(UPixel.class, new DriverPixelG2d());
 		registerDriver(UPolygon.class, new DriverPolygonG2d());
-		registerDriver(UEllipse.class, new DriverEllipseG2d());
+		registerDriver(UEllipse.class, new DriverEllipseG2d(dpiFactor));
 		registerDriver(UImage.class, new DriverImageG2d());
 		registerDriver(DotPath.class, new DriverDotPathG2d());
 		registerDriver(UPath.class, new DriverPathG2d());

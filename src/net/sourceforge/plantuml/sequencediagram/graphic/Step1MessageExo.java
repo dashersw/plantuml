@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.MessageExoType;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.skin.ArrowDirection;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ComponentType;
 
 class Step1MessageExo extends Step1Abstract {
@@ -65,8 +66,7 @@ class Step1MessageExo extends Step1Abstract {
 		if (message.getNote() != null) {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(), message
 					.getSpecificBackColor());
-			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam,
-					message.getNote()));
+			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
 			// throw new UnsupportedOperationException();
 		}
 
@@ -148,8 +148,8 @@ class Step1MessageExo extends Step1Abstract {
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withDotted();
 		}
-		if (m.getArrowConfiguration().isASync()) {
-			result = result.withAsync();
+		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
+			result = result.withHead(ArrowHead.ASYNC);
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		return result;

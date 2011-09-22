@@ -97,7 +97,10 @@ public class EntityImageComponent extends AbstractEntityImage {
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
-		final UShape form = new URectangle(widthTotal, heightTotal);
+		final URectangle form = new URectangle(widthTotal, heightTotal);
+		if (getSkinParam().shadowing()) {
+			form.setDeltaShadow(4);
+		}
 
 		final UShape small = new URectangle(10, 5);
 

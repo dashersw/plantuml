@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7284 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -59,32 +60,49 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 		this.messagePosition = messagePosition;
 	}
 
+	private final double spaceCrossX = 6;
+
 	@Override
 	public void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int textHeight = (int) getTextHeight(stringBounder);
 		ug.getParam().setColor(getForegroundColor());
 
-		final int x2 = (int) dimensionToUse.getWidth();
+		final double x2 = dimensionToUse.getWidth() - 1;
 
 		if (getArrowConfiguration().isDotted()) {
 			stroke(ug, 2, 2);
 		}
 
 		//
-		ug.draw(0, textHeight, new ULine(x2, 0));
+		double start = 0;
+		double len = x2;
+		final int direction = getDirection();
+		if (direction == 1 && getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
+			len -= spaceCrossX + getArrowDeltaX() / 2;
+		} else if (direction == -1 && getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
+			start += spaceCrossX + getArrowDeltaX() / 2;
+			len -= spaceCrossX + getArrowDeltaX() / 2;
+		}
+		ug.draw(start, textHeight, new ULine(len, 0));
 		if (getArrowConfiguration().isDotted()) {
 			ug.getParam().setStroke(new UStroke());
 		}
-		final int direction = getDirection();
 		if (direction == 1) {
-			if (getArrowConfiguration().isASync()) {
+			if (getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 				if (getArrowConfiguration().getPart() != ArrowPart.BOTTOM_PART) {
 					ug.draw(x2, textHeight, new ULine(-getArrowDeltaX(), -getArrowDeltaY()));
 				}
 				if (getArrowConfiguration().getPart() != ArrowPart.TOP_PART) {
 					ug.draw(x2, textHeight, new ULine(-getArrowDeltaX(), getArrowDeltaY()));
 				}
+			} else if (getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
+				ug.getParam().setStroke(new UStroke(2));
+				ug.draw(x2 - getArrowDeltaX() - spaceCrossX, textHeight - getArrowDeltaX() / 2, new ULine(
+						getArrowDeltaX(), getArrowDeltaX()));
+				ug.draw(x2 - getArrowDeltaX() - spaceCrossX, textHeight + getArrowDeltaX() / 2, new ULine(
+						getArrowDeltaX(), -getArrowDeltaX()));
+				ug.getParam().setStroke(new UStroke());
 			} else {
 				ug.getParam().setBackcolor(getForegroundColor());
 				final UPolygon polygon = getPolygonNormal(textHeight, x2);
@@ -92,13 +110,18 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 				ug.getParam().setBackcolor(null);
 			}
 		} else {
-			if (getArrowConfiguration().isASync()) {
+			if (getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 				if (getArrowConfiguration().getPart() != ArrowPart.BOTTOM_PART) {
 					ug.draw(0, textHeight, new ULine(getArrowDeltaX(), -getArrowDeltaY()));
 				}
 				if (getArrowConfiguration().getPart() != ArrowPart.TOP_PART) {
 					ug.draw(0, textHeight, new ULine(getArrowDeltaX(), getArrowDeltaY()));
 				}
+			} else if (getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
+				ug.getParam().setStroke(new UStroke(2));
+				ug.draw(spaceCrossX, textHeight - getArrowDeltaX() / 2, new ULine(getArrowDeltaX(), getArrowDeltaX()));
+				ug.draw(spaceCrossX, textHeight + getArrowDeltaX() / 2, new ULine(getArrowDeltaX(), -getArrowDeltaX()));
+				ug.getParam().setStroke(new UStroke());
 			} else {
 				ug.getParam().setBackcolor(getForegroundColor());
 				final UPolygon polygon = getPolygonReverse(textHeight);
@@ -119,7 +142,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 		getTextBlock().drawU(ug, textPos, 0);
 	}
 
-	private UPolygon getPolygonNormal(final int textHeight, final int x2) {
+	private UPolygon getPolygonNormal(final int textHeight, final double x2) {
 		final UPolygon polygon = new UPolygon();
 		if (getArrowConfiguration().getPart() == ArrowPart.TOP_PART) {
 			polygon.addPoint(x2 - getArrowDeltaX(), textHeight - getArrowDeltaY());

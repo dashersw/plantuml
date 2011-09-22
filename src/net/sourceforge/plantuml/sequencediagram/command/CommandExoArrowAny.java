@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 
 abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
@@ -80,7 +81,7 @@ abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
 			config = config.withDotted();
 		}
 		if (sync) {
-			config = config.withAsync();
+			config = config.withHead(ArrowHead.ASYNC);
 		}
 		config = config.withPart(getArrowPart(arrow));
 

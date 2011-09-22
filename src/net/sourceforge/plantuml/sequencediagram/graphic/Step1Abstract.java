@@ -165,13 +165,13 @@ abstract class Step1Abstract {
 		if (arrow instanceof MessageSelfArrow && notePosition == NotePosition.RIGHT) {
 			noteBox.pushToRight(arrow.getPreferredWidth(stringBounder));
 		}
-		if (arrow instanceof MessageExoArrow) {
-			final MessageExoType type = ((MessageExoArrow) arrow).getType();
-			if (type.isRightBorder()) {
-				final double width = noteBox.getPreferredWidth(stringBounder);
-				noteBox.pushToRight(-width);
-			}
-		}
+//		if (arrow instanceof MessageExoArrow) {
+//			final MessageExoType type = ((MessageExoArrow) arrow).getType();
+//			if (type.isRightBorder()) {
+//				final double width = noteBox.getPreferredWidth(stringBounder);
+//				noteBox.pushToRight(-width);
+//			}
+//		}
 
 		return noteBox;
 	}

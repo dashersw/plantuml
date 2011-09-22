@@ -70,8 +70,8 @@ public class ArrowConfiguration {
 		return new ArrowConfiguration(direction, ArrowBody.NORMAL, ArrowHead.NORMAL, ArrowPart.FULL);
 	}
 
-	public ArrowConfiguration withAsync() {
-		return new ArrowConfiguration(direction, body, ArrowHead.ASYNC, part);
+	public ArrowConfiguration withHead(ArrowHead head) {
+		return new ArrowConfiguration(direction, body, head, part);
 	}
 
 	public ArrowConfiguration withDotted() {
@@ -101,12 +101,8 @@ public class ArrowConfiguration {
 		return body == ArrowBody.DOTTED;
 	}
 
-//	public boolean isSync() {
-//		return this.head == ArrowHead.NORMAL;
-//	}
-
-	public boolean isASync() {
-		return this.head == ArrowHead.ASYNC;
+	public ArrowHead getHead() {
+		return this.head;
 	}
 
 	public final ArrowPart getPart() {

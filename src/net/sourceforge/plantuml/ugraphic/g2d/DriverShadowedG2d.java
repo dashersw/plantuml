@@ -41,10 +41,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class DriverShadowedG2d {
 
@@ -68,7 +64,7 @@ public class DriverShadowedG2d {
 
 	private final Color color = new Color(170, 170, 170);
 
-	protected void drawShadow(Graphics2D g2d, Shape shape, double deltaShadow) {
+	protected void drawShadow(Graphics2D g2d, Shape shape, double deltaShadow, double dpiFactor) {
 		// Shadow
 		final Rectangle2D bounds = shape.getBounds2D();
 		BufferedImage destination = new BufferedImage((int) (bounds.getMaxX() + deltaShadow * 2 + 6), (int) (bounds

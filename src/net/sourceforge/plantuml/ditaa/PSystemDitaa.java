@@ -39,6 +39,7 @@ import java.io.UnsupportedEncodingException;
 import javax.imageio.ImageIO;
 
 import net.sourceforge.plantuml.AbstractPSystem;
+import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 
 import org.stathissideris.ascii2image.core.ConversionOptions;
@@ -64,12 +65,17 @@ public class PSystemDitaa extends AbstractPSystem {
 	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormatOption)
 			throws IOException {
 
-		final ConversionOptions options = new ConversionOptions();
-		final Diagram diagram = new Diagram(grid, options, processingOptions);
-		final BufferedImage image = (BufferedImage) new BitmapRenderer().renderToImage(diagram,
-				options.renderingOptions);
-		ImageIO.write(image, "png", os);
+		if (fileFormatOption.getFileFormat() == FileFormat.PNG) {
+			final ConversionOptions options = new ConversionOptions();
+			final Diagram diagram = new Diagram(grid, options, processingOptions);
+			final BufferedImage image = (BufferedImage) new BitmapRenderer().renderToImage(diagram,
+					options.renderingOptions);
+			ImageIO.write(image, "png", os);
+		} else if (fileFormatOption.getFileFormat() == FileFormat.ATXT) {
+			os.write(getSource().getPlainString().getBytes());
+		} else {
+			throw new UnsupportedOperationException(fileFormatOption.getFileFormat().toString());
+		}
 
 	}
-
 }

@@ -62,7 +62,6 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
-import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class Cluster implements Moveable {
@@ -123,6 +122,9 @@ public class Cluster implements Moveable {
 	}
 
 	public void addShape(Shape sh) {
+		if (sh == null) {
+			throw new IllegalArgumentException();
+		}
 		this.shapes.add(sh);
 		sh.setCluster(this);
 	}
@@ -150,13 +152,18 @@ public class Cluster implements Moveable {
 		for (Line l : lines) {
 			if (tops.contains(l.getStartUid())) {
 				final Shape sh = shs.get(l.getEndUid());
-				all.remove(sh);
-				firsts.add(0, sh);
+				if (sh != null) {
+					all.remove(sh);
+					firsts.add(0, sh);
+				}
 			}
+
 			if (l.isInverted()) {
 				final Shape sh = shs.get(l.getStartUid());
-				all.remove(sh);
-				firsts.add(0, sh);
+				if (sh != null) {
+					all.remove(sh);
+					firsts.add(0, sh);
+				}
 			}
 		}
 
@@ -215,6 +222,9 @@ public class Cluster implements Moveable {
 		}
 		if (stateBack == null) {
 			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.background, group.getStereotype());
+		}
+		if (stateBack == null) {
+			stateBack = HtmlColor.WHITE;
 		}
 		ug.getParam().setBackcolor(stateBack);
 		ug.getParam().setColor(borderColor);

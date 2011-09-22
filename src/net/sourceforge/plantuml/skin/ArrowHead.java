@@ -34,5 +34,5 @@
 package net.sourceforge.plantuml.skin;
 
 public enum ArrowHead {
-	NORMAL, ASYNC
+	NORMAL, ASYNC, CROSSX
 }

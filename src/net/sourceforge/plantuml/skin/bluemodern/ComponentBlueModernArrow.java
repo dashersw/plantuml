@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7284 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
@@ -40,6 +40,7 @@ import java.util.List;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -76,7 +77,7 @@ public class ComponentBlueModernArrow extends AbstractComponentBlueModernArrow {
 		final int direction = getDirection();
 		final UPolygon polygon = new UPolygon();
 
-		if (getArrowConfiguration().isASync()) {
+		if (getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 			ug.getParam().setStroke(new UStroke(1.5));
 			if (direction == 1) {
 				if (getArrowConfiguration().getPart() != ArrowPart.BOTTOM_PART) {

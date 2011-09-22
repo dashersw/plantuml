@@ -115,6 +115,7 @@ public class SequenceDiagram extends UmlDiagram {
 
 	public void addMessage(AbstractMessage m) {
 		lastMessage = m;
+		lastDelay = null;
 		events.add(m);
 		if (pendingCreate != null) {
 			m.addLifeEvent(pendingCreate);
@@ -153,8 +154,12 @@ public class SequenceDiagram extends UmlDiagram {
 		events.add(new Divider(strings));
 	}
 
+	private Delay lastDelay;
+
 	public void delay(List<String> strings) {
-		events.add(new Delay(strings));
+		final Delay delay = new Delay(strings);
+		events.add(delay);
+		lastDelay = delay;
 	}
 
 	public List<Event> events() {
@@ -224,20 +229,26 @@ public class SequenceDiagram extends UmlDiagram {
 
 	private LifeEvent pendingCreate = null;
 
-	public void activate(Participant p, LifeEventType lifeEventType, HtmlColor backcolor) {
+	public String activate(Participant p, LifeEventType lifeEventType, HtmlColor backcolor) {
+		if (lastDelay != null) {
+			return "You cannot Activate/Deactivate just after a ...";
+		}
 		if (lifeEventType == LifeEventType.CREATE) {
 			pendingCreate = new LifeEvent(p, lifeEventType, backcolor);
-			return;
+			return null;
 		}
 		if (lastMessage == null) {
 			if (lifeEventType == LifeEventType.ACTIVATE) {
 				p.incInitialLife(backcolor);
+				return null;
 			}
-			return;
-			// throw new
-			// UnsupportedOperationException("Step1Message::beforeMessage");
+			return "Only activate command can occur before message are send";
 		}
-		lastMessage.addLifeEvent(new LifeEvent(p, lifeEventType, backcolor));
+		final boolean ok = lastMessage.addLifeEvent(new LifeEvent(p, lifeEventType, backcolor));
+		if (ok) {
+			return null;
+		}
+		return "Activate/Deactivate already done on " + p.getCode();
 	}
 
 	private final List<GroupingStart> openGroupings = new ArrayList<GroupingStart>();

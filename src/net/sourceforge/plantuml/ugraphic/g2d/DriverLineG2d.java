@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7240 $
+ * Revision $Revision: 7270 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -54,7 +54,7 @@ public class DriverLineG2d extends DriverShadowedG2d implements UDriver<Graphics
 		manageStroke(param, g2d);
 		// Shadow
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, line, shape.getDeltaShadow());
+			drawShadow(g2d, line, shape.getDeltaShadow(), 1.0);
 		}
 		g2d.setColor(mapper.getMappedColor(param.getColor()));
 		g2d.draw(line);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7240 $
+ * Revision $Revision: 7270 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -57,7 +57,7 @@ public class DriverPolygonG2d extends DriverShadowedG2d implements UDriver<Graph
 		}
 
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, polygon, shape.getDeltaShadow());
+			drawShadow(g2d, polygon, shape.getDeltaShadow(), 1.0);
 		}
 
 		if (param.getBackcolor() != null) {

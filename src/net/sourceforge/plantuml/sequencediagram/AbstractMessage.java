@@ -35,7 +35,9 @@ package net.sourceforge.plantuml.sequencediagram;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.HtmlColor;
@@ -61,8 +63,24 @@ public abstract class AbstractMessage implements Event {
 		this.messageNumber = messageNumber;
 	}
 
-	public final void addLifeEvent(LifeEvent lifeEvent) {
+	public final boolean addLifeEvent(LifeEvent lifeEvent) {
+		final Set<Participant> noActivationAuthorized = new HashSet<Participant>();
+		for (LifeEvent le : this.lifeEvents) {
+			if (le.getType() == LifeEventType.DEACTIVATE || le.getType() == LifeEventType.DESTROY) {
+				noActivationAuthorized.add(le.getParticipant());
+			}
+		}
+		if (lifeEvent.getType() == LifeEventType.ACTIVATE
+				&& noActivationAuthorized.contains(lifeEvent.getParticipant())) {
+			return false;
+		}
+		// for (LifeEvent le : this.lifeEvents) {
+		// if (le.getParticipant().equals(lifeEvent.getParticipant())) {
+		// return false;
+		// }
+		// }
 		this.lifeEvents.add(lifeEvent);
+		return true;
 	}
 
 	public final boolean isCreate() {
@@ -108,8 +126,12 @@ public abstract class AbstractMessage implements Event {
 		}
 		this.notes = strings;
 		this.urlNote = url;
-		this.notePosition = notePosition;
+		this.notePosition = overideNotePosition(notePosition);
 		this.noteBackColor = HtmlColor.getColorIfValid(backcolor);
+	}
+
+	protected NotePosition overideNotePosition(NotePosition notePosition) {
+		return notePosition;
 	}
 
 	public final HtmlColor getSpecificBackColor() {

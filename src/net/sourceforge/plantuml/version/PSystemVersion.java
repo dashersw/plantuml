@@ -157,6 +157,7 @@ public class PSystemVersion extends AbstractPSystem {
 		try {
 			final URL url = new URL("http://plantuml.sourceforge.net/download.html");
 			final HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setUseCaches(false);
 			urlConnection.connect();
 			if (urlConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
 				final BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));

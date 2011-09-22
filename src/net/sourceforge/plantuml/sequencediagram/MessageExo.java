@@ -50,6 +50,17 @@ public class MessageExo extends AbstractMessage {
 		this.type = type;
 	}
 
+	@Override
+	protected NotePosition overideNotePosition(NotePosition notePosition) {
+		if (type == MessageExoType.FROM_LEFT || type == MessageExoType.TO_LEFT) {
+			return NotePosition.RIGHT;
+		}
+		if (type == MessageExoType.FROM_RIGHT || type == MessageExoType.TO_RIGHT) {
+			return NotePosition.LEFT;
+		}
+		throw new IllegalStateException();
+	}
+
 	public Participant getParticipant() {
 		return participant;
 	}

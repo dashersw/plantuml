@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6698 $
+ * Revision $Revision: 7265 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -86,7 +86,8 @@ class LifeLine {
 				throw new IllegalArgumentException();
 			}
 			if (y == last.y && type != last.type) {
-				throw new IllegalArgumentException();
+				return;
+				// throw new IllegalArgumentException();
 			}
 		}
 		events.add(new Variation(type, y, backcolor));
