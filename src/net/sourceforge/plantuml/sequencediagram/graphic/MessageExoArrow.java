@@ -39,6 +39,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.MessageExoType;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowComponent;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
@@ -104,7 +105,7 @@ public class MessageExoArrow extends Arrow {
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		ug.translate(getStartingX(stringBounder), getStartingY());
-		getArrowComponent().drawU(ug, getActualDimension(stringBounder, maxX), context);
+		getArrowComponent().drawU(ug, new Area(getActualDimension(stringBounder, maxX)), context);
 	}
 
 	private Dimension2D getActualDimension(StringBounder stringBounder, double maxX) {

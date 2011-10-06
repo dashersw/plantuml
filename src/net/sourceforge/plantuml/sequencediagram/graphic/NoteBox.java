@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6485 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -92,7 +93,7 @@ class NoteBox extends GraphicalElement implements InGroupable {
 		if (url != null) {
 			ug.setUrl(url.getUrl(), url.getTooltip());
 		}
-		comp.drawU(ug, dimensionToUse, context);
+		comp.drawU(ug, new Area(dimensionToUse), context);
 		if (url != null) {
 			ug.setUrl(null, null);
 		}

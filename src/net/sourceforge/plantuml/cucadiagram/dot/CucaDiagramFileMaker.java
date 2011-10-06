@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6939 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -92,6 +92,7 @@ import net.sourceforge.plantuml.png.PngRotation;
 import net.sourceforge.plantuml.png.PngScaler;
 import net.sourceforge.plantuml.png.PngSizer;
 import net.sourceforge.plantuml.png.PngTitler;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.CircleInterface;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -700,14 +701,13 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		return null;
 	}
 
-	private DrawFile createImageForNote(List<? extends CharSequence> display2, HtmlColor noteBackColor, final FileFormatOption option,
-			Group parent) throws IOException {
+	private DrawFile createImageForNote(List<? extends CharSequence> display2, HtmlColor noteBackColor,
+			final FileFormatOption option, Group parent) throws IOException {
 
 		final Rose skin = new Rose();
 
 		final ISkinParam skinParam = new SkinParamBackcolored(getSkinParam(), noteBackColor);
-		final Component comp = skin
-				.createComponent(ComponentType.NOTE, skinParam, display2);
+		final Component comp = skin.createComponent(ComponentType.NOTE, skinParam, display2);
 
 		final double dpiFactor = diagram.getDpiFactor(option);
 		final int width = (int) (comp.getPreferredWidth(stringBounder) * dpiFactor);
@@ -727,8 +727,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 				final BufferedImage im = builder.getBufferedImage();
 				final Graphics2D g2d = builder.getGraphics2D();
 
-				comp.drawU(new UGraphicG2d(diagram.getColorMapper(), g2d, null, dpiFactor),
-						new Dimension(width, height), new SimpleContext2D(false));
+				comp.drawU(new UGraphicG2d(diagram.getColorMapper(), g2d, null, dpiFactor), new Area(new Dimension(
+						width, height)), new SimpleContext2D(false));
 				PngIO.write(im, fPng, dpi);
 				g2d.dispose();
 				return fPng;
@@ -738,7 +738,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final Lazy<String> lsvg = new Lazy<String>() {
 			public String getNow() throws IOException {
 				final UGraphicSvg ug = new UGraphicSvg(getSkinParam().getColorMapper(), true);
-				comp.drawU(ug, new Dimension(width, height), new SimpleContext2D(false));
+				comp.drawU(ug, new Area(new Dimension(width, height)), new SimpleContext2D(false));
 				return getSvg(ug);
 			}
 		};
@@ -749,7 +749,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 				final PrintWriter pw = new PrintWriter(fEps);
 				final UGraphicEps uEps = new UGraphicEps(getSkinParam().getColorMapper(), getEpsStrategy(option
 						.getFileFormat()));
-				comp.drawU(uEps, new Dimension(width, height), new SimpleContext2D(false));
+				comp.drawU(uEps, new Area(new Dimension(width, height)), new SimpleContext2D(false));
 				pw.print(uEps.getEPSCode());
 				pw.close();
 				return fEps;

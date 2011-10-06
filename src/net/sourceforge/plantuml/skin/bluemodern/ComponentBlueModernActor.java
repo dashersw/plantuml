@@ -28,12 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
 
-import java.awt.geom.Dimension2D;
 import java.util.List;
 
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -41,6 +40,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.StickMan;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -58,7 +58,7 @@ public class ComponentBlueModernActor extends AbstractTextualComponent {
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
+	protected void drawInternalU(UGraphic ug, Area area, boolean withShadow) {
 		ug.getParam().setColor(getFontColor());
 		final TextBlock textBlock = getTextBlock();
 		final StringBounder stringBounder = ug.getStringBounder();

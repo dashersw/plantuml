@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
@@ -100,7 +101,8 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 	}
 
 	@Override
-	protected void drawBackgroundInternalU(UGraphic ug, Dimension2D dimensionToUse) {
+	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		if (this.background == null) {
 			return;
 		}
@@ -110,7 +112,8 @@ public class ComponentRoseGroupingHeader extends AbstractTextualComponent {
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
+	protected void drawInternalU(UGraphic ug, Area area, boolean withShadow) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int textWidth = (int) getTextWidth(stringBounder);
 		final int textHeight = (int) getTextHeight(stringBounder);

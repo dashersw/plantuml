@@ -28,14 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.skin;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -60,19 +59,19 @@ public abstract class AbstractComponent implements Component {
 		stroke(ug, dashVisible, dashSpace, 1);
 	}
 
-	abstract protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow);
+	abstract protected void drawInternalU(UGraphic ug, Area area, boolean withShadow);
 
-	protected void drawBackgroundInternalU(UGraphic ug, Dimension2D dimensionToUse) {
+	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
 	}
 
-	public final void drawU(UGraphic ug, Dimension2D dimensionToUse, Context2D context) {
+	public final void drawU(UGraphic ug, Area area, Context2D context) {
 		final double dx = ug.getTranslateX();
 		final double dy = ug.getTranslateY();
 		ug.translate(getPaddingX(), getPaddingY());
 		if (context.isBackground()) {
-			drawBackgroundInternalU(ug, dimensionToUse);
+			drawBackgroundInternalU(ug, area);
 		} else {
-			drawInternalU(ug, dimensionToUse, context.withShadow());
+			drawInternalU(ug, area, context.withShadow());
 		}
 		ug.setTranslate(dx, dy);
 	}

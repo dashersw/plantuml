@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6750 $
+ * Revision $Revision: 7325 $
  *
  */
 package net.sourceforge.plantuml;
@@ -83,6 +83,7 @@ public class Run {
 		}
 
 		boolean error = false;
+		boolean forceQuit = false;
 		if (option.isPattern()) {
 			managePattern();
 		} else if (OptionFlags.getInstance().isGui()) {
@@ -93,8 +94,10 @@ public class Run {
 			new MainWindow2(option);
 		} else if (option.isPipe() || option.isSyntax()) {
 			managePipe(option);
+			forceQuit = true;
 		} else {
 			error = manageAllFiles(option);
+			forceQuit = true;
 		}
 
 		if (option.isDuration()) {
@@ -105,6 +108,10 @@ public class Run {
 		if (error) {
 			Log.error("Some diagram description contains errors");
 			System.exit(1);
+		}
+		
+		if (forceQuit && OptionFlags.getInstance().isSystemExit()) {
+			System.exit(0);
 		}
 	}
 

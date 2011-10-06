@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7170 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -38,6 +38,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractComponent;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -56,7 +57,8 @@ public class ComponentRoseActiveLine extends AbstractComponent {
 		this.closeDown = closeDown;
 	}
 
-	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
+	protected void drawInternalU(UGraphic ug, Area area, boolean withShadow) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int x = (int) (dimensionToUse.getWidth() - getPreferredWidth(stringBounder)) / 2;
 

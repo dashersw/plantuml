@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7173 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.printskin;
@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.png.PngIO;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -139,7 +140,7 @@ class PrintSkin extends AbstractPSystem {
 		// g2d.translate(xpos, ypos);
 		ug.translate(xpos, ypos);
 		ug.getParam().reset();
-		comp.drawU(ug, new Dimension2DDouble(width, height), new SimpleContext2D(false));
+		comp.drawU(ug, new Area(new Dimension2DDouble(width, height)), new SimpleContext2D(false));
 		ug.translate(-xpos, -ypos);
 		// g2d.setTransform(at);
 

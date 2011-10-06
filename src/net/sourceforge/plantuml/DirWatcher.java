@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6616 $
+ * Revision $Revision: 7312 $
  * 
  */
 package net.sourceforge.plantuml;
@@ -45,6 +45,7 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.preproc.Defines;
 
+@Deprecated
 public class DirWatcher {
 
 	final private File dir;

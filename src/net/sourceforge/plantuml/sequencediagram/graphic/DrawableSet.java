@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6493 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -54,6 +54,7 @@ import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.ParticipantEnglober;
 import net.sourceforge.plantuml.sequencediagram.ParticipantEngloberContexted;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
@@ -341,12 +342,12 @@ class DrawableSet {
 				// }
 				final Dimension2DDouble dim = new Dimension2DDouble(preferedWidth, height);
 				ug.translate(x1, 1);
-				comp.drawU(ug, dim, context);
+				comp.drawU(ug, new Area(dim), context);
 				ug.translate(-x1, -1);
 			} else {
 				final Dimension2DDouble dim = new Dimension2DDouble(width, height);
 				ug.translate(x1, 1);
-				comp.drawU(ug, dim, context);
+				comp.drawU(ug, new Area(dim), context);
 				ug.translate(-x1, -1);
 			}
 		}

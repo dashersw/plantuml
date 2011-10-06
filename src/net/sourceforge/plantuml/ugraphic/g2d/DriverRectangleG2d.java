@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7270 $
+ * Revision $Revision: 7294 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -49,6 +49,12 @@ import net.sourceforge.plantuml.ugraphic.UShape;
 
 public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<Graphics2D> {
 
+	private final double dpiFactor;
+
+	public DriverRectangleG2d(double dpiFactor) {
+		this.dpiFactor = dpiFactor;
+	}
+
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
 		g2d.setStroke(new BasicStroke((float) param.getStroke().getThickness()));
 		final URectangle shape = (URectangle) ushape;
@@ -63,7 +69,7 @@ public class DriverRectangleG2d extends DriverShadowedG2d implements UDriver<Gra
 
 		// Shadow
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, rect, shape.getDeltaShadow(), 1.0);
+			drawShadow(g2d, rect, shape.getDeltaShadow(), dpiFactor);
 		}
 
 		final UGradient gr = param.getGradient();

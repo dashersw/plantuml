@@ -215,9 +215,20 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 		}
 
 		final double dpiFactor = diagram.getDpiFactor(fileFormatOption);
-		final EmptyImageBuilder builder = new EmptyImageBuilder((int) (dim.getWidth() * dpiFactor), (int) (dim
-				.getHeight() * dpiFactor), backColor);
-		final Graphics2D graphics2D = builder.getGraphics2D();
+		final EmptyImageBuilder builder;
+		final Graphics2D graphics2D;
+		if (diagram.isRotation()) {
+			builder = new EmptyImageBuilder((int) (dim.getHeight() * dpiFactor), (int) (dim.getWidth() * dpiFactor),
+					backColor);
+			graphics2D = builder.getGraphics2D();
+			graphics2D.rotate(- Math.PI / 2);
+			graphics2D.translate(-builder.getBufferedImage().getHeight(), 0);
+		} else {
+			builder = new EmptyImageBuilder((int) (dim.getWidth() * dpiFactor), (int) (dim.getHeight() * dpiFactor),
+					backColor);
+			graphics2D = builder.getGraphics2D();
+
+		}
 		final UGraphic ug = new UGraphicG2d(diagram.getSkinParam().getColorMapper(), graphics2D, builder
 				.getBufferedImage(), dpiFactor);
 		result.drawU(ug, 0, 0);

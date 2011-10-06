@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6026 $
+ * Revision $Revision: 7330 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -38,6 +38,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowComponent;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
@@ -47,10 +48,12 @@ import net.sourceforge.plantuml.ugraphic.UGraphic;
 class MessageSelfArrow extends Arrow {
 
 	private final LivingParticipantBox p1;
+	private final double deltaY;
 
-	public MessageSelfArrow(double startingY, Skin skin, Component arrow, LivingParticipantBox p1) {
+	public MessageSelfArrow(double startingY, Skin skin, Component arrow, LivingParticipantBox p1, double deltaY) {
 		super(startingY, skin, arrow);
 		this.p1 = p1;
+		this.deltaY = deltaY;
 	}
 
 	@Override
@@ -66,9 +69,11 @@ class MessageSelfArrow extends Arrow {
 	@Override
 	protected void drawInternalU(UGraphic ug, double maxX, Context2D context) {
 		final StringBounder stringBounder = ug.getStringBounder();
-		ug.translate(getStartingX(stringBounder), getStartingY());
-		getArrowComponent().drawU(ug,
-				new Dimension2DDouble(getPreferredWidth(stringBounder), getPreferredHeight(stringBounder)), context);
+		ug.translate(getStartingX(stringBounder), getStartingY() + deltaY);
+		final Area area = new Area(new Dimension2DDouble(getPreferredWidth(stringBounder),
+				getPreferredHeight(stringBounder)));
+		area.setDeltaX1(deltaY);
+		getArrowComponent().drawU(ug, area, context);
 	}
 
 	@Override

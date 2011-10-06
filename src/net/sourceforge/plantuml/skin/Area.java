@@ -28,20 +28,32 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 4168 $
  *
  */
 package net.sourceforge.plantuml.skin;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import java.awt.geom.Dimension2D;
 
-public interface Component {
+public class Area {
 
-	double getPreferredWidth(StringBounder stringBounder);
+	private final Dimension2D dimensionToUse;
+	private double deltaX1;
 
-	double getPreferredHeight(StringBounder stringBounder);
+	public Area(Dimension2D dimensionToUse) {
+		this.dimensionToUse = dimensionToUse;
+	}
 
-	void drawU(UGraphic ug, Area area, Context2D context);
+	public Dimension2D getDimensionToUse() {
+		return dimensionToUse;
+	}
+
+	public void setDeltaX1(double deltaX1) {
+		this.deltaX1 = deltaX1;
+	}
+
+	public final double getDeltaX1() {
+		return deltaX1;
+	}
 
 }

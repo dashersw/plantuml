@@ -48,9 +48,11 @@ import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.cucadiagram.dot.Graphviz;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -70,15 +72,15 @@ public class DotStringFactory implements Moveable {
 	private final List<Line> lines1 = new ArrayList<Line>();
 	private final List<Line> allLines = new ArrayList<Line>();
 	private Cluster current;
-	private final UmlDiagramType type;
+	private final DotData dotData;
 
 	private final StringBounder stringBounder;
 
-	public DotStringFactory(ColorSequence colorSequence, StringBounder stringBounder, UmlDiagramType type) {
+	public DotStringFactory(ColorSequence colorSequence, StringBounder stringBounder, DotData dotData) {
 		this.colorSequence = colorSequence;
-		this.type = type;
+		this.dotData = dotData;
 		this.stringBounder = stringBounder;
-		this.root = new Cluster(colorSequence);
+		this.root = new Cluster(colorSequence, dotData.getSkinParam());
 		this.current = root;
 	}
 
@@ -122,7 +124,7 @@ public class DotStringFactory implements Moveable {
 		return max / 10;
 	}
 
-	public String createDotString(String... dotStrings) {
+	String createDotString(String... dotStrings) {
 		final StringBuilder sb = new StringBuilder();
 
 		double nodesep = getHorizontalDzeta();
@@ -157,11 +159,12 @@ public class DotStringFactory implements Moveable {
 		sb.append("compound=true;");
 		SvekUtils.println(sb);
 
+		root.printCluster1(sb, allLines);
 		for (Line line : lines0) {
 			line.appendLine(sb);
 		}
 		root.fillRankMin(rankMin);
-		root.printCluster(sb, allLines);
+		root.printCluster2(sb, allLines);
 		printMinRanking(sb);
 
 		for (Line line : lines1) {
@@ -174,22 +177,26 @@ public class DotStringFactory implements Moveable {
 	}
 
 	private int getMinRankSep() {
-		if (type == UmlDiagramType.ACTIVITY) {
-			return 29;
+		if (dotData.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
+			// return 29;
+			return 40;
 		}
 		return 60;
 	}
 
 	private int getMinNodeSep() {
-		if (type == UmlDiagramType.ACTIVITY) {
-			return 15;
+		if (dotData.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
+			// return 15;
+			return 20;
 		}
-		return 25;
+		return 35;
 	}
 
 	String getSVG(String... dotStrings) throws IOException, InterruptedException {
 		final String dotString = createDotString(dotStrings);
-		// System.err.println("dotString=" + dotString);
+		if (OptionFlags.TRACE_DOT) {
+			System.err.println("dotString=" + dotString);
+		}
 
 		final Graphviz graphviz = GraphvizUtils.create(dotString, "svg");
 		final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -198,10 +205,10 @@ public class DotStringFactory implements Moveable {
 		final byte[] result = baos.toByteArray();
 		final String s = new String(result, "UTF-8");
 
-		// if (OptionFlags.getInstance().isKeepTmpFiles()) {
-		Log.info("Creating temporary file svek.svg");
-		SvekUtils.traceSvgString(s);
-		// }
+		if (OptionFlags.SVEK || OptionFlags.getInstance().isKeepTmpFiles()) {
+			Log.info("Creating temporary file svek.svg");
+			SvekUtils.traceSvgString(s);
+		}
 
 		return s;
 	}
@@ -310,7 +317,7 @@ public class DotStringFactory implements Moveable {
 
 	private static boolean first(Line line) {
 		final int length = line.getLength();
-		if (length==1) {
+		if (length == 1) {
 			return true;
 		}
 		return false;
@@ -325,7 +332,8 @@ public class DotStringFactory implements Moveable {
 	}
 
 	public void openCluster(Group g, int titleWidth, int titleHeight, TextBlock title, boolean isSpecialGroup) {
-		this.current = current.createChild(g, titleWidth, titleHeight, title, isSpecialGroup, colorSequence);
+		this.current = current.createChild(g, titleWidth, titleHeight, title, isSpecialGroup, colorSequence, dotData
+				.getSkinParam());
 		this.allCluster.add(this.current);
 	}
 

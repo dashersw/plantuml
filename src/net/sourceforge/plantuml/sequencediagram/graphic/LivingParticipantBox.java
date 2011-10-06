@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6024 $
+ * Revision $Revision: 7341 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -75,6 +75,10 @@ public class LivingParticipantBox implements InGroupable {
 		if (endingY <= startingY) {
 			return;
 		}
+		final double destroy = lifeLine.getDestroy();
+		if (destroy != 0 && destroy > startingY && destroy < endingY) {
+			endingY = destroy;
+		}
 		participantBox.drawLineU(ug, startingY, endingY, showTail);
 	}
 
@@ -101,5 +105,5 @@ public class LivingParticipantBox implements InGroupable {
 	public String toString(StringBounder stringBounder) {
 		return toString();
 	}
-	
+
 }

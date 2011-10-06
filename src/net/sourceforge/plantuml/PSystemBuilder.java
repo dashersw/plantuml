@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.componentdiagram.ComponentDiagramFactory;
 import net.sourceforge.plantuml.compositediagram.CompositeDiagramFactory;
 import net.sourceforge.plantuml.directdot.PSystemDotFactory;
 import net.sourceforge.plantuml.ditaa.PSystemDitaaFactory;
+import net.sourceforge.plantuml.eggs.PSystemAppleTwoFactory;
 import net.sourceforge.plantuml.eggs.PSystemEggFactory;
 import net.sourceforge.plantuml.eggs.PSystemLostFactory;
 import net.sourceforge.plantuml.eggs.PSystemPathFactory;
@@ -116,6 +117,7 @@ public class PSystemBuilder {
 		factories.add(new PSystemJcckitFactory(DiagramType.UML));
 		factories.add(new PSystemSudokuFactory());
 		factories.add(new PSystemEggFactory());
+		factories.add(new PSystemAppleTwoFactory());
 		factories.add(new PSystemRIPFactory());
 		factories.add(new PSystemLostFactory());
 		factories.add(new PSystemPathFactory());

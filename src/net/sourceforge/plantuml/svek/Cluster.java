@@ -46,6 +46,7 @@ import java.util.Set;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -73,6 +74,7 @@ public class Cluster implements Moveable {
 	private final boolean special;
 	private final int color;
 	private final int colorTitle;
+	private final ISkinParam skinParam;
 
 	private int titleWidth;
 	private int titleHeight;
@@ -96,20 +98,21 @@ public class Cluster implements Moveable {
 
 	}
 
-	public Cluster(ColorSequence colorSequence) {
-		this(null, null, false, colorSequence);
+	public Cluster(ColorSequence colorSequence, ISkinParam skinParam) {
+		this(null, null, false, colorSequence, skinParam);
 	}
 
 	private int getUid2() {
 		return group.getUid2();
 	}
 
-	private Cluster(Cluster parent, Group group, boolean special, ColorSequence colorSequence) {
+	private Cluster(Cluster parent, Group group, boolean special, ColorSequence colorSequence, ISkinParam skinParam) {
 		this.parent = parent;
 		this.group = group;
 		this.special = special;
 		this.color = colorSequence.getValue();
 		this.colorTitle = colorSequence.getValue();
+		this.skinParam = skinParam;
 	}
 
 	@Override
@@ -133,9 +136,41 @@ public class Cluster implements Moveable {
 		return Collections.unmodifiableList(shapes);
 	}
 
-	private List<Shape> getShapesOrdered(Collection<Line> lines) {
-		final List<Shape> all = new ArrayList<Shape>(shapes);
+	private List<Shape> getShapesOrderedTop(Collection<Line> lines) {
 		final List<Shape> firsts = new ArrayList<Shape>();
+		final Set<String> tops = new HashSet<String>();
+		final Map<String, Shape> shs = new HashMap<String, Shape>();
+
+		for (final Iterator<Shape> it = shapes.iterator(); it.hasNext();) {
+			final Shape sh = it.next();
+			shs.put(sh.getUid(), sh);
+			if (sh.isTop()) {
+				firsts.add(sh);
+				tops.add(sh.getUid());
+			}
+		}
+
+		for (Line l : lines) {
+			if (tops.contains(l.getStartUid())) {
+				final Shape sh = shs.get(l.getEndUid());
+				if (sh != null) {
+					firsts.add(0, sh);
+				}
+			}
+
+			if (l.isInverted()) {
+				final Shape sh = shs.get(l.getStartUid());
+				if (sh != null) {
+					firsts.add(0, sh);
+				}
+			}
+		}
+
+		return firsts;
+	}
+
+	private List<Shape> getShapesOrderedWithoutTop(Collection<Line> lines) {
+		final List<Shape> all = new ArrayList<Shape>(shapes);
 		final Set<String> tops = new HashSet<String>();
 		final Map<String, Shape> shs = new HashMap<String, Shape>();
 
@@ -143,7 +178,6 @@ public class Cluster implements Moveable {
 			final Shape sh = it.next();
 			shs.put(sh.getUid(), sh);
 			if (sh.isTop()) {
-				firsts.add(sh);
 				tops.add(sh.getUid());
 				it.remove();
 			}
@@ -154,7 +188,6 @@ public class Cluster implements Moveable {
 				final Shape sh = shs.get(l.getEndUid());
 				if (sh != null) {
 					all.remove(sh);
-					firsts.add(0, sh);
 				}
 			}
 
@@ -162,12 +195,10 @@ public class Cluster implements Moveable {
 				final Shape sh = shs.get(l.getStartUid());
 				if (sh != null) {
 					all.remove(sh);
-					firsts.add(0, sh);
 				}
 			}
 		}
 
-		all.addAll(0, firsts);
 		return all;
 	}
 
@@ -176,8 +207,8 @@ public class Cluster implements Moveable {
 	}
 
 	public Cluster createChild(Group g, int titleWidth, int titleHeight, TextBlock title, boolean special,
-			ColorSequence colorSequence) {
-		final Cluster child = new Cluster(this, g, special, colorSequence);
+			ColorSequence colorSequence, ISkinParam skinParam) {
+		final Cluster child = new Cluster(this, g, special, colorSequence, skinParam);
 		child.titleWidth = titleWidth;
 		child.titleHeight = titleHeight;
 		child.title = title;
@@ -208,8 +239,13 @@ public class Cluster implements Moveable {
 			drawUState(ug, x, y, borderColor, dotData);
 			return;
 		}
+		final PackageStyle style = dotData.getSkinParam().getPackageStyle();
 		if (title != null) {
-			drawWithTitle(ug, x, y, borderColor, dotData);
+			if (style == PackageStyle.RECT) {
+				drawWithTitleRect(ug, x, y, borderColor, dotData);
+			} else {
+				drawWithTitle(ug, x, y, borderColor, dotData);
+			}
 			return;
 		}
 		final URectangle rect = new URectangle(maxX - minX, maxY - minY);
@@ -250,16 +286,7 @@ public class Cluster implements Moveable {
 		return shape;
 	}
 
-	// private UPolygon specificFrontier;
-	//
-	// public final UPolygon getSpecificFrontier() {
-	// return specificFrontier;
-	// }
-	//
 	private void drawWithTitle(UGraphic ug, double x, double y, HtmlColor borderColor, DotData dotData) {
-
-		// y += marginTitleY0;
-
 		final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
 		final double wtitle = dimTitle.getWidth() + marginTitleX1 + marginTitleX2;
 		final double htitle = dimTitle.getHeight() + marginTitleY1 + marginTitleY2;
@@ -282,10 +309,38 @@ public class Cluster implements Moveable {
 		ug.getParam().setColor(borderColor);
 		ug.getParam().setStroke(new UStroke(2));
 		ug.draw(x + minX, y + minY, shape);
-		// specificFrontier = shape.translate(x + minX, y + minY);
 		ug.draw(x + minX, y + minY + htitle, new ULine(wtitle + marginTitleX3, 0));
 		ug.getParam().setStroke(new UStroke());
 		title.drawU(ug, x + minX + marginTitleX1, y + minY + marginTitleY1);
+	}
+
+	private void drawWithTitleRect(UGraphic ug, double x, double y, HtmlColor borderColor, DotData dotData) {
+		final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
+		final double width = maxX - minX;
+		final double height = maxY - minY;
+		final URectangle shape = new URectangle(width, height);
+		if (dotData.getSkinParam().shadowing()) {
+			shape.setDeltaShadow(3.0);
+		}
+
+		HtmlColor stateBack = getBackColor();
+		if (stateBack == null) {
+			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.packageBackground, group.getStereotype());
+		}
+		if (stateBack == null) {
+			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.background, group.getStereotype());
+		}
+		if (stateBack == null) {
+			stateBack = HtmlColor.WHITE;
+		}
+		ug.getParam().setBackcolor(stateBack);
+		ug.getParam().setColor(borderColor);
+		ug.getParam().setStroke(new UStroke(2));
+
+		ug.draw(x + minX, y + minY, shape);
+		ug.getParam().setStroke(new UStroke());
+		final double deltax = width - dimTitle.getWidth();
+		title.drawU(ug, x + minX + deltax / 2, y + minY + 5);
 	}
 
 	private HtmlColor getColor(DotData dotData, ColorParam colorParam, String stereo) {
@@ -321,7 +376,13 @@ public class Cluster implements Moveable {
 		return special;
 	}
 
-	public void printCluster(StringBuilder sb, Collection<Line> lines) {
+	public void printCluster1(StringBuilder sb, Collection<Line> lines) {
+		for (Shape sh : getShapesOrderedTop(lines)) {
+			sh.appendShape(sb);
+		}
+	}
+
+	public void printCluster2(StringBuilder sb, Collection<Line> lines) {
 		// System.err.println("Cluster::printCluster " + this);
 
 		final Set<String> rankSame = new HashSet<String>();
@@ -336,7 +397,7 @@ public class Cluster implements Moveable {
 			}
 		}
 
-		for (Shape sh : getShapesOrdered(lines)) {
+		for (Shape sh : getShapesOrderedWithoutTop(lines)) {
 			sh.appendShape(sb);
 		}
 
@@ -382,7 +443,7 @@ public class Cluster implements Moveable {
 	private int marginTitleX1 = 3;
 	private int marginTitleX2 = 3;
 	private int marginTitleX3 = 7;
-	private int marginTitleY0 = 10;
+	private int marginTitleY0 = 0;
 	private int marginTitleY1 = 3;
 	private int marginTitleY2 = 3;
 
@@ -400,9 +461,13 @@ public class Cluster implements Moveable {
 		sb.append("style=solid;");
 		sb.append("color=\"" + StringUtils.getAsHtml(color) + "\";");
 
-		final int titleWidth = getTitleWidth() + marginTitleX1 + marginTitleX2 + marginTitleX3;
-		final int titleHeight = getTitleHeight() + marginTitleY0 + marginTitleY1 + marginTitleY2;
+		int titleWidth = getTitleWidth();
+		int titleHeight = getTitleHeight();
 		if (titleHeight > 0 && titleWidth > 0) {
+			if (skinParam.getPackageStyle() != PackageStyle.RECT) {
+				titleWidth += marginTitleX1 + marginTitleX2 + marginTitleX3;
+				titleHeight += marginTitleY0 + marginTitleY1 + marginTitleY2;
+			}
 			sb.append("label=<");
 			Line.appendTable(sb, titleWidth, titleHeight, colorTitle);
 			sb.append(">;");
@@ -422,7 +487,8 @@ public class Cluster implements Moveable {
 		if (protection1) {
 			subgraphCluster(sb, "p1");
 		}
-		printCluster(sb, lines);
+		printCluster1(sb, lines);
+		printCluster2(sb, lines);
 		if (protection1) {
 			sb.append("}");
 		}

@@ -28,20 +28,46 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 3830 $
  *
  */
-package net.sourceforge.plantuml.skin;
+package net.sourceforge.plantuml.eggs;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
+import java.io.IOException;
 
-public interface Component {
+import net.sourceforge.plantuml.DiagramType;
+import net.sourceforge.plantuml.Log;
+import net.sourceforge.plantuml.PSystemBasicFactory;
 
-	double getPreferredWidth(StringBounder stringBounder);
+public class PSystemAppleTwoFactory implements PSystemBasicFactory {
 
-	double getPreferredHeight(StringBounder stringBounder);
+	private PSystemAppleTwo system;
 
-	void drawU(UGraphic ug, Area area, Context2D context);
+	public void init(String startLine) {
+	}
+
+	public boolean executeLine(String line) {
+		if (line.equalsIgnoreCase("apple //e") || line.equalsIgnoreCase("apple ][")
+				|| line.equalsIgnoreCase("apple II") || line.equalsIgnoreCase("Steve Jobs")
+				|| line.equalsIgnoreCase("Steve Wozniak")) {
+			try {
+				system = new PSystemAppleTwo();
+				return true;
+			} catch (IOException e) {
+				Log.error("Error " + e);
+				e.printStackTrace();
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public PSystemAppleTwo getSystem() {
+		return system;
+	}
+
+	public DiagramType getDiagramType() {
+		return DiagramType.UML;
+	}
 
 }

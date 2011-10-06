@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5874 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -38,6 +38,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -65,11 +66,11 @@ class GroupingElse extends GroupingGraphicalElement {
 		final Dimension2D dim = new Dimension2DDouble(x2 - x1, comp.getPreferredHeight(stringBounder));
 
 		final Dimension2D dimBody = new Dimension2DDouble(x2 - x1, getStartingY() - initY);
-		comp.drawU(ug, dim, context);
+		comp.drawU(ug, new Area(dim), context);
 
 		ug.translate(0, initY - getStartingY());
 
-		body.drawU(ug, dimBody, context);
+		body.drawU(ug, new Area(dimBody), context);
 	}
 
 	@Override

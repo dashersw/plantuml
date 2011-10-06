@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6049 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -41,6 +41,7 @@ import java.util.Iterator;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -87,7 +88,7 @@ class SegmentColored {
 		ug.translate((level - 1) * comp.getPreferredWidth(stringBounder) / 2, segment.getPos1());
 		final Dimension2D dim = new Dimension2DDouble(comp.getPreferredWidth(stringBounder), segment.getPos2()
 				- segment.getPos1());
-		comp.drawU(ug, dim, new SimpleContext2D(false));
+		comp.drawU(ug, new Area(dim), new SimpleContext2D(false));
 		ug.setTranslate(atX, atY);
 	}
 

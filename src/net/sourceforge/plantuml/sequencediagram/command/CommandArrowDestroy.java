@@ -126,8 +126,9 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 			throw new IllegalStateException(arg2.toString());
 		}
 
-//		final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<") || arrow.contains("\\\\")
-//				|| arrow.contains("//");
+		// final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<")
+		// || arrow.contains("\\\\")
+		// || arrow.contains("//");
 
 		final boolean dotted = arrow.contains("--");
 
@@ -143,9 +144,9 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 			config = config.withDotted();
 		}
 		config = config.withHead(ArrowHead.CROSSX);
-//		if (sync) {
-//			config = config.withAsync();
-//		}
+		// if (sync) {
+		// config = config.withAsync();
+		// }
 		// if (arrow.endsWith("\\") || arrow.startsWith("/")) {
 		// config = config.withPart(ArrowPart.TOP_PART);
 		// }
@@ -153,24 +154,28 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 		// config = config.withPart(ArrowPart.BOTTOM_PART);
 		// }
 
-		getSystem().addMessage(new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
+		final String error = getSystem().addMessage(
+				new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
+		if (error != null) {
+			return CommandExecutionResult.error(error);
+		}
 
-//		if (getSystem().isAutoactivate()) {
-//			if (p1 != p2 && config.isASync() == false) {
-//				if (config.isDotted()) {
-//					getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
-//				} else {
-//					getSystem().activate(p2, LifeEventType.ACTIVATE, null);
-//				}
-//			}
-//		} else {
-//			if (deactivatep1) {
-//				getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
-//			}
-//			if (activatep2) {
-//				getSystem().activate(p2, LifeEventType.ACTIVATE, null);
-//			}
-//		}
+		// if (getSystem().isAutoactivate()) {
+		// if (p1 != p2 && config.isASync() == false) {
+		// if (config.isDotted()) {
+		// getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
+		// } else {
+		// getSystem().activate(p2, LifeEventType.ACTIVATE, null);
+		// }
+		// }
+		// } else {
+		// if (deactivatep1) {
+		// getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
+		// }
+		// if (activatep2) {
+		// getSystem().activate(p2, LifeEventType.ACTIVATE, null);
+		// }
+		// }
 		return CommandExecutionResult.ok();
 	}
 

@@ -49,7 +49,6 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.OptionFlags;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -75,6 +74,7 @@ import net.sourceforge.plantuml.posimo.MargedBlock;
 import net.sourceforge.plantuml.posimo.Path;
 import net.sourceforge.plantuml.posimo.PathDrawerInterface;
 import net.sourceforge.plantuml.posimo.PositionableUtils;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -220,7 +220,7 @@ public final class PlayField {
 			final double oldX = ug.getTranslateX();
 			final double oldY = ug.getTranslateY();
 			ug.translate(rect.getX(), rect.getY());
-			frame.drawU(ug, new Dimension2DDouble(rect.getWidth(), rect.getHeight()), null);
+			frame.drawU(ug, new Area(new Dimension2DDouble(rect.getWidth(), rect.getHeight())), null);
 			ug.setTranslate(oldX, oldY);
 		}
 

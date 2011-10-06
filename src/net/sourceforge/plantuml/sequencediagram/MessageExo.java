@@ -77,4 +77,9 @@ public class MessageExo extends AbstractMessage {
 		return null;
 	}
 
+	@Override
+	public boolean compatibleForCreate(Participant p) {
+		return p == participant;
+	}
+
 }

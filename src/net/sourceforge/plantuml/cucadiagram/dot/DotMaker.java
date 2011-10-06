@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6939 $
+ * Revision $Revision: 7304 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -124,7 +124,9 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 		printRanking(sb);
 		sb.append("}");
 
-		// System.err.println(sb);
+		if (OptionFlags.TRACE_DOT) {
+			System.err.println(sb);
+		}
 		if (isJunit) {
 			lastDotSignature = SignatureUtils.getSignatureWithoutImgSrc(sb.toString());
 		}

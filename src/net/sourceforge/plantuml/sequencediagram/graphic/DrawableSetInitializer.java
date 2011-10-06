@@ -28,14 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7244 $
+ * Revision $Revision: 7340 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -88,7 +87,11 @@ class DrawableSetInitializer {
 
 	private double lastFreeY = 0;
 
-	private boolean hasDelay() {
+	private boolean useContinueLineBecauseOfDelay() {
+		final String strategy = drawableSet.getSkinParam().getValue("lifelineStrategy");
+		if ("nosolid".equalsIgnoreCase(strategy)) {
+			return false;
+		}
 		for (Event ev : drawableSet.getAllEvents()) {
 			if (ev instanceof Delay) {
 				return true;
@@ -102,7 +105,8 @@ class DrawableSetInitializer {
 			throw new IllegalStateException();
 		}
 
-		this.defaultLineType = hasDelay() ? ComponentType.CONTINUE_LINE : ComponentType.PARTICIPANT_LINE;
+		this.defaultLineType = useContinueLineBecauseOfDelay() ? ComponentType.CONTINUE_LINE
+				: ComponentType.PARTICIPANT_LINE;
 
 		for (Participant p : drawableSet.getAllParticipants()) {
 			prepareParticipant(stringBounder, p);
@@ -251,6 +255,14 @@ class DrawableSetInitializer {
 		double missingSpace2 = 0;
 
 		for (GraphicalElement ev : drawableSet.getAllGraphicalElements()) {
+			if (ev instanceof GraphicalDelayText) {
+				final double missing = ev.getPreferredWidth(stringBounder) - freeX;
+				if (missing > 0) {
+					missingSpace1 = Math.max(missingSpace1, missing / 2);
+					missingSpace2 = Math.max(missingSpace2, missing / 2);
+				}
+				continue;
+			}
 			final double startX = ev.getStartingX(stringBounder);
 			final double delta1 = -startX;
 			if (delta1 > missingSpace1) {
@@ -313,7 +325,7 @@ class DrawableSetInitializer {
 		final Component compText = drawableSet.getSkin().createComponent(ComponentType.DELAY_TEXT,
 				drawableSet.getSkinParam(), delay.getText());
 		final ParticipantBox first = participants.get(0);
-		final ParticipantBox last = participants.get(participants.size()-1);
+		final ParticipantBox last = participants.get(participants.size() - 1);
 		final GraphicalDelayText graphicalDivider = new GraphicalDelayText(freeY, compText, first, last);
 		for (ParticipantBox p : participants) {
 			p.addDelay(graphicalDivider);

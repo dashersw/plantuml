@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7144 $
+ * Revision $Revision: 7342 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -158,10 +158,26 @@ public class GraphicStrings implements IEntityImage {
 		return im;
 	}
 
+	private double minWidth;
+
+	public void setMinWidth(double minWidth) {
+		this.minWidth = minWidth;
+	}
+
+	private Dimension2D getSizeWithMin(Dimension2D dim) {
+		if (minWidth == 0) {
+			return dim;
+		}
+		if (dim.getWidth() < minWidth) {
+			return new Dimension2DDouble(minWidth, dim.getHeight());
+		}
+		return dim;
+	}
+
 	public Dimension2D drawU(final UGraphic ug) {
 		final TextBlock textBlock = TextBlockUtils.create(strings, new FontConfiguration(font, green),
 				HorizontalAlignement.LEFT);
-		Dimension2D size = textBlock.calculateDimension(ug.getStringBounder());
+		Dimension2D size = getSizeWithMin(textBlock.calculateDimension(ug.getStringBounder()));
 		textBlock.drawU(ug, 0, 0);
 
 		if (image != null) {
@@ -182,7 +198,7 @@ public class GraphicStrings implements IEntityImage {
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final TextBlock textBlock = TextBlockUtils.create(strings, new FontConfiguration(font, green),
 				HorizontalAlignement.LEFT);
-		return textBlock.calculateDimension(stringBounder);
+		return getSizeWithMin(textBlock.calculateDimension(stringBounder));
 	}
 
 	public ShapeType getShapeType() {

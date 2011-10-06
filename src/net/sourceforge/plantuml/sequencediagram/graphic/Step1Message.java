@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7284 $
+ * Revision $Revision: 7347 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import net.sourceforge.plantuml.ISkinParam;
@@ -161,10 +162,8 @@ class Step1Message extends Step1Abstract {
 		if (getMessage().isCreate()) {
 			return createArrowCreate();
 		}
-		final MessageSelfArrow messageSelfArrow = new MessageSelfArrow(getFreeY(), getDrawingSet().getSkin(),
-				getDrawingSet().getSkin().createComponent(getType(), getDrawingSet().getSkinParam(),
-						getLabelOfMessage(getMessage())), getLivingParticipantBox1());
 		if (getMessage().getNote() != null && isSelfMessage()) {
+			final MessageSelfArrow messageSelfArrow = createMessageSelfArrow();
 			final NoteBox noteBox = createNoteBox(getStringBounder(), messageSelfArrow, getNote(), getMessage()
 					.getNotePosition(), getMessage().getUrlNote());
 			return new ArrowAndNoteBox(getStringBounder(), messageSelfArrow, noteBox);
@@ -173,13 +172,36 @@ class Step1Message extends Step1Abstract {
 					.getNotePosition(), getMessage().getUrlNote());
 			return new ArrowAndNoteBox(getStringBounder(), messageArrow, noteBox);
 		} else if (isSelfMessage()) {
-			return messageSelfArrow;
+			return createMessageSelfArrow();
 		} else {
 			return messageArrow;
 		}
 	}
 
+	private MessageSelfArrow createMessageSelfArrow() {
+		final double posY = getFreeY();
+		double deltaY = 0;
+		if (getMessage().isActivate()) {
+			deltaY -= getHalfLifeWidth();
+		}
+		if (getMessage().isDeactivate()) {
+			deltaY += getHalfLifeWidth();
+		}
+
+		return new MessageSelfArrow(posY, getDrawingSet().getSkin(), getDrawingSet().getSkin().createComponent(
+				getType(), getDrawingSet().getSkinParam(), getLabelOfMessage(getMessage())),
+				getLivingParticipantBox1(), deltaY);
+	}
+
+	private double getHalfLifeWidth() {
+		return getDrawingSet().getSkin().createComponent(ComponentType.ALIVE_BOX_OPEN_OPEN,
+				getDrawingSet().getSkinParam(), Arrays.asList("")).getPreferredWidth(null) / 2;
+	}
+
 	private Arrow createArrowCreate() {
+		if (messageArrow == null) {
+			throw new IllegalStateException();
+		}
 		Arrow result = new ArrowAndParticipant(getStringBounder(), messageArrow, getParticipantBox2());
 		if (getMessage().getNote() != null) {
 			final NoteBox noteBox = createNoteBox(getStringBounder(), result, getNote(),

@@ -34,7 +34,6 @@
 package net.sourceforge.plantuml.ugraphic.g2d;
 
 import java.awt.Graphics2D;
-import java.awt.geom.CubicCurve2D;
 import java.awt.geom.GeneralPath;
 
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -55,12 +54,14 @@ public class DriverPathG2d implements UDriver<Graphics2D> {
 		for (USegment seg : shape) {
 			final USegmentType type = seg.getSegmentType();
 			final double coord[] = seg.getCoord();
+			// Cast float for Java 1.5
 			if (type == USegmentType.SEG_MOVETO) {
-				p.moveTo(x + coord[0], y + coord[1]);
+				p.moveTo((float) (x + coord[0]), (float) (y + coord[1]));
 			} else if (type == USegmentType.SEG_LINETO) {
-				p.lineTo(x + coord[0], y + coord[1]);
+				p.lineTo((float) (x + coord[0]), (float) (y + coord[1]));
 			} else if (type == USegmentType.SEG_CUBICTO) {
-				p.curveTo(x + coord[0], y + coord[1], x + coord[2], y + coord[3], x + coord[4], y + coord[5]);
+				p.curveTo((float) (x + coord[0]), (float) (y + coord[1]), (float) (x + coord[2]),
+						(float) (y + coord[3]), (float) (x + coord[4]), (float) (y + coord[5]));
 			} else {
 				throw new UnsupportedOperationException();
 			}

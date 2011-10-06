@@ -60,22 +60,21 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 	}
 
 	static RegexConcat getRegexConcat() {
-		return new RegexConcat(
-				new RegexLeaf("^"), //
+		return new RegexConcat(new RegexLeaf("^"), //
 				new RegexOr("PART1", //
 						new RegexLeaf("PART1CODE", "([\\p{L}0-9_.@]+)"), //
 						new RegexLeaf("PART1LONG", "\"([^\"]+)\""), //
 						new RegexLeaf("PART1LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), //
-						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")),
-				new RegexLeaf("\\s*"), //
+						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
+						"\\s*"), //
 				new RegexLeaf("ARROW", "(\\$?([=-]+(>>?|//?|\\\\\\\\?)|(<<?|//?|\\\\\\\\?)[=-]+)\\$?)"), //
 				new RegexLeaf("\\s*"), // 
 				new RegexOr("PART2", // 
 						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), // 
 						new RegexLeaf("PART2LONG", "\"([^\"]+)\""), // 
 						new RegexLeaf("PART2LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), // 
-						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")),
-				new RegexLeaf("\\s*"), // 
+						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
+						"\\s*"), // 
 				new RegexLeaf("MESSAGE", "(?::\\s*(.*))?$"));
 	}
 
@@ -154,7 +153,11 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			config = config.withPart(ArrowPart.BOTTOM_PART);
 		}
 
-		getSystem().addMessage(new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
+		final String error = getSystem().addMessage(
+				new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
+		if (error != null) {
+			return CommandExecutionResult.error(error);
+		}
 
 		if (getSystem().isAutoactivate()) {
 			if (p1 != p2 && config.getHead() == ArrowHead.NORMAL) {

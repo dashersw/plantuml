@@ -37,6 +37,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UFont;
 
@@ -125,6 +126,10 @@ public class SkinParamBackcolored implements ISkinParam {
 
 	public boolean shadowing() {
 		return skinParam.shadowing();
+	}
+
+	public PackageStyle getPackageStyle() {
+		return skinParam.getPackageStyle();
 	}
 
 }

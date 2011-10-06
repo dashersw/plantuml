@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7284 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -40,6 +40,7 @@ import java.util.List;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
@@ -63,7 +64,8 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 	private final double spaceCrossX = 6;
 
 	@Override
-	public void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
+	public void drawInternalU(UGraphic ug, Area area, boolean withShadow) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final StringBounder stringBounder = ug.getStringBounder();
 		final int textHeight = (int) getTextHeight(stringBounder);
 		ug.getParam().setColor(getForegroundColor());

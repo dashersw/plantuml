@@ -92,6 +92,8 @@ public class PSystemJcckitFactory implements PSystemBasicFactory {
 		final Properties p = new Properties();
 		try {
 			p.load(new StringReader(data.toString()));
+			// For Java 1.5
+			//p.load(new ByteArrayInputStream(data.toString().getBytes("ISO-8859-1")));
 		} catch (IOException e) {
 			Log.error("Error " + e);
 			e.printStackTrace();

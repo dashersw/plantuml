@@ -27,21 +27,15 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 7328 $
  *
+ * Revision $Revision: 4236 $
+ * 
  */
-package net.sourceforge.plantuml.skin;
+package net.sourceforge.plantuml.svek;
 
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-public interface Component {
-
-	double getPreferredWidth(StringBounder stringBounder);
-
-	double getPreferredHeight(StringBounder stringBounder);
-
-	void drawU(UGraphic ug, Area area, Context2D context);
+public enum PackageStyle {
+	
+	FOLDER, RECT
 
 }

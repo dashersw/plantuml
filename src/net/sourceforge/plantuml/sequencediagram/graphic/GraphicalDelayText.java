@@ -37,10 +37,10 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.URectangle;
 
 class GraphicalDelayText extends GraphicalElement {
 
@@ -66,7 +66,7 @@ class GraphicalDelayText extends GraphicalElement {
 		ug.translate(middle - textWidth / 2, getStartingY());
 		// ug.translate(x1, getStartingY());
 		final Dimension2D dim = new Dimension2DDouble(textWidth, compText.getPreferredHeight(stringBounder));
-		compText.drawU(ug, dim, context);
+		compText.drawU(ug, new Area(dim), context);
 	}
 
 	@Override

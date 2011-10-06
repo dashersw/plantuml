@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.SkinParam;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
 import net.sourceforge.plantuml.skin.rose.ComponentRoseNote;
@@ -96,7 +97,7 @@ public class PostIt {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimensionToUse = getDimension(stringBounder);
 
-		note.drawU(ug, dimensionToUse, new SimpleContext2D(false));
+		note.drawU(ug, new Area(dimensionToUse), new SimpleContext2D(false));
 
 	}
 

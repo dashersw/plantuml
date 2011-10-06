@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7270 $
+ * Revision $Revision: 7294 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -47,6 +47,12 @@ import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class DriverLineG2d extends DriverShadowedG2d implements UDriver<Graphics2D> {
 
+	private final double dpiFactor;
+	
+	public DriverLineG2d(double dpiFactor) {
+		this.dpiFactor = dpiFactor;
+	}
+
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
 		final ULine shape = (ULine) ushape;
 
@@ -54,7 +60,7 @@ public class DriverLineG2d extends DriverShadowedG2d implements UDriver<Graphics
 		manageStroke(param, g2d);
 		// Shadow
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, line, shape.getDeltaShadow(), 1.0);
+			drawShadow(g2d, line, shape.getDeltaShadow(), dpiFactor);
 		}
 		g2d.setColor(mapper.getMappedColor(param.getColor()));
 		g2d.draw(line);

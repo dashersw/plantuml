@@ -34,6 +34,8 @@
 package net.sourceforge.plantuml.classdiagram.command;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
@@ -72,9 +74,7 @@ final public class CommandLinkLollipop2 extends SingleLineCommand2<AbstractClass
 				new RegexLeaf("ENT2", "(?:" + optionalKeywords(umlDiagramType) + "\\s+)?"
 						+ "(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*|\"[^\"]+\")\\s*(\\<\\<.*\\>\\>)?"), //
 				new RegexLeaf("\\s*"), //
-				new RegexOr(null, true, //
-						new RegexLeaf("LABEL_LINK", ":\\s*([^\"]+)"), //
-						new RegexLeaf("LABEL_LINK_XT", ":\\s*(\"[^\"]*\")?\\s*([^\"]*)\\s*(\"[^\"]*\")?")), //
+				new RegexLeaf("LABEL_LINK", "(?::\\s*(.+))?"), //
 				new RegexLeaf("$"));
 	}
 
@@ -125,12 +125,41 @@ final public class CommandLinkLollipop2 extends SingleLineCommand2<AbstractClass
 
 		if (arg.get("LABEL_LINK").get(0) != null) {
 			labelLink = arg.get("LABEL_LINK").get(0);
-		} else if (arg.get("LABEL_LINK_XT").get(0) != null || arg.get("LABEL_LINK_XT").get(1) != null
-				|| arg.get("LABEL_LINK_XT").get(2) != null) {
-			labelLink = arg.get("LABEL_LINK_XT").get(1);
-			firstLabel = merge(firstLabel, arg.get("LABEL_LINK_XT").get(0));
-			secondLabel = merge(arg.get("LABEL_LINK_XT").get(2), secondLabel);
-		}
+			if (firstLabel == null && secondLabel == null) {
+				final Pattern p1 = Pattern.compile("^\"([^\"]+)\"([^\"]+)\"([^\"]+)\"$");
+				final Matcher m1 = p1.matcher(labelLink);
+				if (m1.matches()) {
+					firstLabel = m1.group(1);
+					labelLink = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(m1.group(2).trim()).trim();
+					secondLabel = m1.group(3);
+				} else {
+					final Pattern p2 = Pattern.compile("^\"([^\"]+)\"([^\"]+)$");
+					final Matcher m2 = p2.matcher(labelLink);
+					if (m2.matches()) {
+						firstLabel = m2.group(1);
+						labelLink = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(m2.group(2).trim()).trim();
+						secondLabel = null;
+					} else {
+						final Pattern p3 = Pattern.compile("^([^\"]+)\"([^\"]+)\"$");
+						final Matcher m3 = p3.matcher(labelLink);
+						if (m3.matches()) {
+							firstLabel = null;
+							labelLink = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(m3.group(1).trim())
+									.trim();
+							secondLabel = m3.group(2);
+						}
+					}
+				}
+			}
+			labelLink = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(labelLink);
+		} /*
+			 * else if (arg.get("LABEL_LINK_XT").get(0) != null ||
+			 * arg.get("LABEL_LINK_XT").get(1) != null ||
+			 * arg.get("LABEL_LINK_XT").get(2) != null) { labelLink =
+			 * arg.get("LABEL_LINK_XT").get(1); firstLabel = merge(firstLabel,
+			 * arg.get("LABEL_LINK_XT").get(0)); secondLabel =
+			 * merge(arg.get("LABEL_LINK_XT").get(2), secondLabel); }
+			 */
 
 		final Link link = new Link(cl1, cl2, linkType, labelLink, length, firstLabel, secondLabel, getSystem()
 				.getLabeldistance(), getSystem().getLabelangle());
@@ -140,19 +169,20 @@ final public class CommandLinkLollipop2 extends SingleLineCommand2<AbstractClass
 		return CommandExecutionResult.ok();
 	}
 
-	private String merge(String a, String b) {
-		if (a == null && b == null) {
-			return null;
-		}
-		if (a == null && b != null) {
-			return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(b);
-		}
-		if (b == null && a != null) {
-			return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(a);
-		}
-		return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(a) + "\\n"
-				+ StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(b);
-	}
+	// private String merge(String a, String b) {
+	// if (a == null && b == null) {
+	// return null;
+	// }
+	// if (a == null && b != null) {
+	// return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(b);
+	// }
+	// if (b == null && a != null) {
+	// return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(a);
+	// }
+	// return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(a) +
+	// "\\n"
+	// + StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(b);
+	// }
 
 	private void addLink(Link link, String weight) {
 		getSystem().addLink(link);

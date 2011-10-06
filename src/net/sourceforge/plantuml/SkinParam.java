@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7267 $
+ * Revision $Revision: 7320 $
  *
  */
 package net.sourceforge.plantuml;
@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotSplines;
 import net.sourceforge.plantuml.cucadiagram.dot.GraphvizLayoutStrategy;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.svek.PackageStyle;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.ColorMapperIdentity;
 import net.sourceforge.plantuml.ugraphic.ColorMapperMonochrome;
@@ -353,6 +354,9 @@ public class SkinParam implements ISkinParam {
 		if (OptionFlags.SVEK && type == UmlDiagramType.COMPONENT) {
 			defaultValue = true;
 		}
+		if (OptionFlags.SVEK && type == UmlDiagramType.ACTIVITY) {
+			defaultValue = true;
+		}
 		final String value = getValue("svek");
 		if (value == null) {
 			return defaultValue;
@@ -367,5 +371,14 @@ public class SkinParam implements ISkinParam {
 		}
 		return true;
 	}
+	
+	public PackageStyle getPackageStyle() {
+		final String value = getValue("packageStyle");
+		if ("rect".equalsIgnoreCase(value)) {
+			return PackageStyle.RECT;
+		}
+		return PackageStyle.FOLDER;
+	}
+
 
 }

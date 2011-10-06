@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7231 $
+ * Revision $Revision: 7310 $
  *
  */
 package net.sourceforge.plantuml;
@@ -46,6 +46,7 @@ public class OptionFlags {
 	static public final boolean PBBACK = false;
 	static public final boolean GRAPHVIZCACHE = false;
 	static public final boolean SVEK = false;
+	static public final boolean TRACE_DOT = false;
 
 	void reset() {
 		reset(false);
@@ -219,14 +220,7 @@ public class OptionFlags {
 			try {
 				ps = new PrintStream(new FileOutputStream(logData, true));
 				ps.println("Start of " + file.getName());
-				ps.println(systemError.getDescription());
-				for (CharSequence t : systemError.getTitle()) {
-					ps.println(t);
-				}
-				systemError.print(ps);
-				for (String s : systemError.getSuggest()) {
-					ps.println(s);
-				}
+				logErrorFile(systemError, ps);
 				ps.println("End of " + file.getName());
 				ps.println();
 			} catch (FileNotFoundException e) {
@@ -237,6 +231,17 @@ public class OptionFlags {
 					ps.close();
 				}
 			}
+		}
+	}
+
+	public static void logErrorFile(final PSystemError systemError, PrintStream ps) {
+		ps.println(systemError.getDescription());
+		for (CharSequence t : systemError.getTitle()) {
+			ps.println(t);
+		}
+		systemError.print(ps);
+		for (String s : systemError.getSuggest()) {
+			ps.println(s);
 		}
 	}
 

@@ -53,6 +53,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.svek.ShapeType;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -172,7 +173,7 @@ public class EntityImageBlock implements IEntityImageBlock {
 			final double oldX = ug.getTranslateX();
 			final double oldY = ug.getTranslateY();
 			ug.translate(xTheoricalPosition - marginWidth, yTheoricalPosition - marginHeight);
-			frame.drawU(ug, new Dimension2DDouble(widthTotal, heightTotal), null);
+			frame.drawU(ug, new Area(new Dimension2DDouble(widthTotal, heightTotal)), null);
 			// ug.translate(-xTheoricalPosition + marginWidth,
 			// -yTheoricalPosition + marginHeight);
 			ug.setTranslate(oldX, oldY);

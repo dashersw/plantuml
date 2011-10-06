@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5874 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -38,6 +38,7 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -73,7 +74,7 @@ class GroupingHeader extends GroupingGraphicalElement {
 		final double x2 = getInGroupableList().getMaxX(stringBounder);
 		ug.translate(x1, getStartingY());
 		final Dimension2D dim = new Dimension2DDouble(x2 - x1, comp.getPreferredHeight(stringBounder));
-		comp.drawU(ug, dim, context);
+		comp.drawU(ug, new Area(dim), context);
 	}
 
 }

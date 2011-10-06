@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6922 $
+ * Revision $Revision: 7328 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -68,6 +68,7 @@ import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Newpage;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -149,9 +150,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final double headerHeight = drawableSet.getHeadHeight(dummyStringBounder);
 		final double tailHeight = drawableSet.getTailHeight(dummyStringBounder, showFootbox);
 		final double signatureHeight = 0;
-		final double newpageHeight = drawableSet.getSkin()
-				.createComponent(ComponentType.NEWPAGE, drawableSet.getSkinParam(), Arrays.asList(""))
-				.getPreferredHeight(dummyStringBounder);
+		final double newpageHeight = drawableSet.getSkin().createComponent(ComponentType.NEWPAGE,
+				drawableSet.getSkinParam(), Arrays.asList("")).getPreferredHeight(dummyStringBounder);
 
 		return new PageSplitter(fullDimension.getHeight(), headerHeight, positions, tailHeight, signatureHeight,
 				newpageHeight, title);
@@ -223,8 +223,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		if (page.getTitle() != null) {
 			compTitle = drawableSet.getSkin().createComponent(ComponentType.TITLE, drawableSet.getSkinParam(),
 					page.getTitle());
-			area.setTitleArea(compTitle.getPreferredWidth(dummyStringBounder),
-					compTitle.getPreferredHeight(dummyStringBounder));
+			area.setTitleArea(compTitle.getPreferredWidth(dummyStringBounder), compTitle
+					.getPreferredHeight(dummyStringBounder));
 		}
 		addFooter2(area);
 		addHeader2(area);
@@ -232,8 +232,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		offsetX = (int) Math.round(area.getSequenceAreaX());
 		offsetY = (int) Math.round(area.getSequenceAreaY());
 
-		final Color backColor = diagram.getSkinParam().getColorMapper()
-				.getMappedColor(diagram.getSkinParam().getBackgroundColor());
+		final Color backColor = diagram.getSkinParam().getColorMapper().getMappedColor(
+				diagram.getSkinParam().getBackgroundColor());
 		final UGraphic ug;
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		final double dpiFactor = diagram.getDpiFactor(fileFormatOption);
@@ -292,7 +292,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 			final StringBounder stringBounder = ug.getStringBounder();
 			final double h = compTitle.getPreferredHeight(stringBounder);
 			final double w = compTitle.getPreferredWidth(stringBounder);
-			compTitle.drawU(ug, new Dimension2DDouble(w, h), new SimpleContext2D(false));
+			compTitle.drawU(ug, new Area(new Dimension2DDouble(w, h)), new SimpleContext2D(false));
 			ug.translate(-area.getTitleX(), -area.getTitleY());
 		}
 
@@ -311,8 +311,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		}
 		final File dir = pngFile.getParentFile();
 		String name = pngFile.getName();
-		name = name.replaceAll("\\" + fileFormat.getFileSuffix() + "$",
-				"_" + String.format("%03d", i) + fileFormat.getFileSuffix());
+		name = name.replaceAll("\\" + fileFormat.getFileSuffix() + "$", "_" + String.format("%03d", i)
+				+ fileFormat.getFileSuffix());
 		return new File(dir, name);
 
 	}
@@ -321,8 +321,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final HtmlColor titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER, null);
 		final String fontFamily = diagram.getSkinParam().getFont(FontParam.FOOTER, null).getFamily(null);
 		final int fontSize = diagram.getSkinParam().getFont(FontParam.FOOTER, null).getSize();
-		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor,
-				diagram.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
+		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor, diagram
+				.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
 		final Dimension2D dim = pngTitler.getTextDimension(dummyStringBounder);
 		if (dim != null) {
 			area.setFooterArea(dim.getWidth(), dim.getHeight(), 3);
@@ -333,8 +333,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final HtmlColor titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER, null);
 		final String fontFamily = diagram.getSkinParam().getFont(FontParam.HEADER, null).getFamily(null);
 		final int fontSize = diagram.getSkinParam().getFont(FontParam.HEADER, null).getSize();
-		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor,
-				diagram.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP);
+		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor, diagram
+				.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP);
 		final Dimension2D dim = pngTitler.getTextDimension(dummyStringBounder);
 		if (dim != null) {
 			area.setHeaderArea(dim.getWidth(), dim.getHeight(), 3);
@@ -345,8 +345,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final HtmlColor titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.FOOTER, null);
 		final String fontFamily = diagram.getSkinParam().getFont(FontParam.FOOTER, null).getFamily(null);
 		final int fontSize = diagram.getSkinParam().getFont(FontParam.FOOTER, null).getSize();
-		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor,
-				diagram.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
+		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor, diagram
+				.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM);
 		final TextBlock text = pngTitler.getTextBlock();
 		if (text == null) {
 			return;
@@ -358,8 +358,8 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final HtmlColor titleColor = diagram.getSkinParam().getFontHtmlColor(FontParam.HEADER, null);
 		final String fontFamily = diagram.getSkinParam().getFont(FontParam.HEADER, null).getFamily(null);
 		final int fontSize = diagram.getSkinParam().getFont(FontParam.HEADER, null).getSize();
-		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor,
-				diagram.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP);
+		final PngTitler pngTitler = new PngTitler(diagram.getSkinParam().getColorMapper(), titleColor, diagram
+				.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP);
 		final TextBlock text = pngTitler.getTextBlock();
 		if (text == null) {
 			return;

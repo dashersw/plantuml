@@ -116,7 +116,7 @@ public final class CucaDiagramFileMakerSvek2 {
 
 	public IEntityImage createFile(String... dotStrings) throws IOException, InterruptedException {
 
-		dotStringFactory = new DotStringFactory(colorSequence, stringBounder, dotData.getUmlDiagramType());
+		dotStringFactory = new DotStringFactory(colorSequence, stringBounder, dotData);
 		shapeMap = new HashMap<IEntity, Shape>();
 
 		printGroups(null);

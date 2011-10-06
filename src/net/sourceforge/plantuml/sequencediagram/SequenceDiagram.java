@@ -113,14 +113,18 @@ public class SequenceDiagram extends UmlDiagram {
 		return Collections.unmodifiableMap(participants);
 	}
 
-	public void addMessage(AbstractMessage m) {
+	public String addMessage(AbstractMessage m) {
 		lastMessage = m;
 		lastDelay = null;
 		events.add(m);
 		if (pendingCreate != null) {
+			if (m.compatibleForCreate(pendingCreate.getParticipant()) == false) {
+				return "After create command, you have to send a message to \"" + pendingCreate.getParticipant() + "\"";
+			}
 			m.addLifeEvent(pendingCreate);
 			pendingCreate = null;
 		}
+		return null;
 	}
 
 	public void addNote(Note n) {

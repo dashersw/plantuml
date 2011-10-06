@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -73,7 +74,7 @@ public class EntityImageNote2 extends AbstractEntityImage2 {
 		final double dx = ug.getTranslateX();
 		final double dy = ug.getTranslateY();
 		ug.translate(xTheoricalPosition, yTheoricalPosition);
-		comp.drawU(ug, getDimension(ug.getStringBounder()), new SimpleContext2D(false));
+		comp.drawU(ug, new Area(getDimension(ug.getStringBounder())), new SimpleContext2D(false));
 		ug.setTranslate(dx, dy);
 
 	}

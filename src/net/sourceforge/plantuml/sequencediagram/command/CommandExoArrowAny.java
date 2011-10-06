@@ -85,8 +85,11 @@ abstract class CommandExoArrowAny extends SingleLineCommand<SequenceDiagram> {
 		}
 		config = config.withPart(getArrowPart(arrow));
 
-		getSystem().addMessage(
+		final String error = getSystem().addMessage(
 				new MessageExo(p, getMessageExoType(arrow), labels, config, getSystem().getNextMessageNumber()));
+		if (error != null) {
+			return CommandExecutionResult.error(error);
+		}
 		return CommandExecutionResult.ok();
 	}
 

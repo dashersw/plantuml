@@ -41,8 +41,6 @@ import java.util.List;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
-import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -60,7 +58,6 @@ import net.sourceforge.plantuml.posimo.PositionableUtils;
 import net.sourceforge.plantuml.svek.SvekUtils.PointListIterator;
 import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGraphicUtils;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
@@ -162,9 +159,16 @@ public class Line implements Moveable {
 	}
 
 	public void appendLine(StringBuilder sb) {
-		sb.append(startUid);
-		sb.append("->");
-		sb.append(endUid);
+		// System.err.println("inverted=" + isInverted());
+//		if (isInverted()) {
+//			sb.append(endUid);
+//			sb.append("->");
+//			sb.append(startUid);
+//		} else {
+			sb.append(startUid);
+			sb.append("->");
+			sb.append(endUid);
+//		}
 		sb.append("[");
 		String decoration = link.getType().getSpecificDecorationSvek();
 		if (decoration.endsWith(",") == false) {
@@ -211,6 +215,11 @@ public class Line implements Moveable {
 			sb.append(",");
 			sb.append("style=invis");
 		}
+
+		if (link.isConstraint() == false) {
+			sb.append("constraint=false,");
+		}
+
 		sb.append("];");
 		SvekUtils.println(sb);
 	}
@@ -341,62 +350,62 @@ public class Line implements Moveable {
 
 	}
 
-//	public void patchLineForCluster(List<Cluster> clusters) {
-//		if (clusters != null) {
-//			return;
-//		}
-//		if (link.getEntity1().getType() == EntityType.GROUP) {
-//			final IEntity ent = link.getEntity1();
-//			for (Cluster cl : clusters) {
-//				if (cl.isClusterOf(ent) == false) {
-//					continue;
-//				}
-//				final UPolygon frontier = cl.getSpecificFrontier();
-//				if (frontier == null) {
-//					continue;
-//				}
-//				final double frontierY = frontier.getPoints().get(0).getY();
-//				final double frontierX = frontier.getPoints().get(2).getX();
-//				final Point2D pt = dotPath.getStartPoint();
-//				if (pt.getY() < frontierY) {
-//					System.err.println("frontier = " + frontier);
-//					System.err.println("p1 = " + pt);
-//					final double deltaY = frontierY - pt.getY();
-//					dotPath.forceStartPoint(pt.getX(), frontierY);
-//					if (endHead != null) {
-//						endHead = UGraphicUtils.translate(endHead, 0, deltaY);
-//					}
-//				}
-//			}
-//		}
-//
-//		if (link.getEntity2().getType() == EntityType.GROUP) {
-//			final IEntity ent = link.getEntity2();
-//			for (Cluster cl : clusters) {
-//				if (cl.isClusterOf(ent) == false) {
-//					continue;
-//				}
-//				final UPolygon frontier = cl.getSpecificFrontier();
-//				if (frontier == null) {
-//					continue;
-//				}
-//				final double frontierY = frontier.getPoints().get(0).getY();
-//				final double frontierX = frontier.getPoints().get(2).getX();
-//				final Point2D pt = dotPath.getEndPoint();
-//				if (pt.getY() < frontierY) {
-//					System.err.println("frontier = " + frontier);
-//					System.err.println("p2 = " + pt);
-//					dotPath.forceEndPoint(pt.getX(), frontierY);
-//					final double deltaY = frontierY - pt.getY();
-//					if (startTail != null) {
-//						startTail = UGraphicUtils.translate(startTail, 0, deltaY);
-//					}
-//
-//				}
-//			}
-//		}
-//
-//	}
+	// public void patchLineForCluster(List<Cluster> clusters) {
+	// if (clusters != null) {
+	// return;
+	// }
+	// if (link.getEntity1().getType() == EntityType.GROUP) {
+	// final IEntity ent = link.getEntity1();
+	// for (Cluster cl : clusters) {
+	// if (cl.isClusterOf(ent) == false) {
+	// continue;
+	// }
+	// final UPolygon frontier = cl.getSpecificFrontier();
+	// if (frontier == null) {
+	// continue;
+	// }
+	// final double frontierY = frontier.getPoints().get(0).getY();
+	// final double frontierX = frontier.getPoints().get(2).getX();
+	// final Point2D pt = dotPath.getStartPoint();
+	// if (pt.getY() < frontierY) {
+	// System.err.println("frontier = " + frontier);
+	// System.err.println("p1 = " + pt);
+	// final double deltaY = frontierY - pt.getY();
+	// dotPath.forceStartPoint(pt.getX(), frontierY);
+	// if (endHead != null) {
+	// endHead = UGraphicUtils.translate(endHead, 0, deltaY);
+	// }
+	// }
+	// }
+	// }
+	//
+	// if (link.getEntity2().getType() == EntityType.GROUP) {
+	// final IEntity ent = link.getEntity2();
+	// for (Cluster cl : clusters) {
+	// if (cl.isClusterOf(ent) == false) {
+	// continue;
+	// }
+	// final UPolygon frontier = cl.getSpecificFrontier();
+	// if (frontier == null) {
+	// continue;
+	// }
+	// final double frontierY = frontier.getPoints().get(0).getY();
+	// final double frontierX = frontier.getPoints().get(2).getX();
+	// final Point2D pt = dotPath.getEndPoint();
+	// if (pt.getY() < frontierY) {
+	// System.err.println("frontier = " + frontier);
+	// System.err.println("p2 = " + pt);
+	// dotPath.forceEndPoint(pt.getX(), frontierY);
+	// final double deltaY = frontierY - pt.getY();
+	// if (startTail != null) {
+	// startTail = UGraphicUtils.translate(startTail, 0, deltaY);
+	// }
+	//
+	// }
+	// }
+	// }
+	//
+	// }
 
 	public void drawU(UGraphic ug, double x, double y, HtmlColor color) {
 		if (opale) {
@@ -507,7 +516,6 @@ public class Line implements Moveable {
 		}
 		return strategy.getResult() + getDecorDzeta();
 	}
-
 
 	public void manageCollision(List<Shape> allShapes) {
 

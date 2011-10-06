@@ -39,6 +39,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -78,7 +79,7 @@ class GraphicalReference extends GraphicalElement implements InGroupable {
 		if (url != null) {
 			ug.setUrl(url.getUrl(), url.getTooltip());
 		}
-		comp.drawU(ug, dim, context);
+		comp.drawU(ug, new Area(dim), context);
 		if (url != null) {
 			ug.setUrl(null, null);
 		}

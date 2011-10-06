@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7265 $
+ * Revision $Revision: 7341 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -210,7 +210,7 @@ class LifeLine {
 		final double atY = ug.getTranslateY();
 
 		ug.translate(getStartingX(stringBounder), 0);
-
+		
 		for (int i = 0; i < events.size(); i++) {
 			ComponentType type = ComponentType.ALIVE_BOX_CLOSE_OPEN;
 			for (final Iterator<SegmentColored> it = getSegmentsCutted(stringBounder, i).iterator(); it.hasNext();) {
@@ -232,6 +232,7 @@ class LifeLine {
 	}
 
 	private double create = 0;
+	private double destroy = 0;
 
 	public final void setCreate(double create) {
 		this.create = create;
@@ -239,5 +240,13 @@ class LifeLine {
 
 	public final double getCreate() {
 		return create;
+	}
+
+	public final double getDestroy() {
+		return destroy;
+	}
+
+	public final void setDestroy(double destroy) {
+		this.destroy = destroy;
 	}
 }

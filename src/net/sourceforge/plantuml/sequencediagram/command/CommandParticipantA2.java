@@ -45,7 +45,7 @@ public class CommandParticipantA2 extends CommandParticipant {
 
 	static RegexConcat getRegexConcat() {
 		return new RegexConcat(new RegexLeaf("^"), //
-				new RegexLeaf("TYPE", "(participant|actor)"), //
+				new RegexLeaf("TYPE", "(participant|actor|create)"), //
 				new RegexLeaf("\\s+"), //
 				new RegexLeaf("CODE", "([\\p{L}0-9_.@]+)"), //
 				new RegexLeaf("\\s+as\\s+"), //

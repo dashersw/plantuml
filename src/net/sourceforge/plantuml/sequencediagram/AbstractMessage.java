@@ -146,4 +146,24 @@ public abstract class AbstractMessage implements Event {
 		return messageNumber;
 	}
 
+	public boolean isActivate() {
+		for (LifeEvent le : this.lifeEvents) {
+			if (le.getType() == LifeEventType.ACTIVATE) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isDeactivate() {
+		for (LifeEvent le : this.lifeEvents) {
+			if (le.getType() == LifeEventType.DEACTIVATE) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public abstract boolean compatibleForCreate(Participant p);
+
 }

@@ -45,6 +45,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.skin.rose.Rose;
@@ -72,7 +73,8 @@ public class Frame implements Component {
 		// this.font = font;
 	}
 
-	public void drawU(UGraphic ug, Dimension2D dimensionToUse, Context2D context) {
+	public void drawU(UGraphic ug, Area area, Context2D context) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final HtmlColor lineColor = rose.getHtmlColor(skinParam, ColorParam.packageBorder);
 		ug.getParam().setColor(lineColor);
 		ug.getParam().setBackcolor(null);

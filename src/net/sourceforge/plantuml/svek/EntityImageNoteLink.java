@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -65,7 +66,7 @@ public class EntityImageNoteLink implements IEntityImage {
 		final double dx = ug.getTranslateX();
 		final double dy = ug.getTranslateY();
 		ug.translate(xTheoricalPosition, yTheoricalPosition);
-		comp.drawU(ug, getDimension(ug.getStringBounder()), new SimpleContext2D(false, true));
+		comp.drawU(ug, new Area(getDimension(ug.getStringBounder())), new SimpleContext2D(false, true));
 		ug.setTranslate(dx, dy);
 
 	}
@@ -77,10 +78,9 @@ public class EntityImageNoteLink implements IEntityImage {
 	public HtmlColor getBackcolor() {
 		return null;
 	}
-	
+
 	public int getShield() {
 		return 0;
 	}
-
 
 }

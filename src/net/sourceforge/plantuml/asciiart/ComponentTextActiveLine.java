@@ -37,6 +37,7 @@ import java.awt.geom.Dimension2D;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.graphic.StringBounder;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.Context2D;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
@@ -50,7 +51,8 @@ public class ComponentTextActiveLine implements Component {
 		this.fileFormat = fileFormat;
 	}
 
-	public void drawU(UGraphic ug, Dimension2D dimensionToUse, Context2D context) {
+	public void drawU(UGraphic ug, Area area, Context2D context) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		final UmlCharArea charArea = ((UGraphicTxt) ug).getCharArea();
 		final int width = (int) dimensionToUse.getWidth();
 		final int height = (int) dimensionToUse.getHeight();

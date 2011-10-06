@@ -43,7 +43,6 @@ import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
 import net.sourceforge.plantuml.sequencediagram.InGroupableList;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
-import net.sourceforge.plantuml.sequencediagram.MessageExoType;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -113,12 +112,20 @@ abstract class Step1Abstract {
 			final double delta = comp.getPreferredHeight(stringBounder) / 2;
 			final LifeDestroy destroy = new LifeDestroy(pos - delta, drawingSet.getLivingParticipantBox(p)
 					.getParticipantBox(), comp);
+			if (lifelineAfterDestroy()) {
+				line.setDestroy(pos);
+			}
 			drawingSet.addEvent(n, destroy);
 		} else if (n.getType() != LifeEventType.DEACTIVATE) {
 			throw new IllegalStateException();
 		}
 
 		line.addSegmentVariation(LifeSegmentVariation.SMALLER, pos, n.getSpecificBackColor());
+	}
+
+	private boolean lifelineAfterDestroy() {
+		final String v = drawingSet.getSkinParam().getValue("lifelineafterdestroy");
+		return false;
 	}
 
 	protected final ComponentType getType() {
@@ -165,13 +172,13 @@ abstract class Step1Abstract {
 		if (arrow instanceof MessageSelfArrow && notePosition == NotePosition.RIGHT) {
 			noteBox.pushToRight(arrow.getPreferredWidth(stringBounder));
 		}
-//		if (arrow instanceof MessageExoArrow) {
-//			final MessageExoType type = ((MessageExoArrow) arrow).getType();
-//			if (type.isRightBorder()) {
-//				final double width = noteBox.getPreferredWidth(stringBounder);
-//				noteBox.pushToRight(-width);
-//			}
-//		}
+		// if (arrow instanceof MessageExoArrow) {
+		// final MessageExoType type = ((MessageExoArrow) arrow).getType();
+		// if (type.isRightBorder()) {
+		// final double width = noteBox.getPreferredWidth(stringBounder);
+		// noteBox.pushToRight(-width);
+		// }
+		// }
 
 		return noteBox;
 	}

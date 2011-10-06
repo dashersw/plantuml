@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.AbstractTextualComponent;
+import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.URectangle;
@@ -58,7 +59,8 @@ public class ComponentBlueModernEnglober extends AbstractTextualComponent {
 	}
 
 	@Override
-	protected void drawBackgroundInternalU(UGraphic ug, Dimension2D dimensionToUse) {
+	protected void drawBackgroundInternalU(UGraphic ug, Area area) {
+		final Dimension2D dimensionToUse = area.getDimensionToUse();
 		ug.getParam().setColor(borderColor);
 		ug.getParam().setBackcolor(backColor);
 		ug.getParam().setStroke(new UStroke(2));
@@ -69,7 +71,7 @@ public class ComponentBlueModernEnglober extends AbstractTextualComponent {
 	}
 
 	@Override
-	protected void drawInternalU(UGraphic ug, Dimension2D dimensionToUse, boolean withShadow) {
+	protected void drawInternalU(UGraphic ug, Area area, boolean withShadow) {
 		// ug.getParam().setColor(Color.RED);
 		// ug.getParam().setBackcolor(Color.YELLOW);
 		// ug.draw(0, 0, new URectangle(dimensionToUse.getWidth(),
