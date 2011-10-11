@@ -35,7 +35,7 @@
 
     <groupId>net.sourceforge.plantuml</groupId>
     <artifactId>plantuml</artifactId>
-    <version>7363</version>
+    <version>7364-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>PlantUML</name>
@@ -75,9 +75,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/tags/plantuml-7363</connection>
-        <developerConnection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/tags/plantuml-7363</developerConnection>
-        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml/tags/plantuml-7363</url>
+        <connection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/trunk</connection>
+        <developerConnection>scm:svn:https://plantuml.svn.sourceforge.net/svnroot/plantuml/trunk</developerConnection>
+        <url>http://plantuml.svn.sourceforge.net/viewvc/plantuml/trunk</url>
     </scm>
 
     <issueManagement>
