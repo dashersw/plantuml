@@ -27,12 +27,26 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 5191 $
+ *
+ * Revision $Revision: 7173 $
  *
  */
-package net.sourceforge.plantuml.skin;
+package net.sourceforge.plantuml;
 
-public enum ArrowHead {
-	NORMAL, ASYNC
+public class UmlDiagramInfo {
+
+	private final double width;
+
+	public UmlDiagramInfo() {
+		this(0);
+	}
+
+	public UmlDiagramInfo(double width) {
+		this.width = width;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
 }

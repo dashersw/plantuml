@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
@@ -67,7 +68,7 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 						new RegexLeaf("PART1LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), //
 						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
 						"\\s*"), //
-				new RegexLeaf("ARROW", "(\\$?([=-]+(>>?|//?|\\\\\\\\?)|(<<?|//?|\\\\\\\\?)[=-]+)\\$?)"), //
+				new RegexLeaf("ARROW", "([=-]+(>>?|//?|\\\\\\\\?)|(<<?|//?|\\\\\\\\?)[=-]+)"), //
 				new RegexLeaf("\\s*"), // 
 				new RegexOr("PART2", // 
 						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), // 
@@ -75,6 +76,10 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 						new RegexLeaf("PART2LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), // 
 						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
 						"\\s*"), // 
+				new RegexLeaf("ACTIVATION", "(?:([+*!-]+)?)"), //
+				new RegexLeaf("\\s*"), // 
+				new RegexLeaf("LIFECOLOR", "(?:(#\\w+)?)"), //
+				new RegexLeaf("\\s*"), // 
 				new RegexLeaf("MESSAGE", "(?::\\s*(.*))?$"));
 	}
 
@@ -103,26 +108,16 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg2) {
 
-		String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
-		boolean startDollar = arrow.startsWith("$");
-		boolean endDollar = arrow.endsWith("$");
-		arrow = arrow.replaceAll("\\$", "");
-
+		final String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
 		Participant p1;
 		Participant p2;
-		final boolean activatep2;
-		final boolean deactivatep1;
 
 		if (arrow.endsWith(">") || arrow.endsWith("\\") || arrow.endsWith("/")) {
 			p1 = getOrCreateParticipant(arg2, "PART1");
 			p2 = getOrCreateParticipant(arg2, "PART2");
-			activatep2 = endDollar;
-			deactivatep1 = startDollar;
 		} else if (arrow.startsWith("<") || arrow.startsWith("\\") || arrow.startsWith("/")) {
 			p2 = getOrCreateParticipant(arg2, "PART1");
 			p1 = getOrCreateParticipant(arg2, "PART2");
-			activatep2 = startDollar;
-			deactivatep1 = endDollar;
 		} else {
 			throw new IllegalStateException(arg2.toString());
 		}
@@ -153,26 +148,41 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 			config = config.withPart(ArrowPart.BOTTOM_PART);
 		}
 
+		final String activationSpec = arg2.get("ACTIVATION").get(0);
+
+		if (activationSpec != null && activationSpec.charAt(0) == '*') {
+			getSystem().activate(p2, LifeEventType.CREATE, null);
+		}
+
 		final String error = getSystem().addMessage(
 				new Message(p1, p2, labels, config, getSystem().getNextMessageNumber()));
 		if (error != null) {
 			return CommandExecutionResult.error(error);
 		}
 
-		if (getSystem().isAutoactivate()) {
-			if (p1 != p2 && config.getHead() == ArrowHead.NORMAL) {
+		final HtmlColor activationColor = HtmlColor.getColorIfValid(arg2.get("LIFECOLOR").get(0));
+
+		if (activationSpec != null) {
+			switch (activationSpec.charAt(0)) {
+			case '+':
+				getSystem().activate(p2, LifeEventType.ACTIVATE, activationColor);
+				break;
+			case '-':
+				getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
+				break;
+			case '!':
+				getSystem().activate(p2, LifeEventType.DESTROY, null);
+				break;
+			default:
+				break;
+			}
+		} else if (getSystem().isAutoactivate()) {
+			if (config.getHead() == ArrowHead.NORMAL) {
 				if (config.isDotted()) {
 					getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
 				} else {
-					getSystem().activate(p2, LifeEventType.ACTIVATE, null);
+					getSystem().activate(p2, LifeEventType.ACTIVATE, activationColor);
 				}
-			}
-		} else {
-			if (deactivatep1) {
-				getSystem().activate(p1, LifeEventType.DEACTIVATE, null);
-			}
-			if (activatep2) {
-				getSystem().activate(p2, LifeEventType.ACTIVATE, null);
 			}
 		}
 		return CommandExecutionResult.ok();

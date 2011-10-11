@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 7362 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -66,7 +66,6 @@ import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.SkinParamBackcolored;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
@@ -147,8 +146,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 
 	}
 
-	public String createFile(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException {
+	public CucaDiagramFileMakerResult createFile(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException, InterruptedException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.PNG) {
 			return createPng(os, dotStrings, fileFormatOption);
@@ -168,8 +167,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 
 	private double deltaY;
 
-	private String createSvg(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException {
+	private CucaDiagramFileMakerResult createSvg(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException, InterruptedException {
 
 		final StringBuilder cmap = new StringBuilder();
 		try {
@@ -264,7 +263,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 			clean();
 		}
 		if (cmap.length() > 0) {
-			return translateXY(cmap.toString(), 0, (int) Math.round(deltaY));
+			return new CucaDiagramFileMakerResult(translateXY(cmap.toString(), 0, (int) Math.round(deltaY)));
 		}
 		return null;
 	}
@@ -390,8 +389,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		return m.group(1);
 	}
 
-	private String createPng(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException {
+	private CucaDiagramFileMakerResult createPng(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException, InterruptedException {
 
 		final StringBuilder cmap = new StringBuilder();
 		double supX = 0;
@@ -456,7 +455,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		}
 
 		if (cmap.length() > 0) {
-			return translateXY(cmap.toString(), (int) Math.round(supX), (int) Math.round(supY));
+			return new CucaDiagramFileMakerResult(translateXY(cmap.toString(), (int) Math.round(supX),
+					(int) Math.round(supY)));
 		}
 		return null;
 	}
@@ -468,7 +468,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		return new PngFlashcoder(flashcodes).processImage(im, background);
 	}
 
-	private String createDot(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
+	private CucaDiagramFileMakerResult createDot(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
 			throws IOException, InterruptedException {
 		final GraphvizMaker dotMaker = populateImagesAndCreateGraphvizMaker(dotStrings, fileFormatOption);
 		final String dotString = dotMaker.createDotString();
@@ -607,8 +607,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.HEADER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getHeader(), fontSize, fontFamily, diagram
-				.getHeaderAlignement(), VerticalPosition.TOP, 3);
+		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getHeader(), fontSize, fontFamily,
+				diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
 	}
 
 	private SvgTitler getFooterSvgTitler() throws IOException {
@@ -616,8 +616,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.FOOTER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getFooter(), fontSize, fontFamily, diagram
-				.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
+		return new SvgTitler(diagram.getColorMapper(), titleColor, diagram.getFooter(), fontSize, fontFamily,
+				diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
 	}
 
 	private String addTitleEps(EpsStrategy epsStrategy, String eps) throws IOException {
@@ -637,8 +637,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.FOOTER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor, diagram
-				.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
+		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor,
+				diagram.getFooter(), fontSize, fontFamily, diagram.getFooterAlignement(), VerticalPosition.BOTTOM, 3);
 		return epsTitler.addTitleEps(eps);
 	}
 
@@ -647,8 +647,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final UFont font = getSkinParam().getFont(FontParam.HEADER, null);
 		final String fontFamily = font.getFamily(null);
 		final int fontSize = font.getSize();
-		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor, diagram
-				.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
+		final EpsTitler epsTitler = new EpsTitler(diagram.getColorMapper(), epsStrategy, titleColor,
+				diagram.getHeader(), fontSize, fontFamily, diagram.getHeaderAlignement(), VerticalPosition.TOP, 3);
 		this.deltaY += epsTitler.getHeight();
 		return epsTitler.addTitleEps(eps);
 	}
@@ -747,8 +747,8 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 			public File getNow() throws IOException {
 				final File fEps = FileUtils.createTempFile("plantumlB", ".eps");
 				final PrintWriter pw = new PrintWriter(fEps);
-				final UGraphicEps uEps = new UGraphicEps(getSkinParam().getColorMapper(), getEpsStrategy(option
-						.getFileFormat()));
+				final UGraphicEps uEps = new UGraphicEps(getSkinParam().getColorMapper(),
+						getEpsStrategy(option.getFileFormat()));
 				comp.drawU(uEps, new Area(new Dimension(width, height)), new SimpleContext2D(false));
 				pw.print(uEps.getEPSCode());
 				pw.close();
@@ -892,7 +892,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		return EpsStrategy.getDefault2();
 	}
 
-	private String createEps(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
+	private CucaDiagramFileMakerResult createEps(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
 			throws IOException, InterruptedException {
 
 		try {

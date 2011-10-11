@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7135 $
+ * Revision $Revision: 7362 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -58,9 +58,11 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.UmlDiagramInfo;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerBeta;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerResult;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramPngMaker3;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramTxtMaker;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
@@ -363,15 +365,15 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		}
 
 		if (fileFormat.getFileFormat() == FileFormat.PNG) {
-			result = new PngSplitter(suggestedFile, this.getHorizontalPages(), this.getVerticalPages(), this
-					.getMetadata(), this.getDpi(fileFormat)).getFiles();
+			result = new PngSplitter(suggestedFile, this.getHorizontalPages(), this.getVerticalPages(),
+					this.getMetadata(), this.getDpi(fileFormat)).getFiles();
 		}
 		return result;
 
 	}
 
 	@Override
-	final protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
+	final protected UmlDiagramInfo exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
 			FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException {
 		final FileFormat fileFormat = fileFormatOption.getFileFormat();
 		if (fileFormat == FileFormat.ATXT || fileFormat == FileFormat.UTXT) {
@@ -380,12 +382,12 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			} catch (Throwable t) {
 				t.printStackTrace(new PrintStream(os));
 			}
-			return;
+			return new UmlDiagramInfo();
 		}
 
 		if (fileFormat.name().startsWith("XMI")) {
 			createFilesXmi(os, fileFormat);
-			return;
+			return new UmlDiagramInfo();
 		}
 		//
 		// if (OptionFlags.getInstance().useJavaInsteadOfDot()) {
@@ -398,7 +400,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			} catch (InterruptedException e) {
 				throw new IOException(e.toString());
 			}
-			return;
+			return new UmlDiagramInfo();
 		}
 
 		if (getUmlDiagramType() == UmlDiagramType.COMPOSITE) {
@@ -409,7 +411,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 				e.printStackTrace();
 				throw new IOException(e.toString());
 			}
-			return;
+			return new UmlDiagramInfo();
 		}
 		final ICucaDiagramFileMaker maker;
 		if (getSkinParam().isSvek()) {
@@ -418,10 +420,11 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			maker = new CucaDiagramFileMaker(this, flashcodes);
 		}
 		try {
-			final String cmapResult = maker.createFile(os, getDotStrings(), fileFormatOption);
-			if (cmapResult != null && cmap != null) {
-				cmap.append(cmapResult);
+			final CucaDiagramFileMakerResult result = maker.createFile(os, getDotStrings(), fileFormatOption);
+			if (result != null && cmap != null && result.getCmapResult() != null) {
+				cmap.append(result.getCmapResult());
 			}
+			return result == null ? new UmlDiagramInfo() : new UmlDiagramInfo(result.getWidth());
 		} catch (InterruptedException e) {
 			Log.error(e.toString());
 			throw new IOException(e.toString());

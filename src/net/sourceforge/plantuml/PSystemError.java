@@ -28,10 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6622 $
+ * Revision $Revision: 7357 $
  */
 package net.sourceforge.plantuml;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -204,5 +206,22 @@ public class PSystemError extends AbstractPSystem {
 
 	public final Collection<ErrorUml> getErrorsUml() {
 		return Collections.unmodifiableCollection(printedErrors);
+	}
+
+	@Override
+	public String getWarningOrError() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append(getDescription());
+		sb.append('\n');
+		for (CharSequence t : getTitle()) {
+			sb.append(t);
+			sb.append('\n');
+		}
+		sb.append('\n');
+		for (String s : getSuggest()) {
+			sb.append(s);
+			sb.append('\n');
+		}
+		return sb.toString();
 	}
 }

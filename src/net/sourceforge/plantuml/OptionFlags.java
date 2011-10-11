@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7310 $
+ * Revision $Revision: 7357 $
  *
  */
 package net.sourceforge.plantuml;
@@ -200,7 +200,8 @@ public class OptionFlags {
 	private final AtomicBoolean logDataInitized = new AtomicBoolean(false);
 
 	public void logData(File file, PSystem system) {
-		if (system instanceof PSystemError == false) {
+		final String warnOrError = system.getWarningOrError();
+		if (warnOrError == null) {
 			return;
 		}
 		synchronized (logDataInitized) {
@@ -215,12 +216,12 @@ public class OptionFlags {
 			if (logData == null) {
 				return;
 			}
-			final PSystemError systemError = (PSystemError) system;
+			// final PSystemError systemError = (PSystemError) system;
 			PrintStream ps = null;
 			try {
 				ps = new PrintStream(new FileOutputStream(logData, true));
 				ps.println("Start of " + file.getName());
-				logErrorFile(systemError, ps);
+				ps.println(warnOrError);
 				ps.println("End of " + file.getName());
 				ps.println();
 			} catch (FileNotFoundException e) {
@@ -234,16 +235,16 @@ public class OptionFlags {
 		}
 	}
 
-	public static void logErrorFile(final PSystemError systemError, PrintStream ps) {
-		ps.println(systemError.getDescription());
-		for (CharSequence t : systemError.getTitle()) {
-			ps.println(t);
-		}
-		systemError.print(ps);
-		for (String s : systemError.getSuggest()) {
-			ps.println(s);
-		}
-	}
+//	public static void logErrorFile(final PSystemError systemError, PrintStream ps) {
+//		ps.println(systemError.getDescription());
+//		for (CharSequence t : systemError.getTitle()) {
+//			ps.println(t);
+//		}
+//		systemError.print(ps);
+//		for (String s : systemError.getSuggest()) {
+//			ps.println(s);
+//		}
+//	}
 
 	public final void setLogData(File logData) {
 		this.logData = logData;

@@ -124,12 +124,15 @@ public class SourceFileReader implements ISourceFileReader {
 
 			for (File f : system.exportDiagrams(suggested, fileFormatOption)) {
 				final String desc = "[" + file.getName() + "] " + system.getDescription();
-				if (system instanceof PSystemError && OptionFlags.getInstance().isWord()) {
-					final String name = f.getName().substring(0, f.getName().length() - 4) + ".err";
-					final File errorFile = new File(f.getParentFile(), name);
-					final PrintStream ps = new PrintStream(new FileOutputStream(errorFile));
-					OptionFlags.logErrorFile((PSystemError) system, ps);
-					ps.close();
+				if (OptionFlags.getInstance().isWord()) {
+					final String warnOrError = system.getWarningOrError();
+					if (warnOrError != null) {
+						final String name = f.getName().substring(0, f.getName().length() - 4) + ".err";
+						final File errorFile = new File(f.getParentFile(), name);
+						final PrintStream ps = new PrintStream(new FileOutputStream(errorFile));
+						ps.print(warnOrError);
+						ps.close();
+					}
 				}
 				final GeneratedImage generatedImage = new GeneratedImage(f, desc, system);
 				result.add(generatedImage);

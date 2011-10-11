@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7347 $
+ * Revision $Revision: 7354 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -241,8 +241,8 @@ class Step1Message extends Step1Abstract {
 		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 			result = result.withHead(ArrowHead.ASYNC);
 		}
-		if (m.getArrowConfiguration().getHead() == ArrowHead.CROSSX) {
-			result = result.withHead(ArrowHead.CROSSX);
+		if (m.getArrowConfiguration().isCrossX()) {
+			result = result.withCrossX();
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		return result;

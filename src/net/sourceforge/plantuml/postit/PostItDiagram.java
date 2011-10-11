@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.UmlDiagramInfo;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.sequencediagram.graphic.SequenceDiagramFileMaker;
@@ -67,7 +68,7 @@ public class PostItDiagram extends UmlDiagram {
 	}
 
 	@Override
-	final protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
+	final protected UmlDiagramInfo exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
 			FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException {
 		final UGraphic ug = createImage(fileFormatOption);
 		drawU(ug);
@@ -81,6 +82,7 @@ public class PostItDiagram extends UmlDiagram {
 			final UGraphicEps eps = (UGraphicEps) ug;
 			os.write(eps.getEPSCode().getBytes());
 		}
+		return new UmlDiagramInfo();
 	}
 
 	public String getDescription() {

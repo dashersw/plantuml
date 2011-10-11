@@ -28,11 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7173 $
+ * Revision $Revision: 7361 $
  *
  */
 package net.sourceforge.plantuml;
 
+import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -200,8 +201,10 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 			exportDiagramInternalPdf(os, cmap, index, flashcodes);
 			return;
 		}
-		exportDiagramInternal(os, cmap, index, fileFormatOption, flashcodes);
+		lastInfo = exportDiagramInternal(os, cmap, index, fileFormatOption, flashcodes);
 	}
+
+	private UmlDiagramInfo lastInfo;
 
 	private void exportDiagramInternalPdf(OutputStream os, StringBuilder cmap, int index, List<BufferedImage> flashcodes)
 			throws IOException {
@@ -214,7 +217,7 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 		FileUtils.copyToStream(pdfFile, os);
 	}
 
-	protected abstract void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
+	protected abstract UmlDiagramInfo exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
 			FileFormatOption fileFormatOption, List<BufferedImage> flashcodes) throws IOException;
 
 	final protected void exportCmap(File suggestedFile, final StringBuilder cmap) throws FileNotFoundException {
@@ -314,4 +317,26 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 		return result;
 	}
 
+	@Override
+	public final String getWarningOrError() {
+		if (lastInfo == null) {
+			return null;
+		}
+		final double actualWidth = lastInfo.getWidth();
+		if (actualWidth == 0) {
+			return null;
+		}
+		final String value = getSkinParam().getValue("widthwarning");
+		if (value == null) {
+			return null;
+		}
+		if (value.matches("\\d+") == false) {
+			return null;
+		}
+		final int widthwarning = Integer.parseInt(value);
+		if (actualWidth > widthwarning) {
+			return "The image is " + ((int) actualWidth) + " pixel width. (Warning limit is " + widthwarning + ")";
+		}
+		return null;
+	}
 }

@@ -28,11 +28,30 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5191 $
+ * Revision $Revision: 6711 $
  *
  */
-package net.sourceforge.plantuml.skin;
+package net.sourceforge.plantuml.cucadiagram.dot;
 
-public enum ArrowHead {
-	NORMAL, ASYNC
+public class CucaDiagramFileMakerResult {
+
+	private final String cmapResult;
+	private final double width;
+
+	public CucaDiagramFileMakerResult(String cmapResult) {
+		this(cmapResult, 0);
+	}
+
+	public CucaDiagramFileMakerResult(String cmap, double width) {
+		this.cmapResult = cmap;
+		this.width = width;
+	}
+
+	public String getCmapResult() {
+		return cmapResult;
+	}
+
+	public double getWidth() {
+		return width;
+	}
 }

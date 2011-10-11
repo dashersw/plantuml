@@ -49,11 +49,10 @@ import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
-import net.sourceforge.plantuml.skin.ArrowHead;
 
-public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
+public class CommandArrowCrossX extends SingleLineCommand2<SequenceDiagram> {
 
-	public CommandArrowDestroy(SequenceDiagram sequenceDiagram) {
+	public CommandArrowCrossX(SequenceDiagram sequenceDiagram) {
 		super(sequenceDiagram, getRegexConcat());
 	}
 
@@ -66,7 +65,7 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
 						"\\s*"), //
 				new RegexLeaf("\\s+"), // 
-				new RegexLeaf("ARROW", "(\\$?([=-]+(>?x)|(x<?)[=-]+)\\$?)"), //
+				new RegexLeaf("ARROW", "([=-]+(>?x)|(x<?)[=-]+)"), //
 				new RegexLeaf("\\s+"), // 
 				new RegexOr("PART2", // 
 						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), // 
@@ -102,26 +101,17 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg2) {
 
-		String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
-		boolean startDollar = arrow.startsWith("$");
-		boolean endDollar = arrow.endsWith("$");
-		arrow = arrow.replaceAll("\\$", "").toLowerCase();
+		final String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
 
 		Participant p1;
 		Participant p2;
-		final boolean activatep2;
-		final boolean deactivatep1;
 
 		if (arrow.endsWith("x")) {
 			p1 = getOrCreateParticipant(arg2, "PART1");
 			p2 = getOrCreateParticipant(arg2, "PART2");
-			activatep2 = endDollar;
-			deactivatep1 = startDollar;
 		} else if (arrow.startsWith("x")) {
 			p2 = getOrCreateParticipant(arg2, "PART1");
 			p1 = getOrCreateParticipant(arg2, "PART2");
-			activatep2 = startDollar;
-			deactivatep1 = endDollar;
 		} else {
 			throw new IllegalStateException(arg2.toString());
 		}
@@ -143,7 +133,7 @@ public class CommandArrowDestroy extends SingleLineCommand2<SequenceDiagram> {
 		if (dotted) {
 			config = config.withDotted();
 		}
-		config = config.withHead(ArrowHead.CROSSX);
+		config = config.withCrossX();
 		// if (sync) {
 		// config = config.withAsync();
 		// }

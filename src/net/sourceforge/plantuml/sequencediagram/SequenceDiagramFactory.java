@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7334 $
+ * Revision $Revision: 7354 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
@@ -37,7 +37,7 @@ import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate2;
 import net.sourceforge.plantuml.sequencediagram.command.CommandArrow;
-import net.sourceforge.plantuml.sequencediagram.command.CommandArrowDestroy;
+import net.sourceforge.plantuml.sequencediagram.command.CommandArrowCrossX;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutoNewpage;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutoactivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutonumber;
@@ -64,6 +64,7 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA3;
 import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA4;
 import net.sourceforge.plantuml.sequencediagram.command.CommandReferenceMultilinesOverSeveral;
 import net.sourceforge.plantuml.sequencediagram.command.CommandReferenceOverSeveral;
+import net.sourceforge.plantuml.sequencediagram.command.CommandReturn;
 import net.sourceforge.plantuml.sequencediagram.command.CommandSkin;
 import net.sourceforge.plantuml.sequencediagram.command.CommandUrl;
 
@@ -84,7 +85,7 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandParticipantA3(system));
 		addCommand(new CommandParticipantA4(system));
 		addCommand(new CommandArrow(system));
-		addCommand(new CommandArrowDestroy(system));
+		addCommand(new CommandArrowCrossX(system));
 		addCommand(new CommandExoArrowLeft(system));
 		addCommand(new CommandExoArrowRight(system));
 		addCommand(new CommandNoteSequence(system));
@@ -95,6 +96,7 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandGrouping(system));
 
 		addCommand(new CommandActivate2(system));
+		addCommand(new CommandReturn(system));
 
 		addCommand(new CommandNoteOnArrow(system));
 

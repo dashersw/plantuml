@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import net.sourceforge.plantuml.FileFormat;
+import net.sourceforge.plantuml.UmlDiagramInfo;
 import net.sourceforge.plantuml.asciiart.TextSkin;
 import net.sourceforge.plantuml.asciiart.TextStringBounder;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -102,22 +103,23 @@ public class SequenceDiagramTxtMaker implements FileMaker {
 		drawableSet.drawU(ug, 0, fullDimension.getWidth(), page, diagram.isShowFootbox());
 	}
 
-//	public List<File> createManyRRMV(File suggestedFile) throws IOException {
-//		if (fileFormat == FileFormat.UTXT) {
-//			ug.getCharArea().print(new PrintStream(suggestedFile, "UTF-8"));
-//		} else {
-//			ug.getCharArea().print(new PrintStream(suggestedFile));
-//		}
-//		return Collections.singletonList(suggestedFile);
-//	}
+	// public List<File> createManyRRMV(File suggestedFile) throws IOException {
+	// if (fileFormat == FileFormat.UTXT) {
+	// ug.getCharArea().print(new PrintStream(suggestedFile, "UTF-8"));
+	// } else {
+	// ug.getCharArea().print(new PrintStream(suggestedFile));
+	// }
+	// return Collections.singletonList(suggestedFile);
+	// }
 
-	public void createOne(OutputStream os, int index) throws IOException {
+	public UmlDiagramInfo createOne2(OutputStream os, int index) throws IOException {
 		final PrintStream ps = new PrintStream(os);
 		if (fileFormat == FileFormat.UTXT) {
 			ug.getCharArea().print(ps);
 		} else {
 			ug.getCharArea().print(ps);
 		}
+		return null;
 	}
 
 	public int getNbPages() {

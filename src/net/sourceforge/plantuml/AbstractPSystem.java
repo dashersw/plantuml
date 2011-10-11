@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6922 $
+ * Revision $Revision: 7357 $
  *
  */
 package net.sourceforge.plantuml;
@@ -108,6 +108,10 @@ public abstract class AbstractPSystem implements PSystem {
 			return Collections.emptyList();
 		}
 		return source.getTitle();
+	}
+	
+	public String getWarningOrError() {
+		return null;
 	}
 
 }

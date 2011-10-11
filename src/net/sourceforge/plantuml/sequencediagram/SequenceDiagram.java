@@ -31,10 +31,10 @@
  */
 package net.sourceforge.plantuml.sequencediagram;
 
+import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -47,12 +47,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.Log;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagram;
+import net.sourceforge.plantuml.UmlDiagramInfo;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.directdot.DotText;
 import net.sourceforge.plantuml.graphic.HtmlColor;
@@ -222,13 +224,24 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	@Override
-	protected void exportDiagramInternal(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat,
-			List<BufferedImage> flashcodes) throws IOException {
+	protected UmlDiagramInfo exportDiagramInternal(OutputStream os, StringBuilder cmap, int index,
+			FileFormatOption fileFormat, List<BufferedImage> flashcodes) throws IOException {
 		final FileMaker sequenceDiagramPngMaker = getSequenceDiagramPngMaker(fileFormat, flashcodes);
-		sequenceDiagramPngMaker.createOne(os, index);
+		final UmlDiagramInfo info = sequenceDiagramPngMaker.createOne2(os, index);
 		if (cmap != null && this.hasUrl() && fileFormat.getFileFormat() == FileFormat.PNG) {
 			sequenceDiagramPngMaker.appendCmap(cmap);
 		}
+		return info;
+	}
+
+	// support for CommandReturn
+	private final Stack<Message> activationState = new Stack<Message>();
+
+	public Message getActivatingMessage() {
+		if (activationState.empty()) {
+			return null;
+		}
+		return activationState.peek();
 	}
 
 	private LifeEvent pendingCreate = null;
@@ -247,6 +260,11 @@ public class SequenceDiagram extends UmlDiagram {
 				return null;
 			}
 			return "Only activate command can occur before message are send";
+		}
+		if (lifeEventType == LifeEventType.ACTIVATE && lastMessage instanceof Message) {
+			activationState.push((Message) lastMessage);
+		} else if (lifeEventType == LifeEventType.DEACTIVATE && activationState.empty() == false) {
+			activationState.pop();
 		}
 		final boolean ok = lastMessage.addLifeEvent(new LifeEvent(p, lifeEventType, backcolor));
 		if (ok) {
@@ -318,7 +336,14 @@ public class SequenceDiagram extends UmlDiagram {
 	}
 
 	public boolean isShowFootbox() {
-		return showFootbox;
+		final String footbox = getSkinParam().getValue("footbox");
+		if (footbox == null) {
+			return showFootbox;
+		}
+		if (footbox.equalsIgnoreCase("hide")) {
+			return false;
+		}
+		return true;
 	}
 
 	private boolean showFootbox = true;

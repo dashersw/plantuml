@@ -40,6 +40,6 @@ import java.util.List;
 import net.sourceforge.plantuml.FileFormatOption;
 
 public interface ICucaDiagramFileMaker {
-	public String createFile(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException;
+	public CucaDiagramFileMakerResult createFile(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException, InterruptedException;
 }

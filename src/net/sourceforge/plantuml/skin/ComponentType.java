@@ -53,7 +53,7 @@ public class ComponentType {
 	static public final ComponentType ALIVE_BOX_CLOSE_OPEN = new ComponentType("ALIVE_BOX_CLOSE_OPEN");
 	static public final ComponentType ALIVE_BOX_OPEN_CLOSE = new ComponentType("ALIVE_BOX_OPEN_CLOSE");
 	static public final ComponentType ALIVE_BOX_OPEN_OPEN = new ComponentType("ALIVE_BOX_OPEN_OPEN");
-	
+
 	static public final ComponentType DELAY_TEXT = new ComponentType("DELAY_TEXT");
 	static public final ComponentType DESTROY = new ComponentType("DESTROY");
 
@@ -115,6 +115,11 @@ public class ComponentType {
 		return ComponentType.getArrow(arrowConfiguration.withHead(head));
 	}
 
+	public ComponentType withCrossX() {
+		checkArrow();
+		return ComponentType.getArrow(arrowConfiguration.withCrossX());
+	}
+
 	public ComponentType withDotted() {
 		checkArrow();
 		return ComponentType.getArrow(arrowConfiguration.withDotted());
@@ -156,7 +161,7 @@ public class ComponentType {
 		for (ComponentType type : new ArrayList<ComponentType>(all)) {
 			all.add(type.withHead(ArrowHead.ASYNC));
 		}
-		
+
 		final List<ComponentType> simples = new ArrayList<ComponentType>(all);
 		for (ComponentType type : simples) {
 			all.add(type.withPart(ArrowPart.TOP_PART));
@@ -165,10 +170,10 @@ public class ComponentType {
 			all.add(type.withPart(ArrowPart.BOTTOM_PART));
 		}
 
-		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withHead(ArrowHead.CROSSX));
-		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withHead(ArrowHead.CROSSX));
-		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDotted().withHead(ArrowHead.CROSSX));
-		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDotted().withHead(ArrowHead.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withCrossX());
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withCrossX());
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDotted().withCrossX());
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDotted().withCrossX());
 
 		all.addAll(nonArrows);
 		return Collections.unmodifiableCollection(all);

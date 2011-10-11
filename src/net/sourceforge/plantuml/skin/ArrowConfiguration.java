@@ -39,8 +39,9 @@ public class ArrowConfiguration {
 	private final ArrowBody body;
 	private final ArrowHead head;
 	private final ArrowPart part;
+	private final boolean crossX;
 
-	private ArrowConfiguration(ArrowDirection direction, ArrowBody body, ArrowHead head, ArrowPart part) {
+	private ArrowConfiguration(ArrowDirection direction, ArrowBody body, ArrowHead head, ArrowPart part, boolean crossX) {
 		if (direction == null || body == null || head == null || part == null) {
 			throw new IllegalArgumentException();
 		}
@@ -48,16 +49,17 @@ public class ArrowConfiguration {
 		this.direction = direction;
 		this.body = body;
 		this.head = head;
+		this.crossX = crossX;
 	}
 
 	public String name() {
 		return direction.name().substring(0, 4) + "-" + body.name() + "-" + head.name() + "-"
-				+ part.name().substring(0, 3);
+				+ part.name().substring(0, 3) + (crossX ? "-crossX" : "");
 	}
 
 	@Override
 	public int hashCode() {
-		return direction.hashCode() + body.hashCode() + head.hashCode() + part.hashCode();
+		return direction.hashCode() + body.hashCode() + head.hashCode() + part.hashCode() + (crossX ? 1 : 0);
 	}
 
 	@Override
@@ -67,22 +69,30 @@ public class ArrowConfiguration {
 	}
 
 	public static ArrowConfiguration withDirection(ArrowDirection direction) {
-		return new ArrowConfiguration(direction, ArrowBody.NORMAL, ArrowHead.NORMAL, ArrowPart.FULL);
+		return new ArrowConfiguration(direction, ArrowBody.NORMAL, ArrowHead.NORMAL, ArrowPart.FULL, false);
 	}
 
 	public ArrowConfiguration withHead(ArrowHead head) {
-		return new ArrowConfiguration(direction, body, head, part);
+		return new ArrowConfiguration(direction, body, head, part, crossX);
 	}
 
 	public ArrowConfiguration withDotted() {
-		return new ArrowConfiguration(direction, ArrowBody.DOTTED, head, part);
+		return new ArrowConfiguration(direction, ArrowBody.DOTTED, head, part, crossX);
 	}
 
 	public ArrowConfiguration withPart(ArrowPart part) {
-//		if (part != ArrowPart.BOTTOM_PART && part != ArrowPart.TOP_PART) {
-//			throw new IllegalArgumentException();
-//		}
-		return new ArrowConfiguration(direction, body, head, part);
+		// if (part != ArrowPart.BOTTOM_PART && part != ArrowPart.TOP_PART) {
+		// throw new IllegalArgumentException();
+		// }
+		return new ArrowConfiguration(direction, body, head, part, crossX);
+	}
+
+	public ArrowConfiguration withCrossX() {
+		return new ArrowConfiguration(direction, body, head, part, true);
+	}
+
+	public final boolean isCrossX() {
+		return crossX;
 	}
 
 	public boolean isLeftToRightNormal() {

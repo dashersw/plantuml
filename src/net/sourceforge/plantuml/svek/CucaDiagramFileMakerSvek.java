@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.EmptyImageBuilder;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -51,6 +52,7 @@ import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramFileMakerResult;
 import net.sourceforge.plantuml.cucadiagram.dot.CucaDiagramSimplifier2;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.cucadiagram.dot.ICucaDiagramFileMaker;
@@ -86,8 +88,8 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 		this.flashcodes = flashcodes;
 	}
 
-	public String createFile(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException {
+	public CucaDiagramFileMakerResult createFile(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException {
 		try {
 			return createFileInternal(os, dotStrings, fileFormatOption);
 		} catch (IOException e) {
@@ -99,7 +101,7 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 
 	}
 
-	private String createFileInternal(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
+	private CucaDiagramFileMakerResult createFileInternal(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
 			throws IOException, InterruptedException {
 		if (diagram.getUmlDiagramType() == UmlDiagramType.STATE
 				|| diagram.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
@@ -137,12 +139,15 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 			deltaY += ((DecorateEntityImage) result).getDeltaY();
 		}
 
-		if (diagram.hasUrl()) {
-			return cmapString(svek2, deltaX, deltaY);
-		}
-		return null;
+		final Dimension2D finalDimension = Dimension2DDouble.delta(dim, deltaX, deltaY);
 
+		String cmap = null;
+		if (diagram.hasUrl()) {
+			cmap = cmapString(svek2, deltaX, deltaY);
+		}
+		return new CucaDiagramFileMakerResult(cmap, finalDimension.getWidth());
 	}
+
 
 	private String cmapString(CucaDiagramFileMakerSvek2 svek2, double deltaX, double deltaY) {
 		final StringBuilder sb = new StringBuilder();
@@ -182,8 +187,8 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 		final TextBlock textHeader = header == null ? null : TextBlockUtils.create(header, new FontConfiguration(
 				getFont(FontParam.HEADER), getFontColor(FontParam.HEADER, null)), diagram.getHeaderAlignement());
 
-		return new DecorateEntityImage(original, textHeader, diagram.getHeaderAlignement(), textFooter, diagram
-				.getFooterAlignement());
+		return new DecorateEntityImage(original, textHeader, diagram.getHeaderAlignement(), textFooter,
+				diagram.getFooterAlignement());
 	}
 
 	private IEntityImage addTitle(IEntityImage original) {
@@ -221,7 +226,7 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 			builder = new EmptyImageBuilder((int) (dim.getHeight() * dpiFactor), (int) (dim.getWidth() * dpiFactor),
 					backColor);
 			graphics2D = builder.getGraphics2D();
-			graphics2D.rotate(- Math.PI / 2);
+			graphics2D.rotate(-Math.PI / 2);
 			graphics2D.translate(-builder.getBufferedImage().getHeight(), 0);
 		} else {
 			builder = new EmptyImageBuilder((int) (dim.getWidth() * dpiFactor), (int) (dim.getHeight() * dpiFactor),
@@ -229,8 +234,8 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 			graphics2D = builder.getGraphics2D();
 
 		}
-		final UGraphic ug = new UGraphicG2d(diagram.getSkinParam().getColorMapper(), graphics2D, builder
-				.getBufferedImage(), dpiFactor);
+		final UGraphic ug = new UGraphicG2d(diagram.getSkinParam().getColorMapper(), graphics2D,
+				builder.getBufferedImage(), dpiFactor);
 		result.drawU(ug, 0, 0);
 
 		final BufferedImage im = ((UGraphicG2d) ug).getBufferedImage();

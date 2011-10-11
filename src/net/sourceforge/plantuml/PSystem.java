@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6513 $
+ * Revision $Revision: 7357 $
  *
  */
 package net.sourceforge.plantuml;
@@ -49,6 +49,8 @@ public interface PSystem {
 	String getDescription();
 
 	String getMetadata();
+	
+	String getWarningOrError();
 
 	UmlSource getSource();
 
