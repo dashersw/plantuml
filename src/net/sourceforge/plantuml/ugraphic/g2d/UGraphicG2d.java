@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7299 $
+ * Revision $Revision: 7371 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
@@ -68,13 +68,19 @@ public class UGraphicG2d extends AbstractUGraphic<Graphics2D> {
 	private final double dpiFactor;
 
 	public UGraphicG2d(ColorMapper colorMapper, Graphics2D g2d, BufferedImage bufferedImage, double dpiFactor) {
+		this(colorMapper, g2d, bufferedImage, dpiFactor, null);
+
+	}
+
+	public UGraphicG2d(ColorMapper colorMapper, Graphics2D g2d, BufferedImage bufferedImage, double dpiFactor,
+			AffineTransform affineTransform) {
 		super(colorMapper, g2d);
 		this.dpiFactor = dpiFactor;
 		if (dpiFactor != 1.0) {
 			g2d.scale(dpiFactor, dpiFactor);
-//			final AffineTransform at = g2d.getTransform();
-//			at.concatenate(AffineTransform.getScaleInstance(dpiFactor, dpiFactor));
-//			g2d.setTransform(at);
+		}
+		if (affineTransform != null) {
+			g2d.transform(affineTransform);
 		}
 		this.bufferedImage = bufferedImage;
 		registerDriver(URectangle.class, new DriverRectangleG2d(dpiFactor));

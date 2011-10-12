@@ -28,14 +28,16 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7361 $
+ * Revision $Revision: 7373 $
  *
  */
 package net.sourceforge.plantuml;
 
-import java.awt.geom.Dimension2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -48,9 +50,12 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.imageio.ImageIO;
+
 import net.sourceforge.plantuml.code.Compression;
 import net.sourceforge.plantuml.code.CompressionZlib;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
+import net.sourceforge.plantuml.mjpeg.MJPEGGenerator;
 import net.sourceforge.plantuml.pdf.PdfConverter;
 
 import com.google.zxing.BarcodeFormat;
@@ -201,7 +206,32 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 			exportDiagramInternalPdf(os, cmap, index, flashcodes);
 			return;
 		}
+		if (fileFormatOption.getFileFormat() == FileFormat.MJPEG) {
+			// exportDiagramInternalMjpeg(os);
+			// return;*
+			throw new UnsupportedOperationException();
+		}
 		lastInfo = exportDiagramInternal(os, cmap, index, fileFormatOption, flashcodes);
+	}
+
+	private void exportDiagramInternalMjpeg(OutputStream os) throws IOException {
+		final File f = new File("c:/test.avi");
+		int nb = 150;
+		double framerate = 30;
+		final MJPEGGenerator m = new MJPEGGenerator(f, 640, 480, framerate, nb);
+
+		for (int i = 0; i < nb; i++) {
+			final AffineTransform at = new AffineTransform();
+			final double coef = (nb - 1 - i) * 1.0 / nb;
+			at.setToShear(coef, coef);
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			exportDiagram(baos, null, 0, new FileFormatOption(FileFormat.PNG, at));
+			baos.close();
+			final BufferedImage im = ImageIO.read(new ByteArrayInputStream(baos.toByteArray()));
+			m.addImage(im);
+		}
+		m.finishAVI();
+
 	}
 
 	private UmlDiagramInfo lastInfo;

@@ -65,11 +65,20 @@ class LabelBuilderClassWithVisibilityImage extends LabelBuilderObjectOrClass imp
 
 		final boolean showFields = getData().showPortion(EntityPortion.FIELD, getEntity());
 		final boolean showMethods = getData().showPortion(EntityPortion.METHOD, getEntity());
+		final boolean showCircledCharacted = getData().showPortion(EntityPortion.CIRCLED_CHARACTER, getEntity());
 
 		// sb.append("<");
 		if (showFields == false && showMethods == false) {
-			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
-					BorderMode.NO_BORDER_CELLSPACING_OLD));
+			System.err.println("tutu");
+//			sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
+//					BorderMode.NO_BORDER_CELLSPACING_OLD));
+			if (showCircledCharacted) {
+				sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
+						BorderMode.NO_BORDER_CELLSPACING_NEW));
+			} else {
+				sb.append(getHtmlHeaderTableForObjectOrClassOrInterfaceOrEnum(getEntity(), circleAbsolutePath, 1, true,
+						BorderMode.NO_BORDER_CELLSPACING_OLD));
+			}
 		} else {
 			final String stereo = getEntity().getStereotype() == null ? null : getEntity().getStereotype().getLabel();
 			final int longuestHeader = getLonguestHeader(getEntity());

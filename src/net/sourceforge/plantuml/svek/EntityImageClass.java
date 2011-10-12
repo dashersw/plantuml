@@ -86,15 +86,17 @@ public class EntityImageClass extends AbstractEntityImage {
 		if (italic) {
 			fontConfigurationName = fontConfigurationName.italic();
 		}
-		this.name = TextBlockUtils.create(entity.getDisplay2(), fontConfigurationName, HorizontalAlignement.CENTER);
+		this.name = TextBlockUtils.withMargin(
+				TextBlockUtils.create(entity.getDisplay2(), fontConfigurationName, HorizontalAlignement.CENTER), 3, 3);
 
 		if (stereotype == null || stereotype.getLabel() == null
 				|| portionShower.showPortion(EntityPortion.STEREOTYPE, entity) == false) {
 			this.stereo = null;
 		} else {
-			this.stereo = TextBlockUtils.create(stereotype.getLabels(), new FontConfiguration(getFont(
-					FontParam.CLASS_STEREOTYPE, stereotype), getFontColor(FontParam.CLASS_STEREOTYPE, stereotype)),
-					HorizontalAlignement.CENTER);
+			this.stereo = TextBlockUtils.create(
+					stereotype.getLabels(),
+					new FontConfiguration(getFont(FontParam.CLASS_STEREOTYPE, stereotype), getFontColor(
+							FontParam.CLASS_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
 		}
 
 		// see LabelBuilderHtmlHeaderTableForObjectOrClass for colors
@@ -192,8 +194,8 @@ public class EntityImageClass extends AbstractEntityImage {
 		if (circledCharacter == null) {
 			return Dimension2DDouble.atLeast(nameAndStereo, 4 * xMarginCircle, 6 * yMarginCircle);
 		}
-		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(nameAndStereo
-				.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
+		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(
+				nameAndStereo.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
 	}
 
 	private Dimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {

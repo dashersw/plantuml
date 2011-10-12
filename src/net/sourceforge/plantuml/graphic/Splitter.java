@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5705 $
+ * Revision $Revision: 7378 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -51,6 +51,7 @@ public class Splitter {
 	static final String fontSizePattern2 = "\\<size[\\s:]+(\\d+)\\s*\\>";
 	static final String imgPattern = "<img\\s+(src\\s*=\\s*['\"]?[^\\s\">]+['\"]?\\s*|vspace\\s*=\\s*['\"]?\\d+['\"]?\\s*|valign\\s*=\\s*['\"]?(top|middle|bottom)['\"]?\\s*)+>";
 	static final String imgPattern2 = "<img[\\s:]+([^>]+)/?>";
+	static final String fontFamilyPattern = "<font[\\s:]+([^>]+)/?>";
 	static final String htmlTag;
 
 	private static final Pattern tagOrText;
@@ -78,6 +79,8 @@ public class Splitter {
 		sb.append(imgPattern);
 		sb.append('|');
 		sb.append(imgPattern2);
+		sb.append('|');
+		sb.append(fontFamilyPattern);
 
 		htmlTag = sb.toString();
 		tagOrText = Pattern.compile(htmlTag + "|.+?(?=" + htmlTag + ")|.+$", Pattern.CASE_INSENSITIVE);

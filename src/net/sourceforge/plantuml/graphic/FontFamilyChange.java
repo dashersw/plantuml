@@ -27,40 +27,31 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 7384 $
+ * 
+ * Revision $Revision: 3834 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.graphic;
 
-public enum FileFormat {
-	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, DOT, XMI_STANDARD, XMI_STAR, XMI_ARGO, PDF, MJPEG, HTML;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-	public String getFileSuffix() {
-		if (name().startsWith("XMI")) {
-			return ".XMI";
+class FontFamilyChange implements FontChange {
+
+	static private final Pattern colorPattern = Pattern.compile("(?i)" + Splitter.fontFamilyPattern);
+
+	private final String family;
+
+	FontFamilyChange(String s) {
+		final Matcher matcherColor = colorPattern.matcher(s);
+		if (matcherColor.find() == false) {
+			throw new IllegalArgumentException();
 		}
-		if (this == EPS_TEXT) {
-			return EPS.getFileSuffix();
-		}
-		return "." + name().toLowerCase();
+		this.family = matcherColor.group(1).trim();
 	}
 
-	public boolean isEps() {
-		if (this == EPS) {
-			return true;
-		}
-		if (this == EPS_TEXT) {
-			return true;
-		}
-		return false;
-	}
-
-	public String changeName(String fileName, int cpt) {
-		if (cpt == 0) {
-			return fileName.replaceAll("\\.\\w+$", getFileSuffix());
-		}
-		return fileName.replaceAll("\\.\\w+$", "_" + String.format("%03d", cpt) + getFileSuffix());
+	public FontConfiguration apply(FontConfiguration initial) {
+		return initial.changeFamily(family);
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7361 $
+ * Revision $Revision: 7371 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -267,7 +267,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 			scale.scale(getScale(area.getWidth(), area.getHeight()), getScale(area.getWidth(), area.getHeight()));
 			graphics2D.setTransform(scale);
 			ug = new UGraphicG2d(diagram.getSkinParam().getColorMapper(), graphics2D, builder.getBufferedImage(),
-					dpiFactor);
+					dpiFactor, fileFormatOption.getAffineTransform());
 		} else if (fileFormat == FileFormat.SVG) {
 			if (backColor.equals(Color.WHITE)) {
 				ug = new UGraphicSvg(diagram.getSkinParam().getColorMapper(), false);

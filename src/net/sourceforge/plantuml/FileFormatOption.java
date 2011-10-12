@@ -33,32 +33,28 @@
  */
 package net.sourceforge.plantuml;
 
+import java.awt.geom.AffineTransform;
+
 public class FileFormatOption {
 
 	private final FileFormat fileFormat;
-	private final int dpi;
-
-	public FileFormatOption(FileFormat fileFormat, int dpi) {
-		this.fileFormat = fileFormat;
-		this.dpi = dpi;
-	}
+	private final AffineTransform affineTransform;
 
 	public FileFormatOption(FileFormat fileFormat) {
-		this(fileFormat, 96);
+		this(fileFormat, null);
+	}
+
+	public FileFormatOption(FileFormat fileFormat, AffineTransform at) {
+		this.fileFormat = fileFormat;
+		this.affineTransform = at;
 	}
 
 	public final FileFormat getFileFormat() {
 		return fileFormat;
 	}
 
-//	public final int getDpi() {
-//		return dpi;
-//	}
-//
-//	public double getDpiFactor() {
-//		if (dpi == 96) {
-//			return 1.0;
-//		}
-//		return dpi / 96.0;
-//	}
+	public AffineTransform getAffineTransform() {
+		return affineTransform;
+	}
+
 }

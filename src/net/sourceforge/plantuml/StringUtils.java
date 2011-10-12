@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7258 $
+ * Revision $Revision: 7385 $
  *
  */
 package net.sourceforge.plantuml;
@@ -122,9 +122,39 @@ public class StringUtils {
 		return s;
 	}
 
+	public static String unicode(String s) {
+		final StringBuilder result = new StringBuilder();
+		for (char c : s.toCharArray()) {
+			if (c > 127 || c == '&' || c == '|') {
+				final int i = c;
+				result.append("&#" + i + ";");
+			} else {
+				result.append(c);
+			}
+		}
+		return result.toString();
+	}
+
+	public static String unicode2(String s) {
+		final StringBuilder result = new StringBuilder();
+		for (char c : s.toCharArray()) {
+			if (c > 127 || c == '&' || c == '|' || c == '<' || c == '>') {
+				final int i = c;
+				result.append("&#" + i + ";");
+			} else {
+				result.append(c);
+			}
+		}
+		return result.toString();
+	}
+
 	public static String manageArrowForSequence(String s) {
 		s = s.replace('=', '-');
 		return s;
+	}
+
+	public static String capitalize(String s) {
+		return s.substring(0, 1).toUpperCase() + s.substring(1).toLowerCase();
 	}
 
 	public static String manageArrowForCuca(String s) {
@@ -230,7 +260,7 @@ public class StringUtils {
 	public static char hiddenBiggerThan() {
 		return '\u0006';
 	}
-	
+
 	public static String hideComparatorCharacters(String s) {
 		s = s.replace('<', hiddenLesserThan());
 		s = s.replace('>', hiddenBiggerThan());
@@ -355,26 +385,25 @@ public class StringUtils {
 		}
 		return Collections.unmodifiableList(result);
 	}
-	
+
 	public static String getAsHtml(Color color) {
 		if (color == null) {
 			throw new IllegalArgumentException();
 		}
 		return getAsHtml(color.getRGB());
 	}
-	
+
 	public static String getAsHtml(int color) {
 		final int v = 0xFFFFFF & color;
 		String s = "000000" + Integer.toHexString(v).toUpperCase();
 		s = s.substring(s.length() - 6);
 		return "#" + s;
 	}
-	
+
 	public static String getUid(String uid1, int uid2) {
 		return uid1 + String.format("%04d", uid2);
 	}
-	
-	
+
 	public static List<CharSequence> manageEmbededDiagrams(final List<String> strings) {
 		final List<CharSequence> result = new ArrayList<CharSequence>();
 		final Iterator<String> it = strings.iterator();
@@ -397,7 +426,5 @@ public class StringUtils {
 		}
 		return result;
 	}
-
-
 
 }

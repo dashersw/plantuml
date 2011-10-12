@@ -51,6 +51,7 @@ import net.sourceforge.plantuml.eggs.PSystemEggFactory;
 import net.sourceforge.plantuml.eggs.PSystemLostFactory;
 import net.sourceforge.plantuml.eggs.PSystemPathFactory;
 import net.sourceforge.plantuml.eggs.PSystemRIPFactory;
+import net.sourceforge.plantuml.font.PSystemListFontsFactory;
 import net.sourceforge.plantuml.jcckit.PSystemJcckitFactory;
 import net.sourceforge.plantuml.objectdiagram.ObjectDiagramFactory;
 import net.sourceforge.plantuml.oregon.PSystemOregonFactory;
@@ -107,6 +108,7 @@ public class PSystemBuilder {
 		factories.add(new PostIdDiagramFactory());
 		factories.add(new PrintSkinFactory());
 		factories.add(new PSystemVersionFactory());
+		factories.add(new PSystemListFontsFactory());
 		factories.add(new PSystemSaltFactory(DiagramType.SALT));
 		factories.add(new PSystemSaltFactory(DiagramType.UML));
 		factories.add(new PSystemDotFactory(DiagramType.DOT));

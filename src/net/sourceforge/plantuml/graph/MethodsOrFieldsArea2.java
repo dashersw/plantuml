@@ -42,6 +42,7 @@ import java.util.List;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -103,7 +104,7 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 	}
 
 	private TextBlock createTextBlock(String s) {
-		return TextBlockUtils.create(Arrays.asList(s), new FontConfiguration(font, color), HorizontalAlignement.LEFT);
+		return TextBlockUtils.create(StringUtils.getWithNewlines(s) , new FontConfiguration(font, color), HorizontalAlignement.LEFT);
 	}
 
 	public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {

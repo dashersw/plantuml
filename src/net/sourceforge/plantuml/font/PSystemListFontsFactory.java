@@ -27,40 +27,39 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 7384 $
+ * 
+ * Revision $Revision: 3830 $
  *
  */
-package net.sourceforge.plantuml;
+package net.sourceforge.plantuml.font;
 
-public enum FileFormat {
-	PNG, SVG, EPS, EPS_TEXT, ATXT, UTXT, DOT, XMI_STANDARD, XMI_STAR, XMI_ARGO, PDF, MJPEG, HTML;
+import net.sourceforge.plantuml.DiagramType;
+import net.sourceforge.plantuml.PSystemBasicFactory;
 
-	public String getFileSuffix() {
-		if (name().startsWith("XMI")) {
-			return ".XMI";
-		}
-		if (this == EPS_TEXT) {
-			return EPS.getFileSuffix();
-		}
-		return "." + name().toLowerCase();
+public class PSystemListFontsFactory implements PSystemBasicFactory {
+
+	private PSystemListFonts system;
+
+	public void init(String startLine) {
 	}
 
-	public boolean isEps() {
-		if (this == EPS) {
-			return true;
-		}
-		if (this == EPS_TEXT) {
+	public boolean executeLine(String line) {
+		final String lineLower = line.toLowerCase();
+		if (lineLower.equals("listfont") || lineLower.equals("listfonts") || lineLower.startsWith("listfont ")
+				|| lineLower.startsWith("listfonts ")) {
+			final int idx = line.indexOf(' ');
+			system = new PSystemListFonts(idx == -1 ? "This is a test" : line.substring(idx).trim());
 			return true;
 		}
 		return false;
 	}
 
-	public String changeName(String fileName, int cpt) {
-		if (cpt == 0) {
-			return fileName.replaceAll("\\.\\w+$", getFileSuffix());
-		}
-		return fileName.replaceAll("\\.\\w+$", "_" + String.format("%03d", cpt) + getFileSuffix());
+	public PSystemListFonts getSystem() {
+		return system;
+	}
+
+	public DiagramType getDiagramType() {
+		return DiagramType.UML;
 	}
 
 }

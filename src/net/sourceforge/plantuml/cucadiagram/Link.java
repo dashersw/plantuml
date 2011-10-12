@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7241 $
+ * Revision $Revision: 7385 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -321,6 +321,16 @@ public class Link implements Imaged {
 		return false;
 	}
 
+	public IEntity getOther(IEntity entity) {
+		if (getEntity1() == entity) {
+			return getEntity2();
+		}
+		if (getEntity2() == entity) {
+			return getEntity1();
+		}
+		throw new IllegalArgumentException();
+	}
+
 	public double getMarginDecors1(StringBounder stringBounder, UFont fontQualif) {
 		final double q = getQualifierMargin(stringBounder, fontQualif, qualifier1);
 		final LinkDecor decor = getType().getDecor1();
@@ -377,7 +387,7 @@ public class Link implements Imaged {
 		}
 		return nb == 1;
 	}
-	
+
 	private boolean horizontalSolitary;
 
 	public final void setHorizontalSolitary(boolean horizontalSolitary) {

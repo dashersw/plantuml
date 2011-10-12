@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6837 $
+ * Revision $Revision: 7379 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -91,6 +91,11 @@ public class FontConfiguration {
 	FontConfiguration changeSize(float size) {
 		return new FontConfiguration(styles, motherFont, motherColor, currentFont.deriveSize(size), currentColor,
 				extendedColor);
+	}
+
+	FontConfiguration changeFamily(String family) {
+		return new FontConfiguration(styles, motherFont, motherColor, new UFont(family, currentFont.getStyle(),
+				currentFont.getSize()), currentColor, extendedColor);
 	}
 
 	public FontConfiguration resetFont() {

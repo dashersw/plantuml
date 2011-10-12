@@ -124,17 +124,7 @@ abstract class DotCommon {
 	}
 
 	static String unicode(String s) {
-		final StringBuilder result = new StringBuilder();
-		for (char c : s.toCharArray()) {
-			if (c > 127 || c == '&' || c == '|') {
-				// if (c > 127 || c == '&') {
-				final int i = c;
-				result.append("&#" + i + ";");
-			} else {
-				result.append(c);
-			}
-		}
-		return result.toString();
+		return StringUtils.unicode(s);
 	}
 
 	protected final void addTdImageBugB1983(final StringBuilder sb, final String absolutePath) throws IOException {
