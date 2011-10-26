@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7385 $
+ * Revision $Revision: 7394 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -405,11 +405,28 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			if (result != null && cmap != null && result.getCmapResult() != null) {
 				cmap.append(result.getCmapResult());
 			}
+			if (result != null) {
+				this.warningOrError = result.getWarningOrError();
+			}
 			return result == null ? new UmlDiagramInfo() : new UmlDiagramInfo(result.getWidth());
 		} catch (InterruptedException e) {
 			Log.error(e.toString());
 			throw new IOException(e.toString());
 		}
+	}
+
+	private String warningOrError;
+
+	@Override
+	public String getWarningOrError() {
+		final String generalWarningOrError = super.getWarningOrError();
+		if (warningOrError == null) {
+			return generalWarningOrError;
+		}
+		if (generalWarningOrError == null) {
+			return warningOrError;
+		}
+		return generalWarningOrError + "\n" + warningOrError;
 	}
 
 	private void createFilesTxt(OutputStream os, int index, FileFormat fileFormat) throws IOException {

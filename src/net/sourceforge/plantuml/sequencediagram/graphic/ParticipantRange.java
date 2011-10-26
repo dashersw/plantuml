@@ -28,63 +28,34 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4282 $
+ * Revision $Revision: 7340 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+class ParticipantRange {
 
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+	private final int start;
+	private final int end;
 
-public class GroupingStart extends Grouping {
-
-	private final List<GroupingLeaf> children = new ArrayList<GroupingLeaf>();
-	private final HtmlColor backColorGeneral;
-
-	final private GroupingStart parent;
-
-	public GroupingStart(String title, String comment, HtmlColor backColorGeneral, HtmlColor backColorElement,
-			GroupingStart parent) {
-		super(title, comment, GroupingType.START, backColorElement);
-		this.backColorGeneral = backColorGeneral;
-		this.parent = parent;
-	}
-
-	List<GroupingLeaf> getChildren() {
-		return Collections.unmodifiableList(children);
-	}
-
-	public void addChildren(GroupingLeaf g) {
-		children.add(g);
-	}
-
-	public int getLevel() {
-		if (parent == null) {
-			return 0;
+	public ParticipantRange(int start, int end) {
+		if (start > end) {
+			throw new IllegalArgumentException();
 		}
-		return parent.getLevel() + 1;
+		this.start = start;
+		this.end = end;
 	}
 
-	@Override
-	public HtmlColor getBackColorGeneral() {
-		return backColorGeneral;
+	public int start() {
+		return start;
 	}
 
-	public boolean dealWith(Participant someone) {
-		return false;
+	public int end() {
+		return end;
 	}
 
-	public Url getUrl() {
-		return null;
-	}
-
-	@Override
-	public boolean isParallel() {
-		return getTitle().equals("par2");
+	public ParticipantRange merge(ParticipantRange other) {
+		return new ParticipantRange(this.start, other.end);
 	}
 
 }

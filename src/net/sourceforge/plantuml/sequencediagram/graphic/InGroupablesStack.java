@@ -28,63 +28,45 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4282 $
+ * Revision $Revision: 7461 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.sequencediagram.InGroupable;
+import net.sourceforge.plantuml.sequencediagram.InGroupableList;
 
-public class GroupingStart extends Grouping {
+class InGroupablesStack {
 
-	private final List<GroupingLeaf> children = new ArrayList<GroupingLeaf>();
-	private final HtmlColor backColorGeneral;
+	final private List<InGroupableList> inGroupableStack = new ArrayList<InGroupableList>();
 
-	final private GroupingStart parent;
-
-	public GroupingStart(String title, String comment, HtmlColor backColorGeneral, HtmlColor backColorElement,
-			GroupingStart parent) {
-		super(title, comment, GroupingType.START, backColorElement);
-		this.backColorGeneral = backColorGeneral;
-		this.parent = parent;
-	}
-
-	List<GroupingLeaf> getChildren() {
-		return Collections.unmodifiableList(children);
-	}
-
-	public void addChildren(GroupingLeaf g) {
-		children.add(g);
-	}
-
-	public int getLevel() {
-		if (parent == null) {
-			return 0;
+	public void addList(InGroupableList inGroupableList) {
+		for (InGroupableList other : inGroupableStack) {
+			other.addInGroupable(inGroupableList);
 		}
-		return parent.getLevel() + 1;
+		inGroupableStack.add(inGroupableList);
+
 	}
 
-	@Override
-	public HtmlColor getBackColorGeneral() {
-		return backColorGeneral;
+	public void pop() {
+		final int idx = inGroupableStack.size() - 1;
+		inGroupableStack.remove(idx);
 	}
 
-	public boolean dealWith(Participant someone) {
-		return false;
+	public void addElement(InGroupable inGroupable) {
+		for (InGroupableList groupingStructure : inGroupableStack) {
+			groupingStructure.addInGroupable(inGroupable);
+		}
 	}
 
-	public Url getUrl() {
-		return null;
-	}
-
-	@Override
-	public boolean isParallel() {
-		return getTitle().equals("par2");
+	public InGroupableList getTopGroupingStructure() {
+		if (inGroupableStack.size() == 0) {
+			return null;
+		}
+		return inGroupableStack.get(inGroupableStack.size() - 1);
 	}
 
 }

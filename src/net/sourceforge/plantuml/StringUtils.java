@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7385 $
+ * Revision $Revision: 7391 $
  *
  */
 package net.sourceforge.plantuml;
@@ -135,7 +135,7 @@ public class StringUtils {
 		return result.toString();
 	}
 
-	public static String unicode2(String s) {
+	public static String unicodeForHtml(String s) {
 		final StringBuilder result = new StringBuilder();
 		for (char c : s.toCharArray()) {
 			if (c > 127 || c == '&' || c == '|' || c == '<' || c == '>') {

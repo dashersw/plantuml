@@ -139,6 +139,8 @@ public class DotPath implements UShape, Moveable {
 	public void forceStartPoint(double x, double y) {
 		beziers.get(0).x1 = x;
 		beziers.get(0).y1 = y;
+		beziers.get(0).ctrlx1 = x;
+		beziers.get(0).ctrly1 = y;
 	}
 	
 	public Point2D getEndPoint() {
@@ -148,6 +150,8 @@ public class DotPath implements UShape, Moveable {
 	public void forceEndPoint(double x, double y) {
 		beziers.get(beziers.size() - 1).x2 = x;
 		beziers.get(beziers.size() - 1).y2 = y;
+		beziers.get(beziers.size() - 1).ctrlx2 = x;
+		beziers.get(beziers.size() - 1).ctrly2 = y;
 	}
 
 

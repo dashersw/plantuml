@@ -28,53 +28,34 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4320 $
+ * Revision $Revision: 4041 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.logo;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public abstract class Grouping implements Event {
+class LogoToken {
+	public final static int END_OF_INPUT = 256;
+	public final static int INVALID_TOKEN = 257;
+	public final static int IDENTIFIER = 258;
+	public final static int FLOAT = 259;
+	public final static int INTEGER = 270;
 
-	private final String title;
-	private final GroupingType type;
-	private final String comment;
-	private final HtmlColor backColorElement;
+	public final static int FORWARD = 260;
+	public final static int BACK = 261;
+	public final static int LEFT = 262;
+	public final static int RIGHT = 263;
+	public final static int PENUP = 264;
+	public final static int PENDOWN = 265;
+	public final static int HIDETURTLE = 266;
+	public final static int SHOWTURTLE = 267;
+	public final static int CLEARSCREEN = 268;
+	public final static int REPEAT = 269;
+	public final static int TO = 271;
+	public final static int SETPC = 272;
 
-	public Grouping(String title, String comment, GroupingType type,
-			HtmlColor backColorElement) {
-		this.title = title;
-		this.comment = comment;
-		this.type = type;
-		this.backColorElement = backColorElement;
-	}
-
-	@Override
-	public final String toString() {
-		return super.toString() + " " + type + " " + title;
-	}
-
-	final public String getTitle() {
-		return title;
-	}
-
-	final public GroupingType getType() {
-		return type;
-	}
-
-	public abstract int getLevel();
-
-	public abstract HtmlColor getBackColorGeneral();
-	
-	final public String getComment() {
-		return comment;
-	}
-
-	public final HtmlColor getBackColorElement() {
-		return backColorElement;
-	}
-	
-	public abstract boolean isParallel(); 
-
+	public int kind;
+	public String lexeme;
+	public float value;
+	public int intValue;
 }

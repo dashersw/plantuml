@@ -114,6 +114,21 @@ public final class CucaDiagramFileMakerSvek2 {
 		return shapeMap.get(ent);
 	}
 
+	public String getWarningOrError(int warningOrError) {
+		final StringBuilder sb = new StringBuilder();
+		for (Map.Entry<IEntity, Shape> ent : shapeMap.entrySet()) {
+			final Shape sh = ent.getValue();
+			final double maxX = sh.getMinX() + sh.getWidth();
+			if (maxX > warningOrError) {
+				final IEntity entity = ent.getKey();
+				sb.append(entity.getCode() + " is overpassing the width limit.");
+				sb.append("\n");
+			}
+
+		}
+		return sb.length() == 0 ? "" : sb.toString();
+	}
+
 	public IEntityImage createFile(String... dotStrings) throws IOException, InterruptedException {
 
 		dotStringFactory = new DotStringFactory(colorSequence, stringBounder, dotData);
@@ -225,8 +240,8 @@ public final class CucaDiagramFileMakerSvek2 {
 	private void printEntity(IEntity ent) {
 		final IEntityImage image = Shape.printEntity(ent, dotData);
 		final Dimension2D dim = image.getDimension(stringBounder);
-		final Shape shape = new Shape(image, image.getShapeType(), dim.getWidth(), dim.getHeight(), colorSequence, ent
-				.isTop(), image.getShield());
+		final Shape shape = new Shape(image, image.getShapeType(), dim.getWidth(), dim.getHeight(), colorSequence,
+				ent.isTop(), image.getShield());
 		dotStringFactory.addShape(shape);
 		shapeMap.put(ent, shape);
 	}

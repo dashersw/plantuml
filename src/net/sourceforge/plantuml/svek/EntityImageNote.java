@@ -85,7 +85,11 @@ public class EntityImageNote extends AbstractEntityImage {
 
 		final Rose rose = new Rose();
 
-		noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
+		if (entity.getSpecificBackColor() == null) {
+			noteBackgroundColor = rose.getHtmlColor(skinParam, ColorParam.noteBackground);
+		} else {
+			noteBackgroundColor = entity.getSpecificBackColor();
+		}
 		borderColor = rose.getHtmlColor(skinParam, ColorParam.noteBorder);
 		final HtmlColor fontColor = rose.getFontColor(skinParam, FontParam.NOTE);
 		final UFont fontNote = skinParam.getFont(FontParam.NOTE, null);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7252 $
+ * Revision $Revision: 7393 $
  *
  */
 package net.sourceforge.plantuml;
@@ -89,6 +89,8 @@ public class Option {
 			String s = arg[i];
 			if (s.equalsIgnoreCase("-tsvg") || s.equalsIgnoreCase("-svg")) {
 				setFileFormat(FileFormat.SVG);
+			} else if (s.equalsIgnoreCase("-thtml") || s.equalsIgnoreCase("-html")) {
+				setFileFormat(FileFormat.HTML);
 			} else if (s.equalsIgnoreCase("-txmi") || s.equalsIgnoreCase("-xmi")) {
 				setFileFormat(FileFormat.XMI_STANDARD);
 			} else if (s.equalsIgnoreCase("-txmi:argo") || s.equalsIgnoreCase("-xmi:argo")) {

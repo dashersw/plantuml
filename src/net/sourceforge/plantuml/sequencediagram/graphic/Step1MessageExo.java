@@ -34,14 +34,12 @@
 package net.sourceforge.plantuml.sequencediagram.graphic;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.sequencediagram.InGroupable;
-import net.sourceforge.plantuml.sequencediagram.InGroupableList;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.MessageExoType;
@@ -54,25 +52,26 @@ class Step1MessageExo extends Step1Abstract {
 
 	private final MessageExoArrow messageArrow;
 
-	Step1MessageExo(StringBounder stringBounder, MessageExo message, DrawableSet drawingSet, double freeY) {
-		super(stringBounder, message, drawingSet, freeY);
+	Step1MessageExo(ParticipantRange range, StringBounder stringBounder, MessageExo message, DrawableSet drawingSet,
+			Frontier freeY) {
+		super(range, stringBounder, message, drawingSet, freeY);
 
 		setType(getArrowType(message));
 
-		this.messageArrow = new MessageExoArrow(freeY, drawingSet.getSkin(), drawingSet.getSkin().createComponent(
-				getType(), drawingSet.getSkinParam(), getLabelOfMessage(message)), getLivingParticipantBox(), message
-				.getType());
+		this.messageArrow = new MessageExoArrow(freeY.getFreeY(range), drawingSet.getSkin(), drawingSet.getSkin()
+				.createComponent(getType(), drawingSet.getSkinParam(), getLabelOfMessage(message)),
+				getLivingParticipantBox(), message.getType());
 
 		if (message.getNote() != null) {
-			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(), message
-					.getSpecificBackColor());
+			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(),
+					message.getSpecificBackColor());
 			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
 			// throw new UnsupportedOperationException();
 		}
 
 	}
 
-	double prepareMessage(ConstraintSet constraintSet, Collection<InGroupableList> groupingStructures) {
+	Frontier prepareMessage(ConstraintSet constraintSet, InGroupablesStack inGroupablesStack) {
 		final Arrow graphic = createArrow();
 		final double arrowYStartLevel = graphic.getArrowYStartLevel(getStringBounder());
 		final double arrowYEndLevel = graphic.getArrowYEndLevel(getStringBounder());
@@ -103,12 +102,10 @@ class Step1MessageExo extends Step1Abstract {
 			afterMessage(getStringBounder(), lifeEvent, arrowYEndLevel + marginActivateAndDeactive);
 		}
 
-		if (groupingStructures != null && graphic instanceof InGroupable) {
-			for (InGroupableList groupingStructure : groupingStructures) {
-				groupingStructure.addInGroupable((InGroupable) graphic);
-				groupingStructure.addInGroupable(livingParticipantBox);
-				groupingStructure.addInGroupable(livingParticipantBox);
-			}
+		assert graphic instanceof InGroupable;
+		if (graphic instanceof InGroupable) {
+			inGroupablesStack.addElement((InGroupable) graphic);
+			inGroupablesStack.addElement(livingParticipantBox);
 		}
 
 		return getFreeY();

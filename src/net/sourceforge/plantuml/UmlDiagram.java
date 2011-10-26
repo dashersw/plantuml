@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7373 $
+ * Revision $Revision: 7394 $
  *
  */
 package net.sourceforge.plantuml;
@@ -348,7 +348,7 @@ public abstract class UmlDiagram extends AbstractPSystem implements PSystem {
 	}
 
 	@Override
-	public final String getWarningOrError() {
+	public String getWarningOrError() {
 		if (lastInfo == null) {
 			return null;
 		}

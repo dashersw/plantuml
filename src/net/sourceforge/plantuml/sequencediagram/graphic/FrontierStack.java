@@ -28,53 +28,16 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4320 $
+ * Revision $Revision: 7340 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
+interface FrontierStack extends Frontier {
 
-public abstract class Grouping implements Event {
+	FrontierStack openBar();
 
-	private final String title;
-	private final GroupingType type;
-	private final String comment;
-	private final HtmlColor backColorElement;
+	FrontierStack restore();
 
-	public Grouping(String title, String comment, GroupingType type,
-			HtmlColor backColorElement) {
-		this.title = title;
-		this.comment = comment;
-		this.type = type;
-		this.backColorElement = backColorElement;
-	}
-
-	@Override
-	public final String toString() {
-		return super.toString() + " " + type + " " + title;
-	}
-
-	final public String getTitle() {
-		return title;
-	}
-
-	final public GroupingType getType() {
-		return type;
-	}
-
-	public abstract int getLevel();
-
-	public abstract HtmlColor getBackColorGeneral();
-	
-	final public String getComment() {
-		return comment;
-	}
-
-	public final HtmlColor getBackColorElement() {
-		return backColorElement;
-	}
-	
-	public abstract boolean isParallel(); 
-
+	FrontierStack closeBar();
 }

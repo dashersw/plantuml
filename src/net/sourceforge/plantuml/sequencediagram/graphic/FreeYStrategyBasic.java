@@ -28,53 +28,20 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4320 $
+ * Revision $Revision: 7340 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.sequencediagram.Event;
 
-public abstract class Grouping implements Event {
+class FreeYStrategyBasic implements FreeYStrategy {
 
-	private final String title;
-	private final GroupingType type;
-	private final String comment;
-	private final HtmlColor backColorElement;
-
-	public Grouping(String title, String comment, GroupingType type,
-			HtmlColor backColorElement) {
-		this.title = title;
-		this.comment = comment;
-		this.type = type;
-		this.backColorElement = backColorElement;
+	public double peekPosition(Event event, ParticipantRange range) {
+		return 0;
 	}
 
-	@Override
-	public final String toString() {
-		return super.toString() + " " + type + " " + title;
+	public void addElement(Event event, ParticipantRange range, double height) {
 	}
-
-	final public String getTitle() {
-		return title;
-	}
-
-	final public GroupingType getType() {
-		return type;
-	}
-
-	public abstract int getLevel();
-
-	public abstract HtmlColor getBackColorGeneral();
-	
-	final public String getComment() {
-		return comment;
-	}
-
-	public final HtmlColor getBackColorElement() {
-		return backColorElement;
-	}
-	
-	public abstract boolean isParallel(); 
 
 }

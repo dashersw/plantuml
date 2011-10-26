@@ -74,7 +74,7 @@ public class PSystemXearthFactory implements PSystemBasicFactory {
 	}
 
 	public boolean executeLine(String line) {
-		if (line.startsWith("xearth")) {
+		if (system == null && line.startsWith("xearth")) {
 			extractDimension(line);
 			system = new PSystemXearth(width, height, config, markers);
 			return true;

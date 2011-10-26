@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7253 $
+ * Revision $Revision: 7393 $
  *
  */
 package net.sourceforge.plantuml;
@@ -69,8 +69,8 @@ public class OptionPrint {
 		System.err.println("    -gui\t\tTo run the graphical user interface");
 		System.err.println("    -tsvg\t\tTo generate images using SVG format");
 		System.err.println("    -teps\t\tTo generate images using EPS format");
-		System.err.println("    -txmi\t\tTo generate XMI file for classes diagrams");
-		System.err.println("    -tdot\t\tTo generate DOT intermediate file");
+		System.err.println("    -txmi\t\tTo generate XMI file for class diagram");
+		System.err.println("    -thtml\t\tTo generate HTML files for class diagram");
 		System.err.println("    -ttxt\t\tTo generate images with ASCII art");
 		System.err.println("    -tutxt\t\tTo generate images with ASCII art using Unicode characters");
 		System.err.println("    -o[utput] \"dir\"\tTo generate images in the specified directory");

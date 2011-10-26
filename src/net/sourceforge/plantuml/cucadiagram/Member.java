@@ -47,7 +47,10 @@ public class Member {
 		final String lower = display.toLowerCase();
 		this.staticModifier = lower.contains("{static}") || lower.contains("{classifier}");
 		this.abstractModifier = lower.contains("{abstract}");
-		final String displayClean = display.replaceAll("(?i)\\{(static|classifier|abstract)\\}", "").trim();
+		String displayClean = display.replaceAll("(?i)\\{(static|classifier|abstract)\\}", "").trim();
+		if (displayClean.length() == 0) {
+			displayClean = " ";
+		}
 
 		if (VisibilityModifier.isVisibilityCharacter(displayClean.charAt(0))) {
 			visibilityModifier = VisibilityModifier.getVisibilityModifier(display.charAt(0), isMethod == false);

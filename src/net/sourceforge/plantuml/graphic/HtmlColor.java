@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6983 $
+ * Revision $Revision: 7469 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -50,6 +50,7 @@ public class HtmlColor {
 
 	static {
 		// Taken from http://perl.wikipedia.com/wiki/Named_colors ?
+		// http://www.w3schools.com/HTML/html_colornames.asp
 		htmlNames = new HashMap<String, String>();
 		names = new TreeSet<String>();
 		register("AliceBlue", "#F0F8FF");

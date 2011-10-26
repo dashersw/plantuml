@@ -28,53 +28,32 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4320 $
+ * Revision $Revision: 7340 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.sequencediagram.graphic;
 
-import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public abstract class Grouping implements Event {
+class FrontierSimple implements Frontier {
 
-	private final String title;
-	private final GroupingType type;
-	private final String comment;
-	private final HtmlColor backColorElement;
+	private final double freeY;
 
-	public Grouping(String title, String comment, GroupingType type,
-			HtmlColor backColorElement) {
-		this.title = title;
-		this.comment = comment;
-		this.type = type;
-		this.backColorElement = backColorElement;
+	public FrontierSimple(double freeY) {
+		this.freeY = freeY;
 	}
 
-	@Override
-	public final String toString() {
-		return super.toString() + " " + type + " " + title;
+	public double getFreeY(ParticipantRange range) {
+		if (range == null) {
+			throw new IllegalArgumentException();
+		}
+		return freeY;
 	}
 
-	final public String getTitle() {
-		return title;
+	public FrontierSimple add(double delta, ParticipantRange range) {
+		if (range == null) {
+			throw new IllegalArgumentException();
+		}
+		return new FrontierSimple(freeY + delta);
 	}
-
-	final public GroupingType getType() {
-		return type;
-	}
-
-	public abstract int getLevel();
-
-	public abstract HtmlColor getBackColorGeneral();
-	
-	final public String getComment() {
-		return comment;
-	}
-
-	public final HtmlColor getBackColorElement() {
-		return backColorElement;
-	}
-	
-	public abstract boolean isParallel(); 
 
 }

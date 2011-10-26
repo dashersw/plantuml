@@ -37,14 +37,16 @@ public class CucaDiagramFileMakerResult {
 
 	private final String cmapResult;
 	private final double width;
+	private final String warningOrError;
 
 	public CucaDiagramFileMakerResult(String cmapResult) {
-		this(cmapResult, 0);
+		this(cmapResult, 0, null);
 	}
 
-	public CucaDiagramFileMakerResult(String cmap, double width) {
+	public CucaDiagramFileMakerResult(String cmap, double width, String warningOrError) {
 		this.cmapResult = cmap;
 		this.width = width;
+		this.warningOrError = warningOrError;
 	}
 
 	public String getCmapResult() {
@@ -54,4 +56,9 @@ public class CucaDiagramFileMakerResult {
 	public double getWidth() {
 		return width;
 	}
+
+	public String getWarningOrError() {
+		return warningOrError;
+	}
+
 }

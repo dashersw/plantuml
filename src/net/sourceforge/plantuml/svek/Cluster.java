@@ -34,6 +34,7 @@
 package net.sourceforge.plantuml.svek;
 
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -350,8 +351,13 @@ public class Cluster implements Moveable {
 	private void drawUState(UGraphic ug, double x, double y, HtmlColor borderColor, DotData dotData) {
 
 		final Dimension2D total = new Dimension2DDouble(maxX - minX, maxY - minY);
-		final double suppY = title.calculateDimension(ug.getStringBounder()).getHeight() + EntityImageState.MARGIN
-				+ EntityImageState.MARGIN_LINE;
+		final double suppY;
+		if (title == null) {
+			suppY = 0;
+		} else {
+			suppY = title.calculateDimension(ug.getStringBounder()).getHeight() + EntityImageState.MARGIN
+					+ EntityImageState.MARGIN_LINE;
+		}
 		HtmlColor stateBack = getBackColor();
 		if (stateBack == null) {
 			stateBack = getColor(dotData, ColorParam.stateBackground, group.getStereotype());
@@ -360,7 +366,9 @@ public class Cluster implements Moveable {
 		final RoundedContainer r = new RoundedContainer(total, suppY, borderColor, stateBack, background);
 		r.drawU(ug, x + minX, y + minY);
 
-		title.drawU(ug, x + xTitle, y + yTitle);
+		if (title != null) {
+			title.drawU(ug, x + xTitle, y + yTitle);
+		}
 
 	}
 
@@ -553,6 +561,26 @@ public class Cluster implements Moveable {
 			return false;
 		}
 		return group.getEntityCluster() == ent;
+	}
+
+	public Point2D projection(double x, double y) {
+		final double v1 = Math.abs(minX - x);
+		final double v2 = Math.abs(maxX - x);
+		final double v3 = Math.abs(minY - y);
+		final double v4 = Math.abs(maxY - y);
+		if (v1 <= v2 && v1 <= v3 && v1 <= v4) {
+			return new Point2D.Double(minX, y);
+		}
+		if (v2 <= v1 && v2 <= v3 && v2 <= v4) {
+			return new Point2D.Double(maxX, y);
+		}
+		if (v3 <= v1 && v3 <= v2 && v3 <= v4) {
+			return new Point2D.Double(x, minY);
+		}
+		if (v4 <= v1 && v4 <= v1 && v4 <= v3) {
+			return new Point2D.Double(x, maxY);
+		}
+		throw new IllegalStateException();
 	}
 
 }

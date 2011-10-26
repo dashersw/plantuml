@@ -351,6 +351,9 @@ public class Shape implements Positionable {
 		if (ent.getType() == EntityType.ASSOCIATION) {
 			return new EntityImageAssociation(ent, dotData.getSkinParam());
 		}
+		if (ent.getType() == EntityType.PSEUDO_STATE) {
+			return new EntityImagePseudoState(ent, dotData.getSkinParam());
+		}
 		throw new UnsupportedOperationException(ent.getType().toString());
 	}
 }

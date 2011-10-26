@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6551 $
+ * Revision $Revision: 7451 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
@@ -47,7 +47,7 @@ public class CommandGrouping extends SingleLineCommand<SequenceDiagram> {
 	public CommandGrouping(SequenceDiagram sequenceDiagram) {
 		super(
 				sequenceDiagram,
-				"(?i)^(opt|alt|loop|par|break|critical|else|end|group)((?<!else)(?<!end)#\\w+)?(?:\\s+(#\\w+))?(?:\\s+(.*?))?$");
+				"(?i)^(opt|alt|loop|par|par2|break|critical|else|end|also|group)((?<!else)(?<!also)(?<!end)#\\w+)?(?:\\s+(#\\w+))?(?:\\s+(.*?))?$");
 	}
 
 	@Override

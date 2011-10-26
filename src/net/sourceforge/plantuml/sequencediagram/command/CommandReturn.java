@@ -38,6 +38,7 @@ import java.util.List;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
 import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
@@ -52,9 +53,15 @@ public class CommandReturn extends SingleLineCommand<SequenceDiagram> {
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
 
-		final Message message = getSystem().getActivatingMessage();
+		Message message = getSystem().getActivatingMessage();
+		boolean doDeactivation = true;
 		if (message == null) {
-			return CommandExecutionResult.error("Nowhere to return to.");
+			final AbstractMessage last = getSystem().getLastMessage();
+			if (last instanceof Message == false) {
+				return CommandExecutionResult.error("Nowhere to return to.");
+			}
+			message = (Message) last;
+			doDeactivation = false;
 		}
 
 		final ArrowConfiguration arrow = message.getArrowConfiguration().withDotted();
@@ -63,11 +70,13 @@ public class CommandReturn extends SingleLineCommand<SequenceDiagram> {
 				new Message(message.getParticipant2(), message.getParticipant1(), StringUtils.getWithNewlines(arg
 						.get(0)), arrow, getSystem().getNextMessageNumber()));
 
-		final String error = getSystem().activate(message.getParticipant2(), LifeEventType.DEACTIVATE, null);
-		if (error == null) {
-			return CommandExecutionResult.ok();
+		if (doDeactivation) {
+			final String error = getSystem().activate(message.getParticipant2(), LifeEventType.DEACTIVATE, null);
+			if (error != null) {
+				return CommandExecutionResult.error(error);
+			}
 		}
-		return CommandExecutionResult.error(error);
+		return CommandExecutionResult.ok();
 
 	}
 

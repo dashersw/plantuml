@@ -45,19 +45,6 @@ public class LinkType {
 		this(decor1, LinkStyle.NORMAL, decor2);
 	}
 
-	public String getHtml(String ent1, String ent2) {
-		if (decor1 == LinkDecor.NONE && style == LinkStyle.NORMAL && decor2 == LinkDecor.EXTENDS) {
-			return ent2 + " extends " + ent1;
-		}
-		if (decor1 == LinkDecor.ARROW && style == LinkStyle.NORMAL && decor2 == LinkDecor.NONE) {
-			return "Link from " + ent1 + " to " + ent2;
-		}
-		if (decor1 == LinkDecor.NONE && style == LinkStyle.NORMAL && decor2 == LinkDecor.AGREGATION) {
-			return ent1 + " is an agregation of " + ent2;
-		}
-		return ent1 + " " + toString() + " " + ent2;
-	}
-
 	public boolean contains(LinkDecor decors) {
 		return decor1 == decors || decor2 == decors;
 	}

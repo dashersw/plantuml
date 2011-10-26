@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7320 $
+ * Revision $Revision: 7475 $
  *
  */
 package net.sourceforge.plantuml;
@@ -342,7 +342,10 @@ public class SkinParam implements ISkinParam {
 
 	public boolean isSvek() {
 		boolean defaultValue = false;
-		if (OptionFlags.SVEK && type == UmlDiagramType.CLASS) {
+//		if (OptionFlags.SVEK && type == UmlDiagramType.CLASS) {
+//			defaultValue = true;
+//		}
+		if (type == UmlDiagramType.CLASS) {
 			defaultValue = true;
 		}
 		if (OptionFlags.SVEK && type == UmlDiagramType.OBJECT) {
@@ -355,6 +358,9 @@ public class SkinParam implements ISkinParam {
 			defaultValue = true;
 		}
 		if (OptionFlags.SVEK && type == UmlDiagramType.ACTIVITY) {
+			defaultValue = true;
+		}
+		if (OptionFlags.SVEK && type == UmlDiagramType.STATE) {
 			defaultValue = true;
 		}
 		final String value = getValue("svek");

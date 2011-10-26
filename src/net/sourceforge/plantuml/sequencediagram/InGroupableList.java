@@ -48,7 +48,7 @@ public class InGroupableList implements InGroupable {
 	private static final int MARGIN5 = 5;
 	public static final int MARGIN10 = 10;
 
-	private final GroupingStart groupingStart;
+	private final Grouping grouping;
 	private final Set<InGroupable> inGroupables = new HashSet<InGroupable>();
 
 	private double minWidth;
@@ -63,8 +63,8 @@ public class InGroupableList implements InGroupable {
 		return result;
 	}
 
-	public InGroupableList(GroupingStart groupingStart, double startingY) {
-		this.groupingStart = groupingStart;
+	public InGroupableList(Grouping grouping, double startingY) {
+		this.grouping = grouping;
 	}
 
 	public void addInGroupable(InGroupable in) {
@@ -79,11 +79,11 @@ public class InGroupableList implements InGroupable {
 
 	@Override
 	public String toString() {
-		return "GS " + groupingStart + " " + inGroupables.toString();
+		return "GS " + grouping + " " + inGroupables.toString();
 	}
 
 	public String toString(StringBounder stringBounder) {
-		final StringBuilder sb = new StringBuilder("GS " + groupingStart + " ");
+		final StringBuilder sb = new StringBuilder("GS " + grouping + " ");
 		for (InGroupable in : inGroupables) {
 			sb.append(in.toString(stringBounder));
 			sb.append(' ');

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 7452 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -49,7 +49,8 @@ class GroupingTail extends GroupingGraphicalElement {
 	private final Component body;
 	private final Component tail;
 
-	public GroupingTail(double currentY, double initY, Component body, Component tail, InGroupableList inGroupableList) {
+	public GroupingTail(double currentY, double initY, Component body, Component tail, InGroupableList inGroupableList,
+			boolean parallel) {
 		super(currentY, inGroupableList);
 		if (currentY < initY) {
 			throw new IllegalArgumentException("currentY=" + currentY + " initY=" + initY);

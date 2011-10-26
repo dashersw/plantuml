@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 7454 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -66,7 +66,7 @@ public class ComponentRoseGroupingElse extends AbstractTextualComponent {
 
 	@Override
 	public double getPreferredHeight(StringBounder stringBounder) {
-		return 15;
+		return getTextHeight(stringBounder);
 	}
 
 	@Override

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6483 $
+ * Revision $Revision: 7451 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
@@ -82,6 +82,11 @@ public class GroupingLeaf extends Grouping {
 
 	public Url getUrl() {
 		return null;
+	}
+
+	@Override
+	public boolean isParallel() {
+		return start.isParallel();
 	}
 
 }

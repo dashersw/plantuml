@@ -56,7 +56,16 @@ public final class CucaDiagramXmiMaker {
 
 	public void createFiles(OutputStream fos) throws IOException {
 		try {
-			final XmiClassDiagram xmi = new XmiClassDiagram((ClassDiagram) diagram, fileFormat);
+			final IXmiClassDiagram xmi;
+			if (fileFormat == FileFormat.XMI_STANDARD) {
+				xmi = new XmiClassDiagramStandard((ClassDiagram) diagram);
+			} else if (fileFormat == FileFormat.XMI_ARGO) {
+				xmi = new XmiClassDiagramArgo((ClassDiagram) diagram);
+			} else if (fileFormat == FileFormat.XMI_STAR) {
+				xmi = new XmiClassDiagramStar((ClassDiagram) diagram);
+			} else {
+				throw new UnsupportedOperationException();
+			}
 			xmi.transformerXml(fos);
 			// fos.close();
 			// return Collections.singletonList(suggestedFile);

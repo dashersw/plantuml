@@ -34,10 +34,13 @@
 package net.sourceforge.plantuml.svek;
 
 import java.awt.geom.Dimension2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.UmlDiagramType;
+import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -62,9 +65,13 @@ public final class SvekResult implements IEntityImage, Moveable {
 	}
 
 	public void drawU(UGraphic ug, double x, double y) {
+		final Map<Group, Cluster> groups = new HashMap<Group, Cluster>();
+
 		for (Cluster cluster : dotStringFactory.getAllSubCluster()) {
 			cluster.drawU(ug, x, y, clusterBorder, dotData);
+			groups.put(cluster.getGroup(), cluster);
 		}
+		assert groups.size() == dotStringFactory.getAllSubCluster().size();
 
 		for (Shape shape : dotStringFactory.getShapes()) {
 			final double minX = shape.getMinX();
@@ -75,7 +82,7 @@ public final class SvekResult implements IEntityImage, Moveable {
 		for (Line line : dotStringFactory.getLines()) {
 			// line.patchLineForCluster(dotStringFactory.getAllSubCluster());
 			final HtmlColor color = rose.getHtmlColor(dotData.getSkinParam(), getArrowColorParam(), null);
-			line.drawU(ug, x, y, color);
+			line.drawU(ug, x, y, color, groups);
 		}
 
 	}

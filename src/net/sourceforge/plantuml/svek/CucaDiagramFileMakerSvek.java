@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.Scale;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UmlDiagramType;
 import net.sourceforge.plantuml.Url;
@@ -101,8 +102,8 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 
 	}
 
-	private CucaDiagramFileMakerResult createFileInternal(OutputStream os, List<String> dotStrings, FileFormatOption fileFormatOption)
-			throws IOException, InterruptedException {
+	private CucaDiagramFileMakerResult createFileInternal(OutputStream os, List<String> dotStrings,
+			FileFormatOption fileFormatOption) throws IOException, InterruptedException {
 		if (diagram.getUmlDiagramType() == UmlDiagramType.STATE
 				|| diagram.getUmlDiagramType() == UmlDiagramType.ACTIVITY) {
 			new CucaDiagramSimplifier2(diagram, dotStrings);
@@ -145,9 +146,22 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 		if (diagram.hasUrl()) {
 			cmap = cmapString(svek2, deltaX, deltaY);
 		}
-		return new CucaDiagramFileMakerResult(cmap, finalDimension.getWidth());
+
+		final String widthwarning = diagram.getSkinParam().getValue("widthwarning");
+		if (widthwarning != null && widthwarning.matches("\\d+")) {
+			this.warningOrError = svek2.getWarningOrError(Integer.parseInt(widthwarning));
+		} else {
+			this.warningOrError = null;
+		}
+
+		return new CucaDiagramFileMakerResult(cmap, finalDimension.getWidth(), getWarningOrError());
 	}
 
+	private String warningOrError;
+
+	private String getWarningOrError() {
+		return warningOrError;
+	}
 
 	private String cmapString(CucaDiagramFileMakerSvek2 svek2, double deltaX, double deltaY) {
 		final StringBuilder sb = new StringBuilder();
@@ -219,7 +233,14 @@ public final class CucaDiagramFileMakerSvek implements ICucaDiagramFileMaker {
 			backColor = diagram.getSkinParam().getColorMapper().getMappedColor(result.getBackcolor());
 		}
 
-		final double dpiFactor = diagram.getDpiFactor(fileFormatOption);
+		final double dpiFactor;
+		final Scale scale = diagram.getScale();
+		if (scale == null) {
+			dpiFactor = diagram.getDpiFactor(fileFormatOption);
+		} else {
+			dpiFactor = scale.getScale(dim.getWidth(), dim.getHeight());
+		}
+
 		final EmptyImageBuilder builder;
 		final Graphics2D graphics2D;
 		if (diagram.isRotation()) {

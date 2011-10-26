@@ -37,10 +37,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
@@ -160,15 +162,15 @@ public class Line implements Moveable {
 
 	public void appendLine(StringBuilder sb) {
 		// System.err.println("inverted=" + isInverted());
-//		if (isInverted()) {
-//			sb.append(endUid);
-//			sb.append("->");
-//			sb.append(startUid);
-//		} else {
-			sb.append(startUid);
-			sb.append("->");
-			sb.append(endUid);
-//		}
+		// if (isInverted()) {
+		// sb.append(endUid);
+		// sb.append("->");
+		// sb.append(startUid);
+		// } else {
+		sb.append(startUid);
+		sb.append("->");
+		sb.append(endUid);
+		// }
 		sb.append("[");
 		String decoration = link.getType().getSpecificDecorationSvek();
 		if (decoration.endsWith(",") == false) {
@@ -318,18 +320,18 @@ public class Line implements Moveable {
 		}
 
 		if (this.noteLabelText != null) {
-			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder, getXY(svg,
-					this.noteLabelColor, fullHeight));
+			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder,
+					getXY(svg, this.noteLabelColor, fullHeight));
 		}
 
 		if (this.startTailText != null) {
-			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder, getXY(svg,
-					this.startTailColor, fullHeight));
+			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder,
+					getXY(svg, this.startTailColor, fullHeight));
 		}
 
 		if (this.endHeadText != null) {
-			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder, getXY(svg,
-					this.endHeadColor, fullHeight));
+			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder,
+					getXY(svg, this.endHeadColor, fullHeight));
 		}
 
 		if (isOpalisable() == false) {
@@ -407,10 +409,47 @@ public class Line implements Moveable {
 	//
 	// }
 
-	public void drawU(UGraphic ug, double x, double y, HtmlColor color) {
+	public void drawU(UGraphic ug, double x, double y, HtmlColor color, Map<Group, Cluster> groups) {
 		if (opale) {
 			return;
 		}
+//		final IEntity ent1 = link.getEntity1();
+//		final IEntity ent2 = link.getEntity2();
+//		final EntityType type1 = ent1.getType();
+//		final EntityType type2 = ent2.getType();
+//		System.err.println("drawU x=" + x + " y=" + y);
+		final DotPath pathToDraw = dotPath;
+//		if (type1 == EntityType.GROUP) {
+//			System.err.println("link=" + link);
+//			System.err.println("ent1=" + ent1);
+//			System.err.println("other=" + ent2);
+//		}
+//		if (type2 == EntityType.GROUP) {
+//			System.err.println("link=" + link);
+//			System.err.println("ent2=" + ent2);
+//			System.err.println("other=" + ent1);
+//		}
+//		if (type1 == EntityType.GROUP) {
+//			final Group parent = ent1.getParent();
+//			final Cluster cl = groups.get(parent);
+//			System.err.println("sep=" + cl.isSpecial());
+//			if (cl.isSpecial()) {
+//				pathToDraw = new DotPath(pathToDraw);
+//				final Point2D proj = cl.projection(pathToDraw.getStartPoint().getX() + dx, pathToDraw.getStartPoint()
+//						.getY() + dy);
+//				pathToDraw.forceStartPoint(proj.getX() - dx, proj.getY() - dy);
+//			}
+//		}
+		// if (type2 == EntityType.GROUP) {
+		// final Group parent = ent2.getParent();
+		// final Cluster cl = groups.get(parent);
+		// if (cl.isSpecial()) {
+		// pathToDraw = new DotPath(pathToDraw);
+		// final Point2D proj = cl.projection(pathToDraw.getEndPoint().getX() + dx, pathToDraw.getEndPoint()
+		// .getY() + dy);
+		// pathToDraw.forceEndPoint(proj.getX() - dx, proj.getY() - dy);
+		// }
+		// }
 		x += dx;
 		y += dy;
 
@@ -424,7 +463,7 @@ public class Line implements Moveable {
 		ug.getParam().setColor(color);
 		ug.getParam().setBackcolor(null);
 		ug.getParam().setStroke(link.getType().getStroke());
-		ug.draw(x, y, dotPath);
+		ug.draw(x, y, pathToDraw);
 		ug.getParam().setStroke(new UStroke());
 
 		if (this.startTail != null) {
@@ -499,12 +538,10 @@ public class Line implements Moveable {
 		if (startUid.equals(endUid)) {
 			return getDecorDzeta();
 		}
-		final ArithmeticStrategy strategy;
 		if (isHorizontal()) {
 			return 0;
-		} else {
-			strategy = new ArithmeticStrategySum();
 		}
+		final ArithmeticStrategy strategy = new ArithmeticStrategySum();
 		if (noteLabelText != null) {
 			strategy.eat(noteLabelText.calculateDimension(stringBounder).getHeight());
 		}
@@ -565,7 +602,7 @@ public class Line implements Moveable {
 	private boolean tooClose(Positionable pos) {
 		final double dist = dotPath.getMinDist(BezierUtils.getCenter(pos));
 		final Dimension2D dim = pos.getSize();
-		System.err.println("dist=" + dist);
+		// System.err.println("dist=" + dist);
 		return dist < (dim.getWidth() / 2 + 2) || dist < (dim.getHeight() / 2 + 2);
 	}
 

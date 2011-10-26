@@ -49,8 +49,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.ClassDiagram;
 import net.sourceforge.plantuml.cucadiagram.Entity;
@@ -62,21 +60,19 @@ import net.sourceforge.plantuml.cucadiagram.Member;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class XmiClassDiagram {
+public class XmiClassDiagramArgo implements IXmiClassDiagram {
 
 	// http://pierre.ree7.fr/blog/?p=5
 
 	private final ClassDiagram classDiagram;
-	private final FileFormat fileFormat;
 
 	private final Document document;
 	private final Element ownedElement;
 
 	private final Set<IEntity> done = new HashSet<IEntity>();
 
-	public XmiClassDiagram(ClassDiagram classDiagram, FileFormat fileFormat) throws ParserConfigurationException {
+	public XmiClassDiagramArgo(ClassDiagram classDiagram) throws ParserConfigurationException {
 		this.classDiagram = classDiagram;
-		this.fileFormat = fileFormat;
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
 		final DocumentBuilder builder = factory.newDocumentBuilder();
@@ -113,7 +109,7 @@ public class XmiClassDiagram {
 		model.appendChild(ownedElement);
 
 		for (final Entity ent : classDiagram.entities().values()) {
-			if (fileFormat == FileFormat.XMI_ARGO && isStandalone(ent) == false) {
+			if (isStandalone(ent) == false) {
 				continue;
 			}
 			final Element cla = createEntityNode(ent);
@@ -121,11 +117,11 @@ public class XmiClassDiagram {
 			done.add(ent);
 		}
 
-		if (fileFormat != FileFormat.XMI_STANDARD) {
-			for (final Link link : classDiagram.getLinks()) {
-				addLink(link);
-			}
+		// if (fileFormat != FileFormat.XMI_STANDARD) {
+		for (final Link link : classDiagram.getLinks()) {
+			addLink(link);
 		}
+		// }
 	}
 
 	private boolean isStandalone(IEntity ent) {
@@ -143,11 +139,11 @@ public class XmiClassDiagram {
 
 	private void addLink(Link link) {
 		final String assId = "ass" + UniqueSequence.getValue();
-		if ((link.getType().getDecor1() == LinkDecor.EXTENDS || link.getType().getDecor2() == LinkDecor.EXTENDS)
-				&& fileFormat == FileFormat.XMI_STAR) {
-			addExtension(link, assId);
-			return;
-		}
+//		if ((link.getType().getDecor1() == LinkDecor.EXTENDS || link.getType().getDecor2() == LinkDecor.EXTENDS)
+//				&& fileFormat == FileFormat.XMI_STAR) {
+//			addExtension(link, assId);
+//			return;
+//		}
 		final Element association = document.createElement("UML:Association");
 		association.setAttribute("xmi.id", assId);
 		association.setAttribute("namespace", "model1");
@@ -164,21 +160,21 @@ public class XmiClassDiagram {
 			end1.setAttribute("name", forXMI(link.getQualifier1()));
 		}
 		final Element endparticipant1 = document.createElement("UML:AssociationEnd.participant");
-		if (fileFormat == FileFormat.XMI_ARGO) {
+		// if (fileFormat == FileFormat.XMI_ARGO) {
 			if (done.contains(link.getEntity1())) {
 				endparticipant1.appendChild(createEntityNodeRef(link.getEntity1()));
 			} else {
 				endparticipant1.appendChild(createEntityNode(link.getEntity1()));
 				done.add(link.getEntity1());
 			}
-		} else if (fileFormat == FileFormat.XMI_STAR) {
-			if (link.getType().getDecor2() == LinkDecor.COMPOSITION) {
-				end1.setAttribute("aggregation", "composite");
-			}
-			if (link.getType().getDecor2() == LinkDecor.AGREGATION) {
-				end1.setAttribute("aggregation", "aggregate");
-			}
-		}
+//		} else if (fileFormat == FileFormat.XMI_STAR) {
+//			if (link.getType().getDecor2() == LinkDecor.COMPOSITION) {
+//				end1.setAttribute("aggregation", "composite");
+//			}
+//			if (link.getType().getDecor2() == LinkDecor.AGREGATION) {
+//				end1.setAttribute("aggregation", "aggregate");
+//			}
+//		}
 		end1.appendChild(endparticipant1);
 		connection.appendChild(end1);
 
@@ -190,21 +186,21 @@ public class XmiClassDiagram {
 			end2.setAttribute("name", forXMI(link.getQualifier2()));
 		}
 		final Element endparticipant2 = document.createElement("UML:AssociationEnd.participant");
-		if (fileFormat == FileFormat.XMI_ARGO) {
+		// if (fileFormat == FileFormat.XMI_ARGO) {
 			if (done.contains(link.getEntity2())) {
 				endparticipant2.appendChild(createEntityNodeRef(link.getEntity2()));
 			} else {
 				endparticipant2.appendChild(createEntityNode(link.getEntity2()));
 				done.add(link.getEntity2());
 			}
-		} else if (fileFormat == FileFormat.XMI_STAR) {
-			if (link.getType().getDecor1() == LinkDecor.COMPOSITION) {
-				end2.setAttribute("aggregation", "composite");
-			}
-			if (link.getType().getDecor1() == LinkDecor.AGREGATION) {
-				end2.setAttribute("aggregation", "aggregate");
-			}
-		}
+		// } else if (fileFormat == FileFormat.XMI_STAR) {
+		// if (link.getType().getDecor1() == LinkDecor.COMPOSITION) {
+		// end2.setAttribute("aggregation", "composite");
+		// }
+		// if (link.getType().getDecor1() == LinkDecor.AGREGATION) {
+		// end2.setAttribute("aggregation", "aggregate");
+		// }
+		// }
 		end2.appendChild(endparticipant2);
 		connection.appendChild(end2);
 

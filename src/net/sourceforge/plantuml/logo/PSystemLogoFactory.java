@@ -28,63 +28,43 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4282 $
+ * Revision $Revision: 3830 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram;
+package net.sourceforge.plantuml.logo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import net.sourceforge.plantuml.DiagramType;
+import net.sourceforge.plantuml.PSystemBasicFactory;
 
-import net.sourceforge.plantuml.Url;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+public class PSystemLogoFactory implements PSystemBasicFactory {
 
-public class GroupingStart extends Grouping {
+	private PSystemLogo system;
+	private int width;
+	private int height;
 
-	private final List<GroupingLeaf> children = new ArrayList<GroupingLeaf>();
-	private final HtmlColor backColorGeneral;
-
-	final private GroupingStart parent;
-
-	public GroupingStart(String title, String comment, HtmlColor backColorGeneral, HtmlColor backColorElement,
-			GroupingStart parent) {
-		super(title, comment, GroupingType.START, backColorElement);
-		this.backColorGeneral = backColorGeneral;
-		this.parent = parent;
+	public void init(String startLine) {
+		this.width = 640;
+		this.height = 480;
 	}
 
-	List<GroupingLeaf> getChildren() {
-		return Collections.unmodifiableList(children);
-	}
-
-	public void addChildren(GroupingLeaf g) {
-		children.add(g);
-	}
-
-	public int getLevel() {
-		if (parent == null) {
-			return 0;
+	public boolean executeLine(String line) {
+		if (system == null && line.equalsIgnoreCase("logo")) {
+			system = new PSystemLogo();
+			return true;
 		}
-		return parent.getLevel() + 1;
+		if (system == null) {
+			return false;
+		}
+		system.doCommandLine(line);
+		return true;
 	}
 
-	@Override
-	public HtmlColor getBackColorGeneral() {
-		return backColorGeneral;
+	public PSystemLogo getSystem() {
+		return system;
 	}
 
-	public boolean dealWith(Participant someone) {
-		return false;
-	}
-
-	public Url getUrl() {
-		return null;
-	}
-
-	@Override
-	public boolean isParallel() {
-		return getTitle().equals("par2");
+	public DiagramType getDiagramType() {
+		return DiagramType.UML;
 	}
 
 }
