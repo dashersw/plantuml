@@ -100,7 +100,7 @@ public final class CucaDiagramFileMakerSvek2 {
 				}
 			}
 			if (result == null) {
-				return "za" + ent.getParent().getUid2();
+				return Cluster.CENTER_ID + ent.getParent().getUid2();
 			}
 		}
 		String uid = result.getUid();
@@ -144,11 +144,11 @@ public final class CucaDiagramFileMakerSvek2 {
 			final String shapeUid2 = getShapeUid(link.getEntity2());
 
 			String ltail = null;
-			if (shapeUid1.startsWith("za")) {
+			if (shapeUid1.startsWith(Cluster.CENTER_ID)) {
 				ltail = getCluster(link.getEntity1().getParent()).getClusterId();
 			}
 			String lhead = null;
-			if (shapeUid2.startsWith("za")) {
+			if (shapeUid2.startsWith(Cluster.CENTER_ID)) {
 				lhead = getCluster(link.getEntity2().getParent()).getClusterId();
 			}
 			final FontConfiguration labelFont = new FontConfiguration(dotData.getSkinParam().getFont(

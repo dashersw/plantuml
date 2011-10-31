@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7475 $
+ * Revision $Revision: 7484 $
  *
  */
 package net.sourceforge.plantuml;
@@ -348,7 +348,7 @@ public class SkinParam implements ISkinParam {
 		if (type == UmlDiagramType.CLASS) {
 			defaultValue = true;
 		}
-		if (OptionFlags.SVEK && type == UmlDiagramType.OBJECT) {
+		if (type == UmlDiagramType.OBJECT) {
 			defaultValue = true;
 		}
 		if (OptionFlags.SVEK && type == UmlDiagramType.USECASE) {

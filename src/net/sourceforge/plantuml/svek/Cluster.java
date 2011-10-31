@@ -445,8 +445,10 @@ public class Cluster implements Moveable {
 	}
 
 	public String getSpecialPointId() {
-		return "za" + getUid2();
+		return CENTER_ID + getUid2();
 	}
+
+	public final static String CENTER_ID = "za";
 
 	private int marginTitleX1 = 3;
 	private int marginTitleX2 = 3;
@@ -483,7 +485,7 @@ public class Cluster implements Moveable {
 		SvekUtils.println(sb);
 
 		if (isSpecial()) {
-			// subgraphCluster(sb, "za");
+			// subgraphCluster(sb, CENTER_ID);
 			if (OptionFlags.getInstance().isDebugDot()) {
 				sb.append(getSpecialPointId() + ";");
 			} else {

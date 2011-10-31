@@ -47,6 +47,7 @@ import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockEmpty;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
@@ -60,10 +61,7 @@ public class EntityImageObject extends AbstractEntityImage {
 
 	final private TextBlock name;
 	final private TextBlock stereo;
-	// final private MethodsOrFieldsArea2 methods;
-	final private TextBlock fields2;
-
-	// final private MethodsOrFieldsArea2 fields;
+	final private TextBlock fields;
 
 	public EntityImageObject(IEntity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
@@ -78,8 +76,14 @@ public class EntityImageObject extends AbstractEntityImage {
 					new FontConfiguration(getFont(FontParam.OBJECT_STEREOTYPE, stereotype), getFontColor(
 							FontParam.OBJECT_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
 		}
-		this.fields2 = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getFieldsToDisplay(),
-				FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
+
+		if (entity.getFieldsToDisplay().size() == 0) {
+			this.fields = new TextBlockEmpty(10, 16);
+		} else {
+			this.fields = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getFieldsToDisplay(),
+					FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
+
+		}
 
 	}
 
@@ -89,7 +93,7 @@ public class EntityImageObject extends AbstractEntityImage {
 	@Override
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
-		final Dimension2D dimFields = fields2.calculateDimension(stringBounder);
+		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
 		final double width = Math.max(dimFields.getWidth() + 2 * xMarginFieldsOrMethod, dimTitle.getWidth() + 2
 				* xMarginCircle);
 		final double height = getMethodOrFieldHeight(dimFields) + dimTitle.getHeight();
@@ -154,7 +158,7 @@ public class EntityImageObject extends AbstractEntityImage {
 		ug.getParam().setStroke(new UStroke(1.5));
 		ug.draw(x, y, new ULine(widthTotal, 0));
 		ug.getParam().setStroke(new UStroke());
-		fields2.drawU(ug, x + xMarginFieldsOrMethod, y);
+		fields.drawU(ug, x + xMarginFieldsOrMethod, y);
 
 	}
 

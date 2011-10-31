@@ -71,7 +71,7 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 		this.members.addAll(attributes);
 		this.skinParam = skinParam;
 		this.font = skinParam.getFont(fontParam, null);
-		this.color = rose.getFontColor(skinParam, FontParam.CLASS_ATTRIBUTE);
+		this.color = rose.getFontColor(skinParam, fontParam);
 
 	}
 
