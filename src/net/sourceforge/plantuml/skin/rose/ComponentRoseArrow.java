@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7354 $
+ * Revision $Revision: 7487 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.ugraphic.UFont;
@@ -80,9 +81,10 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 		double start = 0;
 		double len = x2;
 		final int direction = getDirection();
-		if (direction == 1 && getArrowConfiguration().isCrossX()) {
+		final ArrowDecoration decoration = getArrowConfiguration().getDecoration();
+		if (direction == 1 && decoration == ArrowDecoration.CROSSX) {
 			len -= spaceCrossX + getArrowDeltaX() / 2;
-		} else if (direction == -1 && getArrowConfiguration().isCrossX()) {
+		} else if (direction == -1 && decoration == ArrowDecoration.CROSSX) {
 			start += spaceCrossX + getArrowDeltaX() / 2;
 			len -= spaceCrossX + getArrowDeltaX() / 2;
 		}
@@ -98,7 +100,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 				if (getArrowConfiguration().getPart() != ArrowPart.TOP_PART) {
 					ug.draw(x2, textHeight, new ULine(-getArrowDeltaX(), getArrowDeltaY()));
 				}
-			} else if (getArrowConfiguration().isCrossX()) {
+			} else if (decoration == ArrowDecoration.CROSSX) {
 				ug.getParam().setStroke(new UStroke(2));
 				ug.draw(x2 - getArrowDeltaX() - spaceCrossX, textHeight - getArrowDeltaX() / 2, new ULine(
 						getArrowDeltaX(), getArrowDeltaX()));
@@ -119,7 +121,7 @@ public class ComponentRoseArrow extends AbstractComponentRoseArrow {
 				if (getArrowConfiguration().getPart() != ArrowPart.TOP_PART) {
 					ug.draw(0, textHeight, new ULine(getArrowDeltaX(), getArrowDeltaY()));
 				}
-			} else if (getArrowConfiguration().isCrossX()) {
+			} else if (decoration == ArrowDecoration.CROSSX) {
 				ug.getParam().setStroke(new UStroke(2));
 				ug.draw(spaceCrossX, textHeight - getArrowDeltaX() / 2, new ULine(getArrowDeltaX(), getArrowDeltaX()));
 				ug.draw(spaceCrossX, textHeight + getArrowDeltaX() / 2, new ULine(getArrowDeltaX(), -getArrowDeltaX()));

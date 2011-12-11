@@ -291,7 +291,7 @@ public class DotPath implements UShape, Moveable {
 	}
 
 	public void draw(EpsGraphics eps, double x, double y) {
-		eps.newpathDot(true);
+		eps.newpathDot(false);
 		boolean first = true;
 		for (CubicCurve2D.Double bez : beziers) {
 			bez = new CubicCurve2D.Double(x + bez.x1, y + bez.y1, x + bez.ctrlx1, y + bez.ctrly1, x + bez.ctrlx2, y
@@ -302,7 +302,7 @@ public class DotPath implements UShape, Moveable {
 			}
 			eps.curvetoNoMacro(bez.ctrlx1, bez.ctrly1, bez.ctrlx2, bez.ctrly2, bez.x2, bez.y2);
 		}
-		eps.closepathDot(true);
+		eps.closepathDot(false);
 	}
 
 	public UPath toUPath() {

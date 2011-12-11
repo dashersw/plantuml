@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6918 $
+ * Revision $Revision: 7489 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -37,20 +37,20 @@ import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntityClass2;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntityClassMultilines2;
 import net.sourceforge.plantuml.classdiagram.command.CommandDiamondAssociation;
-import net.sourceforge.plantuml.classdiagram.command.CommandEndNamespace;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow3;
 import net.sourceforge.plantuml.classdiagram.command.CommandImport;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass2;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkLollipop2;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
-import net.sourceforge.plantuml.classdiagram.command.CommandNamespace;
 import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandCreateNote;
+import net.sourceforge.plantuml.command.CommandEndNamespace;
 import net.sourceforge.plantuml.command.CommandEndPackage;
 import net.sourceforge.plantuml.command.CommandMultilinesStandaloneNote;
+import net.sourceforge.plantuml.command.CommandNamespace;
 import net.sourceforge.plantuml.command.CommandNoteEntity;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;

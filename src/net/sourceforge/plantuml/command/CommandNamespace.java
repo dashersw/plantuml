@@ -28,19 +28,35 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7498 $
+ * Revision $Revision: 3979 $
  *
  */
-package net.sourceforge.plantuml.version;
+package net.sourceforge.plantuml.command;
 
-public class Version {
+import java.util.List;
 
-	public static int version() {
-		return 7497;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
+import net.sourceforge.plantuml.graphic.HtmlColor;
+
+public class CommandNamespace extends SingleLineCommand<AbstractEntityDiagram> {
+
+	public CommandNamespace(AbstractEntityDiagram diagram) {
+		super(diagram, "(?i)^namespace\\s+([\\p{L}0-9_][\\p{L}0-9_.]*)\\s*(#[0-9a-fA-F]{6}|\\w+)?\\s*\\{?$");
 	}
 
-	public static long compileTime() {
-		return 1323606725234L;
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final String code = arg.get(0);
+		final Group currentPackage = getSystem().getCurrentGroup();
+		final Group p = getSystem().getOrCreateGroup(code, code, code, GroupType.PACKAGE, currentPackage);
+		p.setBold(true);
+		final String color = arg.get(1);
+		if (color != null) {
+			p.setBackColor(HtmlColor.getColorIfValid(color));
+		}
+		return CommandExecutionResult.ok();
 	}
 
 }

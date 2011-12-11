@@ -28,36 +28,29 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3979 $
+ * Revision $Revision: 3828 $
  *
  */
-package net.sourceforge.plantuml.classdiagram.command;
+package net.sourceforge.plantuml.command;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.classdiagram.ClassDiagram;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.cucadiagram.Group;
-import net.sourceforge.plantuml.cucadiagram.GroupType;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandNamespace extends SingleLineCommand<ClassDiagram> {
+public class CommandEndNamespace extends SingleLineCommand<AbstractEntityDiagram> {
 
-	public CommandNamespace(ClassDiagram diagram) {
-		super(diagram, "(?i)^namespace\\s+([\\p{L}0-9_][\\p{L}0-9_.]*)\\s*(#[0-9a-fA-F]{6}|\\w+)?\\s*\\{?$");
+	public CommandEndNamespace(AbstractEntityDiagram diagram) {
+		super(diagram, "(?i)^end ?namespace$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String code = arg.get(0);
 		final Group currentPackage = getSystem().getCurrentGroup();
-		final Group p = getSystem().getOrCreateGroup(code, code, code, GroupType.PACKAGE, currentPackage);
-		p.setBold(true);
-		final String color = arg.get(1);
-		if (color != null) {
-			p.setBackColor(HtmlColor.getColorIfValid(color));
+		if (currentPackage == null) {
+			return CommandExecutionResult.error("No namesspace defined");
 		}
+		getSystem().endGroup();
 		return CommandExecutionResult.ok();
 	}
 

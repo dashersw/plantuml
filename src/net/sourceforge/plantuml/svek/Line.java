@@ -273,10 +273,7 @@ public class Line implements Moveable {
 			return;
 		}
 
-		int idx = svg.indexOf(SvekUtils.getStrokeString(this.lineColor));
-		if (idx == -1) {
-			throw new IllegalStateException();
-		}
+		int idx = getIndexFromColor(svg, this.lineColor);
 		idx = svg.indexOf("d=\"", idx);
 		if (idx == -1) {
 			throw new IllegalStateException();
@@ -320,18 +317,18 @@ public class Line implements Moveable {
 		}
 
 		if (this.noteLabelText != null) {
-			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder,
-					getXY(svg, this.noteLabelColor, fullHeight));
+			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder, getXY(svg,
+					this.noteLabelColor, fullHeight));
 		}
 
 		if (this.startTailText != null) {
-			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder,
-					getXY(svg, this.startTailColor, fullHeight));
+			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder, getXY(svg,
+					this.startTailColor, fullHeight));
 		}
 
 		if (this.endHeadText != null) {
-			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder,
-					getXY(svg, this.endHeadColor, fullHeight));
+			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder, getXY(svg,
+					this.endHeadColor, fullHeight));
 		}
 
 		if (isOpalisable() == false) {
@@ -344,11 +341,23 @@ public class Line implements Moveable {
 	}
 
 	private Point2D.Double getXY(String svg, int color, int height) {
-		final int idx = svg.indexOf(SvekUtils.getStrokeString(color));
-		if (idx == -1) {
-			throw new IllegalStateException();
-		}
+		final int idx = getIndexFromColor(svg, color);
 		return SvekUtils.getMinXY(SvekUtils.extractPointsList(svg, idx, height));
+
+	}
+
+	private int getIndexFromColor(String svg, int color) {
+		String s = "stroke=\"" + StringUtils.getAsHtml(color).toLowerCase() + "\"";
+		int idx = svg.indexOf(s);
+		if (idx != -1) {
+			return idx;
+		}
+		s = ";stroke:" + StringUtils.getAsHtml(color).toLowerCase() + ";";
+		idx = svg.indexOf(s);
+		if (idx != -1) {
+			return idx;
+		}
+		throw new IllegalStateException();
 
 	}
 
@@ -413,39 +422,41 @@ public class Line implements Moveable {
 		if (opale) {
 			return;
 		}
-//		final IEntity ent1 = link.getEntity1();
-//		final IEntity ent2 = link.getEntity2();
-//		final EntityType type1 = ent1.getType();
-//		final EntityType type2 = ent2.getType();
-//		System.err.println("drawU x=" + x + " y=" + y);
+		// final IEntity ent1 = link.getEntity1();
+		// final IEntity ent2 = link.getEntity2();
+		// final EntityType type1 = ent1.getType();
+		// final EntityType type2 = ent2.getType();
+		// System.err.println("drawU x=" + x + " y=" + y);
 		final DotPath pathToDraw = dotPath;
-//		if (type1 == EntityType.GROUP) {
-//			System.err.println("link=" + link);
-//			System.err.println("ent1=" + ent1);
-//			System.err.println("other=" + ent2);
-//		}
-//		if (type2 == EntityType.GROUP) {
-//			System.err.println("link=" + link);
-//			System.err.println("ent2=" + ent2);
-//			System.err.println("other=" + ent1);
-//		}
-//		if (type1 == EntityType.GROUP) {
-//			final Group parent = ent1.getParent();
-//			final Cluster cl = groups.get(parent);
-//			System.err.println("sep=" + cl.isSpecial());
-//			if (cl.isSpecial()) {
-//				pathToDraw = new DotPath(pathToDraw);
-//				final Point2D proj = cl.projection(pathToDraw.getStartPoint().getX() + dx, pathToDraw.getStartPoint()
-//						.getY() + dy);
-//				pathToDraw.forceStartPoint(proj.getX() - dx, proj.getY() - dy);
-//			}
-//		}
+		// if (type1 == EntityType.GROUP) {
+		// System.err.println("link=" + link);
+		// System.err.println("ent1=" + ent1);
+		// System.err.println("other=" + ent2);
+		// }
+		// if (type2 == EntityType.GROUP) {
+		// System.err.println("link=" + link);
+		// System.err.println("ent2=" + ent2);
+		// System.err.println("other=" + ent1);
+		// }
+		// if (type1 == EntityType.GROUP) {
+		// final Group parent = ent1.getParent();
+		// final Cluster cl = groups.get(parent);
+		// System.err.println("sep=" + cl.isSpecial());
+		// if (cl.isSpecial()) {
+		// pathToDraw = new DotPath(pathToDraw);
+		// final Point2D proj = cl.projection(pathToDraw.getStartPoint().getX()
+		// + dx, pathToDraw.getStartPoint()
+		// .getY() + dy);
+		// pathToDraw.forceStartPoint(proj.getX() - dx, proj.getY() - dy);
+		// }
+		// }
 		// if (type2 == EntityType.GROUP) {
 		// final Group parent = ent2.getParent();
 		// final Cluster cl = groups.get(parent);
 		// if (cl.isSpecial()) {
 		// pathToDraw = new DotPath(pathToDraw);
-		// final Point2D proj = cl.projection(pathToDraw.getEndPoint().getX() + dx, pathToDraw.getEndPoint()
+		// final Point2D proj = cl.projection(pathToDraw.getEndPoint().getX() +
+		// dx, pathToDraw.getEndPoint()
 		// .getY() + dy);
 		// pathToDraw.forceEndPoint(proj.getX() - dx, proj.getY() - dy);
 		// }

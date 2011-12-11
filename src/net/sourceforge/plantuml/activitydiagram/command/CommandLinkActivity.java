@@ -45,6 +45,8 @@ import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -83,6 +85,8 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 						new RegexLeaf("QUOTED2", "\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?")),
 				new RegexLeaf("\\s*"), // 
 				new RegexLeaf("STEREOTYPE2", "(\\<\\<.*\\>\\>)?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("PARTITION2", "(?:in\\s+(\"[^\"]+\"|\\S+))?"), //
 				new RegexLeaf("\\s*"), //
 				new RegexLeaf("BACKCOLOR2", "(#\\w+)?"), //
 				new RegexLeaf("$"));
@@ -151,9 +155,24 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 			}
 			return system.getEnd();
 		}
+		String partition = null;
+		if (arg.get("PARTITION" + suf) != null) {
+			partition = arg.get("PARTITION" + suf).get(0);
+			if (partition != null) {
+				partition = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(partition);
+			}
+		}
 		final String code = arg.get("CODE" + suf).get(0);
 		if (code != null) {
-			return system.getOrCreate(code, code, getTypeIfExisting(system, code));
+			if (partition != null) {
+				final Group p = system.getOrCreateGroup(partition, partition, null, GroupType.PACKAGE, null);
+				p.setBold(true);
+			}
+			final IEntity result = system.getOrCreate(code, code, getTypeIfExisting(system, code));
+			if (partition != null) {
+				system.endGroup();
+			}
+			return result;
 		}
 		final String bar = arg.get("BAR" + suf).get(0);
 		if (bar != null) {
@@ -162,7 +181,15 @@ public class CommandLinkActivity extends SingleLineCommand2<ActivityDiagram> {
 		final RegexPartialMatch quoted = arg.get("QUOTED" + suf);
 		if (quoted.get(0) != null) {
 			final String quotedCode = quoted.get(1) == null ? quoted.get(0) : quoted.get(1);
-			return system.getOrCreate(quotedCode, quoted.get(0), getTypeIfExisting(system, quotedCode));
+			if (partition != null) {
+				final Group p = system.getOrCreateGroup(partition, partition, null, GroupType.PACKAGE, null);
+				p.setBold(true);
+			}
+			final IEntity result = system.getOrCreate(quotedCode, quoted.get(0), getTypeIfExisting(system, quotedCode));
+			if (partition != null) {
+				system.endGroup();
+			}
+			return result;
 		}
 		final String first = arg.get("FIRST" + suf).get(0);
 		if (first == null) {

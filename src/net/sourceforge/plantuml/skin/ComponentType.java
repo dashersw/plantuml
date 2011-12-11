@@ -115,9 +115,9 @@ public class ComponentType {
 		return ComponentType.getArrow(arrowConfiguration.withHead(head));
 	}
 
-	public ComponentType withCrossX() {
+	public ComponentType withDecoration(ArrowDecoration decoration) {
 		checkArrow();
-		return ComponentType.getArrow(arrowConfiguration.withCrossX());
+		return ComponentType.getArrow(arrowConfiguration.withDecoration(decoration));
 	}
 
 	public ComponentType withDotted() {
@@ -170,10 +170,10 @@ public class ComponentType {
 			all.add(type.withPart(ArrowPart.BOTTOM_PART));
 		}
 
-		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withCrossX());
-		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withCrossX());
-		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDotted().withCrossX());
-		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDotted().withCrossX());
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDecoration(ArrowDecoration.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDecoration(ArrowDecoration.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL).withDotted().withDecoration(ArrowDecoration.CROSSX));
+		all.add(ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE).withDotted().withDecoration(ArrowDecoration.CROSSX));
 
 		all.addAll(nonArrows);
 		return Collections.unmodifiableCollection(all);

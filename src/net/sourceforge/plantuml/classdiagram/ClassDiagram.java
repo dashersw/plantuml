@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6167 $
+ * Revision $Revision: 7489 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -95,50 +95,6 @@ public class ClassDiagram extends AbstractClassOrObjectDiagram {
 			throw new IllegalArgumentException();
 		}
 		return getOrCreateEntity(code, type);
-	}
-
-	private String getFullyQualifiedCode(String code) {
-		if (code.startsWith("\\") || code.startsWith("~") || code.startsWith(".")) {
-			return code.substring(1);
-		}
-		if (code.contains(".")) {
-			return code;
-		}
-		final Group g = this.getCurrentGroup();
-		if (g == null) {
-			return code;
-		}
-		final String namespace = g.getNamespace();
-		if (namespace == null) {
-			return code;
-		}
-		return namespace + "." + code;
-	}
-
-	private String getShortName(String code) {
-		// final int x = code.lastIndexOf('.');
-		// if (x == -1) {
-		// return code;
-		// }
-		// return code.substring(x + 1);
-		final String namespace = getNamespace(code);
-		if (namespace == null) {
-			return code;
-		}
-		return code.substring(namespace.length() + 1);
-	}
-
-	private String getNamespace(String code) {
-		assert code.startsWith("\\") == false;
-		assert code.startsWith("~") == false;
-		do {
-			final int x = code.lastIndexOf('.');
-			if (x == -1) {
-				return null;
-			}
-			code = code.substring(0, x);
-		} while (entityExist(code));
-		return code;
 	}
 
 	@Override

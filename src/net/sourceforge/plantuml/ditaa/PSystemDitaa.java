@@ -52,8 +52,10 @@ public class PSystemDitaa extends AbstractPSystem {
 
 	private final TextGrid grid = new TextGrid();
 	private final ProcessingOptions processingOptions = new ProcessingOptions();
+	private final boolean dropShadows;
 
-	public PSystemDitaa(String data, boolean performSeparationOfCommonEdges) throws UnsupportedEncodingException {
+	public PSystemDitaa(String data, boolean performSeparationOfCommonEdges, boolean dropShadows) throws UnsupportedEncodingException {
+		this.dropShadows = dropShadows;
 		grid.initialiseWithText(data, null);
 		processingOptions.setPerformSeparationOfCommonEdges(performSeparationOfCommonEdges);
 	}
@@ -67,6 +69,7 @@ public class PSystemDitaa extends AbstractPSystem {
 
 		if (fileFormatOption.getFileFormat() == FileFormat.PNG) {
 			final ConversionOptions options = new ConversionOptions();
+			options.setDropShadows(dropShadows);
 			final Diagram diagram = new Diagram(grid, options, processingOptions);
 			final BufferedImage image = (BufferedImage) new BitmapRenderer().renderToImage(diagram,
 					options.renderingOptions);

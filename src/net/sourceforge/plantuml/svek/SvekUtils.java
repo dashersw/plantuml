@@ -45,13 +45,8 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 
 import net.sourceforge.plantuml.Log;
-import net.sourceforge.plantuml.StringUtils;
 
 public class SvekUtils {
-
-	static public String getStrokeString(int color) {
-		return "stroke=\"" + StringUtils.getAsHtml(color).toLowerCase() + "\"";
-	}
 
 	static public void traceSvgString(String svg) throws IOException {
 		final File f = new File("svek.svg");

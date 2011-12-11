@@ -42,6 +42,9 @@ public class PSystemDitaaFactory implements PSystemBasicFactory {
 	private boolean first;
 	// -E,--no-separation
 	private boolean performSeparationOfCommonEdges;
+	
+	// -S,--no-shadows
+	private boolean dropShadows;
 
 	private final DiagramType diagramType;
 
@@ -54,6 +57,10 @@ public class PSystemDitaaFactory implements PSystemBasicFactory {
 		performSeparationOfCommonEdges = true;
 		if (startLine != null && (startLine.contains("-E") || startLine.contains("--no-separation"))) {
 			performSeparationOfCommonEdges = false;
+		}
+		dropShadows = true;
+		if (startLine != null && (startLine.contains("-S") || startLine.contains("--no-shadows"))) {
+			dropShadows = false;
 		}
 		if (diagramType == DiagramType.UML) {
 			first = true;
@@ -71,6 +78,9 @@ public class PSystemDitaaFactory implements PSystemBasicFactory {
 			if (line.contains("-E") || line.contains("--no-separation")) {
 				performSeparationOfCommonEdges = false;
 			}
+			if (line.contains("-S") || line.contains("--no-shadows")) {
+				dropShadows = false;
+			}
 			return true;
 		}
 		first = false;
@@ -84,7 +94,7 @@ public class PSystemDitaaFactory implements PSystemBasicFactory {
 
 	public PSystemDitaa getSystem() {
 		try {
-			return new PSystemDitaa(data.toString(), performSeparationOfCommonEdges);
+			return new PSystemDitaa(data.toString(), performSeparationOfCommonEdges, dropShadows);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6192 $
+ * Revision $Revision: 7489 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
+import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 
 public abstract class AbstractEntityDiagram extends CucaDiagram {
@@ -64,5 +65,47 @@ public abstract class AbstractEntityDiagram extends CucaDiagram {
 	final public String getDescription() {
 		return "(" + entities().size() + " entities)";
 	}
+	
+	
+	protected final String getFullyQualifiedCode(String code) {
+		if (code.startsWith("\\") || code.startsWith("~") || code.startsWith(".")) {
+			return code.substring(1);
+		}
+		if (code.contains(".")) {
+			return code;
+		}
+		final Group g = this.getCurrentGroup();
+		if (g == null) {
+			return code;
+		}
+		final String namespace = g.getNamespace();
+		if (namespace == null) {
+			return code;
+		}
+		return namespace + "." + code;
+	}
+
+	protected final String getShortName(String code) {
+		final String namespace = getNamespace(code);
+		if (namespace == null) {
+			return code;
+		}
+		return code.substring(namespace.length() + 1);
+	}
+
+	protected final String getNamespace(String code) {
+		assert code.startsWith("\\") == false;
+		assert code.startsWith("~") == false;
+		do {
+			final int x = code.lastIndexOf('.');
+			if (x == -1) {
+				return null;
+			}
+			code = code.substring(0, x);
+		} while (entityExist(code));
+		return code;
+	}
+
+
 
 }

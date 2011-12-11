@@ -48,6 +48,7 @@ import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 
 public class CommandArrowCrossX extends SingleLineCommand2<SequenceDiagram> {
@@ -133,7 +134,7 @@ public class CommandArrowCrossX extends SingleLineCommand2<SequenceDiagram> {
 		if (dotted) {
 			config = config.withDotted();
 		}
-		config = config.withCrossX();
+		config = config.withDecoration(ArrowDecoration.CROSSX);
 		// if (sync) {
 		// config = config.withAsync();
 		// }

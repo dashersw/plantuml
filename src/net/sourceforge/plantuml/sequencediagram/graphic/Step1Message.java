@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7463 $
+ * Revision $Revision: 7487 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -42,6 +42,7 @@ import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
+import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -68,8 +69,8 @@ class Step1Message extends Step1Abstract {
 		}
 
 		if (message.getNote() != null) {
-			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(),
-					message.getSpecificBackColor());
+			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(), message
+					.getSpecificBackColor());
 			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
 		}
 
@@ -191,9 +192,8 @@ class Step1Message extends Step1Abstract {
 	}
 
 	private double getHalfLifeWidth() {
-		return getDrawingSet().getSkin()
-				.createComponent(ComponentType.ALIVE_BOX_OPEN_OPEN, getDrawingSet().getSkinParam(), Arrays.asList(""))
-				.getPreferredWidth(null) / 2;
+		return getDrawingSet().getSkin().createComponent(ComponentType.ALIVE_BOX_OPEN_OPEN,
+				getDrawingSet().getSkinParam(), Arrays.asList("")).getPreferredWidth(null) / 2;
 	}
 
 	private Arrow createArrowCreate() {
@@ -240,8 +240,8 @@ class Step1Message extends Step1Abstract {
 		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
 			result = result.withHead(ArrowHead.ASYNC);
 		}
-		if (m.getArrowConfiguration().isCrossX()) {
-			result = result.withCrossX();
+		if (m.getArrowConfiguration().getDecoration() != ArrowDecoration.NONE) {
+			result = result.withDecoration(m.getArrowConfiguration().getDecoration());
 		}
 		result = result.withPart(m.getArrowConfiguration().getPart());
 		return result;

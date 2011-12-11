@@ -28,32 +28,11 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3828 $
+ * Revision $Revision: 5191 $
  *
  */
-package net.sourceforge.plantuml.classdiagram.command;
+package net.sourceforge.plantuml.skin;
 
-import java.util.List;
-
-import net.sourceforge.plantuml.classdiagram.ClassDiagram;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.cucadiagram.Group;
-
-public class CommandEndNamespace extends SingleLineCommand<ClassDiagram> {
-
-	public CommandEndNamespace(ClassDiagram diagram) {
-		super(diagram, "(?i)^end ?namespace$");
-	}
-
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		final Group currentPackage = getSystem().getCurrentGroup();
-		if (currentPackage == null) {
-			return CommandExecutionResult.error("No namesspace defined");
-		}
-		getSystem().endGroup();
-		return CommandExecutionResult.ok();
-	}
-
+public enum ArrowDecoration {
+	NONE, CROSSX, CIN, COUT
 }

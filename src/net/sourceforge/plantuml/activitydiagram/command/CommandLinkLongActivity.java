@@ -47,6 +47,8 @@ import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
@@ -57,41 +59,41 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram> {
 
 	public CommandLinkLongActivity(final ActivityDiagram diagram) {
-		super(
-				diagram,
-				getRegexConcat(),
-				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(\\<\\<.*\\>\\>)?\\s*(#\\w+)?$");
+		super(diagram, getRegexConcat(), //
+				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(\\<\\<.*\\>\\>)?\\s*(?:in\\s+(\"[^\"]+\"|\\S+))?\\s*(#\\w+)?$"); //
 	}
-	
+
 	static RegexConcat getRegexConcat() {
-		return new RegexConcat(new RegexLeaf("^"),
-				new RegexOr("FIRST", true,
-						new RegexLeaf("STAR", "(\\(\\*(top)?\\))"),
-						new RegexLeaf("CODE", "([\\p{L}0-9_.]+)"),
-						new RegexLeaf("BAR", "(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)"),
-						new RegexLeaf("QUOTED", "\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?")),
-				new RegexLeaf("\\s*"),
-				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"),
-				new RegexLeaf("\\s*"),
-				new RegexLeaf("BACKCOLOR", "(#\\w+)?"),
-				new RegexLeaf("\\s*"),
-				new RegexLeaf("ARROW", "([=-]+(?:(left|right|up|down|le?|ri?|up?|do?)(?=[-=]))?[=-]*\\>)"),
-				new RegexLeaf("\\s*"),
-				new RegexLeaf("BRACKET", "(?:\\[([^\\]*]+[^\\]]*)\\])?"),
-				new RegexLeaf("\\s*"),
-				new RegexLeaf("DESC", "\"([^\"]*?)"),
-				new RegexLeaf("\\s*"),
+		return new RegexConcat(new RegexLeaf("^"), //
+				new RegexOr("FIRST", true, //
+						new RegexLeaf("STAR", "(\\(\\*(top)?\\))"), //
+						new RegexLeaf("CODE", "([\\p{L}0-9_.]+)"), //
+						new RegexLeaf("BAR", "(?:==+)\\s*([\\p{L}0-9_.]+)\\s*(?:==+)"), //
+						new RegexLeaf("QUOTED", "\"([^\"]+)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?")), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("STEREOTYPE", "(\\<\\<.*\\>\\>)?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("BACKCOLOR", "(#\\w+)?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("ARROW", "([=-]+(?:(left|right|up|down|le?|ri?|up?|do?)(?=[-=]))?[=-]*\\>)"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("BRACKET", "(?:\\[([^\\]*]+[^\\]]*)\\])?"), //
+				new RegexLeaf("\\s*"), //
+				new RegexLeaf("DESC", "\"([^\"]*?)"), //
+				new RegexLeaf("\\s*"), //
 				new RegexLeaf("$"));
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {
 		StringUtils.trim(lines, false);
 		final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
+
 		final IEntity entity1 = CommandLinkActivity.getEntity(getSystem(), line0, true);
+
 		if (line0.get("STEREOTYPE").get(0) != null) {
 			entity1.setStereotype(new Stereotype(line0.get("STEREOTYPE").get(0)));
 		}
-		if (line0.get("BACKCOLOR").get(0)!=null) {
+		if (line0.get("BACKCOLOR").get(0) != null) {
 			entity1.setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get("BACKCOLOR").get(0)));
 		}
 		final StringBuilder sb = new StringBuilder();
@@ -118,12 +120,25 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 		final String display = sb.toString();
 		final String code = lineLast.get(1) == null ? display : lineLast.get(1);
 
+		String partition = null;
+		if (lineLast.get(3) != null) {
+			partition = lineLast.get(3);
+			partition = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(partition);
+		}
+		if (partition != null) {
+			final Group p = getSystem().getOrCreateGroup(partition, partition, null, GroupType.PACKAGE, null);
+			p.setBold(true);
+		}
 		final Entity entity2 = getSystem().createEntity(code, display, EntityType.ACTIVITY);
-		if (lineLast.get(2)!=null) {
+		if (partition != null) {
+			getSystem().endGroup();
+		}
+
+		if (lineLast.get(2) != null) {
 			entity2.setStereotype(new Stereotype(lineLast.get(2)));
 		}
-		if (lineLast.get(3)!=null) {
-			entity2.setSpecificBackcolor(HtmlColor.getColorIfValid(lineLast.get(3)));
+		if (lineLast.get(4) != null) {
+			entity2.setSpecificBackcolor(HtmlColor.getColorIfValid(lineLast.get(4)));
 		}
 
 		if (entity1 == null || entity2 == null) {
