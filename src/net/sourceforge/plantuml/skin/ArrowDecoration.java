@@ -34,5 +34,5 @@
 package net.sourceforge.plantuml.skin;
 
 public enum ArrowDecoration {
-	NONE, CROSSX, CIN, COUT
+	NONE, CROSSX, CIRCLE
 }

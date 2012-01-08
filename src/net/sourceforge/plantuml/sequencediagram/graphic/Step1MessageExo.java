@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.MessageExo;
 import net.sourceforge.plantuml.sequencediagram.MessageExoType;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -56,16 +57,16 @@ class Step1MessageExo extends Step1Abstract {
 			Frontier freeY) {
 		super(range, stringBounder, message, drawingSet, freeY);
 
-		setType(getArrowType(message));
+		setConfig(getArrowType(message));
 
 		this.messageArrow = new MessageExoArrow(freeY.getFreeY(range), drawingSet.getSkin(), drawingSet.getSkin()
-				.createComponent(getType(), drawingSet.getSkinParam(), getLabelOfMessage(message)),
-				getLivingParticipantBox(), message.getType());
+				.createComponent(ComponentType.ARROW, getConfig(), drawingSet.getSkinParam(),
+						getLabelOfMessage(message)), getLivingParticipantBox(), message.getType());
 
 		if (message.getNote() != null) {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(),
 					message.getSpecificBackColor());
-			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
+			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, null, skinParam, message.getNote()));
 			// throw new UnsupportedOperationException();
 		}
 
@@ -134,13 +135,13 @@ class Step1MessageExo extends Step1Abstract {
 		return new ArrowAndNoteBox(getStringBounder(), messageArrow, toto);
 	}
 
-	private ComponentType getArrowType(MessageExo m) {
-		ComponentType result = null;
+	private ArrowConfiguration getArrowType(MessageExo m) {
+		ArrowConfiguration result = null;
 		final MessageExoType type = m.getType();
 		if (type.getDirection() == 1) {
-			result = ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL);
+			result = ArrowConfiguration.withDirection(ArrowDirection.LEFT_TO_RIGHT_NORMAL);
 		} else {
-			result = ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE);
+			result = ArrowConfiguration.withDirection(ArrowDirection.RIGHT_TO_LEFT_REVERSE);
 		}
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withDotted();

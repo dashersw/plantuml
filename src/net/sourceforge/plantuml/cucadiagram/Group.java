@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6709 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -67,17 +67,19 @@ public class Group {
 	private final int cpt = UniqueSequence.getValue();
 
 	public Group(String code, String display, String namespace, GroupType type, Group parent) {
-		if (type == null) {
-			throw new IllegalArgumentException();
-		}
-		if (code == null || code.length() == 0) {
-			throw new IllegalArgumentException();
-		}
-		if (parent != null) {
-			if (parent.children.contains(this)) {
+		if (type != GroupType.ROOT) {
+			if (type == null) {
 				throw new IllegalArgumentException();
 			}
-			parent.children.add(this);
+			if (code == null || code.length() == 0) {
+				throw new IllegalArgumentException();
+			}
+			if (parent != null) {
+				if (parent.children.contains(this)) {
+					throw new IllegalArgumentException();
+				}
+				parent.children.add(this);
+			}
 		}
 		this.namespace = namespace;
 		this.type = type;
@@ -91,7 +93,7 @@ public class Group {
 		return "G[code=" + code + "]" + entities + " autonom=" + isAutonom();
 	}
 
-	public void addEntity(Entity entity) {
+	public void addEntity(IEntity entity) {
 		if (entities.containsValue(entity)) {
 			throw new IllegalArgumentException();
 		}

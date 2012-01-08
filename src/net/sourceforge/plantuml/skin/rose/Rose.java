@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7203 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.skin.rose;
@@ -43,6 +43,10 @@ import net.sourceforge.plantuml.ColorParam;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowDirection;
+import net.sourceforge.plantuml.skin.ArrowHead;
+import net.sourceforge.plantuml.skin.ArrowPart;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Skin;
@@ -51,10 +55,10 @@ import net.sourceforge.plantuml.ugraphic.UFont;
 public class Rose implements Skin {
 
 	private final Map<ColorParam, HtmlColor> defaultsColor = new EnumMap<ColorParam, HtmlColor>(ColorParam.class);
-	
+
 	private double paddingX = 5;
 	private double paddingY = 5;
-	
+
 	public void setPaddingNote(double paddingX, double paddingY) {
 		this.paddingX = paddingX;
 		this.paddingY = paddingY;
@@ -152,7 +156,8 @@ public class Rose implements Skin {
 		return result;
 	}
 
-	public Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
+	public Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param,
+			List<? extends CharSequence> stringsToDisplay) {
 		final HtmlColor background = param.getBackgroundColor();
 		final HtmlColor groupBorder = getHtmlColor(param, ColorParam.sequenceGroupBorder);
 		final HtmlColor groupBackground = getHtmlColor(param, ColorParam.sequenceGroupBackground);
@@ -174,14 +179,12 @@ public class Rose implements Skin {
 		final UFont fontActor = param.getFont(FontParam.SEQUENCE_ACTOR, null);
 
 		if (type.isArrow()) {
-			if (type.getArrowConfiguration().isSelfArrow()) {
+			if (config.isSelfArrow()) {
 				return new ComponentRoseSelfArrow(sequenceArrow, getFontColor(param, FontParam.SEQUENCE_ARROW),
-						fontArrow, stringsToDisplay, type.getArrowConfiguration());
+						fontArrow, stringsToDisplay, config);
 			}
 			return new ComponentRoseArrow(sequenceArrow, getFontColor(param, FontParam.SEQUENCE_ARROW), fontArrow,
-					stringsToDisplay, type.getArrowConfiguration(),
-					param.getHorizontalAlignement(AlignParam.SEQUENCE_MESSAGE_ALIGN));
-
+					stringsToDisplay, config, param.getHorizontalAlignement(AlignParam.SEQUENCE_MESSAGE_ALIGN));
 		}
 		if (type == ComponentType.PARTICIPANT_HEAD) {
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.sequenceParticipantBorder);
@@ -222,8 +225,8 @@ public class Rose implements Skin {
 			final HtmlColor noteBackgroundColor = getHtmlColor(param, ColorParam.noteBackground);
 			final HtmlColor borderColor = getHtmlColor(param, ColorParam.noteBorder);
 			final UFont fontNote = param.getFont(FontParam.NOTE, null);
-			return new ComponentRoseNoteHexagonal(noteBackgroundColor, borderColor, getFontColor(param, FontParam.NOTE),
-					fontNote, stringsToDisplay);
+			return new ComponentRoseNoteHexagonal(noteBackgroundColor, borderColor,
+					getFontColor(param, FontParam.NOTE), fontNote, stringsToDisplay);
 		}
 		if (type == ComponentType.NOTE_BOX) {
 			final HtmlColor noteBackgroundColor = getHtmlColor(param, ColorParam.noteBackground);
@@ -308,6 +311,7 @@ public class Rose implements Skin {
 			return new ComponentRoseEnglober(borderColor, backColor, stringsToDisplay, getFontColor(param,
 					FontParam.SEQUENCE_BOX), param.getFont(FontParam.SEQUENCE_BOX, null));
 		}
+
 		return null;
 	}
 

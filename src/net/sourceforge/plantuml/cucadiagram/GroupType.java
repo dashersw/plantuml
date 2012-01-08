@@ -28,12 +28,12 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5190 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 public enum GroupType {
 	
-	PACKAGE, STATE, CONCURRENT_STATE, INNER_ACTIVITY, CONCURRENT_ACTIVITY
+	PACKAGE, STATE, CONCURRENT_STATE, INNER_ACTIVITY, CONCURRENT_ACTIVITY, ROOT
 }

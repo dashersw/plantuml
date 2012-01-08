@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 3836 $
+ * Revision $Revision: 7508 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -43,5 +43,7 @@ public interface ArrowComponent extends Component {
 	Point2D getStartPoint(StringBounder stringBounder, Dimension2D dimensionToUse);
 
 	Point2D getEndPoint(StringBounder stringBounder, Dimension2D dimensionToUse);
+	
+	double getPaddingY();
 
 }

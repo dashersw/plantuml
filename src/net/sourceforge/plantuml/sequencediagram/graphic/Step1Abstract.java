@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.sequencediagram.LifeEventType;
 import net.sourceforge.plantuml.sequencediagram.MessageNumber;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.Participant;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 
@@ -57,7 +58,8 @@ abstract class Step1Abstract {
 
 	private Frontier freeY2;
 
-	private ComponentType type;
+//	private ComponentType type;
+	private ArrowConfiguration config;
 
 	private Component note;
 
@@ -116,7 +118,7 @@ abstract class Step1Abstract {
 		}
 
 		if (n.getType() == LifeEventType.DESTROY) {
-			final Component comp = drawingSet.getSkin().createComponent(ComponentType.DESTROY,
+			final Component comp = drawingSet.getSkin().createComponent(ComponentType.DESTROY, null,
 					drawingSet.getSkinParam(), null);
 			final double delta = comp.getPreferredHeight(stringBounder) / 2;
 			final LifeDestroy destroy = new LifeDestroy(pos - delta, drawingSet.getLivingParticipantBox(p)
@@ -137,13 +139,23 @@ abstract class Step1Abstract {
 		return false;
 	}
 
-	protected final ComponentType getType() {
-		return type;
+//	protected final ComponentType getType() {
+//		return type;
+//	}
+//
+//	protected final void setType(ComponentType type) {
+//		this.type = type;
+//	}
+	
+	protected final ArrowConfiguration getConfig() {
+		return config;
 	}
 
-	protected final void setType(ComponentType type) {
-		this.type = type;
+	protected final void setConfig(ArrowConfiguration config) {
+		this.config = config;
 	}
+
+
 
 	protected final Component getNote() {
 		return note;

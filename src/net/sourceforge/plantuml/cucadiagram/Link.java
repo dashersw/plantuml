@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7385 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -121,7 +121,7 @@ public class Link implements Imaged {
 		// final int x = cl1.getXposition();
 		// cl2.setXposition(x-1);
 		// }
-		final Link result = new Link(cl2, cl1, getType().getInv(), label, length, qualifier2, qualifier1,
+		final Link result = new Link(cl2, cl1, getType().getInversed(), label, length, qualifier2, qualifier1,
 				labeldistance, labelangle, specificColor);
 		result.inverted = true;
 		return result;
@@ -157,6 +157,9 @@ public class Link implements Imaged {
 	}
 
 	public final boolean isInvis() {
+		if (type.isInvisible()) {
+			return true;
+		}
 		return invis;
 	}
 

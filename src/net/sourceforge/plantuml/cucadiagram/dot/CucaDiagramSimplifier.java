@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6710 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -70,7 +70,7 @@ public final class CucaDiagramSimplifier {
 		boolean changed;
 		do {
 			changed = false;
-			final Collection<Group> groups = new ArrayList<Group>(diagram.getGroups());
+			final Collection<Group> groups = new ArrayList<Group>(diagram.getGroups(false));
 			for (Group g : groups) {
 				if (diagram.isAutarkic(g)) {
 					final EntityType type;

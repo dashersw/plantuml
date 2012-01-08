@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4246 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -41,6 +41,6 @@ public interface Skin {
 
 	Object getProtocolVersion();
 
-	Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay);
+	Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param, List<? extends CharSequence> stringsToDisplay);
 
 }

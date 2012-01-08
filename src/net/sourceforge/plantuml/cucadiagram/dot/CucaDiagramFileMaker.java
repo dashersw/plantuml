@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7362 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -707,7 +707,7 @@ public final class CucaDiagramFileMaker implements ICucaDiagramFileMaker {
 		final Rose skin = new Rose();
 
 		final ISkinParam skinParam = new SkinParamBackcolored(getSkinParam(), noteBackColor);
-		final Component comp = skin.createComponent(ComponentType.NOTE, skinParam, display2);
+		final Component comp = skin.createComponent(ComponentType.NOTE, null, skinParam, display2);
 
 		final double dpiFactor = diagram.getDpiFactor(option);
 		final int width = (int) (comp.getPreferredWidth(stringBounder) * dpiFactor);

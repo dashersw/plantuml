@@ -56,7 +56,7 @@ public final class CucaDiagramSimplifier2 {
 		boolean changed;
 		do {
 			changed = false;
-			final Collection<Group> groups = new ArrayList<Group>(diagram.getGroups());
+			final Collection<Group> groups = new ArrayList<Group>(diagram.getGroups(false));
 			for (Group g : groups) {
 				if (diagram.isAutarkic(g)) {
 					final EntityType type;

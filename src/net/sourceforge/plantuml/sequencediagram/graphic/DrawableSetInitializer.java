@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7463 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -341,7 +341,7 @@ class DrawableSetInitializer {
 
 	private void prepareNewpage(StringBounder stringBounder, Newpage newpage, ParticipantRange range) {
 		final GraphicalNewpage graphicalNewpage = new GraphicalNewpage(freeY2.getFreeY(range), drawableSet.getSkin()
-				.createComponent(ComponentType.NEWPAGE, drawableSet.getSkinParam(), null));
+				.createComponent(ComponentType.NEWPAGE, null, drawableSet.getSkinParam(), null));
 		this.lastFreeY2 = freeY2;
 		freeY2 = freeY2.add(graphicalNewpage.getPreferredHeight(stringBounder), range);
 		drawableSet.addEvent(newpage, graphicalNewpage);
@@ -350,7 +350,7 @@ class DrawableSetInitializer {
 	private void prepareNewpageSpecial(StringBounder stringBounder, Newpage newpage, Event justBefore,
 			ParticipantRange range) {
 		final GraphicalNewpage graphicalNewpage = new GraphicalNewpage(freeY2.getFreeY(range), drawableSet.getSkin()
-				.createComponent(ComponentType.NEWPAGE, drawableSet.getSkinParam(), null));
+				.createComponent(ComponentType.NEWPAGE, null, drawableSet.getSkinParam(), null));
 		this.lastFreeY2 = freeY2;
 		freeY2 = freeY2.add(graphicalNewpage.getPreferredHeight(stringBounder), range);
 		drawableSet.addEvent(newpage, graphicalNewpage, justBefore);
@@ -358,14 +358,14 @@ class DrawableSetInitializer {
 
 	private void prepareDivider(StringBounder stringBounder, Divider divider, ParticipantRange range) {
 		final GraphicalDivider graphicalDivider = new GraphicalDivider(freeY2.getFreeY(range), drawableSet.getSkin()
-				.createComponent(ComponentType.DIVIDER, drawableSet.getSkinParam(), divider.getText()));
+				.createComponent(ComponentType.DIVIDER, null, drawableSet.getSkinParam(), divider.getText()));
 		freeY2 = freeY2.add(graphicalDivider.getPreferredHeight(stringBounder), range);
 		drawableSet.addEvent(divider, graphicalDivider);
 	}
 
 	private void prepareDelay(StringBounder stringBounder, Delay delay, List<ParticipantBox> participants,
 			ParticipantRange range) {
-		final Component compText = drawableSet.getSkin().createComponent(ComponentType.DELAY_TEXT,
+		final Component compText = drawableSet.getSkin().createComponent(ComponentType.DELAY_TEXT, null,
 				drawableSet.getSkinParam(), delay.getText());
 		final ParticipantBox first = participants.get(0);
 		final ParticipantBox last = participants.get(participants.size() - 1);
@@ -389,7 +389,7 @@ class DrawableSetInitializer {
 
 		final List<String> strings = m.getTitle().equals("group") ? Arrays.asList(m.getComment()) : Arrays.asList(
 				m.getTitle(), m.getComment());
-		final Component header = drawableSet.getSkin().createComponent(ComponentType.GROUPING_HEADER, skinParam,
+		final Component header = drawableSet.getSkin().createComponent(ComponentType.GROUPING_HEADER, null, skinParam,
 				strings);
 		final InGroupableList inGroupableList = new InGroupableList(m, freeY2.getFreeY(range));
 		inGroupableStack.addList(inGroupableList);
@@ -413,9 +413,10 @@ class DrawableSetInitializer {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), null, m.getJustBefore()
 					.getBackColorGeneral());
 			final GraphicalElement before = drawableSet.getEvent(m.getJustBefore());
-			final Component compElse = drawableSet.getSkin().createComponent(ComponentType.GROUPING_ELSE, skinParam,
-					Arrays.asList(m.getComment()));
-			final Component body = drawableSet.getSkin().createComponent(ComponentType.GROUPING_BODY, skinParam, null);
+			final Component compElse = drawableSet.getSkin().createComponent(ComponentType.GROUPING_ELSE, null,
+					skinParam, Arrays.asList(m.getComment()));
+			final Component body = drawableSet.getSkin().createComponent(ComponentType.GROUPING_BODY, null, skinParam,
+					null);
 			double initY = before.getStartingY();
 			if (before instanceof GroupingHeader) {
 				initY += before.getPreferredHeight(stringBounder);
@@ -431,8 +432,10 @@ class DrawableSetInitializer {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), null, m.getJustBefore()
 					.getBackColorGeneral());
 			final GraphicalElement justBefore = drawableSet.getEvent(m.getJustBefore());
-			final Component body = drawableSet.getSkin().createComponent(ComponentType.GROUPING_BODY, skinParam, null);
-			final Component tail = drawableSet.getSkin().createComponent(ComponentType.GROUPING_TAIL, skinParam, null);
+			final Component body = drawableSet.getSkin().createComponent(ComponentType.GROUPING_BODY, null, skinParam,
+					null);
+			final Component tail = drawableSet.getSkin().createComponent(ComponentType.GROUPING_TAIL, null, skinParam,
+					null);
 			double initY = justBefore.getStartingY();
 			if (justBefore instanceof GroupingHeader) {
 				// initY += before.getPreferredHeight(stringBounder);
@@ -468,7 +471,7 @@ class DrawableSetInitializer {
 		}
 		final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), n.getSpecificBackColor());
 		final ComponentType type = getNoteComponentType(n.getStyle());
-		final NoteBox noteBox = new NoteBox(freeY2.getFreeY(range), drawableSet.getSkin().createComponent(type,
+		final NoteBox noteBox = new NoteBox(freeY2.getFreeY(range), drawableSet.getSkin().createComponent(type, null,
 				skinParam, n.getStrings()), p1, p2, n.getPosition(), n.getUrl());
 
 		inGroupableStack.addElement(noteBox);
@@ -509,7 +512,7 @@ class DrawableSetInitializer {
 		final List<String> strings = new ArrayList<String>();
 		strings.add("ref");
 		strings.addAll(reference.getStrings());
-		final Component comp = drawableSet.getSkin().createComponent(ComponentType.REFERENCE, skinParam, strings);
+		final Component comp = drawableSet.getSkin().createComponent(ComponentType.REFERENCE, null, skinParam, strings);
 		final GraphicalReference graphicalReference = new GraphicalReference(freeY2.getFreeY(range), comp, p1, p2,
 				reference.getUrl());
 
@@ -546,31 +549,31 @@ class DrawableSetInitializer {
 
 		if (p.getType() == ParticipantType.PARTICIPANT) {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), p.getSpecificBackColor());
-			final Component head = drawableSet.getSkin().createComponent(ComponentType.PARTICIPANT_HEAD, skinParam,
-					p.getDisplay());
-			final Component tail = drawableSet.getSkin().createComponent(ComponentType.PARTICIPANT_TAIL, skinParam,
-					p.getDisplay());
-			final Component line = drawableSet.getSkin().createComponent(this.defaultLineType,
+			final Component head = drawableSet.getSkin().createComponent(ComponentType.PARTICIPANT_HEAD, null,
+					skinParam, p.getDisplay());
+			final Component tail = drawableSet.getSkin().createComponent(ComponentType.PARTICIPANT_TAIL, null,
+					skinParam, p.getDisplay());
+			final Component line = drawableSet.getSkin().createComponent(this.defaultLineType, null,
 					drawableSet.getSkinParam(), p.getDisplay());
-			final Component delayLine = drawableSet.getSkin().createComponent(ComponentType.DELAY_LINE,
+			final Component delayLine = drawableSet.getSkin().createComponent(ComponentType.DELAY_LINE, null,
 					drawableSet.getSkinParam(), p.getDisplay());
 			box = new ParticipantBox(head, line, tail, delayLine, this.freeX);
 		} else if (p.getType() == ParticipantType.ACTOR) {
 			final ISkinParam skinParam = new SkinParamBackcolored(drawableSet.getSkinParam(), p.getSpecificBackColor());
-			final Component head = drawableSet.getSkin().createComponent(ComponentType.ACTOR_HEAD, skinParam,
+			final Component head = drawableSet.getSkin().createComponent(ComponentType.ACTOR_HEAD, null, skinParam,
 					p.getDisplay());
-			final Component tail = drawableSet.getSkin().createComponent(ComponentType.ACTOR_TAIL, skinParam,
+			final Component tail = drawableSet.getSkin().createComponent(ComponentType.ACTOR_TAIL, null, skinParam,
 					p.getDisplay());
-			final Component line = drawableSet.getSkin().createComponent(this.defaultLineType,
+			final Component line = drawableSet.getSkin().createComponent(this.defaultLineType, null,
 					drawableSet.getSkinParam(), p.getDisplay());
-			final Component delayLine = drawableSet.getSkin().createComponent(ComponentType.DELAY_LINE,
+			final Component delayLine = drawableSet.getSkin().createComponent(ComponentType.DELAY_LINE, null,
 					drawableSet.getSkinParam(), p.getDisplay());
 			box = new ParticipantBox(head, line, tail, delayLine, this.freeX);
 		} else {
 			throw new IllegalArgumentException();
 		}
 
-		final Component comp = drawableSet.getSkin().createComponent(ComponentType.ALIVE_BOX_CLOSE_CLOSE,
+		final Component comp = drawableSet.getSkin().createComponent(ComponentType.ALIVE_BOX_CLOSE_CLOSE, null,
 				drawableSet.getSkinParam(), null);
 
 		final LifeLine lifeLine = new LifeLine(box, comp.getPreferredWidth(stringBounder));

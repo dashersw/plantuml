@@ -47,11 +47,12 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class CommandMultilinesNoteActivity2 extends CommandMultilines<ActivityDiagram2> {
 
 	public CommandMultilinesNoteActivity2(final ActivityDiagram2 system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)$", "(?i)^end ?note$");
+		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*$", "(?i)^end ?note$");
 	}
 
 	public final CommandExecutionResult execute(List<String> lines) {
@@ -69,6 +70,7 @@ public class CommandMultilinesNoteActivity2 extends CommandMultilines<ActivityDi
 		final String s = StringUtils.getMergedLines(strings);
 
 		final Entity note = getSystem().createEntity("GMN" + UniqueSequence.getValue(), s, EntityType.NOTE);
+		note.setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get(1)));
 
 		final Link link;
 

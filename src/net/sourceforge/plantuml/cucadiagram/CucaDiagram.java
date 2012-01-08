@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7394 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -229,8 +229,24 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 		return groups.containsKey(code);
 	}
 
-	public final Collection<Group> getGroups() {
-		return Collections.unmodifiableCollection(groups.values());
+	public final Collection<Group> getGroups(boolean withRootGroup) {
+		if (withRootGroup == false) {
+			return Collections.unmodifiableCollection(groups.values());
+		}
+		final Collection<Group> result = new ArrayList<Group>();
+		result.add(getRootGroup());
+		result.addAll(groups.values());
+		return Collections.unmodifiableCollection(result);
+	}
+
+	private Group getRootGroup() {
+		final Group result = new Group(null, null, null, GroupType.ROOT, null);
+		for (IEntity ent : entities.values()) {
+			if (ent.getParent()==null) {
+				result.addEntity(ent);
+			}
+		}
+		return result;
 	}
 
 	final public Map<String, Entity> entities() {
@@ -647,6 +663,15 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 
 	public ColorMapper getColorMapper() {
 		return getSkinParam().getColorMapper();
+	}
+
+	final public boolean isStandalone(IEntity ent) {
+		for (final Link link : getLinks()) {
+			if (link.getEntity1() == ent || link.getEntity2() == ent) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

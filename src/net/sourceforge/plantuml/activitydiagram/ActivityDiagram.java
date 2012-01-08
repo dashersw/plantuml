@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5721 $
+ * Revision $Revision: 7534 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -62,8 +62,8 @@ public class ActivityDiagram extends CucaDiagram {
 		if (entityExist(code)) {
 			result = super.getOrCreateEntity(code, type);
 			if (result.getType() != type) {
-				throw new IllegalArgumentException("Already known: " + code + " " + result.getType() + " " + type);
-				// return null;
+				// throw new IllegalArgumentException("Already known: " + code + " " + result.getType() + " " + type);
+				return null;
 			}
 		} else {
 			result = createEntity(code, display, type);

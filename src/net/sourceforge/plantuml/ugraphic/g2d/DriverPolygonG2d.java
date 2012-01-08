@@ -28,14 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7294 $
+ * Revision $Revision: 7526 $
  *
  */
 package net.sourceforge.plantuml.ugraphic.g2d;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
-import java.awt.Polygon;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
@@ -55,24 +55,37 @@ public class DriverPolygonG2d extends DriverShadowedG2d implements UDriver<Graph
 	public void draw(UShape ushape, double x, double y, ColorMapper mapper, UParam param, Graphics2D g2d) {
 		final UPolygon shape = (UPolygon) ushape;
 
-		final Polygon polygon = new Polygon();
 		g2d.setStroke(new BasicStroke((float) param.getStroke().getThickness()));
 
+		final GeneralPath path = new GeneralPath();
+
+		boolean first = true;
 		for (Point2D pt : shape.getPoints()) {
-			polygon.addPoint((int) (pt.getX() + x), (int) (pt.getY() + y));
+			final double xp = pt.getX() + x;
+			final double yp = pt.getY() + y;
+			if (first) {
+				path.moveTo((float) xp, (float) yp);
+			} else {
+				path.lineTo((float) xp, (float) yp);
+			}
+			first = false;
+		}
+
+		if (first == false) {
+			path.closePath();
 		}
 
 		if (shape.getDeltaShadow() != 0) {
-			drawShadow(g2d, polygon, shape.getDeltaShadow(), dpiFactor);
+			drawShadow(g2d, path, shape.getDeltaShadow(), dpiFactor);
 		}
 
 		if (param.getBackcolor() != null) {
 			g2d.setColor(mapper.getMappedColor(param.getBackcolor()));
-			g2d.fill(polygon);
+			g2d.fill(path);
 		}
 		if (param.getColor() != null) {
 			g2d.setColor(mapper.getMappedColor(param.getColor()));
-			g2d.draw(polygon);
+			g2d.draw(path);
 		}
 	}
 }

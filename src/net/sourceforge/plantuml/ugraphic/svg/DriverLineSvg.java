@@ -68,6 +68,12 @@ public class DriverLineSvg implements UDriver<SvgGraphics> {
 			x2 = line.x2;
 			y2 = line.y2;
 		}
+		
+		// Shadow
+		if (shape.getDeltaShadow() != 0) {
+			svg.svgLineShadow(x, y, x2, y2, shape.getDeltaShadow());
+		}
+
 
 		// svg.setStroke(new BasicStroke((float)
 		// param.getStroke().getThickness()));

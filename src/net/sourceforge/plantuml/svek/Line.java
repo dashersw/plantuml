@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.cucadiagram.Group;
@@ -291,6 +292,20 @@ public class Line implements Moveable {
 			final Point2D p2 = points.get(2);
 			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
 			this.endHead = new Plus(p1, pc);
+		} else if (OptionFlags.NEW_DIAMOND && link.getType().getDecor2() == LinkDecor.AGREGATION) {
+			final List<Point2D.Double> points = pointListIterator.next();
+			final Point2D p0 = points.get(0);
+			final Point2D p1 = points.get(1);
+			final Point2D p2 = points.get(2);
+			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
+			this.endHead = new Diamond(p1, pc, false);
+		} else if (OptionFlags.NEW_DIAMOND && link.getType().getDecor2() == LinkDecor.COMPOSITION) {
+			final List<Point2D.Double> points = pointListIterator.next();
+			final Point2D p0 = points.get(0);
+			final Point2D p1 = points.get(1);
+			final Point2D p2 = points.get(2);
+			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
+			this.endHead = new Diamond(p1, pc, true);
 		} else if (link.getType().getDecor2() != LinkDecor.NONE) {
 			final UShape sh = new UPolygon(pointListIterator.next());
 			this.endHead = new UDrawable3() {
@@ -307,6 +322,20 @@ public class Line implements Moveable {
 			final Point2D p2 = points.get(2);
 			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
 			this.startTail = new Plus(p1, pc);
+		} else if (OptionFlags.NEW_DIAMOND && link.getType().getDecor1() == LinkDecor.AGREGATION) {
+			final List<Point2D.Double> points = pointListIterator.next();
+			final Point2D p0 = points.get(0);
+			final Point2D p1 = points.get(1);
+			final Point2D p2 = points.get(2);
+			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
+			this.startTail = new Diamond(p1, pc, false);
+		} else if (OptionFlags.NEW_DIAMOND && link.getType().getDecor1() == LinkDecor.COMPOSITION) {
+			final List<Point2D.Double> points = pointListIterator.next();
+			final Point2D p0 = points.get(0);
+			final Point2D p1 = points.get(1);
+			final Point2D p2 = points.get(2);
+			final Point2D pc = new Point2D.Double((p0.getX() + p2.getX()) / 2, (p0.getY() + p2.getY()) / 2);
+			this.startTail = new Diamond(p1, pc, true);
 		} else if (link.getType().getDecor1() != LinkDecor.NONE) {
 			final UShape sh = new UPolygon(pointListIterator.next());
 			this.startTail = new UDrawable3() {
@@ -317,18 +346,18 @@ public class Line implements Moveable {
 		}
 
 		if (this.noteLabelText != null) {
-			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder, getXY(svg,
-					this.noteLabelColor, fullHeight));
+			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder,
+					getXY(svg, this.noteLabelColor, fullHeight));
 		}
 
 		if (this.startTailText != null) {
-			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder, getXY(svg,
-					this.startTailColor, fullHeight));
+			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder,
+					getXY(svg, this.startTailColor, fullHeight));
 		}
 
 		if (this.endHeadText != null) {
-			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder, getXY(svg,
-					this.endHeadColor, fullHeight));
+			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder,
+					getXY(svg, this.endHeadColor, fullHeight));
 		}
 
 		if (isOpalisable() == false) {
@@ -615,60 +644,6 @@ public class Line implements Moveable {
 		final Dimension2D dim = pos.getSize();
 		// System.err.println("dist=" + dist);
 		return dist < (dim.getWidth() / 2 + 2) || dist < (dim.getHeight() / 2 + 2);
-	}
-
-	static class Plus implements UDrawable3 {
-
-		private final AffineTransform at;
-		private final AffineTransform at2;
-		private int radius;
-		private final Point2D center;
-		private final Point2D p1;
-		private final Point2D p2;
-		private Point2D p3;
-		private Point2D p4;
-
-		public Plus(Point2D p1, Point2D p2) {
-			this.center = new Point2D.Double((p1.getX() + p2.getX()) / 2, (p1.getY() + p2.getY()) / 2);
-			at = AffineTransform.getTranslateInstance(-center.getX(), -center.getY());
-			at2 = AffineTransform.getTranslateInstance(center.getX(), center.getY());
-			radius = (int) (p1.distance(p2) / 2);
-			if (radius % 2 == 0) {
-				radius--;
-			}
-			this.p1 = putOnCircle(p1);
-			this.p2 = putOnCircle(p2);
-
-			this.p3 = at.transform(this.p1, null);
-			this.p3 = new Point2D.Double(p3.getY(), -p3.getX());
-			this.p3 = at2.transform(p3, null);
-
-			this.p4 = at.transform(this.p2, null);
-			this.p4 = new Point2D.Double(p4.getY(), -p4.getX());
-			this.p4 = at2.transform(p4, null);
-		}
-
-		private Point2D putOnCircle(Point2D p) {
-			p = at.transform(p, null);
-			final double coef = p.distance(new Point2D.Double()) / radius;
-			p = new Point2D.Double(p.getX() / coef, p.getY() / coef);
-			return at2.transform(p, null);
-		}
-
-		public void drawU(UGraphic ug, double x, double y) {
-			final UShape circle = new UEllipse(radius * 2, radius * 2);
-			ug.draw(x + center.getX() - radius, y + center.getY() - radius, circle);
-			drawLine(ug, x, y, p1, p2);
-			drawLine(ug, x, y, p3, p4);
-		}
-
-		static private void drawLine(UGraphic ug, double x, double y, Point2D p1, Point2D p2) {
-			final double dx = p2.getX() - p1.getX();
-			final double dy = p2.getY() - p1.getY();
-			ug.draw(x + p1.getX(), y + p1.getY(), new ULine(dx, dy));
-
-		}
-
 	}
 
 	private double dx;

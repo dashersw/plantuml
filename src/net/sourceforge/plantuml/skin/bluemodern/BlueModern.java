@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6602 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.skin.bluemodern;
@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Skin;
@@ -66,15 +67,15 @@ public class BlueModern implements Skin {
 	private final HtmlColor lineColor = HtmlColor.getColorIfValid("#989898");
 	private final HtmlColor borderGroupColor = HtmlColor.getColorIfValid("#BBBBBB");
 
-	public Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
+	public Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param,
+			List<? extends CharSequence> stringsToDisplay) {
 
 		if (type.isArrow()) {
-			if (type.getArrowConfiguration().isSelfArrow()) {
+			if (config.isSelfArrow()) {
 				return new ComponentBlueModernSelfArrow(HtmlColor.BLACK, HtmlColor.BLACK, normalFont, stringsToDisplay,
-						type.getArrowConfiguration());
+						config);
 			}
-			return new ComponentBlueModernArrow(HtmlColor.BLACK, HtmlColor.BLACK, normalFont, stringsToDisplay,
-					type.getArrowConfiguration());
+			return new ComponentBlueModernArrow(HtmlColor.BLACK, HtmlColor.BLACK, normalFont, stringsToDisplay, config);
 		}
 		if (type == ComponentType.PARTICIPANT_HEAD) {
 			return new ComponentBlueModernParticipant(blue1, blue2, HtmlColor.WHITE, participantFont, stringsToDisplay);
@@ -137,8 +138,8 @@ public class BlueModern implements Skin {
 			return new ComponentRoseTitle(HtmlColor.BLACK, bigFont, stringsToDisplay);
 		}
 		if (type == ComponentType.REFERENCE) {
-			return new ComponentRoseReference(HtmlColor.BLACK, HtmlColor.WHITE, normalFont, borderGroupColor,
-					blue1, blue3, normalFont, stringsToDisplay, HorizontalAlignement.CENTER);
+			return new ComponentRoseReference(HtmlColor.BLACK, HtmlColor.WHITE, normalFont, borderGroupColor, blue1,
+					blue3, normalFont, stringsToDisplay, HorizontalAlignement.CENTER);
 		}
 		if (type == ComponentType.NEWPAGE) {
 			return new ComponentBlueModernNewpage(blue1);

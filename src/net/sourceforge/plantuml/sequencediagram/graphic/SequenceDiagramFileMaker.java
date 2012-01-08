@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7371 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -152,7 +152,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		final double tailHeight = drawableSet.getTailHeight(dummyStringBounder, showFootbox);
 		final double signatureHeight = 0;
 		final double newpageHeight = drawableSet.getSkin()
-				.createComponent(ComponentType.NEWPAGE, drawableSet.getSkinParam(), Arrays.asList(""))
+				.createComponent(ComponentType.NEWPAGE, null, drawableSet.getSkinParam(), Arrays.asList(""))
 				.getPreferredHeight(dummyStringBounder);
 
 		return new PageSplitter(fullDimension.getHeight(), headerHeight, positions, tailHeight, signatureHeight,
@@ -224,7 +224,7 @@ public class SequenceDiagramFileMaker implements FileMaker {
 		Component compTitle = null;
 
 		if (page.getTitle() != null) {
-			compTitle = drawableSet.getSkin().createComponent(ComponentType.TITLE, drawableSet.getSkinParam(),
+			compTitle = drawableSet.getSkin().createComponent(ComponentType.TITLE, null, drawableSet.getSkinParam(),
 					page.getTitle());
 			area.setTitleArea(compTitle.getPreferredWidth(dummyStringBounder),
 					compTitle.getPreferredHeight(dummyStringBounder));

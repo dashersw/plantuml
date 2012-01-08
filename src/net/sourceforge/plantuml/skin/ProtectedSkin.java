@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4246 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.skin;
@@ -46,10 +46,10 @@ public class ProtectedSkin implements Skin {
 
 	}
 
-	public Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
+	public Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
 		Component result = null;
 		try {
-			result = skinToProtect.createComponent(type, param, stringsToDisplay);
+			result = skinToProtect.createComponent(type, config, param, stringsToDisplay);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

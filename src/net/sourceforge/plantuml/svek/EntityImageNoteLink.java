@@ -53,7 +53,7 @@ public class EntityImageNoteLink implements IEntityImage {
 
 	public EntityImageNoteLink(List<? extends CharSequence> note, ISkinParam skinParam) {
 		final Rose skin = new Rose();
-		comp = skin.createComponent(ComponentType.NOTE, skinParam, note);
+		comp = skin.createComponent(ComponentType.NOTE, null, skinParam, note);
 	}
 
 	public Dimension2D getDimension(StringBounder stringBounder) {

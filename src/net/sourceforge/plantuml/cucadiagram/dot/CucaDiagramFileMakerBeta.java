@@ -163,7 +163,7 @@ public final class CucaDiagramFileMakerBeta {
 				// System.err.println("addingA " + ent);
 			}
 		}
-		final Collection<Group> groups = parent == null ? diagram.getGroups() : parent.getChildren();
+		final Collection<Group> groups = parent == null ? diagram.getGroups(false) : parent.getChildren();
 		for (Group g : groups) {
 			// System.err.println("g=" + g + " parent = " + g.getParent());
 			if (g.isAutonom() == false) {

@@ -121,14 +121,14 @@ public class XmiClassDiagramStar implements IXmiClassDiagram {
 		// }
 	}
 
-	private boolean isStandalone(IEntity ent) {
-		for (final Link link : classDiagram.getLinks()) {
-			if (link.getEntity1() == ent || link.getEntity2() == ent) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	private boolean isStandalone(IEntity ent) {
+//		for (final Link link : classDiagram.getLinks()) {
+//			if (link.getEntity1() == ent || link.getEntity2() == ent) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 	public static String forXMI(String s) {
 		return s.replace(':', ' ');

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7379 $
+ * Revision $Revision: 7531 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -110,6 +110,10 @@ public class FontConfiguration {
 
 	public FontConfiguration italic() {
 		return add(FontStyle.ITALIC);
+	}
+
+	public FontConfiguration underline() {
+		return add(FontStyle.UNDERLINE);
 	}
 
 	FontConfiguration remove(FontStyle style) {

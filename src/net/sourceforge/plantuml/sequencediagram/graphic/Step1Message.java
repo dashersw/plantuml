@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7487 $
+ * Revision $Revision: 7515 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -42,7 +42,7 @@ import net.sourceforge.plantuml.sequencediagram.InGroupable;
 import net.sourceforge.plantuml.sequencediagram.LifeEvent;
 import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
-import net.sourceforge.plantuml.skin.ArrowDecoration;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ComponentType;
@@ -58,20 +58,20 @@ class Step1Message extends Step1Abstract {
 		final double x1 = getParticipantBox1().getCenterX(stringBounder);
 		final double x2 = getParticipantBox2().getCenterX(stringBounder);
 
-		this.setType(isSelfMessage() ? getSelfArrowType(message) : getArrowType(message, x1, x2));
+		this.setConfig(isSelfMessage() ? getSelfArrowType(message) : getArrowType(message, x1, x2));
 
 		if (isSelfMessage()) {
 			this.messageArrow = null;
 		} else {
 			this.messageArrow = new MessageArrow(freeY.getFreeY(range), drawingSet.getSkin(), drawingSet.getSkin()
-					.createComponent(getType(), drawingSet.getSkinParam(), getLabelOfMessage(message)),
-					getLivingParticipantBox1(), getLivingParticipantBox2());
+					.createComponent(ComponentType.ARROW, getConfig(), drawingSet.getSkinParam(),
+							getLabelOfMessage(message)), getLivingParticipantBox1(), getLivingParticipantBox2());
 		}
 
 		if (message.getNote() != null) {
-			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(), message
-					.getSpecificBackColor());
-			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, skinParam, message.getNote()));
+			final ISkinParam skinParam = new SkinParamBackcolored(drawingSet.getSkinParam(),
+					message.getSpecificBackColor());
+			setNote(drawingSet.getSkin().createComponent(ComponentType.NOTE, null, skinParam, message.getNote()));
 		}
 
 	}
@@ -187,13 +187,15 @@ class Step1Message extends Step1Abstract {
 		}
 
 		return new MessageSelfArrow(posY, getDrawingSet().getSkin(), getDrawingSet().getSkin().createComponent(
-				getType(), getDrawingSet().getSkinParam(), getLabelOfMessage(getMessage())),
+				ComponentType.ARROW, getConfig(), getDrawingSet().getSkinParam(), getLabelOfMessage(getMessage())),
 				getLivingParticipantBox1(), deltaY);
 	}
 
 	private double getHalfLifeWidth() {
-		return getDrawingSet().getSkin().createComponent(ComponentType.ALIVE_BOX_OPEN_OPEN,
-				getDrawingSet().getSkinParam(), Arrays.asList("")).getPreferredWidth(null) / 2;
+		return getDrawingSet()
+				.getSkin()
+				.createComponent(ComponentType.ALIVE_BOX_OPEN_OPEN, null, getDrawingSet().getSkinParam(),
+						Arrays.asList("")).getPreferredWidth(null) / 2;
 	}
 
 	private Arrow createArrowCreate() {
@@ -214,9 +216,8 @@ class Step1Message extends Step1Abstract {
 		return result;
 	}
 
-	private ComponentType getSelfArrowType(Message m) {
-		ComponentType result = m.getArrowConfiguration().isDotted() ? ComponentType.getArrow(ArrowDirection.SELF)
-				.withDotted() : ComponentType.getArrow(ArrowDirection.SELF);
+	private ArrowConfiguration getSelfArrowType(Message m) {
+		ArrowConfiguration result = ArrowConfiguration.withDirection(ArrowDirection.SELF);
 		if (m.getArrowConfiguration().isDotted()) {
 			result = result.withDotted();
 		}
@@ -227,24 +228,12 @@ class Step1Message extends Step1Abstract {
 		return result;
 	}
 
-	private ComponentType getArrowType(Message m, final double x1, final double x2) {
-		ComponentType result = null;
+	private ArrowConfiguration getArrowType(Message m, final double x1, final double x2) {
 		if (x2 > x1) {
-			result = ComponentType.getArrow(ArrowDirection.LEFT_TO_RIGHT_NORMAL);
+			return m.getArrowConfiguration();
 		} else {
-			result = ComponentType.getArrow(ArrowDirection.RIGHT_TO_LEFT_REVERSE);
+			return m.getArrowConfiguration().reverse();
 		}
-		if (m.getArrowConfiguration().isDotted()) {
-			result = result.withDotted();
-		}
-		if (m.getArrowConfiguration().getHead() == ArrowHead.ASYNC) {
-			result = result.withHead(ArrowHead.ASYNC);
-		}
-		if (m.getArrowConfiguration().getDecoration() != ArrowDecoration.NONE) {
-			result = result.withDecoration(m.getArrowConfiguration().getDecoration());
-		}
-		result = result.withPart(m.getArrowConfiguration().getPart());
-		return result;
 	}
 
 }

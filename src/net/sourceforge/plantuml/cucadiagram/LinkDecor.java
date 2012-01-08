@@ -33,13 +33,16 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import net.sourceforge.plantuml.OptionFlags;
+
 public enum LinkDecor {
 
-	NONE(2, false), EXTENDS(30, false), COMPOSITION(15, true), AGREGATION(15, false), ARROW(10, true), PLUS(0, false), SQUARRE(30, false);
-	
+	NONE(2, false), EXTENDS(30, false), COMPOSITION(15, true), AGREGATION(15, false), ARROW(10, true), PLUS(0, false), SQUARRE(
+			30, false);
+
 	private final int size;
 	private final boolean fill;
-	
+
 	private LinkDecor(int size, boolean fill) {
 		this.size = size;
 		this.fill = fill;
@@ -69,8 +72,14 @@ public enum LinkDecor {
 		} else if (this == LinkDecor.EXTENDS) {
 			return "empty";
 		} else if (this == LinkDecor.COMPOSITION) {
+			if (OptionFlags.NEW_DIAMOND) {
+				return "empty";
+			}
 			return "diamond";
 		} else if (this == LinkDecor.AGREGATION) {
+			if (OptionFlags.NEW_DIAMOND) {
+				return "empty";
+			}
 			return "ediamond";
 		} else if (this == LinkDecor.ARROW) {
 			return "open";
@@ -84,7 +93,7 @@ public enum LinkDecor {
 	public int getSize() {
 		return size;
 	}
-	
+
 	public boolean isFill() {
 		return fill;
 	}

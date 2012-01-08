@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7304 $
+ * Revision $Revision: 7533 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -570,7 +570,7 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 		String uid2 = link.getEntity2().getUid();
 		LinkType typeToDraw = link.getType();
 		if (TURN_AROUND_B2114 && len == 1 && hasAlreadyOneIncommingArrowLenghtOne.contains(uid2) && hasLabel) {
-			typeToDraw = typeToDraw.getInv();
+			typeToDraw = typeToDraw.getInversed();
 		}
 		if (TURN_AROUND_B2114 && len == 1) {
 			hasAlreadyOneIncommingArrowLenghtOne.add(uid2);

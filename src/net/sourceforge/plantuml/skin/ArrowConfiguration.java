@@ -39,10 +39,11 @@ public class ArrowConfiguration {
 	private final ArrowBody body;
 	private final ArrowHead head;
 	private final ArrowPart part;
-	private final ArrowDecoration decoration;
+	private final ArrowDecoration decorationStart;
+	private final ArrowDecoration decorationEnd;
 
 	private ArrowConfiguration(ArrowDirection direction, ArrowBody body, ArrowHead head, ArrowPart part,
-			ArrowDecoration decoration) {
+			ArrowDecoration decorationStart, ArrowDecoration decorationEnd) {
 		if (direction == null || body == null || head == null || part == null) {
 			throw new IllegalArgumentException();
 		}
@@ -50,9 +51,10 @@ public class ArrowConfiguration {
 		this.direction = direction;
 		this.body = body;
 		this.head = head;
-		this.decoration = decoration;
+		this.decorationStart = decorationStart;
+		this.decorationEnd = decorationEnd;
 	}
-	
+
 	@Override
 	public String toString() {
 		return name();
@@ -60,47 +62,47 @@ public class ArrowConfiguration {
 
 	public String name() {
 		return direction.name().substring(0, 4) + "-" + body.name() + "-" + head.name() + "-"
-				+ part.name().substring(0, 3) + "-" + decoration.name().substring(0, 4);
-	}
-
-	@Override
-	public int hashCode() {
-		return direction.hashCode() + body.hashCode() + head.hashCode() + part.hashCode() + part.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		final ArrowConfiguration this2 = (ArrowConfiguration) other;
-		return direction == this2.direction && body == this2.body && head == this2.head && part == this2.part
-		  && decoration == this2.decoration;
+				+ part.name().substring(0, 3) + "-" + decorationEnd.name().substring(0, 4);
 	}
 
 	public static ArrowConfiguration withDirection(ArrowDirection direction) {
 		return new ArrowConfiguration(direction, ArrowBody.NORMAL, ArrowHead.NORMAL, ArrowPart.FULL,
-				ArrowDecoration.NONE);
+				ArrowDecoration.NONE, ArrowDecoration.NONE);
+	}
+
+	public ArrowConfiguration reverse() {
+		if (direction == ArrowDirection.SELF) {
+			throw new UnsupportedOperationException();
+		}
+		return new ArrowConfiguration(direction.reverse(), body, head, part, decorationStart, decorationEnd);
 	}
 
 	public ArrowConfiguration withHead(ArrowHead head) {
-		return new ArrowConfiguration(direction, body, head, part, decoration);
+		return new ArrowConfiguration(direction, body, head, part, decorationStart, decorationEnd);
 	}
 
 	public ArrowConfiguration withDotted() {
-		return new ArrowConfiguration(direction, ArrowBody.DOTTED, head, part, decoration);
+		return new ArrowConfiguration(direction, ArrowBody.DOTTED, head, part, decorationStart, decorationEnd);
 	}
 
 	public ArrowConfiguration withPart(ArrowPart part) {
-		// if (part != ArrowPart.BOTTOM_PART && part != ArrowPart.TOP_PART) {
-		// throw new IllegalArgumentException();
-		// }
-		return new ArrowConfiguration(direction, body, head, part, decoration);
+		return new ArrowConfiguration(direction, body, head, part, decorationStart, decorationEnd);
 	}
 
-	public ArrowConfiguration withDecoration(ArrowDecoration decoration) {
-		return new ArrowConfiguration(direction, body, head, part, decoration);
+	public ArrowConfiguration withDecorationStart(ArrowDecoration decorationStart) {
+		return new ArrowConfiguration(direction, body, head, part, decorationStart, decorationEnd);
 	}
 
-	public final ArrowDecoration getDecoration() {
-		return this.decoration;
+	public ArrowConfiguration withDecorationEnd(ArrowDecoration decorationEnd) {
+		return new ArrowConfiguration(direction, body, head, part, decorationStart, decorationEnd);
+	}
+
+	public final ArrowDecoration getDecorationEnd() {
+		return this.decorationEnd;
+	}
+
+	public final ArrowDecoration getDecorationStart() {
+		return this.decorationStart;
 	}
 
 	public boolean isLeftToRightNormal() {

@@ -28,15 +28,15 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7216 $
+ * Revision $Revision: 7503 $
  *
  */
 package net.sourceforge.plantuml.svg;
 
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -258,19 +258,45 @@ public class SvgGraphics {
 		ensureVisible(x + width, y + height);
 	}
 
+	class Line {
+		private final Element elt;
+
+		Line(double x1, double y1, double x2, double y2, String style) {
+			elt = (Element) document.createElement("line");
+			elt.setAttribute("x1", "" + x1);
+			elt.setAttribute("y1", "" + y1);
+			elt.setAttribute("x2", "" + x2);
+			elt.setAttribute("y2", "" + y2);
+			elt.setAttribute("style", style);
+		}
+
+		void drawNow() {
+			getG().appendChild(elt);
+		}
+	}
+
+	private final List<SvgGraphics.Line> lines = new ArrayList<SvgGraphics.Line>();
+
 	public void svgLine(double x1, double y1, double x2, double y2) {
-		final Element elt = (Element) document.createElement("line");
-		elt.setAttribute("x1", "" + x1);
-		elt.setAttribute("y1", "" + y1);
-		elt.setAttribute("x2", "" + x2);
-		elt.setAttribute("y2", "" + y2);
-		elt.setAttribute("style", getStyle());
-		getG().appendChild(elt);
+		svgLine(x1, y1, x2, y2, getStyle(), true);
+	}
+
+	private void svgLine(double x1, double y1, double x2, double y2, String style, boolean foreground) {
+		final Line line = new Line(x1, y1, x2, y2, style);
+		if (foreground) {
+			lines.add(line);
+		} else {
+			lines.add(0, line);
+		}
 		ensureVisible(x1, y1);
 		ensureVisible(x2, y2);
 	}
 
 	private String getStyle() {
+		return getStyle(strokeWidth);
+	}
+
+	private String getStyle(String strokeWidth) {
 		final StringBuilder style = new StringBuilder("stroke: " + stroke + "; stroke-width: " + strokeWidth + ";");
 		if (strokeDasharray != null) {
 			style.append(" stroke-dasharray: " + strokeDasharray + ";");
@@ -361,6 +387,11 @@ public class SvgGraphics {
 
 	public void createXml(OutputStream os) throws TransformerException {
 
+		// Add lines
+		for (Line l : lines) {
+			l.drawNow();
+		}
+
 		// Get a DOMSource object that represents the
 		// Document object
 		final DOMSource source = new DOMSource(document);
@@ -381,14 +412,14 @@ public class SvgGraphics {
 		getTransformer().transform(source, scrResult);
 	}
 
-	public String getGElement() throws TransformerException, IOException {
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		final StreamResult sr = new StreamResult(os);
-		getTransformer().transform(new DOMSource(gRoot), sr);
-		os.close();
-		final String s = new String(os.toByteArray(), "UTF-8");
-		return s.replaceFirst("^\\<\\?xml.*?\\?\\>", "");
-	}
+	// String getGElement() throws TransformerException, IOException {
+	// final ByteArrayOutputStream os = new ByteArrayOutputStream();
+	// final StreamResult sr = new StreamResult(os);
+	// getTransformer().transform(new DOMSource(gRoot), sr);
+	// os.close();
+	// final String s = new String(os.toByteArray(), "UTF-8");
+	// return s.replaceFirst("^\\<\\?xml.*?\\?\\>", "");
+	// }
 
 	public void svgPath(double x, double y, UPath path) {
 		final StringBuilder sb = new StringBuilder();
@@ -400,11 +431,11 @@ public class SvgGraphics {
 			} else if (type == USegmentType.SEG_LINETO) {
 				sb.append("L" + format(coord[0] + x) + "," + format(coord[1] + y) + " ");
 			} else if (type == USegmentType.SEG_QUADTO) {
-				sb.append("Q" + format(coord[0] + x) + "," + format(coord[1] + y) + " " + format(coord[2] + x) + "," + format(coord[3] + y)
-						+ " ");
+				sb.append("Q" + format(coord[0] + x) + "," + format(coord[1] + y) + " " + format(coord[2] + x) + ","
+						+ format(coord[3] + y) + " ");
 			} else if (type == USegmentType.SEG_CUBICTO) {
-				sb.append("C" + format(coord[0] + x) + "," + format(coord[1] + y) + " " + format(coord[2] + x) + "," + format(coord[3] + y)
-						+ " " + format(coord[4] + x) + "," + format(coord[5] + y) + " ");
+				sb.append("C" + format(coord[0] + x) + "," + format(coord[1] + y) + " " + format(coord[2] + x) + ","
+						+ format(coord[3] + y) + " " + format(coord[4] + x) + "," + format(coord[5] + y) + " ");
 			} else if (type == USegmentType.SEG_CLOSE) {
 				// Nothing
 			} else {
@@ -493,7 +524,7 @@ public class SvgGraphics {
 			svgPolygon(shadowManager.getShadowDeltaPoints(deltaShadow, diff, points));
 		}
 	}
-	
+
 	public void svgEllipseShadow(double x, double y, double xRadius, double yRadius, double deltaShadow) {
 		setStrokeColor(null);
 		for (double i = 0; i <= deltaShadow; i += 0.5) {
@@ -503,5 +534,13 @@ public class SvgGraphics {
 		}
 	}
 
-
+	public void svgLineShadow(double x1, double y1, double x2, double y2, double deltaShadow) {
+		final double w = Double.parseDouble(strokeWidth);
+		final ShadowManager shadowManager = new ShadowManager(170, 250);
+		for (double i = 0; i <= deltaShadow; i += 0.5) {
+			setStrokeColor(StringUtils.getAsHtml(shadowManager.getColor(deltaShadow - i, deltaShadow)));
+			final double v = (w / 2 + i * i) / deltaShadow;
+			svgLine(x1 + deltaShadow, y1 + deltaShadow, x2 + deltaShadow, y2 + deltaShadow, getStyle("" + v), false);
+		}
+	}
 }

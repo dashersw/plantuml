@@ -36,7 +36,6 @@ package net.sourceforge.plantuml.graph;
 import java.awt.Graphics2D;
 import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
@@ -91,8 +90,7 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 		double x = 0;
 		double y = 0;
 		for (Member m : members) {
-			final String s = getDisplay(m);
-			final TextBlock bloc = createTextBlock(s);
+			final TextBlock bloc = createTextBlock(m);
 			final Dimension2D dim = bloc.calculateDimension(stringBounder);
 			y += dim.getHeight();
 			x = Math.max(dim.getWidth(), x);
@@ -103,8 +101,18 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 		return new Dimension2DDouble(x, y);
 	}
 
-	private TextBlock createTextBlock(String s) {
-		return TextBlockUtils.create(StringUtils.getWithNewlines(s) , new FontConfiguration(font, color), HorizontalAlignement.LEFT);
+	private TextBlock createTextBlock(Member m) {
+		final boolean withVisibilityChar = skinParam.classAttributeIconSize() == 0;
+		final String s = m.getDisplay(withVisibilityChar);
+		FontConfiguration config = new FontConfiguration(font, color);
+		if (m.isAbstract()) {
+			config = config.italic();
+		}
+		if (m.isStatic()) {
+			config = config.underline();
+		}
+		final TextBlock bloc = TextBlockUtils.create(StringUtils.getWithNewlines(s), config, HorizontalAlignement.LEFT);
+		return bloc;
 	}
 
 	public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
@@ -115,11 +123,10 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 		final Dimension2D dim = calculateDimension(ug.getStringBounder());
 		final UGroup group;
 		if (hasSmallIcon()) {
-			group = new UGroup(new PlacementStrategyVisibility(ug.getStringBounder(), skinParam
-					.getCircledCharacterRadius() + 3));
+			group = new UGroup(new PlacementStrategyVisibility(ug.getStringBounder(),
+					skinParam.getCircledCharacterRadius() + 3));
 			for (Member att : members) {
-				final String s = getDisplay(att);
-				final TextBlock bloc = createTextBlock(s);
+				final TextBlock bloc = createTextBlock(att);
 				final VisibilityModifier modifier = att.getVisibilityModifier();
 				group.add(getUBlock(modifier));
 				group.add(bloc);
@@ -127,18 +134,12 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 		} else {
 			group = new UGroup(new PlacementStrategyY1Y2Left(ug.getStringBounder()));
 			for (Member att : members) {
-				final String s = getDisplay(att);
-				final TextBlock bloc = createTextBlock(s);
+				final TextBlock bloc = createTextBlock(att);
 				group.add(bloc);
 			}
 		}
 		group.drawU(ug, x, y, dim.getWidth(), dim.getHeight());
 
-	}
-
-	private String getDisplay(Member att) {
-		final boolean withVisibilityChar = skinParam.classAttributeIconSize() == 0;
-		return att.getDisplay(withVisibilityChar);
 	}
 
 	private TextBlock getUBlock(final VisibilityModifier modifier) {
@@ -157,8 +158,8 @@ public class MethodsOrFieldsArea2 implements TextBlock {
 				}
 			};
 		}
-		final HtmlColor back = modifier.getBackground() == null ? null : rose.getHtmlColor(skinParam, modifier
-				.getBackground());
+		final HtmlColor back = modifier.getBackground() == null ? null : rose.getHtmlColor(skinParam,
+				modifier.getBackground());
 		final HtmlColor fore = rose.getHtmlColor(skinParam, modifier.getForeground());
 
 		final TextBlock uBlock = modifier.getUBlock(skinParam.classAttributeIconSize(), fore, back);

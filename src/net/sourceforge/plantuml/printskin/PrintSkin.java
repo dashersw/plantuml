@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 7512 $
  *
  */
 package net.sourceforge.plantuml.printskin;
@@ -55,6 +55,8 @@ import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
 import net.sourceforge.plantuml.png.PngIO;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.SimpleContext2D;
@@ -77,30 +79,31 @@ class PrintSkin extends AbstractPSystem {
 	private float ypos = 0;
 	private float maxYpos = 0;
 
-//	public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
-//			InterruptedException {
-//		final List<File> result = Arrays.asList(suggestedFile);
-//		final BufferedImage im = createImage();
-//
-//		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), suggestedFile, 96);
-//		return result;
-//
-//	}
+	// public List<File> createFiles(File suggestedFile, FileFormatOption fileFormat) throws IOException,
+	// InterruptedException {
+	// final List<File> result = Arrays.asList(suggestedFile);
+	// final BufferedImage im = createImage();
+	//
+	// PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), suggestedFile, 96);
+	// return result;
+	//
+	// }
 
-	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat) throws IOException {
+	public void exportDiagram(OutputStream os, StringBuilder cmap, int index, FileFormatOption fileFormat)
+			throws IOException {
 		final BufferedImage im = createImage();
 		PngIO.write(im.getSubimage(0, 0, im.getWidth(), (int) maxYpos), os, 96);
 	}
 
 	private BufferedImage createImage() {
-		final EmptyImageBuilder builder = new EmptyImageBuilder(1500, 830, Color.WHITE);
+		final EmptyImageBuilder builder = new EmptyImageBuilder(2000, 830, Color.WHITE);
 
 		final BufferedImage im = builder.getBufferedImage();
 		final Graphics2D g2d = builder.getGraphics2D();
 
 		ug = new UGraphicG2d(new ColorMapperIdentity(), g2d, null, 1.0);
 
-		for (ComponentType type : ComponentType.all()) {
+		for (ComponentType type : ComponentType.values()) {
 			printComponent(type);
 			ypos += 10;
 			maxYpos = Math.max(maxYpos, ypos);
@@ -115,7 +118,8 @@ class PrintSkin extends AbstractPSystem {
 
 	private void printComponent(ComponentType type) {
 		println(type.name());
-		final Component comp = skin.createComponent(type, new SkinParam(null), toPrint);
+		final Component comp = skin.createComponent(type,
+				ArrowConfiguration.withDirection(ArrowDirection.LEFT_TO_RIGHT_NORMAL), new SkinParam(null), toPrint);
 		if (comp == null) {
 			println("null");
 			return;
@@ -148,8 +152,8 @@ class PrintSkin extends AbstractPSystem {
 	}
 
 	private void println(String s) {
-		final TextBlock textBlock = TextBlockUtils.create(Arrays.asList(s), new FontConfiguration(FONT1, HtmlColor.BLACK),
-				HorizontalAlignement.LEFT);
+		final TextBlock textBlock = TextBlockUtils.create(Arrays.asList(s), new FontConfiguration(FONT1,
+				HtmlColor.BLACK), HorizontalAlignement.LEFT);
 		textBlock.drawU(ug, xpos, ypos);
 		ypos += textBlock.calculateDimension(ug.getStringBounder()).getHeight();
 	}

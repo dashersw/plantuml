@@ -46,6 +46,7 @@ import net.sourceforge.plantuml.statediagram.StateDiagram;
 public class CommandMultilinesNoteOnStateLink extends CommandMultilines<StateDiagram> {
 
 	public CommandMultilinesNoteOnStateLink(final StateDiagram diagram) {
+		// Miss color
 		super(diagram, "(?i)^note\\s+(right|left|top|bottom)?\\s*on\\s+link$", "(?i)^end ?note$");
 	}
 

@@ -33,6 +33,7 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
+import net.sourceforge.plantuml.OptionFlags;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class LinkType {
@@ -83,6 +84,10 @@ public class LinkType {
 		return style == LinkStyle.BOLD;
 	}
 
+	public boolean isInvisible() {
+		return style == LinkStyle.INVISIBLE;
+	}
+
 	public LinkType getDashed() {
 		return new LinkType(decor1, LinkStyle.DASHED, decor2);
 	}
@@ -103,9 +108,15 @@ public class LinkType {
 		return new LinkType(decor1, LinkStyle.INTERFACE_USER, decor2);
 	}
 
-	public LinkType getInv() {
+	public LinkType getInversed() {
 		return new LinkType(decor2, style, decor1);
 	}
+	
+	public LinkType getInvisible() {
+		return new LinkType(decor1, LinkStyle.INVISIBLE, decor2);
+	}
+
+
 
 	public String getSpecificDecoration() {
 		final StringBuilder sb = new StringBuilder();
@@ -163,16 +174,14 @@ public class LinkType {
 		if (decor1 == LinkDecor.PLUS || decor2 == LinkDecor.PLUS) {
 			sb.append(",arrowsize=1.5");
 		}
-
-		// if (style == LinkStyle.DASHED) {
-		// sb.append(",style=dashed");
-		// }
-		// if (style == LinkStyle.DOTTED) {
-		// sb.append(",style=dotted,");
-		// }
-		// if (style == LinkStyle.BOLD) {
-		// sb.append(",style=bold,");
-		// }
+		if (OptionFlags.NEW_DIAMOND) {
+			if (decor1 == LinkDecor.COMPOSITION || decor2 == LinkDecor.COMPOSITION) {
+				sb.append(",arrowsize=1.2");
+			}
+			if (decor1 == LinkDecor.AGREGATION || decor2 == LinkDecor.AGREGATION) {
+				sb.append(",arrowsize=1.2");
+			}
+		}
 
 		return sb.toString();
 	}

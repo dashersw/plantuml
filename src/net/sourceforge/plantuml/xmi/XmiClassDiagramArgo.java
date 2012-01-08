@@ -109,7 +109,7 @@ public class XmiClassDiagramArgo implements IXmiClassDiagram {
 		model.appendChild(ownedElement);
 
 		for (final Entity ent : classDiagram.entities().values()) {
-			if (isStandalone(ent) == false) {
+			if (classDiagram.isStandalone(ent) == false) {
 				continue;
 			}
 			final Element cla = createEntityNode(ent);
@@ -122,15 +122,6 @@ public class XmiClassDiagramArgo implements IXmiClassDiagram {
 			addLink(link);
 		}
 		// }
-	}
-
-	private boolean isStandalone(IEntity ent) {
-		for (final Link link : classDiagram.getLinks()) {
-			if (link.getEntity1() == ent || link.getEntity2() == ent) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public static String forXMI(String s) {

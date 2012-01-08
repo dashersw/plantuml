@@ -35,6 +35,6 @@ package net.sourceforge.plantuml.cucadiagram;
 
 public enum LinkStyle {
 
-	NORMAL, DASHED, INTERFACE_PROVIDER, INTERFACE_USER, DOTTED, BOLD;
+	NORMAL, DASHED, INTERFACE_PROVIDER, INTERFACE_USER, DOTTED, BOLD, INVISIBLE;
 
 }

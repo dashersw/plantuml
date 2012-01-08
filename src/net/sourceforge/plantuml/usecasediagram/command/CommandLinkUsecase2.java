@@ -183,7 +183,7 @@ public class CommandLinkUsecase2 extends SingleLineCommand2<UsecaseDiagram> {
 	private LinkType getLinkTypeInv(RegexPartialMatch regexPartialMatch) {
 		final String queue = regexPartialMatch.get(2).trim() + regexPartialMatch.get(4).trim();
 		final String key = regexPartialMatch.get(1);
-		return getLinkType(queue, key).getInv();
+		return getLinkType(queue, key).getInversed();
 	}
 
 	private LinkType getLinkType(String queue, String key) {

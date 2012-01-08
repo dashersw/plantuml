@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
@@ -51,12 +52,14 @@ public class ComponentTextSelfArrow implements Component {
 	private final ComponentType type;
 	private final List<? extends CharSequence> stringsToDisplay;
 	private final FileFormat fileFormat;
+	private final ArrowConfiguration config;
 
-	public ComponentTextSelfArrow(ComponentType type, List<? extends CharSequence> stringsToDisplay,
+	public ComponentTextSelfArrow(ComponentType type, ArrowConfiguration config, List<? extends CharSequence> stringsToDisplay,
 			FileFormat fileFormat) {
 		this.type = type;
 		this.stringsToDisplay = stringsToDisplay;
 		this.fileFormat = fileFormat;
+		this.config = config;
 	}
 
 	public void drawU(UGraphic ug, Area area, Context2D context) {
@@ -68,7 +71,7 @@ public class ComponentTextSelfArrow implements Component {
 		charArea.fillRect(' ', 0, 0, width, height);
 
 		if (fileFormat == FileFormat.UTXT) {
-			if (type.getArrowConfiguration().isDotted()) {
+			if (config.isDotted()) {
 				charArea.drawStringLR("\u2500 \u2500 \u2510", 0, 0);
 				charArea.drawStringLR("|", 4, 1);
 				charArea.drawStringLR("< \u2500 \u2518", 0, 2);
@@ -78,7 +81,7 @@ public class ComponentTextSelfArrow implements Component {
 				charArea.drawStringLR("<\u2500\u2500\u2500\u2518", 0, 2);
 			}
 		} else {
-			if (type.getArrowConfiguration().isDotted()) {
+			if (config.isDotted()) {
 				charArea.drawStringLR("- - .", 0, 0);
 				charArea.drawStringLR("|", 4, 1);
 				charArea.drawStringLR("< - '", 0, 2);

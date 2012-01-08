@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7357 $
+ * Revision $Revision: 7527 $
  *
  */
 package net.sourceforge.plantuml;
@@ -47,6 +47,8 @@ public class OptionFlags {
 	static public final boolean GRAPHVIZCACHE = false;
 	static public final boolean SVEK = false;
 	static public final boolean TRACE_DOT = false;
+	static public final boolean NEW_DIAMOND = true;
+	
 
 	void reset() {
 		reset(false);

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7328 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.graphic;
@@ -138,7 +138,7 @@ class DrawableSet {
 		if (englober == null) {
 			return height;
 		}
-		final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober
+		final Component comp = skin.createComponent(ComponentType.ENGLOBER, null, skinParam, englober
 				.getParticipantEnglober().getTitle());
 		final double heightEnglober = comp.getPreferredHeight(stringBounder);
 		return height + heightEnglober;
@@ -167,7 +167,7 @@ class DrawableSet {
 	public double getOffsetForEnglobers(StringBounder stringBounder) {
 		double result = 0;
 		for (ParticipantEngloberContexted englober : getExistingParticipantEnglober()) {
-			final Component comp = skin.createComponent(ComponentType.ENGLOBER, skinParam, englober
+			final Component comp = skin.createComponent(ComponentType.ENGLOBER, null, skinParam, englober
 					.getParticipantEnglober().getTitle());
 			final double height = comp.getPreferredHeight(stringBounder);
 			if (height > result) {
@@ -360,7 +360,7 @@ class DrawableSet {
 	private Component getEngloberComponent(ParticipantEnglober englober) {
 		final ISkinParam s = englober.getBoxColor() == null ? skinParam : new SkinParamBackcolored(skinParam, englober
 				.getBoxColor());
-		return skin.createComponent(ComponentType.ENGLOBER, s, englober.getTitle());
+		return skin.createComponent(ComponentType.ENGLOBER, null, s, englober.getTitle());
 	}
 
 	public double getX1(ParticipantEngloberContexted englober) {

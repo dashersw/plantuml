@@ -44,6 +44,7 @@ import net.sourceforge.plantuml.statediagram.StateDiagram;
 public class CommandNoteOnStateLink extends SingleLineCommand<StateDiagram> {
 
 	public CommandNoteOnStateLink(StateDiagram diagram) {
+		// Miss color
 		super(diagram, "(?i)^note\\s+(right|left|top|bottom)?\\s*on\\s+link\\s*:\\s*(.*)$");
 	}
 

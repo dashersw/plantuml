@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5019 $
+ * Revision $Revision: 7504 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
@@ -45,17 +45,19 @@ import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
 public class CommandNoteActivity extends SingleLineCommand<ActivityDiagram> {
 
 	public CommandNoteActivity(ActivityDiagram diagram) {
-		super(diagram, "(?i)^note\\s+(right|left|top|bottom)\\s*:\\s*(.*)$");
+		super(diagram, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*:\\s*(.*)$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
 		final String pos = arg.get(0);
-		final Entity note = getSystem().createNote("GN" + UniqueSequence.getValue(), arg.get(1));
+		final Entity note = getSystem().createNote("GN" + UniqueSequence.getValue(), arg.get(2));
+		note.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get(1)));
 
 		IEntity activity = getSystem().getLastEntityConsulted();
 		if (activity == null) {

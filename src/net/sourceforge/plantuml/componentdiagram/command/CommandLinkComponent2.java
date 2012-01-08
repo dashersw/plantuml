@@ -107,7 +107,7 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_RIGHT").get(4));
 		} else {
 			queue = arg.get("AR_TO_LEFT").get(2) + arg.get("AR_TO_LEFT").get(4);
-			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInv();
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInversed();
 		}
 		final Direction dir = getDirection(arg);
 
@@ -149,7 +149,7 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_RIGHT").get(4));
 		} else {
 			queue = arg.get("AR_TO_LEFT").get(2) + arg.get("AR_TO_LEFT").get(4);
-			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInv();
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInversed();
 
 		}
 

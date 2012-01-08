@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Context2D;
@@ -51,9 +52,11 @@ public class ComponentTextArrow implements Component {
 	private final ComponentType type;
 	private final List<? extends CharSequence> stringsToDisplay;
 	private final FileFormat fileFormat;
+	private final ArrowConfiguration config;
 
-	public ComponentTextArrow(ComponentType type, List<? extends CharSequence> stringsToDisplay, FileFormat fileFormat) {
+	public ComponentTextArrow(ComponentType type, ArrowConfiguration config, List<? extends CharSequence> stringsToDisplay, FileFormat fileFormat) {
 		this.type = type;
+		this.config = config;
 		this.stringsToDisplay = stringsToDisplay;
 		this.fileFormat = fileFormat;
 	}
@@ -67,15 +70,15 @@ public class ComponentTextArrow implements Component {
 
 		final int yarrow = height - 2;
 		charArea.drawHLine(fileFormat == FileFormat.UTXT ? '\u2500' : '-', yarrow, 1, width);
-		if (type.getArrowConfiguration().isDotted()) {
+		if (config.isDotted()) {
 			for (int i = 1; i < width; i += 2) {
 				charArea.drawChar(' ', i, yarrow);
 			}
 		}
 
-		if (type.getArrowConfiguration().isLeftToRightNormal()) {
+		if (config.isLeftToRightNormal()) {
 			charArea.drawChar('>', width - 1, yarrow);
-		} else if (type.getArrowConfiguration().isRightToLeftReverse()) {
+		} else if (config.isRightToLeftReverse()) {
 			charArea.drawChar('<', 1, yarrow);
 		} else {
 			throw new UnsupportedOperationException();

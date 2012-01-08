@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.sequencediagram.Message;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 import net.sourceforge.plantuml.skin.ArrowConfiguration;
+import net.sourceforge.plantuml.skin.ArrowDecoration;
 import net.sourceforge.plantuml.skin.ArrowDirection;
 import net.sourceforge.plantuml.skin.ArrowHead;
 import net.sourceforge.plantuml.skin.ArrowPart;
@@ -68,18 +69,20 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 						new RegexLeaf("PART1LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), //
 						new RegexLeaf("PART1CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
 						"\\s*"), //
-				new RegexLeaf("ARROW", "([=-]+(>>?|//?|\\\\\\\\?)|(<<?|//?|\\\\\\\\?)[=-]+)"), //
-				new RegexLeaf("\\s*"), // 
-				new RegexOr("PART2", // 
-						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), // 
-						new RegexLeaf("PART2LONG", "\"([^\"]+)\""), // 
-						new RegexLeaf("PART2LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), // 
+				new RegexOr("ARROW", //
+						new RegexLeaf("ARROW_DIRECT", "( o)?[=-]+(>>?|//?|\\\\\\\\?|x )([ox] )?"), //
+						new RegexLeaf("ARROW_REVERSE", "( [xo])?( x|<<?|//?|\\\\\\\\?)[=-]+(o )?")), //
+				new RegexLeaf("\\s*"), //
+				new RegexOr("PART2", //
+						new RegexLeaf("PART2CODE", "([\\p{L}0-9_.@]+)"), //
+						new RegexLeaf("PART2LONG", "\"([^\"]+)\""), //
+						new RegexLeaf("PART2LONGCODE", "\"([^\"]+)\"\\s*as\\s+([\\p{L}0-9_.@]+)"), //
 						new RegexLeaf("PART2CODELONG", "([\\p{L}0-9_.@]+)\\s+as\\s*\"([^\"]+)\"")), new RegexLeaf(
-						"\\s*"), // 
+						"\\s*"), //
 				new RegexLeaf("ACTIVATION", "(?:([+*!-]+)?)"), //
-				new RegexLeaf("\\s*"), // 
+				new RegexLeaf("\\s*"), //
 				new RegexLeaf("LIFECOLOR", "(?:(#\\w+)?)"), //
-				new RegexLeaf("\\s*"), // 
+				new RegexLeaf("\\s*"), //
 				new RegexLeaf("MESSAGE", "(?::\\s*(.*))?$"));
 	}
 
@@ -105,21 +108,49 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		return getSystem().getOrCreateParticipant(code, display);
 	}
 
+	private boolean decorationAtStart(Map<String, RegexPartialMatch> arg2, String decoration) {
+		return decorationAtPosition(arg2, 0, 2, decoration);
+	}
+
+	private boolean decorationAtEnd(Map<String, RegexPartialMatch> arg2, String decoration) {
+		return decorationAtPosition(arg2, 2, 0, decoration);
+	}
+
+	private boolean decorationAtPosition(Map<String, RegexPartialMatch> arg2, int posDirect, int posReverse,
+			String decoration) {
+		final String s1 = arg2.get("ARROW_DIRECT").get(posDirect);
+		if (s1 != null && s1.contains(decoration)) {
+			return true;
+		}
+		final String s2 = arg2.get("ARROW_REVERSE").get(posReverse);
+		if (s2 != null && s2.contains(decoration)) {
+			return true;
+		}
+		return false;
+	}
+
 	@Override
 	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg2) {
 
-		final String arrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
+		String fullArrow = StringUtils.manageArrowForSequence(arg2.get("ARROW").get(0));
+		final String arrowWithX = fullArrow.replaceAll("[ o]", "");
+		final String arrow = fullArrow.replaceAll("[ ox]", "");
+		final boolean circleAtStart = decorationAtStart(arg2, "o");
+		final boolean circleAtEnd = decorationAtEnd(arg2, "o");
+		final boolean crossAtEnd = decorationAtEnd(arg2, "x") || decorationAtPosition(arg2, 1, 1, "x");
 		Participant p1;
 		Participant p2;
 
-		if (arrow.endsWith(">") || arrow.endsWith("\\") || arrow.endsWith("/")) {
+		if (arrowWithX.endsWith(">") || arrowWithX.endsWith("\\") || arrowWithX.endsWith("/")
+				|| arrowWithX.endsWith("x")) {
 			p1 = getOrCreateParticipant(arg2, "PART1");
 			p2 = getOrCreateParticipant(arg2, "PART2");
-		} else if (arrow.startsWith("<") || arrow.startsWith("\\") || arrow.startsWith("/")) {
+		} else if (arrowWithX.startsWith("x") || arrowWithX.startsWith("<") || arrowWithX.startsWith("\\")
+				|| arrowWithX.startsWith("/")) {
 			p2 = getOrCreateParticipant(arg2, "PART1");
 			p1 = getOrCreateParticipant(arg2, "PART2");
 		} else {
-			throw new IllegalStateException(arg2.toString());
+			throw new IllegalStateException(fullArrow);
 		}
 
 		final boolean sync = arrow.endsWith(">>") || arrow.startsWith("<<") || arrow.contains("\\\\")
@@ -147,6 +178,18 @@ public class CommandArrow extends SingleLineCommand2<SequenceDiagram> {
 		if (arrow.endsWith("/") || arrow.startsWith("\\")) {
 			config = config.withPart(ArrowPart.BOTTOM_PART);
 		}
+		if (circleAtEnd) {
+			config = config.withDecorationEnd(ArrowDecoration.CIRCLE);
+		}
+		if (circleAtStart) {
+			config = config.withDecorationStart(ArrowDecoration.CIRCLE);
+		}
+		if (crossAtEnd) {
+			config = config.withDecorationEnd(ArrowDecoration.CROSSX);
+		}
+		// if (crossAtStart) {
+		// config = config.withDecorationStart(ArrowDecoration.CROSSX);
+		// }
 
 		final String activationSpec = arg2.get("ACTIVATION").get(0);
 

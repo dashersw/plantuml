@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 6046 $
+ * Revision $Revision: 7511 $
  *
  */
 package net.sourceforge.plantuml.asciiart;
@@ -37,6 +37,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.skin.ArrowConfiguration;
 import net.sourceforge.plantuml.skin.Component;
 import net.sourceforge.plantuml.skin.ComponentType;
 import net.sourceforge.plantuml.skin.Skin;
@@ -49,20 +50,19 @@ public class TextSkin implements Skin {
 		this.fileFormat = fileFormat;
 	}
 
-	public Component createComponent(ComponentType type, ISkinParam param, List<? extends CharSequence> stringsToDisplay) {
+	public Component createComponent(ComponentType type, ArrowConfiguration config, ISkinParam param,
+			List<? extends CharSequence> stringsToDisplay) {
 		if (type == ComponentType.PARTICIPANT_HEAD || type == ComponentType.PARTICIPANT_TAIL) {
 			return new ComponentTextParticipant(type, stringsToDisplay, fileFormat);
 		}
 		if (type == ComponentType.ACTOR_HEAD || type == ComponentType.ACTOR_TAIL) {
 			return new ComponentTextActor(type, stringsToDisplay, fileFormat);
 		}
-		if (type.isArrow()
-				&& (type.getArrowConfiguration().isLeftToRightNormal() || type.getArrowConfiguration()
-						.isRightToLeftReverse())) {
-			return new ComponentTextArrow(type, stringsToDisplay, fileFormat);
+		if (type.isArrow() && (config.isLeftToRightNormal() || config.isRightToLeftReverse())) {
+			return new ComponentTextArrow(type, config, stringsToDisplay, fileFormat);
 		}
-		if (type.isArrow() && type.getArrowConfiguration().isSelfArrow()) {
-			return new ComponentTextSelfArrow(type, stringsToDisplay, fileFormat);
+		if (type.isArrow() && config.isSelfArrow()) {
+			return new ComponentTextSelfArrow(type, config, stringsToDisplay, fileFormat);
 		}
 		if (type == ComponentType.PARTICIPANT_LINE) {
 			return new ComponentTextLine(fileFormat);

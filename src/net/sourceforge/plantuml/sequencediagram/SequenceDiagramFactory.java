@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7354 $
+ * Revision $Revision: 7520 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
@@ -85,7 +85,7 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandParticipantA3(system));
 		addCommand(new CommandParticipantA4(system));
 		addCommand(new CommandArrow(system));
-		addCommand(new CommandArrowCrossX(system));
+		// addCommand(new CommandArrowCrossX(system));
 		addCommand(new CommandExoArrowLeft(system));
 		addCommand(new CommandExoArrowRight(system));
 		addCommand(new CommandNoteSequence(system));
