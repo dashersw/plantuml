@@ -50,9 +50,14 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines<Objec
 	public CommandCreateEntityObjectMultilines(ObjectDiagram diagram) {
 		super(
 				diagram,
-				"(?i)^(object)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?([\\p{L}0-9_.]+)(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?\\s*\\{\\s*$",
-				"(?i)^\\s*\\}\\s*$");
+				"(?i)^(object)\\s+(?:\"([^\"]+)\"\\s+as\\s+)?([\\p{L}0-9_.]+)(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?\\s*\\{\\s*$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^\\s*\\}\\s*$";
+	}
+
 
 	public CommandExecutionResult execute(List<String> lines) {
 		StringUtils.trim(lines, true);

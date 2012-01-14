@@ -28,31 +28,51 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6575 $
+ * Revision $Revision: 6209 $
  *
  */
 package net.sourceforge.plantuml.command;
 
 import java.util.List;
 
+import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.Entity;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandCreateNote extends SingleLineCommand<AbstractEntityDiagram> {
+public class CommandPackageEmpty extends SingleLineCommand<AbstractEntityDiagram> {
 
-	public CommandCreateNote(AbstractEntityDiagram diagram) {
-		super(diagram, "(?i)^note\\s+\"([^\"]+)\"\\s+as\\s+([\\p{L}0-9_.]+)\\s*(#\\w+)?$");
+	public CommandPackageEmpty(AbstractEntityDiagram diagram) {
+		super(diagram,
+				"(?i)^package\\s+(\"[^\"]+\"|[^#\\s{}]*)(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(#[0-9a-fA-F]{6}|#?\\w+)?\\s*\\{\\s*\\}$");
 	}
 
 	@Override
 	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String display = arg.get(0);
-		final String code = arg.get(1);
-		final Entity entity = getSystem().createEntity(code, display, EntityType.NOTE);
-		assert entity != null;
-		entity.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get(2)));
+		final String code;
+		final String display;
+		if (arg.get(1) == null) {
+			if (StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0)).length() == 0) {
+				code = "##" + UniqueSequence.getValue();
+				display = null;
+			} else {
+				code = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
+				display = code;
+			}
+		} else {
+			display = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg.get(0));
+			code = arg.get(1);
+		}
+		final Group currentPackage = getSystem().getCurrentGroup();
+		final Group p = getSystem().getOrCreateGroup(code, display, null, GroupType.PACKAGE, currentPackage);
+		p.setBold(true);
+		final String color = arg.get(2);
+		if (color != null) {
+			p.setBackColor(HtmlColor.getColorIfValid(color));
+		}
+		getSystem().endGroup();
 		return CommandExecutionResult.ok();
 	}
 

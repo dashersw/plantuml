@@ -53,7 +53,12 @@ import net.sourceforge.plantuml.skin.VisibilityModifier;
 public class CommandCreateEntityClassMultilines2 extends CommandMultilines2<ClassDiagram> {
 
 	public CommandCreateEntityClassMultilines2(ClassDiagram diagram) {
-		super(diagram, getRegexConcat(), "(?i)^\\s*\\}\\s*$");
+		super(diagram, getRegexConcat());
+	}
+
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^\\s*\\}\\s*$";
 	}
 
 	private static RegexConcat getRegexConcat() {

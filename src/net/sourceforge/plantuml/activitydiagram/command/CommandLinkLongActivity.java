@@ -35,6 +35,7 @@ package net.sourceforge.plantuml.activitydiagram.command;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import net.sourceforge.plantuml.Direction;
 import net.sourceforge.plantuml.StringUtils;
@@ -59,9 +60,14 @@ import net.sourceforge.plantuml.graphic.HtmlColor;
 public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram> {
 
 	public CommandLinkLongActivity(final ActivityDiagram diagram) {
-		super(diagram, getRegexConcat(), //
-				"(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(\\<\\<.*\\>\\>)?\\s*(?:in\\s+(\"[^\"]+\"|\\S+))?\\s*(#\\w+)?$"); //
+		super(diagram, getRegexConcat());
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^\\s*([^\"]*)\"(?:\\s+as\\s+([\\p{L}0-9_.]+))?\\s*(\\<\\<.*\\>\\>)?\\s*(?:in\\s+(\"[^\"]+\"|\\S+))?\\s*(#\\w+)?$";
+	}
+
 
 	static RegexConcat getRegexConcat() {
 		return new RegexConcat(new RegexLeaf("^"), //
@@ -109,7 +115,7 @@ public class CommandLinkLongActivity extends CommandMultilines2<ActivityDiagram>
 			}
 		}
 
-		final List<String> lineLast = StringUtils.getSplit(getEnding(), lines.get(lines.size() - 1));
+		final List<String> lineLast = StringUtils.getSplit(Pattern.compile(getPatternEnd()), lines.get(lines.size() - 1));
 		if (StringUtils.isNotEmpty(lineLast.get(0))) {
 			if (sb.toString().endsWith("\\n") == false) {
 				sb.append("\\n");

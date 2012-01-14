@@ -28,12 +28,14 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4239 $
+ * Revision $Revision: 7558 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram.command;
 
-import net.sourceforge.plantuml.command.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.note.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
 
 public class CommandMultilinesComponentNoteEntity extends AbstractCommandMultilinesNoteEntity {
@@ -41,7 +43,11 @@ public class CommandMultilinesComponentNoteEntity extends AbstractCommandMultili
 	public CommandMultilinesComponentNoteEntity(final ComponentDiagram system) {
 		super(
 				system,
-				"(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?([\\p{L}0-9_.]+|\\(\\)\\s*[\\p{L}0-9_.]+|\\(\\)\\s*\"[^\"]+\"|\\[[^\\]*]+[^\\]]*\\])\\s*(#\\w+)?$");
+				new RegexOr("ENTITY",
+						new RegexLeaf("[\\p{L}0-9_.]+"),
+						new RegexLeaf("\\(\\)\\s*[\\p{L}0-9_.]+"),
+						new RegexLeaf("\\(\\)\\s*\"[^\"]+\""),
+						new RegexLeaf("\\[[^\\]*]+[^\\]]*\\]")));
 	}
 
 }

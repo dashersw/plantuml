@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7225 $
+ * Revision $Revision: 7559 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
@@ -38,13 +38,14 @@ import java.util.List;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.NoteStyle;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandNoteOverSeveral extends SingleLineCommand<SequenceDiagram> {
+public class CommandNoteOverSeveral extends SingleLineCommand<SequenceDiagram> implements CommandNote {
 
 	public CommandNoteOverSeveral(SequenceDiagram sequenceDiagram) {
 		super(

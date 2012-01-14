@@ -27,36 +27,39 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 6575 $
+ *
+ * Revision $Revision: 6923 $
  *
  */
-package net.sourceforge.plantuml.command;
+package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
-import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.cucadiagram.Link;
 
-public class CommandMultilinesStandaloneNote extends CommandMultilines<AbstractEntityDiagram> {
+public class CommandNoteOnStateLink extends SingleLineCommand<AbstractEntityDiagram> implements CommandNote {
 
-	public CommandMultilinesStandaloneNote(final AbstractEntityDiagram system) {
-		super(system, "(?i)^(note)\\s+as\\s+([\\p{L}0-9_.]+)\\s*(#\\w+)?$", "(?i)^end ?note$");
+	public CommandNoteOnStateLink(AbstractEntityDiagram diagram) {
+		// Miss color
+		super(diagram, "(?i)^note\\s+(right|left|top|bottom)?\\s*on\\s+link\\s*:\\s*(.*)$");
 	}
 
-	public CommandExecutionResult execute(List<String> lines) {
+	@Override
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final Link link = getSystem().getLastStateLink();
+		if (link == null) {
+			return CommandExecutionResult.error("No link defined");
+		}
+		Position position = Position.BOTTOM;
+		if (arg.get(0) != null) {
+			position = Position.valueOf(arg.get(0).toUpperCase());
+		}
 
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
-
-		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		final String display = StringUtils.getMergedLines(strings);
-
-		final EntityType type = EntityType.NOTE;
-		final String code = line0.get(1);
-		getSystem().createEntity(code, display, type).setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get(2)));
-
+		link.addNote(arg.get(1), position);
 		return CommandExecutionResult.ok();
 	}
 

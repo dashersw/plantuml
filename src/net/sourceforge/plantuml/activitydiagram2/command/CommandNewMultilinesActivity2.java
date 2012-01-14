@@ -44,8 +44,14 @@ import net.sourceforge.plantuml.command.CommandMultilines;
 public class CommandNewMultilinesActivity2 extends CommandMultilines<ActivityDiagram2> {
 
 	public CommandNewMultilinesActivity2(final ActivityDiagram2 system) {
-		super(system, "(?i)^\\s*[-*<>^]\\s*\"\\s*.*$", "(?i)^.*\\s*\"\\s*$");
+		super(system, "(?i)^\\s*[-*<>^]\\s*\"\\s*.*$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^.*\\s*\"\\s*$";
+	}
+
 
 	public final CommandExecutionResult execute(List<String> lines) {
 		if (getSystem().entities().size() == 0) {

@@ -31,14 +31,18 @@
  */
 package net.sourceforge.plantuml.usecasediagram.command;
 
-import net.sourceforge.plantuml.command.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.note.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.usecasediagram.UsecaseDiagram;
 
 public class CommandMultilinesUsecaseNoteEntity extends AbstractCommandMultilinesNoteEntity {
 
 	public CommandMultilinesUsecaseNoteEntity(final UsecaseDiagram system) {
-		super(system,
-				"(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?([\\p{L}0-9_.]+|:[^:]+:|\\((?!\\*\\))[^)]+\\))\\s*(#\\w+)?$");
+		super(system, new RegexOr("ENTITY", //
+				new RegexLeaf("[\\p{L}0-9_.]+"), //
+				new RegexLeaf(":[^:]+:"), //
+				new RegexLeaf("\\((?!\\*\\))[^)]+\\)")));
 	}
 
 }

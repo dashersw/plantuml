@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7225 $
+ * Revision $Revision: 7559 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
@@ -38,17 +38,24 @@ import java.util.List;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
+import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.Note;
 import net.sourceforge.plantuml.sequencediagram.NoteStyle;
 import net.sourceforge.plantuml.sequencediagram.Participant;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> {
+public class CommandMultilinesNoteOverSeveral extends CommandMultilines<SequenceDiagram> implements CommandNote {
 
 	public CommandMultilinesNoteOverSeveral(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^(note|hnote|rnote)\\s+over\\s+([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*\\,\\s*([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*(#\\w+)?$", "(?i)^end ?(note|hnote|rnote)$");
+		super(sequenceDiagram, "(?i)^(note|hnote|rnote)\\s+over\\s+([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*\\,\\s*([\\p{L}0-9_.@]+|\"[^\"]+\")\\s*(#\\w+)?$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?(note|hnote|rnote)$";
+	}
+
 
 	public CommandExecutionResult execute(List<String> lines) {
 		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());

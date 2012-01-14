@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6921 $
+ * Revision $Revision: 7558 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram.command;
@@ -38,14 +38,20 @@ import java.util.List;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
+import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
 import net.sourceforge.plantuml.sequencediagram.NotePosition;
 import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 
-public class CommandMultilinesNoteOnArrow extends CommandMultilines<SequenceDiagram> {
+public class CommandMultilinesNoteOnArrow extends CommandMultilines<SequenceDiagram> implements CommandNote {
 
 	public CommandMultilinesNoteOnArrow(final SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+(right|left)\\s*(#\\w+)?$", "(?i)^end ?note$");
+		super(sequenceDiagram, "(?i)^note\\s+(right|left)\\s*(#\\w+)?$");
+	}
+
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?note$";
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {

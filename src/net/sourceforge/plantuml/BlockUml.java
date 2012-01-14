@@ -45,8 +45,9 @@ public class BlockUml {
 	private final List<String> data;
 	private PSystem system;
 
-	private static final Pattern patternFilename = Pattern.compile("^@start\\S+\\s+\"?(.*?)\"?$");
-
+	//private static final Pattern patternFilename = Pattern.compile("^@start\\S+\\s+\"?(.*?)\"?$");
+	private static final Pattern patternFilename = Pattern.compile("^@start[^\\s{}\"]+[\\s{][\\s\"]*([^\"]*?)[\\s}\"]*$");
+	
 	BlockUml(String... strings) {
 		this(Arrays.asList(strings));
 	}

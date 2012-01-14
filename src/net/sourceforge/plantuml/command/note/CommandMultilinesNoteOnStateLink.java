@@ -27,26 +27,27 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 7558 $
+ * 
+ * Revision $Revision: 6922 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
 import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.cucadiagram.Link;
 
-public class CommandMultilinesNoteActivityLink extends CommandMultilines<ActivityDiagram> implements CommandNote {
+public class CommandMultilinesNoteOnStateLink extends CommandMultilines<AbstractEntityDiagram> implements CommandNote {
 
-	public CommandMultilinesNoteActivityLink(final ActivityDiagram system) {
-		super(system, "(?i)^note\\s+on\\s+link$");
+	public CommandMultilinesNoteOnStateLink(final AbstractEntityDiagram diagram) {
+		// Miss color
+		super(diagram, "(?i)^note\\s+(right|left|top|bottom)?\\s*on\\s+link$");
 	}
 
 	@Override
@@ -54,17 +55,28 @@ public class CommandMultilinesNoteActivityLink extends CommandMultilines<Activit
 		return "(?i)^end ?note$";
 	}
 
-	public final CommandExecutionResult execute(List<String> lines) {
-
+	public CommandExecutionResult execute(List<String> lines) {
 		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		// final String s = StringUtils.getMergedLines(strings);
+		if (strings.size() > 0) {
+			final List<CharSequence> n = StringUtils.manageEmbededDiagrams(strings);
 
-		final Link link = getSystem().getLastActivityLink();
-		if (link == null) {
-			return CommandExecutionResult.error("Nothing to note");
+			final Link link = getSystem().getLastStateLink();
+			if (link == null) {
+				return CommandExecutionResult.error("No link defined");
+			}
+			Position position = Position.BOTTOM;
+			final Matcher m = getStartingPattern().matcher(lines.get(0));
+			if (m.find()) {
+				final String pos = m.group(1);
+				if (pos != null) {
+					position = Position.valueOf(pos.toUpperCase());
+				}
+			}
+
+			link.addNote(n, position);
+			return CommandExecutionResult.ok();
 		}
-		link.addNote(strings, Position.BOTTOM);
-		return CommandExecutionResult.ok();
+		return CommandExecutionResult.error("No note defined");
 	}
 
 }

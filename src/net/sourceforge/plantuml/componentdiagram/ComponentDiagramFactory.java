@@ -28,21 +28,21 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7490 $
+ * Revision $Revision: 7559 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram;
 
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandCreateNote;
 import net.sourceforge.plantuml.command.CommandEndNamespace;
 import net.sourceforge.plantuml.command.CommandEndPackage;
-import net.sourceforge.plantuml.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.command.CommandNamespace;
-import net.sourceforge.plantuml.command.CommandNoteEntity;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
+import net.sourceforge.plantuml.command.note.CommandCreateNote;
+import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
+import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateActorInComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateComponent;
@@ -74,7 +74,7 @@ public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandNamespace(system));
 		addCommand(new CommandEndNamespace(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));
-		addCommand(new CommandNoteEntity(system));
+		addCommand(new CommandNoteEntityOld(system));
 
 		addCommand(new CommandCreateNote(system));
 		addCommand(new CommandUrl(system));

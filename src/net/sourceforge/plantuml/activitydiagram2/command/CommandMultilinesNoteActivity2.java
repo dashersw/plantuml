@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.activitydiagram2.ActivityDiagram2;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
 import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -49,11 +50,17 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandMultilinesNoteActivity2 extends CommandMultilines<ActivityDiagram2> {
+public class CommandMultilinesNoteActivity2 extends CommandMultilines<ActivityDiagram2> implements CommandNote {
 
 	public CommandMultilinesNoteActivity2(final ActivityDiagram2 system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*$", "(?i)^end ?note$");
+		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?note$";
+	}
+
 
 	public final CommandExecutionResult execute(List<String> lines) {
 

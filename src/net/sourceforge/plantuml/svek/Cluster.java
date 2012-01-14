@@ -56,13 +56,10 @@ import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.posimo.Moveable;
 import net.sourceforge.plantuml.skin.rose.Rose;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
-import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
@@ -242,27 +239,16 @@ public class Cluster implements Moveable {
 		}
 		final PackageStyle style = dotData.getSkinParam().getPackageStyle();
 		if (title != null) {
-			if (style == PackageStyle.RECT) {
-				drawWithTitleRect(ug, x, y, borderColor, dotData);
-			} else {
-				drawWithTitle(ug, x, y, borderColor, dotData);
-			}
+			final HtmlColor stateBack = ClusterDecoration.getStateBackColor(getBackColor(), dotData.getSkinParam(), group.getStereotype());
+			final ClusterDecoration decoration = new ClusterDecoration(style, title, stateBack, minX, minY, maxX, maxY);
+			decoration.drawU(ug, x, y, borderColor, dotData.getSkinParam().shadowing());
 			return;
 		}
 		final URectangle rect = new URectangle(maxX - minX, maxY - minY);
 		if (dotData.getSkinParam().shadowing()) {
 			rect.setDeltaShadow(3.0);
 		}
-		HtmlColor stateBack = getBackColor();
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.packageBackground, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.background, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = HtmlColor.WHITE;
-		}
+		final HtmlColor stateBack = ClusterDecoration.getStateBackColor(getBackColor(), dotData.getSkinParam(), group.getStereotype());
 		ug.getParam().setBackcolor(stateBack);
 		ug.getParam().setColor(borderColor);
 		ug.getParam().setStroke(new UStroke(2));
@@ -270,79 +256,6 @@ public class Cluster implements Moveable {
 		ug.getParam().setStroke(new UStroke());
 	}
 
-	private UPolygon getSpecificFrontier(StringBounder stringBounder) {
-		final double width = maxX - minX;
-		final double height = maxY - minY;
-		final Dimension2D dimTitle = title.calculateDimension(stringBounder);
-		final double wtitle = dimTitle.getWidth() + marginTitleX1 + marginTitleX2;
-		final double htitle = dimTitle.getHeight() + marginTitleY1 + marginTitleY2;
-		final UPolygon shape = new UPolygon();
-		shape.addPoint(0, 0);
-		shape.addPoint(wtitle, 0);
-		shape.addPoint(wtitle + marginTitleX3, htitle);
-		shape.addPoint(width, htitle);
-		shape.addPoint(width, height);
-		shape.addPoint(0, height);
-		shape.addPoint(0, 0);
-		return shape;
-	}
-
-	private void drawWithTitle(UGraphic ug, double x, double y, HtmlColor borderColor, DotData dotData) {
-		final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
-		final double wtitle = dimTitle.getWidth() + marginTitleX1 + marginTitleX2;
-		final double htitle = dimTitle.getHeight() + marginTitleY1 + marginTitleY2;
-		final UPolygon shape = getSpecificFrontier(ug.getStringBounder());
-		if (dotData.getSkinParam().shadowing()) {
-			shape.setDeltaShadow(3.0);
-		}
-
-		HtmlColor stateBack = getBackColor();
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.packageBackground, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.background, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = HtmlColor.WHITE;
-		}
-		ug.getParam().setBackcolor(stateBack);
-		ug.getParam().setColor(borderColor);
-		ug.getParam().setStroke(new UStroke(2));
-		ug.draw(x + minX, y + minY, shape);
-		ug.draw(x + minX, y + minY + htitle, new ULine(wtitle + marginTitleX3, 0));
-		ug.getParam().setStroke(new UStroke());
-		title.drawU(ug, x + minX + marginTitleX1, y + minY + marginTitleY1);
-	}
-
-	private void drawWithTitleRect(UGraphic ug, double x, double y, HtmlColor borderColor, DotData dotData) {
-		final Dimension2D dimTitle = title.calculateDimension(ug.getStringBounder());
-		final double width = maxX - minX;
-		final double height = maxY - minY;
-		final URectangle shape = new URectangle(width, height);
-		if (dotData.getSkinParam().shadowing()) {
-			shape.setDeltaShadow(3.0);
-		}
-
-		HtmlColor stateBack = getBackColor();
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.packageBackground, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = dotData.getSkinParam().getHtmlColor(ColorParam.background, group.getStereotype());
-		}
-		if (stateBack == null) {
-			stateBack = HtmlColor.WHITE;
-		}
-		ug.getParam().setBackcolor(stateBack);
-		ug.getParam().setColor(borderColor);
-		ug.getParam().setStroke(new UStroke(2));
-
-		ug.draw(x + minX, y + minY, shape);
-		ug.getParam().setStroke(new UStroke());
-		final double deltax = width - dimTitle.getWidth();
-		title.drawU(ug, x + minX + deltax / 2, y + minY + 5);
-	}
 
 	private HtmlColor getColor(DotData dotData, ColorParam colorParam, String stereo) {
 		return new Rose().getHtmlColor(dotData.getSkinParam(), colorParam, stereo);
@@ -450,13 +363,6 @@ public class Cluster implements Moveable {
 
 	public final static String CENTER_ID = "za";
 
-	private int marginTitleX1 = 3;
-	private int marginTitleX2 = 3;
-	private int marginTitleX3 = 7;
-	private int marginTitleY0 = 0;
-	private int marginTitleY1 = 3;
-	private int marginTitleY2 = 3;
-
 	private final boolean protection0 = true;
 	private final boolean protection1 = true;
 
@@ -475,8 +381,8 @@ public class Cluster implements Moveable {
 		int titleHeight = getTitleHeight();
 		if (titleHeight > 0 && titleWidth > 0) {
 			if (skinParam.getPackageStyle() != PackageStyle.RECT) {
-				titleWidth += marginTitleX1 + marginTitleX2 + marginTitleX3;
-				titleHeight += marginTitleY0 + marginTitleY1 + marginTitleY2;
+				titleWidth += ClusterDecoration.marginTitleX1 + ClusterDecoration.marginTitleX2 + ClusterDecoration.marginTitleX3;
+				titleHeight += ClusterDecoration.marginTitleY0 + ClusterDecoration.marginTitleY1 + ClusterDecoration.marginTitleY2;
 			}
 			sb.append("label=<");
 			Line.appendTable(sb, titleWidth, titleHeight, colorTitle);
@@ -557,6 +463,7 @@ public class Cluster implements Moveable {
 		}
 		return parent.getBackColor();
 	}
+	
 
 	public boolean isClusterOf(IEntity ent) {
 		if (ent.getType() != EntityType.GROUP) {

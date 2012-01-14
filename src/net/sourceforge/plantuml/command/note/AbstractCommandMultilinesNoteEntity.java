@@ -28,15 +28,25 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7241 $
+ * Revision $Revision: 7558 $
  *
  */
-package net.sourceforge.plantuml.command;
+package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
+import java.util.Map;
 
+import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
+import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
+import net.sourceforge.plantuml.command.CommandExecutionResult;
+import net.sourceforge.plantuml.command.CommandMultilines2;
+import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.command.regex.IRegex;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -44,25 +54,55 @@ import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.sequencediagram.Note;
 
-final public class CommandNoteEntity extends SingleLineCommand<AbstractEntityDiagram> {
+public abstract class AbstractCommandMultilinesNoteEntity extends CommandMultilines2<AbstractEntityDiagram> implements
+		CommandNote {
 
-	public CommandNoteEntity(AbstractEntityDiagram classDiagram) {
-		super(
-				classDiagram,
-				"(?i)^note\\s+(right|left|top|bottom)\\s+of\\s+([\\p{L}0-9_.]+|\\((?!\\*\\))[^\\)]+\\)|\\[[^\\]*]+[^\\]]*\\]|\\(\\)\\s*[\\p{L}0-9_.]+|\\(\\)\\s*\"[^\"]+\"|:[^:]+:|\"[^\"]+\")"
-						+ "\\s*(#\\w+)?\\s*:\\s*(.*)$");
+	protected AbstractCommandMultilinesNoteEntity(final AbstractEntityDiagram system, IRegex partialPattern) {
+		super(system, getRegexConcat(partialPattern));
+	}
+
+	static RegexConcat getRegexConcat(IRegex partialPattern) {
+		return new RegexConcat(new RegexLeaf("^note\\s+"), //
+				new RegexLeaf("POSITION", "(right|left|top|bottom)\\s+(?:of\\s+)?"), //
+				partialPattern, // 
+				new RegexLeaf("COLOR", "\\s*(#\\w+)?"), //
+				new RegexLeaf("$") //
+		);
 	}
 
 	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-		final String pos = arg.get(0);
-		final IEntity cl1 = getSystem().getOrCreateClass(arg.get(1));
-		final Entity note = getSystem().createEntity("GN" + UniqueSequence.getValue(), arg.get(3), EntityType.NOTE);
-		note.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get(2)));
+	public String getPatternEnd() {
+		return "(?i)^end ?note$";
+	}
 
-		final Link link;
+	public final CommandExecutionResult execute(List<String> lines) {
+
+		StringUtils.trim(lines, false);
+		final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
+
+		final String pos = line0.get("POSITION").get(0);
+
+		final IEntity cl1 = getSystem().getOrCreateClass(line0.get("ENTITY").get(0));
+
+		List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
+		Url url = null;
+		if (strings.size() > 0) {
+			url = Note.extractUrl(strings.get(0));
+		}
+		if (url != null) {
+			strings = strings.subList(1, strings.size());
+		}
+
+		final String s = StringUtils.getMergedLines(strings);
+
+		final Entity note = getSystem().createEntity("GMN" + UniqueSequence.getValue(), s, EntityType.NOTE);
+		note.setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get("COLOR").get(0)));
+		note.setUrl(url);
+
 		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(getSystem().getRankdir());
+		final Link link;
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
 		if (position == Position.RIGHT) {
@@ -80,7 +120,6 @@ final public class CommandNoteEntity extends SingleLineCommand<AbstractEntityDia
 		}
 		getSystem().addLink(link);
 		return CommandExecutionResult.ok();
-
 	}
 
 }

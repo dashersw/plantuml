@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6922 $
+ * Revision $Revision: 7548 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -41,8 +41,14 @@ import net.sourceforge.plantuml.UmlDiagram;
 public class CommandMultilinesTitle extends CommandMultilines<UmlDiagram> {
 
 	public CommandMultilinesTitle(final UmlDiagram diagram) {
-		super(diagram, "(?i)^title$", "(?i)^end ?title$");
+		super(diagram, "(?i)^title$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?title$";
+	}
+
 
 	public CommandExecutionResult execute(List<String> lines) {
 		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));

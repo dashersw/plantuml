@@ -346,7 +346,7 @@ public class Shape implements Positionable {
 			return new EntityImageGroup(ent, dotData.getSkinParam());
 		}
 		if (ent.getType() == EntityType.EMPTY_PACKAGE) {
-			return new EntityImageEmptyPackage(ent, dotData.getSkinParam());
+			return new EntityImageEmptyPackage2(ent, dotData.getSkinParam());
 		}
 		if (ent.getType() == EntityType.ASSOCIATION) {
 			return new EntityImageAssociation(ent, dotData.getSkinParam());

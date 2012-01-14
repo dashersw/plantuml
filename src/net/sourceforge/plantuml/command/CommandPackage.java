@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6209 $
+ * Revision $Revision: 7541 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -67,10 +67,6 @@ public class CommandPackage extends SingleLineCommand<AbstractEntityDiagram> {
 			code = arg.get(1);
 		}
 		final Group currentPackage = getSystem().getCurrentGroup();
-		// if (getSystem().entityExist(code)) {
-		// return CommandExecutionResult.error("Package cannot have the same
-		// name as an existing class");
-		// }
 		final Group p = getSystem().getOrCreateGroup(code, display, null, GroupType.PACKAGE, currentPackage);
 		p.setBold(true);
 		final String color = arg.get(2);

@@ -45,22 +45,25 @@ public abstract class CommandMultilines2<S extends PSystem> implements Command {
 	private final S system;
 
 	private final RegexConcat starting;
-	private final Pattern ending;
+	// private final Pattern ending;
 
-	public CommandMultilines2(final S system, RegexConcat patternStart, String patternEnd) {
+	public CommandMultilines2(final S system, RegexConcat patternStart) {
 		if (patternStart.getPattern().startsWith("^") == false || patternStart.getPattern().endsWith("$") == false) {
 			throw new IllegalArgumentException("Bad pattern " + patternStart.getPattern());
 		}
-		if (patternEnd.startsWith("(?i)^") == false || patternEnd.endsWith("$") == false) {
-			throw new IllegalArgumentException("Bad pattern " + patternEnd);
-		}
+//		if (patternEnd.startsWith("(?i)^") == false || patternEnd.endsWith("$") == false) {
+//			throw new IllegalArgumentException("Bad pattern " + patternEnd);
+//		}
 		this.system = system;
 		this.starting = patternStart;
-		this.ending = Pattern.compile(patternEnd);
+		//this.ending = Pattern.compile(patternEnd);
 	}
 	
+	public abstract String getPatternEnd();
+
+	
 	public String[] getDescription() {
-		return new String[] { "START: "+starting.getPattern(), "END: "+ending.pattern() };
+		return new String[] { "START: "+starting.getPattern(), "END: "+getPatternEnd() };
 	}
 
 	final public CommandControl isValid(List<String> lines) {
@@ -75,7 +78,7 @@ public abstract class CommandMultilines2<S extends PSystem> implements Command {
 			return CommandControl.OK_PARTIAL;
 		}
 
-		final Matcher m1 = ending.matcher(lines.get(lines.size() - 1).trim());
+		final Matcher m1 = Pattern.compile(getPatternEnd()).matcher(lines.get(lines.size() - 1).trim());
 		if (m1.matches() == false) {
 			return CommandControl.OK_PARTIAL;
 		}
@@ -99,9 +102,9 @@ public abstract class CommandMultilines2<S extends PSystem> implements Command {
 		return starting;
 	}
 
-	protected final Pattern getEnding() {
-		return ending;
-	}
+//	protected final Pattern getEnding() {
+//		return ending;
+//	}
 
 	public boolean isDeprecated(List<String> line) {
 		return false;

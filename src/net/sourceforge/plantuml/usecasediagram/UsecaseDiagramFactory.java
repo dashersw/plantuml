@@ -33,12 +33,12 @@ package net.sourceforge.plantuml.usecasediagram;
 
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandCreateNote;
 import net.sourceforge.plantuml.command.CommandEndPackage;
-import net.sourceforge.plantuml.command.CommandMultilinesStandaloneNote;
-import net.sourceforge.plantuml.command.CommandNoteEntity;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
+import net.sourceforge.plantuml.command.note.CommandCreateNote;
+import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
+import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor2;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase;
@@ -68,7 +68,7 @@ public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
-		addCommand(new CommandNoteEntity(system));
+		addCommand(new CommandNoteEntityOld(system));
 		addCommand(new CommandUrl(system));
 
 		addCommand(new CommandCreateNote(system));

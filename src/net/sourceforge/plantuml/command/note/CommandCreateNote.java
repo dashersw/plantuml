@@ -27,43 +27,34 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
+ * 
  * Revision $Revision: 7558 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.CommandMultilines;
-import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.command.note.CommandNote;
-import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.cucadiagram.Entity;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandMultilinesNoteActivityLink extends CommandMultilines<ActivityDiagram> implements CommandNote {
+public class CommandCreateNote extends SingleLineCommand<AbstractEntityDiagram> implements CommandNote {
 
-	public CommandMultilinesNoteActivityLink(final ActivityDiagram system) {
-		super(system, "(?i)^note\\s+on\\s+link$");
+	public CommandCreateNote(AbstractEntityDiagram diagram) {
+		super(diagram, "(?i)^note\\s+\"([^\"]+)\"\\s+as\\s+([\\p{L}0-9_.]+)\\s*(#\\w+)?$");
 	}
 
 	@Override
-	public String getPatternEnd() {
-		return "(?i)^end ?note$";
-	}
-
-	public final CommandExecutionResult execute(List<String> lines) {
-
-		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		// final String s = StringUtils.getMergedLines(strings);
-
-		final Link link = getSystem().getLastActivityLink();
-		if (link == null) {
-			return CommandExecutionResult.error("Nothing to note");
-		}
-		link.addNote(strings, Position.BOTTOM);
+	protected CommandExecutionResult executeArg(List<String> arg) {
+		final String display = arg.get(0);
+		final String code = arg.get(1);
+		final Entity entity = getSystem().createEntity(code, display, EntityType.NOTE);
+		assert entity != null;
+		entity.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get(2)));
 		return CommandExecutionResult.ok();
 	}
 

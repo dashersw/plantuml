@@ -40,7 +40,12 @@ import net.sourceforge.plantuml.UmlDiagram;
 public class CommandMultilinesComment extends CommandMultilines<UmlDiagram> {
 
 	public CommandMultilinesComment(final UmlDiagram diagram) {
-		super(diagram, "(?i)^\\s*/'.*$", "(?i)^.*'/\\s*$");
+		super(diagram, "(?i)^\\s*/'.*$");
+	}
+
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^.*'/\\s*$";
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {

@@ -28,18 +28,20 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 5616 $
+ * Revision $Revision: 7558 $
  *
  */
 package net.sourceforge.plantuml.classdiagram.command;
 
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
-import net.sourceforge.plantuml.command.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.note.AbstractCommandMultilinesNoteEntity;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
 
 public class CommandMultilinesClassNote extends AbstractCommandMultilinesNoteEntity {
 
 	public CommandMultilinesClassNote(final AbstractEntityDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s+(?:of\\s+)?([\\p{L}0-9_.]+|\"[^\"]+\")\\s*(#\\w+)?$");
+		super(system,
+				new RegexLeaf("ENTITY", "([\\p{L}0-9_.]+|\"[^\"]+\")"));
 	}
 
 }

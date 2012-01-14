@@ -27,21 +27,23 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
- * Revision $Revision: 7558 $
+ * 
+ * Revision $Revision: 7559 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml.command.note;
 
-import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.CommandMultilines;
 import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.command.note.CommandNote;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
+import net.sourceforge.plantuml.command.regex.RegexConcat;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
+import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
@@ -50,52 +52,58 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandMultilinesNoteActivity extends CommandMultilines<ActivityDiagram> implements CommandNote {
+final public class CommandNoteEntityOld extends SingleLineCommand2<AbstractEntityDiagram> implements CommandNote {
 
-	public CommandMultilinesNoteActivity(final ActivityDiagram system) {
-		super(system, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*$");
+	public CommandNoteEntityOld(AbstractEntityDiagram classDiagram) {
+		super(
+				classDiagram, getRegexConcat());
+	}
+	
+	static RegexConcat getRegexConcat() {
+		return new RegexConcat(new RegexLeaf("^note\\s+"),
+				new RegexLeaf("POSITION", "(right|left|top|bottom)\\s+of\\s+"), //
+				new RegexOr("ENTITY",
+						new RegexLeaf("[\\p{L}0-9_.]+"), //
+						new RegexLeaf("\\((?!\\*\\))[^\\)]+\\)"), //
+						new RegexLeaf("\\[[^\\]*]+[^\\]]*\\]"), //
+						new RegexLeaf("\\(\\)\\s*[\\p{L}0-9_.]+"), //
+						new RegexLeaf("\\(\\)\\s*\"[^\"]+\""), //
+						new RegexLeaf(":[^:]+:"), //
+						new RegexLeaf("\"[^\"]+\"") //
+						),
+				new RegexLeaf("COLOR", "\\s*(#\\w+)?\\s*:\\s*"), //
+				new RegexLeaf("NOTE", "(.*)"), //
+				new RegexLeaf("$") //
+		);
 	}
 
 	@Override
-	public String getPatternEnd() {
-		return "(?i)^end ?note$";
-	}
-
-	public final CommandExecutionResult execute(List<String> lines) {
-
-		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
-		final String pos = line0.get(0);
-
-		IEntity activity = getSystem().getLastEntityConsulted();
-		if (activity == null) {
-			activity = getSystem().getStart();
-		}
-
-		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		final String s = StringUtils.getMergedLines(strings);
-
-		final Entity note = getSystem().createEntity("GMN" + UniqueSequence.getValue(), s, EntityType.NOTE);
-		note.setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get(1)));
+	protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
+		final String pos = arg.get("POSITION").get(0);
+		final IEntity cl1 = getSystem().getOrCreateClass(arg.get("ENTITY").get(0));
+		final Entity note = getSystem().createEntity("GN" + UniqueSequence.getValue(), arg.get("NOTE").get(0), EntityType.NOTE);
+		note.setSpecificBackcolor(HtmlColor.getColorIfValid(arg.get("COLOR").get(0)));
 
 		final Link link;
-
 		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(getSystem().getRankdir());
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
-
 		if (position == Position.RIGHT) {
-			link = new Link(activity, note, type, null, 1);
+			link = new Link(cl1, note, type, null, 1);
+			link.setHorizontalSolitary(true);
 		} else if (position == Position.LEFT) {
-			link = new Link(note, activity, type, null, 1);
+			link = new Link(note, cl1, type, null, 1);
+			link.setHorizontalSolitary(true);
 		} else if (position == Position.BOTTOM) {
-			link = new Link(activity, note, type, null, 2);
+			link = new Link(cl1, note, type, null, 2);
 		} else if (position == Position.TOP) {
-			link = new Link(note, activity, type, null, 2);
+			link = new Link(note, cl1, type, null, 2);
 		} else {
 			throw new IllegalArgumentException();
 		}
 		getSystem().addLink(link);
 		return CommandExecutionResult.ok();
+
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6931 $
+ * Revision $Revision: 7559 $
  *
  */
 package net.sourceforge.plantuml.statediagram;
@@ -36,7 +36,9 @@ package net.sourceforge.plantuml.statediagram;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandNoteEntity;
+import net.sourceforge.plantuml.command.note.CommandMultilinesNoteOnStateLink;
+import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
+import net.sourceforge.plantuml.command.note.CommandNoteOnStateLink;
 import net.sourceforge.plantuml.statediagram.command.CommandAddField;
 import net.sourceforge.plantuml.statediagram.command.CommandConcurrentState;
 import net.sourceforge.plantuml.statediagram.command.CommandCreatePackageState;
@@ -46,8 +48,6 @@ import net.sourceforge.plantuml.statediagram.command.CommandCreateState2;
 import net.sourceforge.plantuml.statediagram.command.CommandEndState;
 import net.sourceforge.plantuml.statediagram.command.CommandHideEmptyDescription;
 import net.sourceforge.plantuml.statediagram.command.CommandLinkState2;
-import net.sourceforge.plantuml.statediagram.command.CommandMultilinesNoteOnStateLink;
-import net.sourceforge.plantuml.statediagram.command.CommandNoteOnStateLink;
 import net.sourceforge.plantuml.usecasediagram.command.CommandRankDirUsecase;
 
 public class StateDiagramFactory extends AbstractUmlSystemCommandFactory {
@@ -75,7 +75,7 @@ public class StateDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandMultilinesClassNote(system));
 		addCommand(new CommandHideEmptyDescription(system));
 
-		addCommand(new CommandNoteEntity(system));
+		addCommand(new CommandNoteEntityOld(system));
 		addCommand(new CommandNoteOnStateLink(system));
 		addCommand(new CommandMultilinesNoteOnStateLink(system));
 		addCommand(new CommandUrl(system));

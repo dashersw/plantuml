@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6186 $
+ * Revision $Revision: 7548 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -44,22 +44,21 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 	private final S system;
 
 	private final Pattern starting;
-	private final Pattern ending;
+	// private final Pattern ending;
 
-	public CommandMultilines(final S system, String patternStart, String patternEnd) {
+	public CommandMultilines(final S system, String patternStart) {
 		if (patternStart.startsWith("(?i)^") == false || patternStart.endsWith("$") == false) {
 			throw new IllegalArgumentException("Bad pattern " + patternStart);
 		}
-		if (patternEnd.startsWith("(?i)^") == false || patternEnd.endsWith("$") == false) {
-			throw new IllegalArgumentException("Bad pattern " + patternEnd);
-		}
 		this.system = system;
 		this.starting = Pattern.compile(patternStart);
-		this.ending = Pattern.compile(patternEnd);
+		// this.ending = Pattern.compile(getPatternEnd());
 	}
 	
+	public abstract String getPatternEnd();
+	
 	public String[] getDescription() {
-		return new String[] { "START: " + starting.pattern(), "END: " + ending.pattern() };
+		return new String[] { "START: " + starting.pattern(), "END: " + getPatternEnd() };
 	}
 
 	final public CommandControl isValid(List<String> lines) {
@@ -74,7 +73,7 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 			return CommandControl.OK_PARTIAL;
 		}
 
-		m1 = ending.matcher(lines.get(lines.size() - 1).trim());
+		m1 = Pattern.compile(getPatternEnd()).matcher(lines.get(lines.size() - 1).trim());
 		if (m1.matches() == false) {
 			return CommandControl.OK_PARTIAL;
 		}
@@ -98,9 +97,9 @@ public abstract class CommandMultilines<S extends PSystem> implements Command {
 		return starting;
 	}
 
-	protected final Pattern getEnding() {
-		return ending;
-	}
+//	protected final Pattern getEnding() {
+//		return Pattern.compile(getPatternEnd());
+//	}
 
 	public boolean isDeprecated(List<String> line) {
 		return false;

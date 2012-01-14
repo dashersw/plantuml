@@ -55,6 +55,7 @@ import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.GraphicStrings;
@@ -84,9 +85,9 @@ public final class CucaDiagramFileMakerSvek2 {
 		this.dotData = dotData;
 	}
 
-	protected UFont getFont(FontParam fontParam) {
-		return getData().getSkinParam().getFont(fontParam, null);
-	}
+	// protected UFont getFont(FontParam fontParam) {
+	// return getData().getSkinParam().getFont(fontParam, null);
+	// }
 
 	private DotStringFactory dotStringFactory;
 	private Map<IEntity, Shape> shapeMap;
@@ -176,7 +177,7 @@ public final class CucaDiagramFileMakerSvek2 {
 
 		final Dimension2D dim = Dimension2DDouble.delta(dotStringFactory.solve(dotStrings), 10);
 		final HtmlColor border;
-		if (getData().getUmlDiagramType() == UmlDiagramType.STATE) {
+		if (dotData.getUmlDiagramType() == UmlDiagramType.STATE) {
 			border = getColor(ColorParam.stateBorder, null);
 		} else {
 			border = getColor(ColorParam.packageBorder, null);
@@ -280,9 +281,13 @@ public final class CucaDiagramFileMakerSvek2 {
 		final String label = g.getDisplay();
 		TextBlock title = null;
 		if (label != null) {
-			final UFont font = getFont(g.getType() == GroupType.STATE ? FontParam.STATE : FontParam.PACKAGE);
-			title = TextBlockUtils.create(StringUtils.getWithNewlines(label), new FontConfiguration(font,
-					HtmlColor.BLACK), HorizontalAlignement.CENTER);
+			final FontParam fontParam = g.getType() == GroupType.STATE ? FontParam.STATE : FontParam.PACKAGE;
+
+			title = TextBlockUtils.create(StringUtils.getWithNewlines(label),
+					new FontConfiguration(dotData.getSkinParam().getFont(fontParam, g.getStereotype()), dotData
+							.getSkinParam().getFontHtmlColor(fontParam, g.getStereotype())),
+					HorizontalAlignement.CENTER);
+
 			final Dimension2D dimLabel = title.calculateDimension(stringBounder);
 			titleWidth = (int) dimLabel.getWidth();
 			titleHeight = (int) dimLabel.getHeight();
@@ -341,22 +346,22 @@ public final class CucaDiagramFileMakerSvek2 {
 		if (g.getType() == GroupType.CONCURRENT_STATE) {
 			throw new IllegalStateException();
 		}
-		if (getData().isThereLink(g)) {
+		if (dotData.isThereLink(g)) {
 			return true;
 		}
 		return false;
 	}
 
-	private DotData getData() {
-		return dotData;
-	}
+	// private DotData getData() {
+	// return dotData;
+	// }
 
-	private HtmlColor getGroupBackColor(Group g) {
-		HtmlColor value = g.getBackColor();
-		if (value == null) {
-			value = getData().getSkinParam().getHtmlColor(ColorParam.packageBackground, null);
-		}
-		return value;
-	}
+	// private HtmlColor getGroupBackColor(Group g) {
+	// HtmlColor value = g.getBackColor();
+	// if (value == null) {
+	// value = getData().getSkinParam().getHtmlColor(ColorParam.packageBackground, null);
+	// }
+	// return value;
+	// }
 
 }

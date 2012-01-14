@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 5957 $
+ * Revision $Revision: 7548 $
  *
  */
 package net.sourceforge.plantuml.command;
@@ -43,8 +43,14 @@ import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 public class CommandMultilinesFooter extends CommandMultilines<UmlDiagram> {
 
 	public CommandMultilinesFooter(final UmlDiagram diagram) {
-		super(diagram, "(?i)^(?:(left|right|center)?\\s*)footer$", "(?i)^end ?footer$");
+		super(diagram, "(?i)^(?:(left|right|center)?\\s*)footer$");
 	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?footer$";
+	}
+
 
 	public CommandExecutionResult execute(List<String> lines) {
 		StringUtils.trim(lines, false);

@@ -28,50 +28,44 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6922 $
+ * Revision $Revision: 7559 $
  *
  */
-package net.sourceforge.plantuml.statediagram.command;
+package net.sourceforge.plantuml.command.note;
 
 import java.util.List;
-import java.util.regex.Matcher;
 
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines;
-import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.cucadiagram.Link;
-import net.sourceforge.plantuml.statediagram.StateDiagram;
+import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandMultilinesNoteOnStateLink extends CommandMultilines<StateDiagram> {
+public class CommandMultilinesStandaloneNote extends CommandMultilines<AbstractEntityDiagram> implements CommandNote {
 
-	public CommandMultilinesNoteOnStateLink(final StateDiagram diagram) {
-		// Miss color
-		super(diagram, "(?i)^note\\s+(right|left|top|bottom)?\\s*on\\s+link$", "(?i)^end ?note$");
+	public CommandMultilinesStandaloneNote(final AbstractEntityDiagram system) {
+		super(system, "(?i)^(note)\\s+as\\s+([\\p{L}0-9_.]+)\\s*(#\\w+)?$");
+	}
+	
+	@Override
+	public String getPatternEnd() {
+		return "(?i)^end ?note$";
 	}
 
+
 	public CommandExecutionResult execute(List<String> lines) {
+
+		final List<String> line0 = StringUtils.getSplit(getStartingPattern(), lines.get(0).trim());
+
 		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		if (strings.size() > 0) {
-			final List<CharSequence> n = StringUtils.manageEmbededDiagrams(strings);
+		final String display = StringUtils.getMergedLines(strings);
 
-			final Link link = getSystem().getLastStateLink();
-			if (link == null) {
-				return CommandExecutionResult.error("No link defined");
-			}
-			Position position = Position.BOTTOM;
-			final Matcher m = getStartingPattern().matcher(lines.get(0));
-			if (m.find()) {
-				final String pos = m.group(1);
-				if (pos != null) {
-					position = Position.valueOf(pos.toUpperCase());
-				}
-			}
+		final EntityType type = EntityType.NOTE;
+		final String code = line0.get(1);
+		getSystem().createEntity(code, display, type).setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get(2)));
 
-			link.addNote(n, position);
-			return CommandExecutionResult.ok();
-		}
-		return CommandExecutionResult.error("No note defined");
+		return CommandExecutionResult.ok();
 	}
 
 }

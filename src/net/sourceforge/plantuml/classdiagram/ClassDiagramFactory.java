@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7534 $
+ * Revision $Revision: 7559 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -43,20 +43,23 @@ import net.sourceforge.plantuml.classdiagram.command.CommandDiamondAssociation;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow3;
 import net.sourceforge.plantuml.classdiagram.command.CommandImport;
-import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass2;
+import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass3;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkLollipop2;
 import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.CommandCreateNote;
 import net.sourceforge.plantuml.command.CommandEndNamespace;
 import net.sourceforge.plantuml.command.CommandEndPackage;
-import net.sourceforge.plantuml.command.CommandMultilinesStandaloneNote;
 import net.sourceforge.plantuml.command.CommandNamespace;
-import net.sourceforge.plantuml.command.CommandNoteEntity;
 import net.sourceforge.plantuml.command.CommandPackage;
+import net.sourceforge.plantuml.command.CommandPackageEmpty;
 import net.sourceforge.plantuml.command.CommandPage;
+import net.sourceforge.plantuml.command.note.CommandCreateNote;
+import net.sourceforge.plantuml.command.note.CommandMultilinesNoteOnStateLink;
+import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
+import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
+import net.sourceforge.plantuml.command.note.CommandNoteOnStateLink;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -80,28 +83,30 @@ public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandPage(system));
 		addCommand(new CommandAddMethod(system));
 
-		// addCommand(new CommandCreateEntityClass(system));
 		addCommand(new CommandCreateEntityClass2(system));
 		addCommand(new CommandCreateNote(system));
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
+		addCommand(new CommandPackageEmpty(system));
+		
 		addCommand(new CommandNamespace(system));
 		addCommand(new CommandEndNamespace(system));
 		addCommand(new CommandStereotype(system));
 
-		// addCommand(new CommandLinkClass(system));
-		addCommand(new CommandLinkClass2(system));
+		addCommand(new CommandLinkClass3(system));
 		addCommand(new CommandLinkLollipop2(system));
 
 		addCommand(new CommandImport(system));
-		addCommand(new CommandNoteEntity(system));
+		addCommand(new CommandNoteEntityOld(system));
 		addCommand(new CommandUrl(system));
 
 		addCommand(new CommandMultilinesClassNote(system));
 		addCommand(new CommandMultilinesStandaloneNote(system));
-		// addCommand(new CommandCreateEntityClassMultilines(system));
 		addCommand(new CommandCreateEntityClassMultilines2(system));
+
+		addCommand(new CommandNoteOnStateLink(system));
+		addCommand(new CommandMultilinesNoteOnStateLink(system));
 
 		addCommand(new CommandDiamondAssociation(system));
 

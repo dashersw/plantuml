@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7504 $
+ * Revision $Revision: 7558 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram.command;
@@ -40,6 +40,7 @@ import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.Position;
 import net.sourceforge.plantuml.command.SingleLineCommand;
+import net.sourceforge.plantuml.command.note.CommandNote;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -47,7 +48,7 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 
-public class CommandNoteActivity extends SingleLineCommand<ActivityDiagram> {
+public class CommandNoteActivity extends SingleLineCommand<ActivityDiagram> implements CommandNote {
 
 	public CommandNoteActivity(ActivityDiagram diagram) {
 		super(diagram, "(?i)^note\\s+(right|left|top|bottom)\\s*(#\\w+)?\\s*:\\s*(.*)$");
