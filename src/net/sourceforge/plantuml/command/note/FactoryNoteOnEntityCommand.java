@@ -40,12 +40,15 @@ import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.classdiagram.AbstractEntityDiagram;
+import net.sourceforge.plantuml.command.Command;
 import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.CommandMultilines2;
 import net.sourceforge.plantuml.command.Position;
+import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.IRegex;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.cucadiagram.Entity;
 import net.sourceforge.plantuml.cucadiagram.EntityType;
@@ -56,52 +59,96 @@ import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.sequencediagram.Note;
 
-public abstract class AbstractCommandMultilinesNoteEntity extends CommandMultilines2<AbstractEntityDiagram> implements
-		CommandNote {
+public final class FactoryNoteOnEntityCommand implements SingleMultiFactoryCommand<AbstractEntityDiagram> {
 
-	protected AbstractCommandMultilinesNoteEntity(final AbstractEntityDiagram system, IRegex partialPattern) {
-		super(system, getRegexConcat(partialPattern));
+	private final IRegex partialPattern;
+
+	public FactoryNoteOnEntityCommand(IRegex partialPattern) {
+		this.partialPattern = partialPattern;
 	}
 
-	static RegexConcat getRegexConcat(IRegex partialPattern) {
+	private RegexConcat getRegexConcatSingleLine(IRegex partialPattern) {
 		return new RegexConcat(new RegexLeaf("^note\\s+"), //
-				new RegexLeaf("POSITION", "(right|left|top|bottom)\\s+(?:of\\s+)?"), //
-				partialPattern, // 
+				new RegexLeaf("POSITION", "(right|left|top|bottom)"), //
+				new RegexOr( //
+						new RegexConcat(new RegexLeaf("\\s+of\\s+"), partialPattern), //
+						new RegexLeaf("")), //
+				new RegexLeaf("COLOR", "\\s*(#\\w+)?\\s*:\\s*"), //
+				new RegexLeaf("NOTE", "(.*)"), //
+				new RegexLeaf("$") //
+		);
+	}
+
+	private RegexConcat getRegexConcatMultiLine(IRegex partialPattern) {
+		return new RegexConcat(new RegexLeaf("^note\\s+"), //
+				new RegexLeaf("POSITION", "(right|left|top|bottom)"), //
+				new RegexOr( //
+						new RegexConcat(new RegexLeaf("\\s+of\\s+"), partialPattern), //
+						new RegexLeaf("")), //
 				new RegexLeaf("COLOR", "\\s*(#\\w+)?"), //
 				new RegexLeaf("$") //
 		);
 	}
 
-	@Override
-	public String getPatternEnd() {
-		return "(?i)^end ?note$";
+	public Command createSingleLine(final AbstractEntityDiagram system) {
+		return new SingleLineCommand2<AbstractEntityDiagram>(system, getRegexConcatSingleLine(partialPattern)) {
+
+			@Override
+			protected CommandExecutionResult executeArg(Map<String, RegexPartialMatch> arg) {
+				final String s = arg.get("NOTE").get(0);
+				return executeInternal(arg, system, null, s);
+			}
+		};
 	}
 
-	public final CommandExecutionResult execute(List<String> lines) {
+	public Command createMultiLine(final AbstractEntityDiagram system) {
+		return new CommandMultilines2<AbstractEntityDiagram>(system, getRegexConcatMultiLine(partialPattern)) {
 
-		StringUtils.trim(lines, false);
-		final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
+			@Override
+			public String getPatternEnd() {
+				return "(?i)^end ?note$";
+			}
+
+			public CommandExecutionResult execute(List<String> lines) {
+				StringUtils.trim(lines, false);
+				final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
+
+				List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
+				Url url = null;
+				if (strings.size() > 0) {
+					url = Note.extractUrl(strings.get(0));
+				}
+				if (url != null) {
+					strings = strings.subList(1, strings.size());
+				}
+
+				final String s = StringUtils.getMergedLines(strings);
+				return executeInternal(line0, system, url, s);
+			}
+		};
+	}
+
+	private CommandExecutionResult executeInternal(Map<String, RegexPartialMatch> line0, AbstractEntityDiagram system,
+			Url url, String s) {
 
 		final String pos = line0.get("POSITION").get(0);
 
-		final IEntity cl1 = getSystem().getOrCreateClass(line0.get("ENTITY").get(0));
-
-		List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		Url url = null;
-		if (strings.size() > 0) {
-			url = Note.extractUrl(strings.get(0));
+		final String code = line0.get("ENTITY").get(0);
+		final IEntity cl1;
+		if (code == null) {
+			cl1 = system.getLastEntity();
+			if (cl1 == null) {
+				return CommandExecutionResult.error("Nothing to note to");
+			}
+		} else {
+			cl1 = system.getOrCreateClass(code);
 		}
-		if (url != null) {
-			strings = strings.subList(1, strings.size());
-		}
 
-		final String s = StringUtils.getMergedLines(strings);
-
-		final Entity note = getSystem().createEntity("GMN" + UniqueSequence.getValue(), s, EntityType.NOTE);
+		final Entity note = system.createEntity("GMN" + UniqueSequence.getValue(), s, EntityType.NOTE);
 		note.setSpecificBackcolor(HtmlColor.getColorIfValid(line0.get("COLOR").get(0)));
 		note.setUrl(url);
 
-		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(getSystem().getRankdir());
+		final Position position = Position.valueOf(pos.toUpperCase()).withRankdir(system.getRankdir());
 		final Link link;
 
 		final LinkType type = new LinkType(LinkDecor.NONE, LinkDecor.NONE).getDashed();
@@ -118,7 +165,7 @@ public abstract class AbstractCommandMultilinesNoteEntity extends CommandMultili
 		} else {
 			throw new IllegalArgumentException();
 		}
-		getSystem().addLink(link);
+		system.addLink(link);
 		return CommandExecutionResult.ok();
 	}
 

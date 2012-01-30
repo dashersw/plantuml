@@ -28,16 +28,18 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7520 $
+ * Revision $Revision: 7598 $
  *
  */
 package net.sourceforge.plantuml.sequencediagram;
 
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
+import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteCommand;
+import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteOnArrowCommand;
+import net.sourceforge.plantuml.command.note.sequence.FactorySequenceNoteOverSeveralCommand;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandActivate2;
 import net.sourceforge.plantuml.sequencediagram.command.CommandArrow;
-import net.sourceforge.plantuml.sequencediagram.command.CommandArrowCrossX;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutoNewpage;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutoactivate;
 import net.sourceforge.plantuml.sequencediagram.command.CommandAutonumber;
@@ -51,13 +53,7 @@ import net.sourceforge.plantuml.sequencediagram.command.CommandFootbox;
 import net.sourceforge.plantuml.sequencediagram.command.CommandFootboxOld;
 import net.sourceforge.plantuml.sequencediagram.command.CommandGrouping;
 import net.sourceforge.plantuml.sequencediagram.command.CommandIgnoreNewpage;
-import net.sourceforge.plantuml.sequencediagram.command.CommandMultilinesNote;
-import net.sourceforge.plantuml.sequencediagram.command.CommandMultilinesNoteOnArrow;
-import net.sourceforge.plantuml.sequencediagram.command.CommandMultilinesNoteOverSeveral;
 import net.sourceforge.plantuml.sequencediagram.command.CommandNewpage;
-import net.sourceforge.plantuml.sequencediagram.command.CommandNoteOnArrow;
-import net.sourceforge.plantuml.sequencediagram.command.CommandNoteOverSeveral;
-import net.sourceforge.plantuml.sequencediagram.command.CommandNoteSequence;
 import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA;
 import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA2;
 import net.sourceforge.plantuml.sequencediagram.command.CommandParticipantA3;
@@ -88,8 +84,12 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		// addCommand(new CommandArrowCrossX(system));
 		addCommand(new CommandExoArrowLeft(system));
 		addCommand(new CommandExoArrowRight(system));
-		addCommand(new CommandNoteSequence(system));
-		addCommand(new CommandNoteOverSeveral(system));
+		
+		final FactorySequenceNoteCommand factorySequenceNoteCommand = new FactorySequenceNoteCommand();
+		addCommand(factorySequenceNoteCommand.createSingleLine(system));
+		
+		final FactorySequenceNoteOverSeveralCommand factorySequenceNoteOverSeveralCommand = new FactorySequenceNoteOverSeveralCommand();
+		addCommand(factorySequenceNoteOverSeveralCommand.createSingleLine(system));
 
 		addCommand(new CommandBoxStart(system));
 		addCommand(new CommandBoxEnd(system));
@@ -98,11 +98,12 @@ public class SequenceDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandActivate2(system));
 		addCommand(new CommandReturn(system));
 
-		addCommand(new CommandNoteOnArrow(system));
+		final FactorySequenceNoteOnArrowCommand factorySequenceNoteOnArrowCommand = new FactorySequenceNoteOnArrowCommand();
+		addCommand(factorySequenceNoteOnArrowCommand.createSingleLine(system));
 
-		addCommand(new CommandMultilinesNote(system));
-		addCommand(new CommandMultilinesNoteOverSeveral(system));
-		addCommand(new CommandMultilinesNoteOnArrow(system));
+		addCommand(factorySequenceNoteCommand.createMultiLine(system));
+		addCommand(factorySequenceNoteOverSeveralCommand.createMultiLine(system));
+		addCommand(factorySequenceNoteOnArrowCommand.createMultiLine(system));
 
 		addCommand(new CommandNewpage(system));
 		addCommand(new CommandIgnoreNewpage(system));

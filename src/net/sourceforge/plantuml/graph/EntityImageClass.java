@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6923 $
+ * Revision $Revision: 7612 $
  *
  */
 package net.sourceforge.plantuml.graph;
@@ -66,8 +66,8 @@ class EntityImageClass extends AbstractEntityImage {
 		super(entity);
 		this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(
 				getFont14(), HtmlColor.BLACK), HorizontalAlignement.CENTER);
-		this.methods = new MethodsOrFieldsArea(entity.getMethodsToDisplay(), getFont14());
-		this.fields = new MethodsOrFieldsArea(entity.getFieldsToDisplay(), getFont14());
+		this.methods = new MethodsOrFieldsArea(entity.getMethodsToDisplay().getAll(), getFont14());
+		this.fields = new MethodsOrFieldsArea(entity.getFieldsToDisplay().getAll(), getFont14());
 
 		circledCharacter = getCircledCharacter(entity);
 

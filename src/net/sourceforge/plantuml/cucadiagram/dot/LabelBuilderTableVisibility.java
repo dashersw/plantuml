@@ -59,14 +59,14 @@ class LabelBuilderTableVisibility extends DotCommon implements LabelBuilder {
 	public void appendLabel(StringBuilder sb) throws IOException {
 		sb.append("<TABLE BORDER=\"0\" CELLBORDER=\"0\" CELLSPACING=\"0\" CELLPADDING=\"0\">");
 
-		final boolean hasStatic = hasStatic(entity.getMethodsToDisplay());
+		final boolean hasStatic = hasStatic(entity.getMethodsToDisplay().getAll());
 		final boolean dpiNormal = getData().getDpi() == 96;
-		for (Member att : isField ? entity.getFieldsToDisplay() : entity.getMethodsToDisplay()) {
+		for (Member att : isField ? entity.getFieldsToDisplay().getAll() : entity.getMethodsToDisplay().getAll()) {
 			sb.append("<TR>");
 			if (dpiNormal) {
 				sb.append("<TD WIDTH=\"10\">");
 			}
-			String s = att.getDisplayWithVisibilityChar();
+			String s = att.getDisplay(true);
 			final VisibilityModifier visibilityModifier = VisibilityModifier
 					.getVisibilityModifier(s.charAt(0), isField);
 			if (visibilityModifier != null) {

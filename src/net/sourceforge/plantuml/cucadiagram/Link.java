@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7533 $
+ * Revision $Revision: 7601 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -66,6 +66,7 @@ public class Link implements Imaged {
 
 	private List<? extends CharSequence> note;
 	private Position notePosition;
+	private HtmlColor noteColor;
 
 	private boolean invis = false;
 	private double weight = 1.0;
@@ -248,19 +249,25 @@ public class Link implements Imaged {
 	public final List<? extends CharSequence> getNote() {
 		return note;
 	}
+	
+	public final HtmlColor getNoteColor() {
+		return noteColor;
+	}
 
 	public final Position getNotePosition() {
 		return notePosition;
 	}
 
-	public final void addNote(List<? extends CharSequence> note, Position position) {
+	public final void addNote(List<? extends CharSequence> note, Position position, HtmlColor noteColor) {
 		this.note = note;
 		this.notePosition = position;
+		this.noteColor = noteColor;
 	}
 
-	public final void addNote(String n, Position position) {
+	public final void addNote(String n, Position position, HtmlColor noteColor) {
 		this.note = StringUtils.getWithNewlines(n);
 		this.notePosition = position;
+		this.noteColor = noteColor;
 	}
 
 	public DrawFile getImageFile() {

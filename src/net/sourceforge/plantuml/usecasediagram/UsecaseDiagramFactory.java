@@ -36,15 +36,15 @@ import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandEndPackage;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
-import net.sourceforge.plantuml.command.note.CommandCreateNote;
-import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
-import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
+import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateActor2;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase;
 import net.sourceforge.plantuml.usecasediagram.command.CommandCreateUsecase2;
 import net.sourceforge.plantuml.usecasediagram.command.CommandLinkUsecase2;
-import net.sourceforge.plantuml.usecasediagram.command.CommandMultilinesUsecaseNoteEntity;
 import net.sourceforge.plantuml.usecasediagram.command.CommandRankDirUsecase;
 
 public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
@@ -68,16 +68,23 @@ public class UsecaseDiagramFactory extends AbstractUmlSystemCommandFactory {
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
-		addCommand(new CommandNoteEntityOld(system));
+		final FactoryNoteOnEntityCommand factoryNoteOnEntityCommand = new FactoryNoteOnEntityCommand(new RegexOr(
+				"ENTITY", new RegexLeaf("[\\p{L}0-9_.]+"), //
+				new RegexLeaf("\\((?!\\*\\))[^\\)]+\\)"), //
+				new RegexLeaf(":[^:]+:"), //
+				new RegexLeaf("\"[^\"]+\"") //
+				));
+		addCommand(factoryNoteOnEntityCommand.createSingleLine(system));
 		addCommand(new CommandUrl(system));
 
-		addCommand(new CommandCreateNote(system));
+		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
+		addCommand(factoryNoteCommand.createSingleLine(system));
 		addCommand(new CommandCreateActor(system));
 		addCommand(new CommandCreateActor2(system));
 		addCommand(new CommandCreateUsecase(system));
 		addCommand(new CommandCreateUsecase2(system));
 
-		addCommand(new CommandMultilinesUsecaseNoteEntity(system));
-		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(factoryNoteOnEntityCommand.createMultiLine(system));
+		addCommand(factoryNoteCommand.createMultiLine(system));
 	}
 }

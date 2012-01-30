@@ -71,7 +71,7 @@ public class CommandCreateEntityObjectMultilines extends CommandMultilines<Objec
 			if (VisibilityModifier.isVisibilityCharacter(s.charAt(0))) {
 				getSystem().setVisibilityModifierPresent(true);
 			}
-			entity.addField(s);
+			entity.addFieldOrMethod(s);
 		}
 		return CommandExecutionResult.ok();
 	}

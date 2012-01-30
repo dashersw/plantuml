@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7157 $
+ * Revision $Revision: 7607 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -85,6 +85,11 @@ public class TextBlockUtils {
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX, double marginY) {
 		return new TextBlockMarged(textBlock, marginX, marginX, marginY, marginY);
+	}
+
+	public static TextBlock withMargin(TextBlock textBlock, double marginX1, double marginX2, double marginY1,
+			double marginY2) {
+		return new TextBlockMarged(textBlock, marginX1, marginX2, marginY1, marginY2);
 	}
 
 	// static private Font deriveForCircleCharacter(Font font) {

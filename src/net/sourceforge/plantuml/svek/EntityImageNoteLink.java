@@ -38,6 +38,7 @@ import java.util.List;
 
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.SkinParamBackcolored;
 import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.skin.Area;
@@ -51,9 +52,9 @@ public class EntityImageNoteLink implements IEntityImage {
 
 	private final Component comp;
 
-	public EntityImageNoteLink(List<? extends CharSequence> note, ISkinParam skinParam) {
+	public EntityImageNoteLink(List<? extends CharSequence> note, HtmlColor htmlColor, ISkinParam skinParam) {
 		final Rose skin = new Rose();
-		comp = skin.createComponent(ComponentType.NOTE, null, skinParam, note);
+		comp = skin.createComponent(ComponentType.NOTE, null, new SkinParamBackcolored(skinParam, htmlColor), note);
 	}
 
 	public Dimension2D getDimension(StringBounder stringBounder) {

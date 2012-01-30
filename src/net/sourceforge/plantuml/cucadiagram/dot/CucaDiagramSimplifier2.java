@@ -76,9 +76,11 @@ public final class CucaDiagramSimplifier2 {
 					// if (type == EntityType.STATE) {
 					// manageBackColorForState(diagram, g, proxy);
 					// }
-					for (Member field : g.getEntityCluster().getFieldsToDisplay()) {
-						proxy.addField(field);
-					}
+					
+					proxy.overidesFieldsToDisplay(g.getEntityCluster());
+//					for (Member field : g.getEntityCluster().getFieldsToDisplay().getAll()) {
+//						proxy.addField(field);
+//					}
 					computeImageGroup(g, proxy, dotStrings);
 					diagram.overideGroup(g, proxy);
 					if (proxy.getImageFile() != null) {

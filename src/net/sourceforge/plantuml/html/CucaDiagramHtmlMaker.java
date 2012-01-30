@@ -129,9 +129,9 @@ public final class CucaDiagramHtmlMaker {
 		} else {
 			pw.println("<h2>Fields:</h2>");
 			pw.println("<ul>");
-			for (Member m : entity.getFieldsToDisplay()) {
+			for (Member m : entity.getFieldsToDisplay().getAll()) {
 				pw.println("<li>");
-				pw.println(StringUtils.unicodeForHtml(m.getDisplayWithVisibilityChar()));
+				pw.println(StringUtils.unicodeForHtml(m.getDisplay(true)));
 				pw.println("</li>");
 			}
 			pw.println("</ul>");
@@ -143,9 +143,9 @@ public final class CucaDiagramHtmlMaker {
 		} else {
 			pw.println("<h2>Methods:</h2>");
 			pw.println("<ul>");
-			for (Member m : entity.getMethodsToDisplay()) {
+			for (Member m : entity.getMethodsToDisplay().getAll()) {
 				pw.println("<li>");
-				pw.println(StringUtils.unicodeForHtml(m.getDisplayWithVisibilityChar()));
+				pw.println(StringUtils.unicodeForHtml(m.getDisplay(true)));
 				pw.println("</li>");
 			}
 			pw.println("</ul>");

@@ -27,44 +27,19 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- *
+ * 
  * Revision $Revision: 7558 $
  *
  */
-package net.sourceforge.plantuml.activitydiagram.command;
+package net.sourceforge.plantuml.command.note;
 
-import java.util.List;
+import net.sourceforge.plantuml.PSystem;
+import net.sourceforge.plantuml.command.Command;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.activitydiagram.ActivityDiagram;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.CommandMultilines;
-import net.sourceforge.plantuml.command.Position;
-import net.sourceforge.plantuml.command.note.CommandNote;
-import net.sourceforge.plantuml.cucadiagram.Link;
+public interface SingleMultiFactoryCommand<D extends PSystem> {
 
-public class CommandMultilinesNoteActivityLink extends CommandMultilines<ActivityDiagram> implements CommandNote {
+	public Command createSingleLine(final D system);
 
-	public CommandMultilinesNoteActivityLink(final ActivityDiagram system) {
-		super(system, "(?i)^note\\s+on\\s+link$");
-	}
-
-	@Override
-	public String getPatternEnd() {
-		return "(?i)^end ?note$";
-	}
-
-	public final CommandExecutionResult execute(List<String> lines) {
-
-		final List<String> strings = StringUtils.removeEmptyColumns(lines.subList(1, lines.size() - 1));
-		// final String s = StringUtils.getMergedLines(strings);
-
-		final Link link = getSystem().getLastActivityLink();
-		if (link == null) {
-			return CommandExecutionResult.error("Nothing to note");
-		}
-		link.addNote(strings, Position.BOTTOM);
-		return CommandExecutionResult.ok();
-	}
+	public Command createMultiLine(final D system);
 
 }

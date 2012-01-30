@@ -45,7 +45,6 @@ import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graph.MethodsOrFieldsArea2;
 import net.sourceforge.plantuml.graphic.CircledCharacter;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
@@ -65,14 +64,14 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 
 	final private TextBlock name;
 	final private TextBlock stereo;
-	final private MethodsOrFieldsArea2 methods;
-	final private MethodsOrFieldsArea2 fields;
+	final private TextBlock methods;
+	final private TextBlock fields;
 	final private CircledCharacter circledCharacter;
 
 	public EntityImageClass2(IEntity entity, ISkinParam skinParam, Collection<Link> links) {
 		super(entity, skinParam);
-		this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(
-				getFont(FontParam.CLASS), HtmlColor.BLACK), HorizontalAlignement.CENTER);
+		this.name = TextBlockUtils.create(entity.getDisplay2(), new FontConfiguration(getFont(FontParam.CLASS),
+				HtmlColor.BLACK), HorizontalAlignement.CENTER);
 		final Stereotype stereotype = entity.getStereotype();
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;
@@ -82,8 +81,8 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 							getFont(FontParam.CLASS_STEREOTYPE), getFontColor(FontParam.CLASS_STEREOTYPE)),
 							HorizontalAlignement.CENTER);
 		}
-		this.methods = new MethodsOrFieldsArea2(entity.getMethodsToDisplay(), FontParam.CLASS_ATTRIBUTE, skinParam);
-		this.fields = new MethodsOrFieldsArea2(entity.getFieldsToDisplay(), FontParam.CLASS_ATTRIBUTE, skinParam);
+		this.methods = entity.getMethodsToDisplay().asTextBlock(FontParam.CLASS_ATTRIBUTE, skinParam);
+		this.fields = entity.getFieldsToDisplay().asTextBlock(FontParam.CLASS_ATTRIBUTE, skinParam);
 
 		circledCharacter = getCircledCharacter(entity);
 	}
@@ -128,8 +127,9 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
 		final Dimension2D dimMethods = methods.calculateDimension(stringBounder);
 		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
-		final double width = Math.max(Math.max(dimMethods.getWidth() + 2 * xMarginFieldsOrMethod, dimFields.getWidth()
-				+ 2 * xMarginFieldsOrMethod), dimTitle.getWidth() + 2 * xMarginCircle);
+		final double width = Math.max(
+				Math.max(dimMethods.getWidth() + 2 * xMarginFieldsOrMethod, dimFields.getWidth() + 2
+						* xMarginFieldsOrMethod), dimTitle.getWidth() + 2 * xMarginCircle);
 		final double height = getMethodOrFieldHeight(dimMethods) + getMethodOrFieldHeight(dimFields)
 				+ dimTitle.getHeight();
 		return new Dimension2DDouble(width, height);
@@ -151,8 +151,8 @@ public class EntityImageClass2 extends AbstractEntityImage2 {
 		if (circledCharacter == null) {
 			return nameAndStereo;
 		}
-		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(nameAndStereo
-				.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
+		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(
+				nameAndStereo.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
 	}
 
 	private Dimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {

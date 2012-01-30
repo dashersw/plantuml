@@ -28,26 +28,23 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7558 $
+ * Revision $Revision: 4749 $
  *
  */
-package net.sourceforge.plantuml.componentdiagram.command;
+package net.sourceforge.plantuml.cucadiagram;
 
-import net.sourceforge.plantuml.command.note.AbstractCommandMultilinesNoteEntity;
-import net.sourceforge.plantuml.command.regex.RegexLeaf;
-import net.sourceforge.plantuml.command.regex.RegexOr;
-import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
+import java.util.List;
 
-public class CommandMultilinesComponentNoteEntity extends AbstractCommandMultilinesNoteEntity {
+import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.ISkinParam;
+import net.sourceforge.plantuml.graphic.TextBlock;
 
-	public CommandMultilinesComponentNoteEntity(final ComponentDiagram system) {
-		super(
-				system,
-				new RegexOr("ENTITY",
-						new RegexLeaf("[\\p{L}0-9_.]+"),
-						new RegexLeaf("\\(\\)\\s*[\\p{L}0-9_.]+"),
-						new RegexLeaf("\\(\\)\\s*\"[^\"]+\""),
-						new RegexLeaf("\\[[^\\]*]+[^\\]]*\\]")));
-	}
+public interface BlockMember {
+
+	public List<Member> getAll();
+
+	public int size();
+	
+	public TextBlock asTextBlock(FontParam fontParam, ISkinParam skinParam);
 
 }

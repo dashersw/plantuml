@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6590 $
+ * Revision $Revision: 7614 $
  *
  */
 package net.sourceforge.plantuml.graph;
@@ -61,7 +61,7 @@ public class MethodsOrFieldsArea {
 	public MethodsOrFieldsArea(List<Member> attributes, UFont font) {
 		this.font = font;
 		for (Member att : attributes) {
-			this.strings.add(att.getDisplayWithoutVisibilityChar());
+			this.strings.add(att.getDisplay(false));
 		}
 	}
 

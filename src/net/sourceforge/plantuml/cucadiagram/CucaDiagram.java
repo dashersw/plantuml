@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7533 $
+ * Revision $Revision: 7600 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
@@ -79,7 +79,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private int horizontalPages = 1;
 	private int verticalPages = 1;
 
-	private final Map<String, Entity> entities = new LinkedHashMap<String, Entity>();
+	private final LinkedHashMap<String, Entity> entities = new LinkedHashMap<String, Entity>();
 	// private final Map<String, Entity> entities = new TreeMap<String,
 	// Entity>();
 	private final Map<IEntity, Integer> nbLinks = new HashMap<IEntity, Integer>();
@@ -242,7 +242,7 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 	private Group getRootGroup() {
 		final Group result = new Group(null, null, null, GroupType.ROOT, null);
 		for (IEntity ent : entities.values()) {
-			if (ent.getParent()==null) {
+			if (ent.getParent() == null) {
 				result.addEntity(ent);
 			}
 		}
@@ -672,6 +672,27 @@ public abstract class CucaDiagram extends UmlDiagram implements GroupHierarchy, 
 			}
 		}
 		return true;
+	}
+
+	final public Link getLastLink() {
+		final List<Link> links = getLinks();
+		for (int i = links.size() - 1; i >= 0; i--) {
+			final Link link = links.get(i);
+			if (link.getEntity1().getType() != EntityType.NOTE && link.getEntity2().getType() != EntityType.NOTE) {
+				return link;
+			}
+		}
+		return null;
+	}
+
+	final public IEntity getLastEntity() {
+		for (final Iterator<Entity> it = entities.values().iterator(); it.hasNext();) {
+			final Entity ent = it.next();
+			if (it.hasNext() == false) {
+				return ent;
+			}
+		}
+		return null;
 	}
 
 }

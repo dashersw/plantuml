@@ -27,39 +27,29 @@
  * in the United States and other countries.]
  *
  * Original Author:  Arnaud Roques
- * 
- * Revision $Revision: 7558 $
+ *
+ * Revision $Revision: 5075 $
  *
  */
-package net.sourceforge.plantuml.sequencediagram.command;
+package net.sourceforge.plantuml.classdiagram.command;
 
-import java.util.List;
 
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.command.CommandExecutionResult;
-import net.sourceforge.plantuml.command.SingleLineCommand;
-import net.sourceforge.plantuml.command.note.CommandNote;
-import net.sourceforge.plantuml.sequencediagram.AbstractMessage;
-import net.sourceforge.plantuml.sequencediagram.NotePosition;
-import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
+public class GenericRegexProducer {
 
-public class CommandNoteOnArrow extends SingleLineCommand<SequenceDiagram> implements CommandNote {
+	public final static String PATTERN = "[^\\<\\>]" + getGenericRegex(4);
 
-	public CommandNoteOnArrow(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^note\\s+(right|left)\\s*(#\\w+)?\\s*:\\s*(.*)$");
-	}
+	// \<[^\<\>]([^\<\>]|\<\>)*\>
+	static final private String part1 = "(?:[^\\<\\>]|\\<";
+	static final private String part2 = "\\>)*";
 
-	@Override
-	protected CommandExecutionResult executeArg(List<String> arg) {
-
-		final AbstractMessage m = getSystem().getLastMessage();
-		if (m != null) {
-			final NotePosition position = NotePosition.valueOf(arg.get(0).toUpperCase());
-			final List<String> strings = StringUtils.getWithNewlines(arg.get(2));
-			m.setNote(strings, position, arg.get(1), null);
+	static String getGenericRegex(int level) {
+		if (level < 0) {
+			throw new IllegalArgumentException();
 		}
-
-		return CommandExecutionResult.ok();
+		if (level == 0) {
+			return part1 + part2;
+		}
+		return part1 + getGenericRegex(level - 1) + part2;
 	}
 
 }

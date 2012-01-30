@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7550 $
+ * Revision $Revision: 7600 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -39,10 +39,8 @@ import java.util.Collections;
 import java.util.List;
 
 import net.sourceforge.plantuml.cucadiagram.CucaDiagram;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
-import net.sourceforge.plantuml.cucadiagram.Link;
 
 public abstract class AbstractEntityDiagram extends CucaDiagram {
 
@@ -108,18 +106,6 @@ public abstract class AbstractEntityDiagram extends CucaDiagram {
 		return code;
 	}
 	
-	final public Link getLastStateLink() {
-		final List<Link> links = getLinks();
-		for (int i = links.size() - 1; i >= 0; i--) {
-			final Link link = links.get(i);
-			if (link.getEntity1().getType() != EntityType.NOTE && link.getEntity2().getType() != EntityType.NOTE) {
-				return link;
-			}
-		}
-		return null;
-	}
-
-
 
 
 }

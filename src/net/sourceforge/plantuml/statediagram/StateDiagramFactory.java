@@ -28,17 +28,17 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7559 $
+ * Revision $Revision: 7590 $
  *
  */
 package net.sourceforge.plantuml.statediagram;
 
-import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
-import net.sourceforge.plantuml.command.note.CommandMultilinesNoteOnStateLink;
-import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
-import net.sourceforge.plantuml.command.note.CommandNoteOnStateLink;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnLinkCommand;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.statediagram.command.CommandAddField;
 import net.sourceforge.plantuml.statediagram.command.CommandConcurrentState;
 import net.sourceforge.plantuml.statediagram.command.CommandCreatePackageState;
@@ -72,12 +72,19 @@ public class StateDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandEndState(system));
 		addCommand(new CommandAddField(system));
 		addCommand(new CommandConcurrentState(system));
-		addCommand(new CommandMultilinesClassNote(system));
+
+		final FactoryNoteOnEntityCommand factoryNoteCommand = new FactoryNoteOnEntityCommand(new RegexOr("ENTITY",
+				new RegexLeaf("[\\p{L}0-9_.]+"), //
+				new RegexLeaf("\"[^\"]+\"") //
+				));
+		addCommand(factoryNoteCommand.createMultiLine(system));
+
 		addCommand(new CommandHideEmptyDescription(system));
 
-		addCommand(new CommandNoteEntityOld(system));
-		addCommand(new CommandNoteOnStateLink(system));
-		addCommand(new CommandMultilinesNoteOnStateLink(system));
+		addCommand(factoryNoteCommand.createSingleLine(system));
+		final FactoryNoteOnLinkCommand factoryNoteOnLinkCommand = new FactoryNoteOnLinkCommand();
+		addCommand(factoryNoteOnLinkCommand.createSingleLine(system));
+		addCommand(factoryNoteOnLinkCommand.createMultiLine(system));
 		addCommand(new CommandUrl(system));
 		addCommonCommands(system);
 	}

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7559 $
+ * Revision $Revision: 7576 $
  *
  */
 package net.sourceforge.plantuml.componentdiagram;
@@ -40,14 +40,14 @@ import net.sourceforge.plantuml.command.CommandEndPackage;
 import net.sourceforge.plantuml.command.CommandNamespace;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
-import net.sourceforge.plantuml.command.note.CommandCreateNote;
-import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
-import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
+import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateActorInComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateCircleInterface;
 import net.sourceforge.plantuml.componentdiagram.command.CommandCreateComponent;
 import net.sourceforge.plantuml.componentdiagram.command.CommandLinkComponent2;
-import net.sourceforge.plantuml.componentdiagram.command.CommandMultilinesComponentNoteEntity;
 import net.sourceforge.plantuml.usecasediagram.command.CommandRankDirUsecase;
 
 public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
@@ -66,23 +66,33 @@ public class ComponentDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommonCommands(system);
 
 		addCommand(new CommandPage(system));
-		//addCommand(new CommandLinkComponent(system));
+		// addCommand(new CommandLinkComponent(system));
 		addCommand(new CommandLinkComponent2(system));
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
 		addCommand(new CommandNamespace(system));
 		addCommand(new CommandEndNamespace(system));
-		addCommand(new CommandMultilinesStandaloneNote(system));
-		addCommand(new CommandNoteEntityOld(system));
+		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
+		addCommand(factoryNoteCommand.createMultiLine(system));
+		//addCommand(new CommandMultilinesStandaloneNote(system));
+		// addCommand(new CommandNoteEntityOld(system));
+		final FactoryNoteOnEntityCommand factoryNoteOnEntityCommand = new FactoryNoteOnEntityCommand(new RegexOr(
+				"ENTITY", //
+				new RegexLeaf("[\\p{L}0-9_.]+"), //
+				new RegexLeaf("\\(\\)\\s*[\\p{L}0-9_.]+"), //
+				new RegexLeaf("\\(\\)\\s*\"[^\"]+\""), //
+				new RegexLeaf("\\[[^\\]*]+[^\\]]*\\]")));
+		addCommand(factoryNoteOnEntityCommand.createSingleLine(system));
 
-		addCommand(new CommandCreateNote(system));
+		// addCommand(new CommandCreateNote(system));
+		addCommand(factoryNoteCommand.createSingleLine(system));
 		addCommand(new CommandUrl(system));
 		addCommand(new CommandCreateComponent(system));
 		addCommand(new CommandCreateCircleInterface(system));
 		addCommand(new CommandCreateActorInComponent(system));
 
-		addCommand(new CommandMultilinesComponentNoteEntity(system));
-
+		// addCommand(new CommandMultilinesComponentNoteEntity(system));
+		addCommand(factoryNoteOnEntityCommand.createMultiLine(system));
 	}
 }

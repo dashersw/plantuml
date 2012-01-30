@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7534 $
+ * Revision $Revision: 7589 $
  *
  */
 package net.sourceforge.plantuml.activitydiagram;
@@ -87,17 +87,6 @@ public class ActivityDiagram extends CucaDiagram {
 
 	public IEntity getEnd() {
 		return getOrCreate("end", "end", EntityType.CIRCLE_END);
-	}
-
-	final public Link getLastActivityLink() {
-		final List<Link> links = getLinks();
-		for (int i = links.size() - 1; i >= 0; i--) {
-			final Link link = links.get(i);
-			if (link.getEntity1().getType() != EntityType.NOTE && link.getEntity2().getType() != EntityType.NOTE) {
-				return link;
-			}
-		}
-		return null;
 	}
 
 	private void updateLasts(final IEntity result) {

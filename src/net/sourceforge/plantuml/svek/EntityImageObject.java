@@ -42,7 +42,6 @@ import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graph.MethodsOrFieldsArea2;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
@@ -72,7 +71,8 @@ public class EntityImageObject extends AbstractEntityImage {
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;
 		} else {
-			this.stereo = TextBlockUtils.create(StringUtils.getWithNewlines(stereotype.getLabel()),
+			this.stereo = TextBlockUtils.create(
+					StringUtils.getWithNewlines(stereotype.getLabel()),
 					new FontConfiguration(getFont(FontParam.OBJECT_STEREOTYPE, stereotype), getFontColor(
 							FontParam.OBJECT_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
 		}
@@ -80,8 +80,8 @@ public class EntityImageObject extends AbstractEntityImage {
 		if (entity.getFieldsToDisplay().size() == 0) {
 			this.fields = new TextBlockEmpty(10, 16);
 		} else {
-			this.fields = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getFieldsToDisplay(),
-					FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
+			this.fields = TextBlockUtils.withMargin(
+					entity.getFieldsToDisplay().asTextBlock(FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
 
 		}
 

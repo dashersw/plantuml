@@ -66,8 +66,8 @@ class LabelBuilderObjectOld extends LabelBuilderObjectOrClass implements LabelBu
 		if (getEntity().getFieldsToDisplay().size() == 0) {
 			sb.append(manageHtmlIB(" ", FontParam.OBJECT_ATTRIBUTE, stereo));
 		} else {
-			for (Member att : getEntity().getFieldsToDisplay()) {
-				sb.append(manageHtmlIB(att.getDisplayWithVisibilityChar(), FontParam.OBJECT_ATTRIBUTE, stereo));
+			for (Member att : getEntity().getFieldsToDisplay().getAll()) {
+				sb.append(manageHtmlIB(att.getDisplay(true), FontParam.OBJECT_ATTRIBUTE, stereo));
 				sb.append("<BR ALIGN=\"LEFT\"/>");
 			}
 		}

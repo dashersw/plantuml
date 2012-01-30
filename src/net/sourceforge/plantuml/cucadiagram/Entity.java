@@ -28,16 +28,13 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 6923 $
+ * Revision $Revision: 7619 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,9 +56,10 @@ public class Entity implements IEntity {
 	private EntityType type;
 
 	private Stereotype stereotype;
+	private String generic;
 
-	private final List<Member> fields = new ArrayList<Member>();
-	private final List<Member> methods = new ArrayList<Member>();
+	private final BlockMemberImpl fields = new BlockMemberImpl();
+	private final BlockMemberImpl methods = new BlockMemberImpl();
 	private final Set<VisibilityModifier> hides;
 
 	private Group container;
@@ -88,8 +86,8 @@ public class Entity implements IEntity {
 		this(uid1, uid2, code, StringUtils.getWithNewlines(display), type, entityPackage, hides);
 	}
 
-	public Entity(String uid1, int uid2, String code, List<? extends CharSequence> display, EntityType type, Group entityPackage,
-			Set<VisibilityModifier> hides) {
+	public Entity(String uid1, int uid2, String code, List<? extends CharSequence> display, EntityType type,
+			Group entityPackage, Set<VisibilityModifier> hides) {
 		if (code == null || code.length() == 0) {
 			throw new IllegalArgumentException();
 		}
@@ -120,48 +118,64 @@ public class Entity implements IEntity {
 
 	public void addFieldOrMethod(String s) {
 		if (isMethod(s)) {
-			methods.add(new Member(s, true));
+			methods.add(new MemberImpl(s, true));
 		} else {
-			addField(s);
+			fields.add(new MemberImpl(s, false));
 		}
 	}
 
-	public void addField(String s) {
-		fields.add(new Member(s, false));
-	}
-
-	public void addField(Member s) {
-		fields.add(s);
-	}
+	// public void addField(String s) {
+	// fields.add(new MemberImpl(s, false));
+	// }
+	//
+	// public void addField(Member s) {
+	// fields.add(s);
+	// }
 
 	private boolean isMethod(String s) {
-		return s.contains("(") || s.contains(")");
+		if (getType() == EntityType.ABSTRACT_CLASS || getType() == EntityType.CLASS
+				|| getType() == EntityType.INTERFACE || getType() == EntityType.ENUM) {
+			return s.contains("(") || s.contains(")");
+		}
+		return false;
 	}
 
-	public List<Member> getMethodsToDisplay() {
-		if (hides == null || hides.size() == 0) {
-			return Collections.unmodifiableList(methods);
+	private IEntity blocDisplayProxy;
+
+	public void overidesFieldsToDisplay(IEntity blocDisplayProxy) {
+		this.blocDisplayProxy = blocDisplayProxy;
+	}
+
+	public BlockMember getMethodsToDisplay() {
+		if (blocDisplayProxy != null) {
+			return blocDisplayProxy.getMethodsToDisplay();
 		}
-		final List<Member> result = new ArrayList<Member>();
-		for (Member m : methods) {
+		if (hides == null || hides.size() == 0) {
+			return methods;
+		}
+		final BlockMemberImpl result = new BlockMemberImpl();
+		for (Member m : methods.getAll()) {
 			if (hides.contains(m.getVisibilityModifier()) == false) {
 				result.add(m);
 			}
 		}
-		return Collections.unmodifiableList(result);
+		return result;
 	}
 
-	public List<Member> getFieldsToDisplay() {
-		if (hides == null || hides.size() == 0) {
-			return Collections.unmodifiableList(fields);
+	public BlockMember getFieldsToDisplay() {
+		if (blocDisplayProxy != null) {
+			return blocDisplayProxy.getFieldsToDisplay();
 		}
-		final List<Member> result = new ArrayList<Member>();
-		for (Member m : fields) {
+		if (hides == null || hides.size() == 0) {
+			return fields;
+		}
+		final BlockMemberImpl result = new BlockMemberImpl();
+		for (Member m : fields.getAll()) {
 			if (hides.contains(m.getVisibilityModifier()) == false) {
 				result.add(m);
 			}
 		}
-		return Collections.unmodifiableList(result);
+		return result;
 	}
 
 	public EntityType getType() {
@@ -336,6 +350,14 @@ public class Entity implements IEntity {
 
 	public final void setSvekImage(IEntityImage svekImage) {
 		this.svekImage = svekImage;
+	}
+
+	public final void setGeneric(String generic) {
+		this.generic = generic;
+	}
+
+	public final String getGeneric() {
+		return generic;
 	}
 
 }

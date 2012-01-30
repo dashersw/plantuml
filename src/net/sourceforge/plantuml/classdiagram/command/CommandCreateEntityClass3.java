@@ -51,13 +51,13 @@ import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
-public class CommandCreateEntityClass2 extends SingleLineCommand2<ClassDiagram> {
+public class CommandCreateEntityClass3 extends SingleLineCommand2<ClassDiagram> {
 
 	enum Mode {
 		EXTENDS, IMPLEMENTS
 	};
 
-	public CommandCreateEntityClass2(ClassDiagram diagram) {
+	public CommandCreateEntityClass3(ClassDiagram diagram) {
 		super(diagram, getRegexConcat());
 	}
 
@@ -69,7 +69,8 @@ public class CommandCreateEntityClass2 extends SingleLineCommand2<ClassDiagram> 
 						"(?:\"([^\"]+)\"\\s+as\\s+)?(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)"), //
 						new RegexLeaf("NAME2", "(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*)\\s+as\\s+\"([^\"]+)\""), //
 						new RegexLeaf("NAME3", "\"([^\"]+)\"")), //
-				new RegexLeaf("STEREO", "(?:\\s*([\\<\\[]{2}.*[\\>\\]]{2}))?"), //
+				new RegexLeaf("GENERIC", "(?:\\s*\\<(" + GenericRegexProducer.PATTERN + ")\\>)?"), //
+				new RegexLeaf("STEREO", "(?:\\s*(\\<{2}.*\\>{2}))?"), //
 				new RegexLeaf("EXTENDS", "(\\s+(extends|implements)\\s+(\\.?[\\p{L}0-9_]+(?:\\.[\\p{L}0-9_]+)*))?"), //
 				new RegexLeaf("$"));
 	}
@@ -90,6 +91,7 @@ public class CommandCreateEntityClass2 extends SingleLineCommand2<ClassDiagram> 
 			display = arg.get("NAME2").get(1);
 		}
 		final String stereotype = arg.get("STEREO").get(0);
+		final String generic = arg.get("GENERIC").get(0);
 		final Entity entity;
 		if (getSystem().entityExist(code)) {
 			entity = (Entity) getSystem().getOrCreateEntity(code, type);
@@ -100,6 +102,9 @@ public class CommandCreateEntityClass2 extends SingleLineCommand2<ClassDiagram> 
 		if (stereotype != null) {
 			entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
 					getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER, null)));
+		}
+		if (generic != null) {
+			entity.setGeneric(generic);
 		}
 
 		manageExtends(getSystem(), arg, entity);
@@ -146,7 +151,8 @@ public class CommandCreateEntityClass2 extends SingleLineCommand2<ClassDiagram> 
 	// entity = getSystem().createEntity(code, display, type);
 	// }
 	// if (stereotype != null) {
-	// entity.setStereotype(new Stereotype(stereotype, getSystem().getSkinParam().getCircledCharacterRadius(),
+	// entity.setStereotype(new Stereotype(stereotype,
+	// getSystem().getSkinParam().getCircledCharacterRadius(),
 	// getSystem().getSkinParam().getFont(FontParam.CIRCLED_CHARACTER)));
 	// }
 	// return CommandExecutionResult.ok();

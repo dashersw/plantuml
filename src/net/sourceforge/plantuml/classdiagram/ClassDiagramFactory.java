@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7559 $
+ * Revision $Revision: 7605 $
  *
  */
 package net.sourceforge.plantuml.classdiagram;
@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.plantuml.classdiagram.command.CommandAddMethod;
-import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntityClass2;
+import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntityClass3;
 import net.sourceforge.plantuml.classdiagram.command.CommandCreateEntityClassMultilines2;
 import net.sourceforge.plantuml.classdiagram.command.CommandDiamondAssociation;
 import net.sourceforge.plantuml.classdiagram.command.CommandHideShow;
@@ -45,7 +45,6 @@ import net.sourceforge.plantuml.classdiagram.command.CommandHideShow3;
 import net.sourceforge.plantuml.classdiagram.command.CommandImport;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass3;
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkLollipop2;
-import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandStereotype;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
@@ -55,11 +54,10 @@ import net.sourceforge.plantuml.command.CommandNamespace;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPackageEmpty;
 import net.sourceforge.plantuml.command.CommandPage;
-import net.sourceforge.plantuml.command.note.CommandCreateNote;
-import net.sourceforge.plantuml.command.note.CommandMultilinesNoteOnStateLink;
-import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
-import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
-import net.sourceforge.plantuml.command.note.CommandNoteOnStateLink;
+import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnLinkCommand;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
@@ -83,13 +81,14 @@ public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandPage(system));
 		addCommand(new CommandAddMethod(system));
 
-		addCommand(new CommandCreateEntityClass2(system));
-		addCommand(new CommandCreateNote(system));
+		addCommand(new CommandCreateEntityClass3(system));
+		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
+		addCommand(factoryNoteCommand.createSingleLine(system));
 
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
 		addCommand(new CommandPackageEmpty(system));
-		
+
 		addCommand(new CommandNamespace(system));
 		addCommand(new CommandEndNamespace(system));
 		addCommand(new CommandStereotype(system));
@@ -98,15 +97,18 @@ public class ClassDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandLinkLollipop2(system));
 
 		addCommand(new CommandImport(system));
-		addCommand(new CommandNoteEntityOld(system));
+		final FactoryNoteOnEntityCommand factoryNoteOnEntityCommand = new FactoryNoteOnEntityCommand(new RegexLeaf(
+				"ENTITY", "([\\p{L}0-9_.]+|\"[^\"]+\")"));
+		addCommand(factoryNoteOnEntityCommand.createSingleLine(system));
 		addCommand(new CommandUrl(system));
 
-		addCommand(new CommandMultilinesClassNote(system));
-		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(factoryNoteOnEntityCommand.createMultiLine(system));
+		addCommand(factoryNoteCommand.createMultiLine(system));
 		addCommand(new CommandCreateEntityClassMultilines2(system));
 
-		addCommand(new CommandNoteOnStateLink(system));
-		addCommand(new CommandMultilinesNoteOnStateLink(system));
+		final FactoryNoteOnLinkCommand factoryNoteOnLinkCommand = new FactoryNoteOnLinkCommand();
+		addCommand(factoryNoteOnLinkCommand.createSingleLine(system));
+		addCommand(factoryNoteOnLinkCommand.createMultiLine(system));
 
 		addCommand(new CommandDiamondAssociation(system));
 

@@ -54,13 +54,13 @@ public interface IEntity extends Imaged, SpecificBackcolorable, Comparable<IEnti
 
 	public Url getUrl();
 
-	public List<Member> getFieldsToDisplay();
-
 	public Stereotype getStereotype();
 
 	public void setStereotype(Stereotype stereotype);
 
-	public List<Member> getMethodsToDisplay();
+	public BlockMember getFieldsToDisplay();
+	
+	public BlockMember getMethodsToDisplay();
 
 	public String getCode();
 
@@ -79,5 +79,7 @@ public interface IEntity extends Imaged, SpecificBackcolorable, Comparable<IEnti
 	public void setXposition(int pos);
 
 	public IEntityImage getSvekImage();
+	
+	public String getGeneric();
 
 }

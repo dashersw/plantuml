@@ -75,8 +75,8 @@ public class EntityImageState extends AbstractEntityImage {
 				stereotype), getFontColor(FontParam.STATE, stereotype)), HorizontalAlignement.CENTER);
 
 		final List<String> list = new ArrayList<String>();
-		for (Member att : entity.getFieldsToDisplay()) {
-			list.add(att.getDisplayWithVisibilityChar());
+		for (Member att : entity.getFieldsToDisplay().getAll()) {
+			list.add(att.getDisplay(true));
 		}
 
 		this.fields = TextBlockUtils.create(list, new FontConfiguration(getFont(FontParam.STATE_ATTRIBUTE, stereotype),

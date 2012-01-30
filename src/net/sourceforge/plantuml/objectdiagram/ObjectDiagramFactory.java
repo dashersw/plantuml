@@ -34,15 +34,14 @@
 package net.sourceforge.plantuml.objectdiagram;
 
 import net.sourceforge.plantuml.classdiagram.command.CommandLinkClass2;
-import net.sourceforge.plantuml.classdiagram.command.CommandMultilinesClassNote;
 import net.sourceforge.plantuml.classdiagram.command.CommandUrl;
 import net.sourceforge.plantuml.command.AbstractUmlSystemCommandFactory;
 import net.sourceforge.plantuml.command.CommandEndPackage;
 import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
-import net.sourceforge.plantuml.command.note.CommandCreateNote;
-import net.sourceforge.plantuml.command.note.CommandMultilinesStandaloneNote;
-import net.sourceforge.plantuml.command.note.CommandNoteEntityOld;
+import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.objectdiagram.command.CommandAddData;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObject;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObjectMultilines;
@@ -66,7 +65,9 @@ public class ObjectDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(new CommandLinkClass2(system));
 		//
 		addCommand(new CommandCreateEntityObject(system));
-		addCommand(new CommandCreateNote(system));
+		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
+		// addCommand(new CommandCreateNote(system));
+		addCommand(factoryNoteCommand.createSingleLine(system));
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
 		// addCommand(new CommandNamespace(system));
@@ -74,11 +75,14 @@ public class ObjectDiagramFactory extends AbstractUmlSystemCommandFactory {
 		// addCommand(new CommandStereotype(system));
 		//
 		// addCommand(new CommandImport(system));
-		addCommand(new CommandNoteEntityOld(system));
+		final FactoryNoteOnEntityCommand factoryNoteOnEntityCommand = new FactoryNoteOnEntityCommand(new RegexLeaf(
+				"ENTITY", "([\\p{L}0-9_.]+|\"[^\"]+\")"));
+		addCommand(factoryNoteOnEntityCommand.createSingleLine(system));
+
 		addCommand(new CommandUrl(system));
 
-		addCommand(new CommandMultilinesClassNote(system));
-		addCommand(new CommandMultilinesStandaloneNote(system));
+		addCommand(factoryNoteCommand.createMultiLine(system));
+		addCommand(factoryNoteOnEntityCommand.createMultiLine(system));
 		addCommand(new CommandCreateEntityObjectMultilines(system));
 
 		// addCommand(new CommandNoopClass(system));

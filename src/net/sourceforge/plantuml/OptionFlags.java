@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7527 $
+ * Revision $Revision: 7622 $
  *
  */
 package net.sourceforge.plantuml;
@@ -48,6 +48,7 @@ public class OptionFlags {
 	static public final boolean SVEK = false;
 	static public final boolean TRACE_DOT = false;
 	static public final boolean NEW_DIAMOND = true;
+	static public final boolean HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED = false;
 	
 
 	void reset() {

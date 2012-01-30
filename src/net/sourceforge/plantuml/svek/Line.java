@@ -33,7 +33,6 @@
  */
 package net.sourceforge.plantuml.svek;
 
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.util.List;
@@ -59,9 +58,7 @@ import net.sourceforge.plantuml.posimo.Moveable;
 import net.sourceforge.plantuml.posimo.Positionable;
 import net.sourceforge.plantuml.posimo.PositionableUtils;
 import net.sourceforge.plantuml.svek.SvekUtils.PointListIterator;
-import net.sourceforge.plantuml.ugraphic.UEllipse;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.UPolygon;
 import net.sourceforge.plantuml.ugraphic.UShape;
 import net.sourceforge.plantuml.ugraphic.UStroke;
@@ -124,7 +121,8 @@ public class Line implements Moveable {
 		if (link.getNote() == null) {
 			noteOnly = null;
 		} else {
-			noteOnly = TextBlockUtils.fromIEntityImage(new EntityImageNoteLink(link.getNote(), skinParam));
+			noteOnly = TextBlockUtils.fromIEntityImage(new EntityImageNoteLink(link.getNote(), link.getNoteColor(),
+					skinParam));
 		}
 
 		if (labelOnly != null && noteOnly != null) {
@@ -179,7 +177,7 @@ public class Line implements Moveable {
 		}
 		sb.append(decoration);
 
-		if (link.getLength() != 1) {
+		if (OptionFlags.HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED || link.getLength() != 1) {
 			sb.append("minlen=" + (link.getLength() - 1));
 			sb.append(",");
 		}
@@ -228,7 +226,7 @@ public class Line implements Moveable {
 	}
 
 	public String rankSame() {
-		if (link.getLength() == 1) {
+		if (OptionFlags.HORIZONTAL_LINE_BETWEEN_DIFFERENT_PACKAGE_ALLOWED == false && link.getLength() == 1) {
 			return "{rank=same; " + getStartUid() + "; " + getEndUid() + "}";
 		}
 		return null;
@@ -346,18 +344,18 @@ public class Line implements Moveable {
 		}
 
 		if (this.noteLabelText != null) {
-			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder,
-					getXY(svg, this.noteLabelColor, fullHeight));
+			this.noteLabelXY = TextBlockUtils.asPositionable(noteLabelText, stringBounder, getXY(svg,
+					this.noteLabelColor, fullHeight));
 		}
 
 		if (this.startTailText != null) {
-			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder,
-					getXY(svg, this.startTailColor, fullHeight));
+			this.startTailLabelXY = TextBlockUtils.asPositionable(startTailText, stringBounder, getXY(svg,
+					this.startTailColor, fullHeight));
 		}
 
 		if (this.endHeadText != null) {
-			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder,
-					getXY(svg, this.endHeadColor, fullHeight));
+			this.endHeadLabelXY = TextBlockUtils.asPositionable(endHeadText, stringBounder, getXY(svg,
+					this.endHeadColor, fullHeight));
 		}
 
 		if (isOpalisable() == false) {

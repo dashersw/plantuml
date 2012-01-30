@@ -41,134 +41,62 @@ import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.MathUtils;
 import net.sourceforge.plantuml.cucadiagram.EntityPortion;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
-import net.sourceforge.plantuml.cucadiagram.Stereotype;
-import net.sourceforge.plantuml.graph.MethodsOrFieldsArea2;
-import net.sourceforge.plantuml.graphic.CircledCharacter;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignement;
-import net.sourceforge.plantuml.graphic.HtmlColor;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.ugraphic.PlacementStrategyX1Y2Y3;
-import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
-import net.sourceforge.plantuml.ugraphic.UFont;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGroup;
 import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
 public class EntityImageClass extends AbstractEntityImage {
 
-	final private TextBlock name;
-	final private TextBlock stereo;
 	final private TextBlock methods;
 	final private TextBlock fields;
-	final private CircledCharacter circledCharacter;
 	final private int shield;
+	final private EntityImageClassHeader2 header;
 
 	public EntityImageClass(IEntity entity, ISkinParam skinParam, PortionShower portionShower) {
 		super(entity, skinParam);
 
 		this.shield = entity.hasNearDecoration() ? 16 : 0;
 
-		final boolean italic = entity.getType() == EntityType.ABSTRACT_CLASS
-				|| entity.getType() == EntityType.INTERFACE;
-
-		final HtmlColor color = getFontColor(FontParam.CLASS, getStereo());
-		final Stereotype stereotype = entity.getStereotype();
-		FontConfiguration fontConfigurationName = new FontConfiguration(getFont(FontParam.CLASS, stereotype), color);
-		if (italic) {
-			fontConfigurationName = fontConfigurationName.italic();
-		}
-		this.name = TextBlockUtils.withMargin(
-				TextBlockUtils.create(entity.getDisplay2(), fontConfigurationName, HorizontalAlignement.CENTER), 3, 3);
-
-		if (stereotype == null || stereotype.getLabel() == null
-				|| portionShower.showPortion(EntityPortion.STEREOTYPE, entity) == false) {
-			this.stereo = null;
-		} else {
-			this.stereo = TextBlockUtils.create(
-					stereotype.getLabels(),
-					new FontConfiguration(getFont(FontParam.CLASS_STEREOTYPE, stereotype), getFontColor(
-							FontParam.CLASS_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
-		}
-
-		// see LabelBuilderHtmlHeaderTableForObjectOrClass for colors
-
 		final boolean showMethods = portionShower.showPortion(EntityPortion.METHOD, getEntity());
 		if (showMethods) {
-			this.methods = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getMethodsToDisplay(),
-					FontParam.CLASS_ATTRIBUTE, skinParam), 6, 4);
+			this.methods = TextBlockUtils.withMargin(
+					entity.getMethodsToDisplay().asTextBlock(FontParam.CLASS_ATTRIBUTE, skinParam), 6, 4);
 		} else {
 			this.methods = null;
 		}
 
 		final boolean showFields = portionShower.showPortion(EntityPortion.FIELD, getEntity());
 		if (showFields) {
-			this.fields = TextBlockUtils.withMargin(new MethodsOrFieldsArea2(entity.getFieldsToDisplay(),
-					FontParam.CLASS_ATTRIBUTE, skinParam), 6, 4);
+			this.fields = TextBlockUtils.withMargin(
+					entity.getFieldsToDisplay().asTextBlock(FontParam.CLASS_ATTRIBUTE, skinParam), 6, 4);
 		} else {
 			this.fields = null;
 		}
 
-		if (portionShower.showPortion(EntityPortion.CIRCLED_CHARACTER, getEntity())) {
-			circledCharacter = getCircledCharacter(entity);
-		} else {
-			circledCharacter = null;
-		}
-	}
+		header = new EntityImageClassHeader2(entity, skinParam, portionShower);
 
-	private CircledCharacter getCircledCharacter(IEntity entity) {
-		final Stereotype stereotype = entity.getStereotype();
-		if (stereotype != null && stereotype.getCharacter() != 0) {
-			final HtmlColor classBorder = getColor(ColorParam.classBorder, stereotype);
-			final UFont font = getFont(FontParam.CIRCLED_CHARACTER, null);
-			return new CircledCharacter(stereotype.getCharacter(), getSkinParam().getCircledCharacterRadius(), font,
-					stereotype.getHtmlColor(), classBorder, getFontColor(FontParam.CIRCLED_CHARACTER, null));
-		}
-		if (entity.getType() == EntityType.ABSTRACT_CLASS) {
-			return new CircledCharacter('A', getSkinParam().getCircledCharacterRadius(), getFont(
-					FontParam.CIRCLED_CHARACTER, null), getColor(ColorParam.stereotypeABackground, stereotype),
-					getColor(ColorParam.classBorder, stereotype), getFontColor(FontParam.CIRCLED_CHARACTER, null));
-		}
-		if (entity.getType() == EntityType.CLASS) {
-			return new CircledCharacter('C', getSkinParam().getCircledCharacterRadius(), getFont(
-					FontParam.CIRCLED_CHARACTER, null), getColor(ColorParam.stereotypeCBackground, stereotype),
-					getColor(ColorParam.classBorder, stereotype), getFontColor(FontParam.CIRCLED_CHARACTER, null));
-		}
-		if (entity.getType() == EntityType.INTERFACE) {
-			return new CircledCharacter('I', getSkinParam().getCircledCharacterRadius(), getFont(
-					FontParam.CIRCLED_CHARACTER, null), getColor(ColorParam.stereotypeIBackground, stereotype),
-					getColor(ColorParam.classBorder, stereotype), getFontColor(FontParam.CIRCLED_CHARACTER, null));
-		}
-		if (entity.getType() == EntityType.ENUM) {
-			return new CircledCharacter('E', getSkinParam().getCircledCharacterRadius(), getFont(
-					FontParam.CIRCLED_CHARACTER, null), getColor(ColorParam.stereotypeEBackground, stereotype),
-					getColor(ColorParam.classBorder, stereotype), getFontColor(FontParam.CIRCLED_CHARACTER, null));
-		}
-		assert false;
-		return null;
 	}
 
 	private int marginEmptyFieldsOrMethod = 13;
 
 	@Override
 	public Dimension2D getDimension(StringBounder stringBounder) {
-		final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		// final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		final Dimension2D dimHeader = header.getDimension(stringBounder);
 		final Dimension2D dimMethods = methods == null ? new Dimension2DDouble(0, 0) : methods
 				.calculateDimension(stringBounder);
 		final Dimension2D dimFields = fields == null ? new Dimension2DDouble(0, 0) : fields
 				.calculateDimension(stringBounder);
-		final double width = MathUtils.max(dimMethods.getWidth(), dimFields.getWidth(), dimTitle.getWidth() + 2
-				* xMarginCircle);
+		final double width = MathUtils.max(dimMethods.getWidth(), dimFields.getWidth(), dimHeader.getWidth());
 		final double height = getMethodOrFieldHeight(dimMethods, EntityPortion.METHOD)
-				+ getMethodOrFieldHeight(dimFields, EntityPortion.FIELD) + dimTitle.getHeight();
+				+ getMethodOrFieldHeight(dimFields, EntityPortion.FIELD) + dimHeader.getHeight();
 		return new Dimension2DDouble(width, height);
 	}
 
@@ -186,36 +114,10 @@ public class EntityImageClass extends AbstractEntityImage {
 		return fieldsHeight;
 	}
 
-	private int xMarginCircle = 5;
-	private int yMarginCircle = 5;
-
-	private Dimension2D getTitleDimension(StringBounder stringBounder) {
-		final Dimension2D nameAndStereo = getNameAndSteretypeDimension(stringBounder);
-		if (circledCharacter == null) {
-			return Dimension2DDouble.atLeast(nameAndStereo, 4 * xMarginCircle, 6 * yMarginCircle);
-		}
-		return new Dimension2DDouble(nameAndStereo.getWidth() + getCircledWidth(stringBounder), Math.max(
-				nameAndStereo.getHeight(), circledCharacter.getPreferredHeight(stringBounder) + 2 * yMarginCircle));
-	}
-
-	private Dimension2D getNameAndSteretypeDimension(StringBounder stringBounder) {
-		final Dimension2D nameDim = name.calculateDimension(stringBounder);
-		final Dimension2D stereoDim = stereo == null ? new Dimension2DDouble(0, 0) : stereo
-				.calculateDimension(stringBounder);
-		return Dimension2DDouble.mergeTB(nameDim, stereoDim);
-	}
-
-	private double getCircledWidth(StringBounder stringBounder) {
-		if (circledCharacter == null) {
-			return 0;
-		}
-		return circledCharacter.getPreferredWidth(stringBounder) + 3;
-	}
-
 	public void drawU(UGraphic ug, double xTheoricalPosition, double yTheoricalPosition) {
 		final StringBounder stringBounder = ug.getStringBounder();
 		final Dimension2D dimTotal = getDimension(stringBounder);
-		final Dimension2D dimTitle = getTitleDimension(stringBounder);
+		final Dimension2D dimHeader = header.getDimension(stringBounder);
 
 		final double widthTotal = dimTotal.getWidth();
 		final double heightTotal = dimTotal.getHeight();
@@ -234,20 +136,11 @@ public class EntityImageClass extends AbstractEntityImage {
 		ug.draw(x, y, rect);
 		ug.getParam().setStroke(new UStroke());
 
-		final UGroup header;
-		if (circledCharacter == null) {
-			header = new UGroup(new PlacementStrategyY1Y2(ug.getStringBounder()));
-		} else {
-			header = new UGroup(new PlacementStrategyX1Y2Y3(ug.getStringBounder()));
-			header.add(circledCharacter);
-		}
-		if (stereo != null) {
-			header.add(stereo);
-		}
-		header.add(name);
-		header.drawU(ug, x, y, dimTotal.getWidth(), dimTitle.getHeight());
+		// final UGroup header = createHeader(ug);
+		header.drawU(ug, x, y, dimTotal.getWidth(), dimHeader.getHeight());
+		// header.drawU(ug, x, y);
 
-		y += dimTitle.getHeight();
+		y += dimHeader.getHeight();
 
 		x = xTheoricalPosition;
 		if (fields != null) {
