@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7607 $
+ * Revision $Revision: 7642 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -71,9 +71,9 @@ public class TextBlockUtils {
 			HorizontalAlignement horizontalAlignement) {
 		final Stereotype stereotype = (Stereotype) texts.get(0);
 		if (stereotype.isSpotted()) {
-			final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(), stereotype
-					.getRadius(), stereotype.getCircledFont(), stereotype.getHtmlColor(), null, fontConfiguration
-					.getColor());
+			final CircledCharacter circledCharacter = new CircledCharacter(stereotype.getCharacter(),
+					stereotype.getRadius(), stereotype.getCircledFont(), stereotype.getHtmlColor(), null,
+					fontConfiguration.getColor());
 			if (stereotype.getLabel() == null) {
 				return new TextBlockSpotted(circledCharacter, texts.subList(1, texts.size()), fontConfiguration,
 						horizontalAlignement);
@@ -85,6 +85,14 @@ public class TextBlockUtils {
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX, double marginY) {
 		return new TextBlockMarged(textBlock, marginX, marginX, marginY, marginY);
+	}
+
+	public static TextBlockWidth withMargin(TextBlockWidth textBlock, double marginX, double marginY) {
+		return new TextBlocWidthMarged(textBlock, marginX, marginX, marginY, marginY);
+	}
+
+	public static TextBlockWidth withMargin(TextBlockWidth textBlock, double marginX, double marginY1, double marginY2) {
+		return new TextBlocWidthMarged(textBlock, marginX, marginX, marginY1, marginY2);
 	}
 
 	public static TextBlock withMargin(TextBlock textBlock, double marginX1, double marginX2, double marginY1,

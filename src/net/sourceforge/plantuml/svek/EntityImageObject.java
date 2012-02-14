@@ -40,19 +40,22 @@ import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
+import net.sourceforge.plantuml.cucadiagram.EntityPortion;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 import net.sourceforge.plantuml.graphic.FontConfiguration;
 import net.sourceforge.plantuml.graphic.HorizontalAlignement;
 import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockEmpty;
+import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.graphic.TextBlockWidth;
 import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2;
 import net.sourceforge.plantuml.ugraphic.Shadowable;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
 import net.sourceforge.plantuml.ugraphic.UGroup;
-import net.sourceforge.plantuml.ugraphic.ULine;
 import net.sourceforge.plantuml.ugraphic.URectangle;
 import net.sourceforge.plantuml.ugraphic.UStroke;
 
@@ -60,7 +63,7 @@ public class EntityImageObject extends AbstractEntityImage {
 
 	final private TextBlock name;
 	final private TextBlock stereo;
-	final private TextBlock fields;
+	final private TextBlockWidth fields;
 
 	public EntityImageObject(IEntity entity, ISkinParam skinParam) {
 		super(entity, skinParam);
@@ -71,31 +74,38 @@ public class EntityImageObject extends AbstractEntityImage {
 		if (stereotype == null || stereotype.getLabel() == null) {
 			this.stereo = null;
 		} else {
-			this.stereo = TextBlockUtils.create(
-					StringUtils.getWithNewlines(stereotype.getLabel()),
+			this.stereo = TextBlockUtils.create(StringUtils.getWithNewlines(stereotype.getLabel()),
 					new FontConfiguration(getFont(FontParam.OBJECT_STEREOTYPE, stereotype), getFontColor(
 							FontParam.OBJECT_STEREOTYPE, stereotype)), HorizontalAlignement.CENTER);
 		}
 
 		if (entity.getFieldsToDisplay().size() == 0) {
-			this.fields = new TextBlockEmpty(10, 16);
+			this.fields = new TextBlockLineBefore(new TextBlockEmpty(10, 16));
 		} else {
-			this.fields = TextBlockUtils.withMargin(
-					entity.getFieldsToDisplay().asTextBlock(FontParam.OBJECT_ATTRIBUTE, skinParam), 6, 4);
+			// this.fields =
+			// entity.getFieldsToDisplay().asTextBlock(FontParam.OBJECT_ATTRIBUTE,
+			// skinParam);
+			this.fields = entity.getBody(new PortionShower() {
+				public boolean showPortion(EntityPortion portion, IEntity entity) {
+					return true;
+				}
+			}).asTextBlock(FontParam.OBJECT_ATTRIBUTE, skinParam);
 
 		}
 
 	}
 
-	private int xMarginFieldsOrMethod = 5;
+	// private int xMarginFieldsOrMethod = 5;
 	private int marginEmptyFieldsOrMethod = 13;
 
 	@Override
 	public Dimension2D getDimension(StringBounder stringBounder) {
 		final Dimension2D dimTitle = getTitleDimension(stringBounder);
 		final Dimension2D dimFields = fields.calculateDimension(stringBounder);
-		final double width = Math.max(dimFields.getWidth() + 2 * xMarginFieldsOrMethod, dimTitle.getWidth() + 2
-				* xMarginCircle);
+		final double width = Math.max(dimFields.getWidth(), dimTitle.getWidth() + 2 * xMarginCircle);
+		// final double width = Math.max(dimFields.getWidth() + 2 *
+		// xMarginFieldsOrMethod, dimTitle.getWidth() + 2
+		// * xMarginCircle);
 		final double height = getMethodOrFieldHeight(dimFields) + dimTitle.getHeight();
 		return new Dimension2DDouble(width, height);
 	}
@@ -155,10 +165,10 @@ public class EntityImageObject extends AbstractEntityImage {
 
 		x = xTheoricalPosition;
 		ug.getParam().setColor(getColor(ColorParam.objectBorder, getStereo()));
-		ug.getParam().setStroke(new UStroke(1.5));
-		ug.draw(x, y, new ULine(widthTotal, 0));
-		ug.getParam().setStroke(new UStroke());
-		fields.drawU(ug, x + xMarginFieldsOrMethod, y);
+		// ug.getParam().setStroke(new UStroke(1.5));
+		// ug.draw(x, y, new ULine(widthTotal, 0));
+		// ug.getParam().setStroke(new UStroke());
+		fields.drawU(ug, x, y, widthTotal);
 
 	}
 

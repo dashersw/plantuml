@@ -95,9 +95,9 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 				// if (fileFormat == FileFormat.EPS) {
 				// sb.append(addFieldsEps(getEntity().fields2(), true));
 				// } else {
-				final boolean hasStatic = hasStatic(getEntity().getFieldsToDisplay().getAll());
+				final boolean hasStatic = hasStatic(getEntity().getFieldsToDisplay());
 				sb.append("<TR ALIGN=\"LEFT\"><TD " + getWitdh55() + " ALIGN=\"LEFT\">");
-				for (Member att : getEntity().getFieldsToDisplay().getAll()) {
+				for (Member att : getEntity().getFieldsToDisplay()) {
 					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic, getColorString(
 							ColorParam.classBackground, stereo), true));
 					sb.append("<BR ALIGN=\"LEFT\"/>");
@@ -109,9 +109,9 @@ class LabelBuilderClassOld extends LabelBuilderObjectOrClass implements LabelBui
 				// if (fileFormat == FileFormat.EPS) {
 				// sb.append(addFieldsEps(getEntity().methods2(), true));
 				// } else {
-				final boolean hasStatic = hasStatic(getEntity().getMethodsToDisplay().getAll());
+				final boolean hasStatic = hasStatic(getEntity().getMethodsToDisplay());
 				sb.append("<TR ALIGN=\"LEFT\"><TD ALIGN=\"LEFT\">");
-				for (Member att : getEntity().getMethodsToDisplay().getAll()) {
+				for (Member att : getEntity().getMethodsToDisplay()) {
 					sb.append(manageHtmlIBspecial(att, FontParam.CLASS_ATTRIBUTE, hasStatic, getColorString(
 							ColorParam.classBackground, stereo), true));
 					sb.append("<BR ALIGN=\"LEFT\"/>");

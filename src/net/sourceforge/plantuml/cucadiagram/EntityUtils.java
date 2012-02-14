@@ -49,7 +49,7 @@ public abstract class EntityUtils {
 			throw new IllegalArgumentException();
 		}
 		return new IEntity() {
-			public BlockMember getFieldsToDisplay() {
+			public List<Member> getFieldsToDisplay() {
 				return ent.getFieldsToDisplay();
 			}
 
@@ -81,7 +81,7 @@ public abstract class EntityUtils {
 				return ent.getUrl();
 			}
 
-			public BlockMember getMethodsToDisplay() {
+			public List<Member> getMethodsToDisplay() {
 				return ent.getMethodsToDisplay();
 			}
 
@@ -154,6 +154,10 @@ public abstract class EntityUtils {
 
 			public String getGeneric() {
 				return ent.getGeneric();
+			}
+
+			public BlockMember getBody(PortionShower portionShower) {
+				return ent.getBody(portionShower);
 			}
 
 		};

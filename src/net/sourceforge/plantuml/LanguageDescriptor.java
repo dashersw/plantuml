@@ -78,6 +78,8 @@ public class LanguageDescriptor {
 		keyword.add("left");
 		keyword.add("right");
 		keyword.add("of");
+		keyword.add("on");
+		keyword.add("link");
 		keyword.add("over");
 		keyword.add("end");
 		keyword.add("activate");

@@ -172,7 +172,7 @@ abstract class DotCommon {
 
 	protected final int getLongestMethods(IEntity entity) {
 		int result = 0;
-		for (Member att : entity.getMethodsToDisplay().getAll()) {
+		for (Member att : entity.getMethodsToDisplay()) {
 			final int size = att.getDisplay(true).length();
 			if (size > result) {
 				result = size;
@@ -184,7 +184,7 @@ abstract class DotCommon {
 
 	protected final int getLongestField(IEntity entity) {
 		int result = 0;
-		for (Member att : entity.getFieldsToDisplay().getAll()) {
+		for (Member att : entity.getFieldsToDisplay()) {
 			final int size = att.getDisplay(true).length();
 			if (size > result) {
 				result = size;

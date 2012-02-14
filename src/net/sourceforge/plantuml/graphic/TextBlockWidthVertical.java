@@ -28,40 +28,49 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7634 $
+ * Revision $Revision: 6577 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.StringUtils;
+import java.awt.geom.Dimension2D;
+import java.util.ArrayList;
+import java.util.List;
 
-public enum EntityType {
+import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-	EMPTY_PACKAGE,
+public class TextBlockWidthVertical implements TextBlockWidth {
 
-	ABSTRACT_CLASS, CLASS, INTERFACE, LOLLIPOP, ENUM, ACTOR, USECASE, COMPONENT, CIRCLE_INTERFACE, NOTE, OBJECT, ASSOCIATION,
-	
-	ARC_CIRCLE,
+	private final List<TextBlockWidth> blocks = new ArrayList<TextBlockWidth>();
 
-	ACTIVITY, BRANCH, SYNCHRO_BAR, CIRCLE_START, CIRCLE_END, POINT_FOR_ASSOCIATION, ACTIVITY_CONCURRENT,
-
-	STATE, STATE_CONCURRENT, PSEUDO_STATE,
-
-	BLOCK,
-
-	GROUP;
-
-	public static EntityType getEntityType(String arg0) {
-		arg0 = arg0.toUpperCase();
-		if (arg0.startsWith("ABSTRACT")) {
-			return EntityType.ABSTRACT_CLASS;
-		}
-		return EntityType.valueOf(arg0);
+	public TextBlockWidthVertical(TextBlockWidth b1, TextBlockWidth b2) {
+		this.blocks.add(b1);
+		this.blocks.add(b2);
 	}
 
-	public String toHtml() {
-		final String html = toString().replace('_', ' ').toLowerCase();
-		return StringUtils.capitalize(html);
+	public TextBlockWidthVertical(List<TextBlockWidth> all) {
+		if (all.size() < 2) {
+			throw new IllegalArgumentException();
+		}
+		this.blocks.addAll(all);
+	}
+
+	public Dimension2D calculateDimension(StringBounder stringBounder) {
+		Dimension2D dim = blocks.get(0).calculateDimension(stringBounder);
+		for (int i = 1; i < blocks.size(); i++) {
+			dim = Dimension2DDouble.mergeTB(dim, blocks.get(i).calculateDimension(stringBounder));
+		}
+		return dim;
+	}
+
+	public void drawU(UGraphic ug, double x, double y, double widthToUse) {
+		for (TextBlockWidth b : blocks) {
+			b.drawU(ug, x, y, widthToUse);
+			final Dimension2D dim = b.calculateDimension(ug.getStringBounder());
+			y += dim.getHeight();
+		}
+
 	}
 
 }

@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7614 $
+ * Revision $Revision: 7635 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram.dot;
@@ -363,7 +363,7 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 			final StringBuilder label = new StringBuilder(manageHtmlIB(g.getDisplay(), getFontParamForGroup(), null));
 			if (g.getEntityCluster().getFieldsToDisplay().size() > 0) {
 				label.append("<BR ALIGN=\"LEFT\"/>");
-				for (Member att : g.getEntityCluster().getFieldsToDisplay().getAll()) {
+				for (Member att : g.getEntityCluster().getFieldsToDisplay()) {
 					label.append(manageHtmlIB("  " + att.getDisplay(true) + "  ",
 							FontParam.STATE_ATTRIBUTE, null));
 					label.append("<BR ALIGN=\"LEFT\"/>");
@@ -1190,7 +1190,7 @@ final public class DotMaker extends DotCommon implements GraphvizMaker {
 
 		if (entity.getFieldsToDisplay().size() > 0) {
 			sb.append("|");
-			for (Member att : entity.getFieldsToDisplay().getAll()) {
+			for (Member att : entity.getFieldsToDisplay()) {
 				sb.append(manageHtmlIB(att.getDisplay(true), FontParam.STATE_ATTRIBUTE, stereotype));
 				sb.append("<BR ALIGN=\"LEFT\"/>");
 			}

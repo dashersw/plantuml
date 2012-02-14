@@ -28,17 +28,41 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 7163 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.TextBlockWidth;
+import java.awt.Graphics2D;
+import java.awt.geom.Dimension2D;
 
-public interface BlockMember {
+import net.sourceforge.plantuml.ugraphic.ColorMapper;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-	public TextBlockWidth asTextBlock(FontParam fontParam, ISkinParam skinParam);
+public class TextBlockWidthAdapter implements TextBlock {
+
+	private final TextBlockWidth textBlockWidth;
+	private final double width;
+
+//	public final void setWidth(double width) {
+//		this.width = width;
+//	}
+
+	public TextBlockWidthAdapter(TextBlockWidth textBlockWidth, double widthToUse) {
+		this.textBlockWidth = textBlockWidth;
+		this.width = widthToUse;
+	}
+
+	public void drawU(UGraphic ug, double x, double y) {
+		textBlockWidth.drawU(ug, x, y, width);
+	}
+
+	public Dimension2D calculateDimension(StringBounder stringBounder) {
+		return textBlockWidth.calculateDimension(stringBounder);
+	}
+
+	public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
+		throw new UnsupportedOperationException();
+	}
 
 }

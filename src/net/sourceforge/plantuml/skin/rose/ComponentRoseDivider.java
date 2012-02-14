@@ -52,11 +52,13 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 
 	// private final int outMargin = 5;
 	private final HtmlColor background;
+	private final boolean empty;
 
 	public ComponentRoseDivider(HtmlColor fontColor, UFont font, HtmlColor background,
 			List<? extends CharSequence> stringsToDisplay) {
 		super(stringsToDisplay, fontColor, font, HorizontalAlignement.CENTER, 4, 4, 4);
 		this.background = background;
+		this.empty = stringsToDisplay.get(0).length() == 0;
 	}
 
 	@Override
@@ -71,18 +73,25 @@ public class ComponentRoseDivider extends AbstractTextualComponent {
 		final double xpos = (dimensionToUse.getWidth() - textWidth - deltaX) / 2;
 		final double ypos = (dimensionToUse.getHeight() - textHeight) / 2;
 
+		// if (empty) {
+			ug.getParam().setColor(background);
+			ug.getParam().setBackcolor(background);
+			ug.draw(0, dimensionToUse.getHeight() / 2 - 1, new URectangle(dimensionToUse.getWidth(), 3));
+		// }
 		ug.getParam().setColor(HtmlColor.BLACK);
 		ug.draw(0, dimensionToUse.getHeight() / 2 - 1, new ULine(dimensionToUse.getWidth(), 0));
 		ug.draw(0, dimensionToUse.getHeight() / 2 + 2, new ULine(dimensionToUse.getWidth(), 0));
 
-		ug.getParam().setColor(HtmlColor.BLACK);
-		ug.getParam().setBackcolor(background);
+		if (empty == false) {
+			ug.getParam().setColor(HtmlColor.BLACK);
+			ug.getParam().setBackcolor(background);
 
-		ug.getParam().setStroke(new UStroke(2));
-		ug.draw(xpos, ypos, new URectangle(textWidth + deltaX, textHeight));
-		ug.getParam().setStroke(new UStroke());
+			ug.getParam().setStroke(new UStroke(2));
+			ug.draw(xpos, ypos, new URectangle(textWidth + deltaX, textHeight));
+			ug.getParam().setStroke(new UStroke());
 
-		textBlock.drawU(ug, xpos + deltaX, ypos + getMarginY());
+			textBlock.drawU(ug, xpos + deltaX, ypos + getMarginY());
+		}
 	}
 
 	@Override

@@ -260,6 +260,7 @@ public final class CucaDiagramFileMakerSvek2 {
 			if (dotData.isEmpty(g) && g.getType() == GroupType.PACKAGE) {
 				final IEntity folder = new Entity(g.getUid1(), g.getUid2(), g.getCode(), g.getDisplay(),
 						EntityType.EMPTY_PACKAGE, null, null);
+				folder.setSpecificBackcolor(g.getBackColor());
 				printEntity(folder);
 			} else {
 				printGroup(g);

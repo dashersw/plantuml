@@ -43,7 +43,7 @@ import net.sourceforge.plantuml.sequencediagram.SequenceDiagram;
 public class CommandDivider extends SingleLineCommand<SequenceDiagram> {
 
 	public CommandDivider(SequenceDiagram sequenceDiagram) {
-		super(sequenceDiagram, "(?i)^==\\s*(.+)\\s*==$");
+		super(sequenceDiagram, "(?i)^==\\s*(.*)\\s*==$");
 	}
 
 	@Override

@@ -241,7 +241,7 @@ public class XmiClassDiagramStar implements IXmiClassDiagram {
 		final Element feature = document.createElement("UML:Classifier.feature");
 		cla.appendChild(feature);
 
-		for (Member m : entity.getFieldsToDisplay().getAll()) {
+		for (Member m : entity.getFieldsToDisplay()) {
 			// <UML:Attribute xmi.id="UMLAttribute.6" name="Attribute1"
 			// visibility="public" isSpecification="false"
 			// ownerScope="instance" changeability="changeable"
@@ -252,7 +252,7 @@ public class XmiClassDiagramStar implements IXmiClassDiagram {
 			feature.appendChild(attribute);
 		}
 
-		for (Member m : entity.getMethodsToDisplay().getAll()) {
+		for (Member m : entity.getMethodsToDisplay()) {
 			// <UML:Operation xmi.id="UMLOperation.7" name="Operation1"
 			// visibility="public" isSpecification="false"
 			// ownerScope="instance" isQuery="false" concurrency="sequential"

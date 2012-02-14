@@ -41,6 +41,7 @@ import net.sourceforge.plantuml.command.CommandPackage;
 import net.sourceforge.plantuml.command.CommandPage;
 import net.sourceforge.plantuml.command.note.FactoryNoteCommand;
 import net.sourceforge.plantuml.command.note.FactoryNoteOnEntityCommand;
+import net.sourceforge.plantuml.command.note.FactoryNoteOnLinkCommand;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
 import net.sourceforge.plantuml.objectdiagram.command.CommandAddData;
 import net.sourceforge.plantuml.objectdiagram.command.CommandCreateEntityObject;
@@ -66,7 +67,7 @@ public class ObjectDiagramFactory extends AbstractUmlSystemCommandFactory {
 		//
 		addCommand(new CommandCreateEntityObject(system));
 		final FactoryNoteCommand factoryNoteCommand = new FactoryNoteCommand();
-		// addCommand(new CommandCreateNote(system));
+
 		addCommand(factoryNoteCommand.createSingleLine(system));
 		addCommand(new CommandPackage(system));
 		addCommand(new CommandEndPackage(system));
@@ -84,6 +85,11 @@ public class ObjectDiagramFactory extends AbstractUmlSystemCommandFactory {
 		addCommand(factoryNoteCommand.createMultiLine(system));
 		addCommand(factoryNoteOnEntityCommand.createMultiLine(system));
 		addCommand(new CommandCreateEntityObjectMultilines(system));
+		
+		final FactoryNoteOnLinkCommand factoryNoteOnLinkCommand = new FactoryNoteOnLinkCommand();
+		addCommand(factoryNoteOnLinkCommand.createSingleLine(system));
+		addCommand(factoryNoteOnLinkCommand.createMultiLine(system));
+
 
 		// addCommand(new CommandNoopClass(system));
 

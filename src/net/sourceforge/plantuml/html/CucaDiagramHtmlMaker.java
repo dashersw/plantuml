@@ -129,7 +129,7 @@ public final class CucaDiagramHtmlMaker {
 		} else {
 			pw.println("<h2>Fields:</h2>");
 			pw.println("<ul>");
-			for (Member m : entity.getFieldsToDisplay().getAll()) {
+			for (Member m : entity.getFieldsToDisplay()) {
 				pw.println("<li>");
 				pw.println(StringUtils.unicodeForHtml(m.getDisplay(true)));
 				pw.println("</li>");
@@ -143,7 +143,7 @@ public final class CucaDiagramHtmlMaker {
 		} else {
 			pw.println("<h2>Methods:</h2>");
 			pw.println("<ul>");
-			for (Member m : entity.getMethodsToDisplay().getAll()) {
+			for (Member m : entity.getMethodsToDisplay()) {
 				pw.println("<li>");
 				pw.println(StringUtils.unicodeForHtml(m.getDisplay(true)));
 				pw.println("</li>");

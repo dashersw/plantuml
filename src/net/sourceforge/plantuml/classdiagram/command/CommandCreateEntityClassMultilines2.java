@@ -82,15 +82,14 @@ public class CommandCreateEntityClassMultilines2 extends CommandMultilines2<Clas
 	}
 
 	public CommandExecutionResult execute(List<String> lines) {
-		StringUtils.trim(lines, true);
+		StringUtils.trim(lines, false);
 		final Map<String, RegexPartialMatch> line0 = getStartingPattern().matcher(lines.get(0).trim());
 		final Entity entity = executeArg0(line0);
 		if (entity == null) {
 			return CommandExecutionResult.error("No such entity");
 		}
 		for (String s : lines.subList(1, lines.size() - 1)) {
-			assert s.length() > 0;
-			if (VisibilityModifier.isVisibilityCharacter(s.charAt(0))) {
+			if (s.length() > 0 && VisibilityModifier.isVisibilityCharacter(s.charAt(0))) {
 				getSystem().setVisibilityModifierPresent(true);
 			}
 			entity.addFieldOrMethod(s);

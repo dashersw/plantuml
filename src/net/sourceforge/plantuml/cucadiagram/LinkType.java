@@ -101,11 +101,11 @@ public class LinkType {
 	}
 
 	public LinkType getInterfaceProvider() {
-		return new LinkType(decor1, LinkStyle.INTERFACE_PROVIDER, decor2);
+		return new LinkType(decor1, LinkStyle.__toremove_INTERFACE_PROVIDER, decor2);
 	}
 
 	public LinkType getInterfaceUser() {
-		return new LinkType(decor1, LinkStyle.INTERFACE_USER, decor2);
+		return new LinkType(decor1, LinkStyle.__toremove_INTERFACE_USER, decor2);
 	}
 
 	public LinkType getInversed() {

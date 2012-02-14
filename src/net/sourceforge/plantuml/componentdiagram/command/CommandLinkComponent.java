@@ -41,18 +41,19 @@ import net.sourceforge.plantuml.command.CommandExecutionResult;
 import net.sourceforge.plantuml.command.SingleLineCommand2;
 import net.sourceforge.plantuml.command.regex.RegexConcat;
 import net.sourceforge.plantuml.command.regex.RegexLeaf;
+import net.sourceforge.plantuml.command.regex.RegexOr;
 import net.sourceforge.plantuml.command.regex.RegexPartialMatch;
 import net.sourceforge.plantuml.componentdiagram.ComponentDiagram;
-import net.sourceforge.plantuml.cucadiagram.EntityType;
+import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.LinkType;
 import net.sourceforge.plantuml.cucadiagram.Stereotype;
 
-public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> {
+public class CommandLinkComponent extends SingleLineCommand2<ComponentDiagram> {
 
-	public CommandLinkComponent2(ComponentDiagram diagram) {
+	public CommandLinkComponent(ComponentDiagram diagram) {
 		super(diagram, getRegex());
 	}
 
@@ -60,11 +61,12 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 		return new RegexConcat(new RegexLeaf("^"), //
 				getRegexGroup("G1"),//
 				new RegexLeaf("\\s*"),//
-//				new RegexOr(
+				new RegexOr(
+				//
 						new RegexLeaf("AR_TO_RIGHT",
-								"(([-=.]+)(?:(left|right|up|down|le?|ri?|up?|do?)(?=[-=.]))?([-=.]*)\\()"),
-//						new RegexLeaf("AR_TO_LEFT",
-//								"(([\\[<^]|[<\\[]\\|)?([-=.]*)(left|right|up|down|le?|ri?|up?|do?)?([-=.]+))")),
+								"(([-=.]+)(?:(left|right|up|down|le?|ri?|up?|do?)(?=[-=.]))?([-=.]*)([\\]>^]|\\|[>\\]])?)"),
+						new RegexLeaf("AR_TO_LEFT",
+								"(([\\[<^]|[<\\[]\\|)?([-=.]*)(left|right|up|down|le?|ri?|up?|do?)?([-=.]+))")),
 				new RegexLeaf("\\s*"),//
 				getRegexGroup("G2"),//
 				new RegexLeaf("\\s*"),//
@@ -73,7 +75,7 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 
 	private static RegexLeaf getRegexGroup(String name) {
 		return new RegexLeaf(name,
-				"([\\p{L}0-9_.]+|:[^:]+:|\\[[^\\]*]+[^\\]]*\\])(?:\\s*(\\<\\<.*\\>\\>))?");
+				"([\\p{L}0-9_.]+|:[^:]+:|\\[[^\\]*]+[^\\]]*\\]|\\(\\)\\s*[\\p{L}0-9_.]+|\\(\\)\\s*\"[^\"]+\")(?:\\s*(\\<\\<.*\\>\\>))?");
 	}
 
 	@Override
@@ -81,16 +83,15 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 		final String g1 = arg.get("G1").get(0);
 		final String g2 = arg.get("G2").get(0);
 
-//		if (getSystem().isGroup(g1) && getSystem().isGroup(g2)) {
-//			return executePackageLink(arg);
-//		}
+		if (getSystem().isGroup(g1) && getSystem().isGroup(g2)) {
+			return executePackageLink(arg);
+		}
 		if (getSystem().isGroup(g1) || getSystem().isGroup(g2)) {
-			return CommandExecutionResult.error("Not implemented");
+			return CommandExecutionResult.error("Package can be only linked to other package");
 		}
 
 		final IEntity cl1 = getSystem().getOrCreateClass(g1);
-		final IEntity cl2 = getSystem().getOrCreateEntity(g2, EntityType.ARC_CIRCLE);
-		
+		final IEntity cl2 = getSystem().getOrCreateClass(g2);
 
 		if (arg.get("G1").get(1) != null) {
 			cl1.setStereotype(new Stereotype(arg.get("G1").get(1)));
@@ -99,14 +100,14 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 			cl2.setStereotype(new Stereotype(arg.get("G2").get(1)));
 		}
 
-		final LinkType linkType = new LinkType(LinkDecor.NONE, LinkDecor.NONE);
+		final LinkType linkType;
 		String queue;
 		if (arg.get("AR_TO_RIGHT").get(0) != null) {
 			queue = arg.get("AR_TO_RIGHT").get(1) + arg.get("AR_TO_RIGHT").get(3);
-//			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_RIGHT").get(4));
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_RIGHT").get(4));
 		} else {
 			queue = arg.get("AR_TO_LEFT").get(2) + arg.get("AR_TO_LEFT").get(4);
-//			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInversed();
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInversed();
 		}
 		final Direction dir = getDirection(arg);
 
@@ -125,38 +126,62 @@ public class CommandLinkComponent2 extends SingleLineCommand2<ComponentDiagram> 
 	}
 
 	private Direction getDirection(Map<String, RegexPartialMatch> arg) {
-		if (arg.get("AR_TO_RIGHT").get(1) != null) {
-			return StringUtils.getQueueDirection(arg.get("AR_TO_RIGHT").get(1));
+		if (arg.get("AR_TO_RIGHT").get(2) != null) {
+			return StringUtils.getQueueDirection(arg.get("AR_TO_RIGHT").get(2));
 		}
-//		if (arg.get("AR_TO_LEFT").get(3) != null) {
-//			return StringUtils.getQueueDirection(arg.get("AR_TO_LEFT").get(3)).getInv();
-//		}
+		if (arg.get("AR_TO_LEFT").get(3) != null) {
+			return StringUtils.getQueueDirection(arg.get("AR_TO_LEFT").get(3)).getInv();
+		}
 		return null;
 	}
-//
-//	private LinkType getLinkTypeNormal(String queue, String key) {
-//		LinkType linkType = getLinkTypeFromKey(key);
-//
-//		if (queue.startsWith(".")) {
-//			linkType = linkType.getDashed();
-//		}
-//		return linkType;
-//	}
-//
-//	private LinkType getLinkTypeFromKey(String k) {
-//		if (k == null) {
-//			return new LinkType(LinkDecor.NONE, LinkDecor.NONE);
-//		}
-//		if (k.equals("<") || k.equals(">")) {
-//			return new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
-//		}
-//		if (k.equals("<|") || k.equals("|>")) {
-//			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
-//		}
-//		if (k.equals("^")) {
-//			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
-//		}
-//		return null;
-//	}
+
+	private CommandExecutionResult executePackageLink(Map<String, RegexPartialMatch> arg) {
+		final String g1 = arg.get("G1").get(0);
+		final String g2 = arg.get("G2").get(0);
+
+		final Group cl1 = getSystem().getGroup(g1);
+		final Group cl2 = getSystem().getGroup(g2);
+
+		final LinkType linkType;
+		final String queue;
+		if (arg.get("AR_TO_RIGHT").get(0) != null) {
+			queue = arg.get("AR_TO_RIGHT").get(1) + arg.get("AR_TO_RIGHT").get(3);
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_RIGHT").get(4));
+		} else {
+			queue = arg.get("AR_TO_LEFT").get(2) + arg.get("AR_TO_LEFT").get(4);
+			linkType = getLinkTypeNormal(queue, arg.get("AR_TO_LEFT").get(1)).getInversed();
+
+		}
+
+		final Link link = new Link(cl1.getEntityCluster(), cl2.getEntityCluster(), linkType, arg.get("END").get(0),
+				queue.length());
+		getSystem().addLink(link);
+		return CommandExecutionResult.ok();
+	}
+
+	private LinkType getLinkTypeNormal(String queue, String key) {
+		LinkType linkType = getLinkTypeFromKey(key);
+
+		if (queue.startsWith(".")) {
+			linkType = linkType.getDashed();
+		}
+		return linkType;
+	}
+
+	private LinkType getLinkTypeFromKey(String k) {
+		if (k == null) {
+			return new LinkType(LinkDecor.NONE, LinkDecor.NONE);
+		}
+		if (k.equals("<") || k.equals(">")) {
+			return new LinkType(LinkDecor.ARROW, LinkDecor.NONE);
+		}
+		if (k.equals("<|") || k.equals("|>")) {
+			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
+		}
+		if (k.equals("^")) {
+			return new LinkType(LinkDecor.EXTENDS, LinkDecor.NONE);
+		}
+		return null;
+	}
 
 }

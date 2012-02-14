@@ -73,7 +73,7 @@ public class MemberImpl implements Member {
 	}
 
 	public String getDisplayWithoutVisibilityChar() {
-		assert VisibilityModifier.isVisibilityCharacter(display.charAt(0)) == false;
+		assert display.length() == 0 || VisibilityModifier.isVisibilityCharacter(display.charAt(0)) == false;
 		return display;
 	}
 

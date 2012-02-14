@@ -58,9 +58,11 @@ public interface IEntity extends Imaged, SpecificBackcolorable, Comparable<IEnti
 
 	public void setStereotype(Stereotype stereotype);
 
-	public BlockMember getFieldsToDisplay();
+	public List<Member> getFieldsToDisplay();
 	
-	public BlockMember getMethodsToDisplay();
+	public List<Member> getMethodsToDisplay();
+
+	public BlockMember getBody(PortionShower portionShower);
 
 	public String getCode();
 

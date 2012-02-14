@@ -33,157 +33,31 @@
  */
 package net.sourceforge.plantuml.cucadiagram;
 
-import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.FontParam;
 import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.StringUtils;
-import net.sourceforge.plantuml.graphic.FontConfiguration;
-import net.sourceforge.plantuml.graphic.HorizontalAlignement;
-import net.sourceforge.plantuml.graphic.HtmlColor;
-import net.sourceforge.plantuml.graphic.StringBounder;
-import net.sourceforge.plantuml.graphic.TextBlock;
+import net.sourceforge.plantuml.graphic.TextBlockLineBefore;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
-import net.sourceforge.plantuml.skin.VisibilityModifier;
-import net.sourceforge.plantuml.skin.rose.Rose;
-import net.sourceforge.plantuml.ugraphic.ColorMapper;
-import net.sourceforge.plantuml.ugraphic.PlacementStrategyVisibility;
-import net.sourceforge.plantuml.ugraphic.PlacementStrategyY1Y2Left;
-import net.sourceforge.plantuml.ugraphic.UFont;
-import net.sourceforge.plantuml.ugraphic.UGraphic;
-import net.sourceforge.plantuml.ugraphic.UGroup;
+import net.sourceforge.plantuml.graphic.TextBlockWidth;
 
 public class BlockMemberImpl implements BlockMember {
 
 	private final List<Member> members = new ArrayList<Member>();
 
-	public void add(Member s) {
-		members.add(s);
+	public BlockMemberImpl(List<Member> members) {
+		this.members.addAll(members);
 	}
 
 	public List<Member> getAll() {
 		return Collections.unmodifiableList(members);
 	}
 
-	public int size() {
-		return members.size();
-	}
-
-	public TextBlock asTextBlock(FontParam fontParam, ISkinParam skinParam) {
-		return new MethodsOrFieldsArea2(fontParam, skinParam);
-	}
-
-	class MethodsOrFieldsArea2 implements TextBlock {
-
-		private final UFont font;
-		private final ISkinParam skinParam;
-		private final HtmlColor color;
-		private final Rose rose = new Rose();
-
-		public MethodsOrFieldsArea2(FontParam fontParam, ISkinParam skinParam) {
-			this.skinParam = skinParam;
-			this.font = skinParam.getFont(fontParam, null);
-			this.color = rose.getFontColor(skinParam, fontParam);
-		}
-
-		private boolean hasSmallIcon() {
-			if (skinParam.classAttributeIconSize() == 0) {
-				return false;
-			}
-			for (Member m : members) {
-				if (m.getVisibilityModifier() != null) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		public Dimension2D calculateDimension(StringBounder stringBounder) {
-			double x = 0;
-			double y = 0;
-			for (Member m : members) {
-				final TextBlock bloc = createTextBlock(m);
-				final Dimension2D dim = bloc.calculateDimension(stringBounder);
-				y += dim.getHeight();
-				x = Math.max(dim.getWidth(), x);
-			}
-			if (hasSmallIcon()) {
-				x += skinParam.getCircledCharacterRadius() + 3;
-			}
-			return new Dimension2DDouble(x, y);
-		}
-
-		private TextBlock createTextBlock(Member m) {
-			final boolean withVisibilityChar = skinParam.classAttributeIconSize() == 0;
-			final String s = m.getDisplay(withVisibilityChar);
-			FontConfiguration config = new FontConfiguration(font, color);
-			if (m.isAbstract()) {
-				config = config.italic();
-			}
-			if (m.isStatic()) {
-				config = config.underline();
-			}
-			final TextBlock bloc = TextBlockUtils.create(StringUtils.getWithNewlines(s), config,
-					HorizontalAlignement.LEFT);
-			return bloc;
-		}
-
-		public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void drawU(UGraphic ug, double x, double y) {
-			final Dimension2D dim = calculateDimension(ug.getStringBounder());
-			final UGroup group;
-			if (hasSmallIcon()) {
-				group = new UGroup(new PlacementStrategyVisibility(ug.getStringBounder(),
-						skinParam.getCircledCharacterRadius() + 3));
-				for (Member att : members) {
-					final TextBlock bloc = createTextBlock(att);
-					final VisibilityModifier modifier = att.getVisibilityModifier();
-					group.add(getUBlock(modifier));
-					group.add(bloc);
-				}
-			} else {
-				group = new UGroup(new PlacementStrategyY1Y2Left(ug.getStringBounder()));
-				for (Member att : members) {
-					final TextBlock bloc = createTextBlock(att);
-					group.add(bloc);
-				}
-			}
-			group.drawU(ug, x, y, dim.getWidth(), dim.getHeight());
-
-		}
-
-		private TextBlock getUBlock(final VisibilityModifier modifier) {
-			if (modifier == null) {
-				return new TextBlock() {
-
-					public void drawU(UGraphic ug, double x, double y) {
-					}
-
-					public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
-						throw new UnsupportedOperationException();
-					}
-
-					public Dimension2D calculateDimension(StringBounder stringBounder) {
-						return new Dimension2DDouble(1, 1);
-					}
-				};
-			}
-			final HtmlColor back = modifier.getBackground() == null ? null : rose.getHtmlColor(skinParam,
-					modifier.getBackground());
-			final HtmlColor fore = rose.getHtmlColor(skinParam, modifier.getForeground());
-
-			final TextBlock uBlock = modifier.getUBlock(skinParam.classAttributeIconSize(), fore, back);
-			return uBlock;
-		}
-
+	public TextBlockWidth asTextBlock(FontParam fontParam, ISkinParam skinParam) {
+		return new TextBlockLineBefore(TextBlockUtils.withMargin(
+				new MethodsOrFieldsArea(members, fontParam, skinParam), 6, 4));
 	}
 
 }

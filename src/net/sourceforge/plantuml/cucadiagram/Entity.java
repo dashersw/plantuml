@@ -28,22 +28,28 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 7619 $
+ * Revision $Revision: 7638 $
  *
  */
 package net.sourceforge.plantuml.cucadiagram;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.sourceforge.plantuml.FontParam;
+import net.sourceforge.plantuml.ISkinParam;
 import net.sourceforge.plantuml.StringUtils;
 import net.sourceforge.plantuml.UniqueSequence;
 import net.sourceforge.plantuml.Url;
 import net.sourceforge.plantuml.cucadiagram.dot.DrawFile;
 import net.sourceforge.plantuml.graphic.HtmlColor;
+import net.sourceforge.plantuml.graphic.TextBlockWidth;
+import net.sourceforge.plantuml.graphic.TextBlockWidthVertical;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 import net.sourceforge.plantuml.svek.IEntityImage;
 
@@ -58,8 +64,8 @@ public class Entity implements IEntity {
 	private Stereotype stereotype;
 	private String generic;
 
-	private final BlockMemberImpl fields = new BlockMemberImpl();
-	private final BlockMemberImpl methods = new BlockMemberImpl();
+	private final List<String> rawBody = new ArrayList<String>();
+
 	private final Set<VisibilityModifier> hides;
 
 	private Group container;
@@ -117,25 +123,22 @@ public class Entity implements IEntity {
 	}
 
 	public void addFieldOrMethod(String s) {
-		if (isMethod(s)) {
-			methods.add(new MemberImpl(s, true));
-		} else {
-			fields.add(new MemberImpl(s, false));
-		}
+		rawBody.add(s);
 	}
 
-	// public void addField(String s) {
-	// fields.add(new MemberImpl(s, false));
-	// }
-	//
-	// public void addField(Member s) {
-	// fields.add(s);
-	// }
+	private boolean isBodyEnhanced() {
+		for (String s : rawBody) {
+			if (BodyEnhanced.isBlockSeparator(s)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private boolean isMethod(String s) {
 		if (getType() == EntityType.ABSTRACT_CLASS || getType() == EntityType.CLASS
 				|| getType() == EntityType.INTERFACE || getType() == EntityType.ENUM) {
-			return s.contains("(") || s.contains(")");
+			return StringUtils.isMethod(s);
 		}
 		return false;
 	}
@@ -146,36 +149,61 @@ public class Entity implements IEntity {
 		this.blocDisplayProxy = blocDisplayProxy;
 	}
 
-	public BlockMember getMethodsToDisplay() {
+	public List<Member> getMethodsToDisplay() {
 		if (blocDisplayProxy != null) {
 			return blocDisplayProxy.getMethodsToDisplay();
 		}
-		if (hides == null || hides.size() == 0) {
-			return methods;
-		}
-		final BlockMemberImpl result = new BlockMemberImpl();
-		for (Member m : methods.getAll()) {
-			if (hides.contains(m.getVisibilityModifier()) == false) {
+		final List<Member> result = new ArrayList<Member>();
+		for (int i = 0; i < rawBody.size(); i++) {
+			final String s = rawBody.get(i);
+			if (isMethod(i, rawBody) == false) {
+				continue;
+			}
+			if (s.length() == 0 && result.size() == 0) {
+				continue;
+			}
+			final Member m = new MemberImpl(s, true);
+			if (hides == null || hides.contains(m.getVisibilityModifier()) == false) {
 				result.add(m);
 			}
 		}
-		return result;
+		removeFinalEmptyMembers(result);
+		return Collections.unmodifiableList(result);
 	}
 
-	public BlockMember getFieldsToDisplay() {
+	private boolean isMethod(int i, List<String> rawBody) {
+		if (i > 0 && i < rawBody.size() - 1 && rawBody.get(i).length() == 0 && isMethod(rawBody.get(i - 1))
+				&& isMethod(rawBody.get(i + 1))) {
+			return true;
+		}
+		return isMethod(rawBody.get(i));
+	}
+
+	public List<Member> getFieldsToDisplay() {
 		if (blocDisplayProxy != null) {
 			return blocDisplayProxy.getFieldsToDisplay();
 		}
-		if (hides == null || hides.size() == 0) {
-			return fields;
-		}
-		final BlockMemberImpl result = new BlockMemberImpl();
-		for (Member m : fields.getAll()) {
-			if (hides.contains(m.getVisibilityModifier()) == false) {
+		final List<Member> result = new ArrayList<Member>();
+		for (String s : rawBody) {
+			if (isMethod(s) == true) {
+				continue;
+			}
+			if (s.length() == 0 && result.size() == 0) {
+				continue;
+			}
+			final Member m = new MemberImpl(s, false);
+			if (hides == null || hides.contains(m.getVisibilityModifier()) == false) {
 				result.add(m);
 			}
 		}
-		return result;
+		removeFinalEmptyMembers(result);
+		return Collections.unmodifiableList(result);
+	}
+
+	private void removeFinalEmptyMembers(List<Member> result) {
+		while (result.size() > 0 && result.get(result.size() - 1).getDisplay(false).trim().length() == 0) {
+			result.remove(result.size() - 1);
+		}
 	}
 
 	public EntityType getType() {
@@ -360,4 +388,42 @@ public class Entity implements IEntity {
 		return generic;
 	}
 
+	public BlockMember getBody(final PortionShower portionShower) {
+		if (getType() == EntityType.CLASS && isBodyEnhanced()) {
+			return getBodyEnhanced();
+		}
+		return new BlockMember() {
+			public TextBlockWidth asTextBlock(FontParam fontParam, ISkinParam skinParam) {
+				if (getType() == EntityType.ABSTRACT_CLASS || getType() == EntityType.CLASS
+						|| getType() == EntityType.INTERFACE || getType() == EntityType.ENUM) {
+
+					final boolean showMethods = portionShower.showPortion(EntityPortion.METHOD, Entity.this);
+					final boolean showFields = portionShower.showPortion(EntityPortion.FIELD, Entity.this);
+
+					if (showFields && showMethods) {
+						return new TextBlockWidthVertical(new BlockMemberImpl(getFieldsToDisplay()).asTextBlock(
+								fontParam, skinParam), new BlockMemberImpl(getMethodsToDisplay()).asTextBlock(
+								fontParam, skinParam));
+					} else if (showFields) {
+						return new BlockMemberImpl(getFieldsToDisplay()).asTextBlock(fontParam, skinParam);
+					} else if (showMethods) {
+						return new BlockMemberImpl(getMethodsToDisplay()).asTextBlock(fontParam, skinParam);
+					}
+					return null;
+				}
+				if (getType() == EntityType.OBJECT) {
+					return new BlockMemberImpl(getFieldsToDisplay()).asTextBlock(fontParam, skinParam);
+				}
+				throw new UnsupportedOperationException();
+			}
+		};
+	}
+
+	private BlockMember getBodyEnhanced() {
+		return new BlockMember() {
+			public TextBlockWidth asTextBlock(FontParam fontParam, ISkinParam skinParam) {
+				return new BodyEnhanced(rawBody, fontParam, skinParam);
+			}
+		};
+	}
 }

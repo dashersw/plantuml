@@ -339,6 +339,9 @@ public class Shape implements Positionable {
 		if (ent.getType() == EntityType.CIRCLE_INTERFACE) {
 			return new EntityImageCircleInterface(ent, dotData.getSkinParam());
 		}
+		if (ent.getType() == EntityType.ARC_CIRCLE) {
+			return new EntityImageArcCircle(ent, dotData.getSkinParam());
+		}
 		if (ent.getType() == EntityType.POINT_FOR_ASSOCIATION) {
 			return new EntityImageAssociationPoint(ent, dotData.getSkinParam());
 		}

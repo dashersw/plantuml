@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4125 $
+ * Revision $Revision: 7163 $
  *
  */
 package net.sourceforge.plantuml.graphic;
@@ -39,33 +39,53 @@ import java.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.Dimension2DDouble;
 import net.sourceforge.plantuml.ugraphic.ColorMapper;
 import net.sourceforge.plantuml.ugraphic.UGraphic;
+import net.sourceforge.plantuml.ugraphic.UPolygon;
+import net.sourceforge.plantuml.ugraphic.URectangle;
 
-public class TextBlockEmpty implements TextBlock, TextBlockWidth {
-	
-	private final double width;
-	private final double height;
-	
-	public TextBlockEmpty(double width, double height) {
-		this.width = width;
-		this.height = height;
+public class TextBlockArrow implements TextBlock {
+
+	private final double size;
+	private final char arrow;
+	private final HtmlColor color;
+
+	public TextBlockArrow(char arrow, FontConfiguration fontConfiguration) {
+		if (arrow != '<' && arrow != '>') {
+			throw new IllegalArgumentException();
+		}
+		this.arrow = arrow;
+		this.size = fontConfiguration.getFont().getSize2D() * 0 + 30;
+		// this.size = fontConfiguration.getFont().getSize2D();
+		System.err.println("size=" + size);
+		this.color = fontConfiguration.getColor();
+
 	}
-	
-	public TextBlockEmpty() {
-		this(0, 0);
+
+	public void drawU(UGraphic ug, double x, double y) {
+		//ug.draw(x, y, new URectangle(size, size));
+		ug.getParam().setBackcolor(color);
+		ug.getParam().setColor(color);
+		final UPolygon triangle = new UPolygon();
+		int x1 = (int) (size * .8 - 3);
+		if (x1 % 2 == 1) {
+			x1--;
+		}
+		int y1 = (int) (size * .8 - 3);
+		if (y1 % 2 == 1) {
+			y1--;
+		}
+		triangle.addPoint(0, 0);
+		triangle.addPoint(x1, y1 / 2);
+		triangle.addPoint(0, y1);
+		triangle.addPoint(0, 0);
+		ug.draw(x + 2, y + (size - y1) - 2, triangle);
 	}
 
 	public Dimension2D calculateDimension(StringBounder stringBounder) {
-		return new Dimension2DDouble(width, height);
+		return new Dimension2DDouble(size, size);
 	}
 
 	public void drawTOBEREMOVED(ColorMapper colorMapper, Graphics2D g2d, double x, double y) {
 		throw new UnsupportedOperationException();
-	}
-
-	public void drawU(UGraphic ug, double x, double y) {
-	}
-
-	public void drawU(UGraphic ug, double x, double y, double widthToUse) {
 	}
 
 }

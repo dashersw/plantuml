@@ -28,7 +28,7 @@
  *
  * Original Author:  Arnaud Roques
  *
- * Revision $Revision: 7391 $
+ * Revision $Revision: 7638 $
  *
  */
 package net.sourceforge.plantuml;
@@ -425,6 +425,10 @@ public class StringUtils {
 			result.add(s);
 		}
 		return result;
+	}
+
+	public static boolean isMethod(String s) {
+		return s.contains("(") || s.contains(")");
 	}
 
 }

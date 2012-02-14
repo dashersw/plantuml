@@ -28,17 +28,39 @@
  *
  * Original Author:  Arnaud Roques
  * 
- * Revision $Revision: 4749 $
+ * Revision $Revision: 6577 $
  *
  */
-package net.sourceforge.plantuml.cucadiagram;
+package net.sourceforge.plantuml.graphic;
 
-import net.sourceforge.plantuml.FontParam;
-import net.sourceforge.plantuml.ISkinParam;
-import net.sourceforge.plantuml.graphic.TextBlockWidth;
+import java.awt.geom.Dimension2D;
 
-public interface BlockMember {
+import net.sourceforge.plantuml.Dimension2DDouble;
+import net.sourceforge.plantuml.ugraphic.UGraphic;
 
-	public TextBlockWidth asTextBlock(FontParam fontParam, ISkinParam skinParam);
+public class TextBlocWidthMarged implements TextBlockWidth {
+
+	private final TextBlockWidth textBlock;
+	private final double x1;
+	private final double x2;
+	private final double y1;
+	private final double y2;
+
+	public TextBlocWidthMarged(TextBlockWidth textBlock, double x1, double x2, double y1, double y2) {
+		this.textBlock = textBlock;
+		this.x1 = x1;
+		this.x2 = x2;
+		this.y1 = y1;
+		this.y2 = y2;
+	}
+
+	public Dimension2D calculateDimension(StringBounder stringBounder) {
+		final Dimension2D dim = textBlock.calculateDimension(stringBounder);
+		return Dimension2DDouble.delta(dim, x1 + x2, y1 + y2);
+	}
+
+	public void drawU(UGraphic ug, double x, double y, double widthToUse) {
+		textBlock.drawU(ug, x + x1, y + y1, widthToUse);
+	}
 
 }

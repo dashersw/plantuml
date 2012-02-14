@@ -123,7 +123,7 @@ public class PathDrawerInterface implements PathDrawer {
 		}
 
 		final LinkStyle style = linkType.getStyle();
-		if (style == LinkStyle.INTERFACE_PROVIDER || style == LinkStyle.INTERFACE_USER) {
+		if (style == LinkStyle.__toremove_INTERFACE_PROVIDER || style == LinkStyle.__toremove_INTERFACE_USER) {
 			final Decor decor = new DecorInterfaceProvider(style);
 			final Map<Point2D, Double> all = dotPath.somePoints();
 			final Point2D p = getFarest(outPoint, inPoint, all.keySet());
