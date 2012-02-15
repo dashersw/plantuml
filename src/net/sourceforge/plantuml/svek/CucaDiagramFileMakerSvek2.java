@@ -64,6 +64,7 @@ import net.sourceforge.plantuml.graphic.StringBounder;
 import net.sourceforge.plantuml.graphic.StringBounderUtils;
 import net.sourceforge.plantuml.graphic.TextBlock;
 import net.sourceforge.plantuml.graphic.TextBlockUtils;
+import net.sourceforge.plantuml.jsonexporter.Exporter;
 import net.sourceforge.plantuml.skin.rose.Rose;
 
 public final class CucaDiagramFileMakerSvek2 {
@@ -294,6 +295,9 @@ public final class CucaDiagramFileMakerSvek2 {
 
 		dotStringFactory.openCluster(g, titleWidth, titleHeight, title, isSpecialGroup(g));
 		this.printEntities(g.entities().values());
+		
+		// export class diagrams as json
+		Exporter.getInstance().write(getData(), g);
 
 		// sb.append("subgraph " + g.getUid() + " {");
 		//
