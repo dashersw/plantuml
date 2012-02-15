@@ -297,7 +297,7 @@ public final class CucaDiagramFileMakerSvek2 {
 		this.printEntities(g.entities().values());
 		
 		// export class diagrams as json
-		Exporter.getInstance().write(getData(), g);
+		Exporter.getInstance().write(dotData, g);
 
 		// sb.append("subgraph " + g.getUid() + " {");
 		//

@@ -44,5 +44,7 @@ public interface Member {
 	public  boolean isAbstract() ;
 	
 	public  VisibilityModifier getVisibilityModifier() ;
+	
+	public String getDisplayWithoutVisibilityChar();
 
 }
