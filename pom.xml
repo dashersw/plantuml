@@ -64,6 +64,12 @@
             <version>1.8.1</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Gson: Java to Json conversion -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.1</version>
+		</dependency>
     </dependencies>
 
     <licenses>
@@ -90,6 +96,11 @@
             <id>arnaud.roques</id>
             <name>Arnaud Roques</name>
             <email>plantuml@gmail.com</email>
+        </developer>
+        <developer>
+            <id>burcu</id>
+            <name>Burcu Dogan</name>
+            <email>burcujdogan@gmail.com</email>
         </developer>
     </developers>
 
