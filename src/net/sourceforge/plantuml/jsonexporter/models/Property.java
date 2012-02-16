@@ -5,6 +5,7 @@ import net.sourceforge.plantuml.cucadiagram.Member;
 public class Property extends Base {
 	
 	private String propName;
+	private String visibility;
 	private String type;
 	private String cmp;
 	
@@ -17,10 +18,31 @@ public class Property extends Base {
 		property.propName = parts[0].trim();
 		
 		if(parts.length > 1){	
-			property.type = property.toArrayType(parts[1].trim());
+			property.type = toArrayType(parts[1].trim());
+		}
+		
+		// assign visibility
+		if(member.getVisibilityModifier() != null){
+			property.visibility = toVisibility(member.getVisibilityModifier());
 		}
 		
 		return property;
+	}
+
+	public String getPropName() {
+		return propName;
+	}
+
+	public String getVisibility() {
+		return visibility;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getCmp() {
+		return cmp;
 	}
 	
 }

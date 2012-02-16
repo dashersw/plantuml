@@ -1,11 +1,18 @@
 package net.sourceforge.plantuml.jsonexporter.models;
 
 import net.sourceforge.plantuml.jsonexporter.Exporter;
+import net.sourceforge.plantuml.skin.VisibilityModifier;
 
 public class Base {
 	
 	
-	public String toArrayType(String type){
+	/**
+	 * Exchanges any array[<ClassName>] types to <ClassName>[]
+	 *
+	 * @param type the type
+	 * @return the string
+	 */
+	public static String toArrayType(String type){
 		
 		String output = type;
 		if(type != null
@@ -15,9 +22,30 @@ public class Base {
 					.replaceAll("\\[", "")
 					.replaceAll("\\]", "");
 			
-			output = Exporter.ARRAY_PREFIX + newType + Exporter.ARRAY_POSTFIX;
+			output = Exporter.OUTPUT_ARRAY_PREFIX + newType + Exporter.OUTPUT_ARRAY_POSTFIX;
 		}
 		
 		return output;
+	}
+	
+	/**
+	 * Exchanges the VisibilityModifier to public,
+	 * private, protected or package.
+	 *
+	 * @param visibilityModifier the visibility modifier
+	 * @return the string
+	 */
+	public static String toVisibility(VisibilityModifier visibilityModifier){
+		
+		if(visibilityModifier == null) { return null; }
+		
+		for(String mod: Exporter.OUTPUT_VISIBILITIES){
+			if(visibilityModifier
+				.name().toLowerCase().contains(mod)){
+				return mod;
+			}
+		}
+		
+		return null;
 	}
 }

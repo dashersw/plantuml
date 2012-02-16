@@ -7,7 +7,9 @@ import java.util.regex.Pattern;
 import net.sourceforge.plantuml.cucadiagram.Member;
 
 public class Method extends Base {
+	
 	private String methodName;
+	private String visibility;
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
 	private String returns;
 	
@@ -39,18 +41,51 @@ public class Method extends Base {
 					if(paramName!= null 
 							&& !paramName.equals("")){
 						method.parameters.add(
-							new Parameter(method.toArrayType(paramName))
+							new Parameter(toArrayType(paramName))
 						);
 					}
 				}
 			}
 		}
 		
+		// assign visibility
+		if(member.getVisibilityModifier() != null){
+			method.visibility = toVisibility(member.getVisibilityModifier());;
+		}
+		
 		// if schema includes a return type
 		if(parts.length > 1){
-			method.returns = method.toArrayType(parts[1].trim());
+			method.returns = toArrayType(parts[1].trim());
 		}
 		
 		return method;
 	}
+	
+	public boolean isConstructor(String entityCode){
+		
+		if(getMethodName() == null || entityCode == null){
+			return false;
+		}
+		
+		int index = entityCode.indexOf(getMethodName());
+		return index == 0
+				|| (index > 0 && entityCode.charAt(index-1) == '.');
+	}
+
+	public String getMethodName() {
+		return methodName;
+	}
+
+	public String getVisibility() {
+		return visibility;
+	}
+
+	public ArrayList<Parameter> getParameters() {
+		return parameters;
+	}
+
+	public String getReturns() {
+		return returns;
+	}
+	
 }

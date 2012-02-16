@@ -8,4 +8,13 @@ public class Parameter extends Base {
 	public Parameter(String param) {
 		paramName = param;
 	}
+
+	public String getParamName() {
+		return paramName;
+	}
+
+	public String getType() {
+		return type;
+	}
+
 }

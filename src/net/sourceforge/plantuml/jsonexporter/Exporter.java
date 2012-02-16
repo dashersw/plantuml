@@ -26,12 +26,10 @@ public class Exporter {
 		return instance;
 	}
 
-	public boolean write(DotData data,
-			Group group) {
+	public boolean write(DotData data, Group group) {
 
 		try {
-			String jsonFileName = group.getDisplay()
-					.toLowerCase().replaceAll(" ", "-") + ".json";
+			String jsonFileName = group.getDisplay().replaceAll(" ", "-") + ".json";
 			
 			if(group.entities() != null){	
 				// Outputs metadata about class diagram in JSON
@@ -56,7 +54,9 @@ public class Exporter {
 	}
 	
 	final public static String KEY_ARRAY = "array";
-	final public static String ARRAY_PREFIX = "";
-	final public static String ARRAY_POSTFIX = "[]";
+	final public static String[] OUTPUT_VISIBILITIES = 
+			new String[]{"public", "private", "protected", "package"};
+	final public static String OUTPUT_ARRAY_PREFIX = "";
+	final public static String OUTPUT_ARRAY_POSTFIX = "[]";
 
 }
