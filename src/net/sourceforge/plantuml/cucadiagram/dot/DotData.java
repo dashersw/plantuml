@@ -154,6 +154,19 @@ final public class DotData implements PortionShower {
 	public Map<String, ? extends IEntity> getEntities() {
 		return entities;
 	}
+	
+	public IEntity getInheritedEntity(IEntity ent){
+		// iterate over links to find an extends
+		// relationship from given entity
+		
+		for (Link link: getLinks()) {
+			if((link.getEntity2() == ent)
+				&& link.getType().isExtends()){
+				return link.getEntity1();
+			}
+		}
+		return null;
+	}
 
 	public final Set<IEntity> getAllLinkedTo(final IEntity ent1) {
 		final Set<IEntity> result = new HashSet<IEntity>();
