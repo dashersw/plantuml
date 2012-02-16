@@ -1,0 +1,8 @@
+bin/*
+img/*
+target/*
+*eclipse*
+*.jar
+json/*
+test*
+.project
