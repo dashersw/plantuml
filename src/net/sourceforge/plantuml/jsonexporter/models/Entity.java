@@ -3,6 +3,7 @@ package net.sourceforge.plantuml.jsonexporter.models;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Member;
@@ -12,8 +13,9 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 public class Entity extends Base {
 	
 	private String className;
+	private String[] namespace;
 	private String type;
-	private String superClass;
+	private String inherits;
 	private String stereotype;
 	
 	private ArrayList<String> requires = new ArrayList<String>();
@@ -24,7 +26,9 @@ public class Entity extends Base {
 	public static Entity fromPlantUmlEntity(IEntity e, DotData data){
 		
 		Entity entity = new Entity();
-		entity.className = e.getCode();
+		
+		entity.className = findClassName(e.getCode());
+		entity.namespace = findNamespace(e);
 		entity.type = e.getType().name().toLowerCase();
 		
 		if(e.getStereotype() != null){
@@ -55,13 +59,14 @@ public class Entity extends Base {
 		// check if entity relationship is inheritance
 		IEntity iEntity = data.getInheritedEntity(e);
 		if(iEntity != null){
-			entity.superClass = iEntity.getCode();
+			entity.inherits = iEntity.getCode();
 		}
 		
 		// export inheritance and requiring entities
-		Iterator<IEntity> relationsIt =  data.getAllLinkedDirectedTo(e).iterator();
-		while(relationsIt.hasNext()){
-			IEntity rEntity = relationsIt.next();
+		Set<IEntity> requiresSet = data.getAllRequiredEntities(e);
+		Iterator<IEntity> requiresIt = requiresSet.iterator();
+		while(requiresIt.hasNext()){
+			IEntity rEntity = requiresIt.next();
 			entity.requires.add(rEntity.getCode());
 		}
 		
@@ -77,7 +82,7 @@ public class Entity extends Base {
 	}
 
 	public String getSuperClass() {
-		return superClass;
+		return inherits;
 	}
 
 	public String getStereotype() {
@@ -92,6 +97,10 @@ public class Entity extends Base {
 		return properties;
 	}
 
+	public String[] getNamespace() {
+		return namespace;
+	}
+
 	public ArrayList<Method> getConstructors() {
 		return constructors;
 	}
@@ -99,5 +108,5 @@ public class Entity extends Base {
 	public ArrayList<Method> getMethods() {
 		return methods;
 	}
-	
+
 }

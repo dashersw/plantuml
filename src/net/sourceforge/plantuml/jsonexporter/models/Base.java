@@ -1,5 +1,10 @@
 package net.sourceforge.plantuml.jsonexporter.models;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.jsonexporter.Exporter;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 
@@ -47,5 +52,33 @@ public class Base {
 		}
 		
 		return null;
+	}
+	
+	public static String findClassName(String fullName){
+		String[] parts = fullName.split("\\.");
+		return parts[parts.length - 1];
+	}
+	
+	public static String[] findNamespace(IEntity e){
+		
+		Group group = e.getParent();
+		ArrayList<String> list = new ArrayList<String>();
+		
+		if(group != null){
+			do {
+				list.add(group.getCode() + ".");
+			} while((group = group.getParent()) != null);
+		}
+		
+		// the list is populated reversely
+		// but representation should be from top to bottom
+		Collections.reverse(list);
+		
+		StringBuilder builder = new StringBuilder();
+		for(String name: list){
+			builder.append(name);
+		}
+		
+		return builder.toString().split("\\.");
 	}
 }
