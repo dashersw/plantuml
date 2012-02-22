@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sourceforge.plantuml.jsonexporter.Options;
 import net.sourceforge.plantuml.preproc.Defines;
 
 public class Option {
@@ -122,7 +123,17 @@ public class Option {
 					continue;
 				}
 				outputFile = new File(StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]));
-			} else if (s.equalsIgnoreCase("-graphvizdot") || s.equalsIgnoreCase("-graphviz_dot")) {
+			} else if (s.equalsIgnoreCase("-ojson")){
+                i++;
+                if (i == arg.length) {
+                    continue;
+                }
+                // Setting json output directory in exporter module
+                // TODO: in order not to change the existing code
+                // config passing is left ugly
+                Options.FILES_OUPUT_DIRECTORY = StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(arg[i]);
+            }
+			else if (s.equalsIgnoreCase("-graphvizdot") || s.equalsIgnoreCase("-graphviz_dot")) {
 				i++;
 				if (i == arg.length) {
 					continue;

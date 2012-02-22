@@ -39,9 +39,11 @@ public class Exporter {
 		try {
 			// check if output directory exists
 			// if not, create
-			createOutputDirectoryIfDoesntExist();
 			
-			String jsonFileName = group.getDisplay().replaceAll(" ", "-") + ".json";
+			File jsonOutputDir = new File(Options.FILES_OUPUT_DIRECTORY);
+			createOutputDirectoryIfDoesntExist(jsonOutputDir);
+			
+			String jsonFileName = group.getDisplay() + ".json";
 			
 			if(group.entities() != null){	
 				// Outputs metadata about class diagram in JSON
@@ -52,7 +54,11 @@ public class Exporter {
 				}
 
 				BufferedWriter writer = new BufferedWriter(
-						new FileWriter(FILES_OUPUT_DIRECTORY + jsonFileName));
+						new FileWriter(
+							jsonOutputDir.getAbsolutePath() 
+							+ "/" 
+							+ jsonFileName));
+				
 				writer.write(new Gson().toJson(output));
 				writer.close();
 				return true;
@@ -68,19 +74,10 @@ public class Exporter {
 	/**
 	 * Creates the output directory if doesn't exist.
 	 */
-	public void createOutputDirectoryIfDoesntExist(){
-		File outputDir = new File(FILES_OUPUT_DIRECTORY);
+	public void createOutputDirectoryIfDoesntExist(File dir){
+		File outputDir = dir;
 		if(!outputDir.exists()){
 			outputDir.mkdir();
 		}
 	}
-	
-	final public static String KEY_ARRAY = "array";
-	final public static String[] OUTPUT_VISIBILITIES = 
-			new String[]{"public", "private", "protected", "package"};
-	final public static String OUTPUT_ARRAY_PREFIX = "";
-	final public static String OUTPUT_ARRAY_POSTFIX = "[]";
-	
-	final public static String FILES_OUPUT_DIRECTORY = "json/";
-
 }
