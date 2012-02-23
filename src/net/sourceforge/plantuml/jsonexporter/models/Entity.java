@@ -15,10 +15,10 @@ public class Entity extends Base {
 	private String className;
 	private String[] namespace;
 	private String type;
-	private String inherits;
+	private EntityInfo inherits;
 	private String stereotype;
 	
-	private ArrayList<String> requires = new ArrayList<String>();
+	private ArrayList<EntityInfo> requires = new ArrayList<EntityInfo>();
 	private ArrayList<Property> properties = new ArrayList<Property>();
 	private ArrayList<Method> constructors = new ArrayList<Method>();
 	private ArrayList<Method> methods = new ArrayList<Method>();
@@ -59,7 +59,7 @@ public class Entity extends Base {
 		// check if entity relationship is inheritance
 		IEntity iEntity = data.getInheritedEntity(e);
 		if(iEntity != null){
-			entity.inherits = iEntity.getCode();
+			entity.inherits = EntityInfo.fromPlantUmlEntity(iEntity);
 		}
 		
 		// export inheritance and requiring entities
@@ -67,7 +67,7 @@ public class Entity extends Base {
 		Iterator<IEntity> requiresIt = requiresSet.iterator();
 		while(requiresIt.hasNext()){
 			IEntity rEntity = requiresIt.next();
-			entity.requires.add(rEntity.getCode());
+			entity.requires.add(EntityInfo.fromPlantUmlEntity(rEntity));
 		}
 		
 		return entity;
@@ -81,7 +81,7 @@ public class Entity extends Base {
 		return type;
 	}
 
-	public String getSuperClass() {
+	public EntityInfo getSuperClass() {
 		return inherits;
 	}
 
@@ -89,7 +89,7 @@ public class Entity extends Base {
 		return stereotype;
 	}
 
-	public ArrayList<String> getRequires() {
+	public ArrayList<EntityInfo> getRequires() {
 		return requires;
 	}
 
