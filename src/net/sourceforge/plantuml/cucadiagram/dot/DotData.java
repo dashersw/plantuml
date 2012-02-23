@@ -160,12 +160,23 @@ final public class DotData implements PortionShower {
 		// relationship from given entity
 		
 		for (Link link: getLinks()) {
-			if((link.getEntity2() == ent)
+			if((link.getEntity1() == ent)
 				&& link.getType().isExtends()){
-				return link.getEntity1();
+				return link.getEntity2();
 			}
 		}
 		return null;
+	}
+	
+	public Set<IEntity> getAllRequiredEntities(IEntity ent){
+		
+		Set<IEntity> output = new HashSet<IEntity>();
+		for (Link link: getLinks()) {
+			if(link.getEntity1() == ent){
+				output.add(link.getEntity2());
+			}
+		}
+		return output;
 	}
 
 	public final Set<IEntity> getAllLinkedTo(final IEntity ent1) {

@@ -3,6 +3,7 @@ package net.sourceforge.plantuml.jsonexporter.models;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Member;
@@ -12,11 +13,12 @@ import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 public class Entity extends Base {
 	
 	private String className;
+	private String[] namespace;
 	private String type;
-	private String superClass;
+	private EntityInfo inherits;
 	private String stereotype;
 	
-	private ArrayList<String> requires = new ArrayList<String>();
+	private ArrayList<EntityInfo> requires = new ArrayList<EntityInfo>();
 	private ArrayList<Property> properties = new ArrayList<Property>();
 	private ArrayList<Method> constructors = new ArrayList<Method>();
 	private ArrayList<Method> methods = new ArrayList<Method>();
@@ -24,7 +26,9 @@ public class Entity extends Base {
 	public static Entity fromPlantUmlEntity(IEntity e, DotData data){
 		
 		Entity entity = new Entity();
-		entity.className = e.getCode();
+		
+		entity.className = findClassName(e.getCode());
+		entity.namespace = findNamespace(e);
 		entity.type = e.getType().name().toLowerCase();
 		
 		if(e.getStereotype() != null){
@@ -55,14 +59,15 @@ public class Entity extends Base {
 		// check if entity relationship is inheritance
 		IEntity iEntity = data.getInheritedEntity(e);
 		if(iEntity != null){
-			entity.superClass = iEntity.getCode();
+			entity.inherits = EntityInfo.fromPlantUmlEntity(iEntity);
 		}
 		
 		// export inheritance and requiring entities
-		Iterator<IEntity> relationsIt =  data.getAllLinkedDirectedTo(e).iterator();
-		while(relationsIt.hasNext()){
-			IEntity rEntity = relationsIt.next();
-			entity.requires.add(rEntity.getCode());
+		Set<IEntity> requiresSet = data.getAllRequiredEntities(e);
+		Iterator<IEntity> requiresIt = requiresSet.iterator();
+		while(requiresIt.hasNext()){
+			IEntity rEntity = requiresIt.next();
+			entity.requires.add(EntityInfo.fromPlantUmlEntity(rEntity));
 		}
 		
 		return entity;
@@ -76,20 +81,24 @@ public class Entity extends Base {
 		return type;
 	}
 
-	public String getSuperClass() {
-		return superClass;
+	public EntityInfo getSuperClass() {
+		return inherits;
 	}
 
 	public String getStereotype() {
 		return stereotype;
 	}
 
-	public ArrayList<String> getRequires() {
+	public ArrayList<EntityInfo> getRequires() {
 		return requires;
 	}
 
 	public ArrayList<Property> getProperties() {
 		return properties;
+	}
+
+	public String[] getNamespace() {
+		return namespace;
 	}
 
 	public ArrayList<Method> getConstructors() {
@@ -99,5 +108,5 @@ public class Entity extends Base {
 	public ArrayList<Method> getMethods() {
 		return methods;
 	}
-	
+
 }

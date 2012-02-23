@@ -1,6 +1,7 @@
 package net.sourceforge.plantuml.jsonexporter;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -26,10 +27,23 @@ public class Exporter {
 		return instance;
 	}
 
+	/**
+	 * Writes the given group to the output directory.
+	 *
+	 * @param data
+	 * @param group
+	 * @return true, if write successful
+	 */
 	public boolean write(DotData data, Group group) {
 
 		try {
-			String jsonFileName = group.getDisplay().replaceAll(" ", "-") + ".json";
+			// check if output directory exists
+			// if not, create
+			
+			File jsonOutputDir = new File(Options.FILES_OUPUT_DIRECTORY);
+			createOutputDirectoryIfDoesntExist(jsonOutputDir);
+			
+			String jsonFileName = group.getDisplay() + ".json";
 			
 			if(group.entities() != null){	
 				// Outputs metadata about class diagram in JSON
@@ -40,7 +54,11 @@ public class Exporter {
 				}
 
 				BufferedWriter writer = new BufferedWriter(
-						new FileWriter("json/" + jsonFileName));
+						new FileWriter(
+							jsonOutputDir.getAbsolutePath() 
+							+ "/" 
+							+ jsonFileName));
+				
 				writer.write(new Gson().toJson(output));
 				writer.close();
 				return true;
@@ -53,10 +71,13 @@ public class Exporter {
 		return false;
 	}
 	
-	final public static String KEY_ARRAY = "array";
-	final public static String[] OUTPUT_VISIBILITIES = 
-			new String[]{"public", "private", "protected", "package"};
-	final public static String OUTPUT_ARRAY_PREFIX = "";
-	final public static String OUTPUT_ARRAY_POSTFIX = "[]";
-
+	/**
+	 * Creates the output directory if doesn't exist.
+	 */
+	public void createOutputDirectoryIfDoesntExist(File dir){
+		File outputDir = dir;
+		if(!outputDir.exists()){
+			outputDir.mkdir();
+		}
+	}
 }
