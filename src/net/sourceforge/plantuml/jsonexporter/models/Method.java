@@ -17,33 +17,29 @@ public class Method extends Base {
 		
 		Method method = new Method();
 		
-		String fullName = member.getDisplayWithoutVisibilityChar();
+		String fullName = member.getDisplayWithoutVisibilityChar().trim();
 		
-		// split signature and return type
-		String[] parts = fullName.split(":");
+		// parses method name and return type
+		Pattern outputTypeSearchPattern = Pattern.compile("(\\w+)\\s*\\([^\\)]*\\)\\s*(:\\s*(\\w+))?");
+		Matcher m = outputTypeSearchPattern.matcher(fullName);
 		
-		// find method name and params list
-		Pattern p = Pattern.compile("(\\w+)\\s*\\((.*)\\)");
-		Matcher matcher = p.matcher(parts[0].trim());
+		while(m.find()){
+			method.methodName = m.group(1);
+			method.returns = m.group(3);
+		}
 		
-		if(matcher.matches()){
+		
+		// parses method parameters
+		Pattern paramsPattern = Pattern.compile("\\(([^\\)]*)\\)");
+		m = paramsPattern.matcher(fullName);
+		
+		if(m.find()){
+			String paramSignature = m.group(1);
+			String[] params = paramSignature.split(",");
 			
-			method.methodName = matcher.group(1).trim();
-			
-			// if method has params
-			if(matcher.groupCount() >= 2){
-				
-				// split param names
-				String[] paramParts = matcher.group(2).split(",");
-				
-				for(String param: paramParts){
-					String paramName = param.trim();
-					if(paramName!= null 
-							&& !paramName.equals("")){
-						method.parameters.add(
-							new Parameter(toArrayType(paramName))
-						);
-					}
+			for(String param: params){
+				if(!param.equals("")){
+					method.parameters.add(new Parameter(param));
 				}
 			}
 		}
@@ -51,11 +47,6 @@ public class Method extends Base {
 		// assign visibility
 		if(member.getVisibilityModifier() != null){
 			method.visibility = toVisibility(member.getVisibilityModifier());;
-		}
-		
-		// if schema includes a return type
-		if(parts.length > 1){
-			method.returns = toArrayType(parts[1].trim());
 		}
 		
 		return method;

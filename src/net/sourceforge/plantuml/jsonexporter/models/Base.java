@@ -1,6 +1,11 @@
 package net.sourceforge.plantuml.jsonexporter.models;
 
-import net.sourceforge.plantuml.jsonexporter.Exporter;
+import java.util.ArrayList;
+import java.util.Collections;
+
+import net.sourceforge.plantuml.cucadiagram.Group;
+import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.jsonexporter.Options;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 
 public class Base {
@@ -16,13 +21,15 @@ public class Base {
 		
 		String output = type;
 		if(type != null
-			&& type.contains(Exporter.KEY_ARRAY)){
+			&& type.contains(Options.KEY_ARRAY)){
 			
-			String newType = type.replaceAll(Exporter.KEY_ARRAY, "")
+			String newType = type.replaceAll(Options.KEY_ARRAY, "")
 					.replaceAll("\\[", "")
 					.replaceAll("\\]", "");
 			
-			output = Exporter.OUTPUT_ARRAY_PREFIX + newType + Exporter.OUTPUT_ARRAY_POSTFIX;
+			output = Options.OUTPUT_ARRAY_PREFIX 
+					+ newType 
+					+ Options.OUTPUT_ARRAY_POSTFIX;
 		}
 		
 		return output;
@@ -39,7 +46,7 @@ public class Base {
 		
 		if(visibilityModifier == null) { return null; }
 		
-		for(String mod: Exporter.OUTPUT_VISIBILITIES){
+		for(String mod: Options.OUTPUT_VISIBILITIES){
 			if(visibilityModifier
 				.name().toLowerCase().contains(mod)){
 				return mod;
@@ -47,5 +54,33 @@ public class Base {
 		}
 		
 		return null;
+	}
+	
+	public static String findClassName(String fullName){
+		String[] parts = fullName.split("\\.");
+		return parts[parts.length - 1];
+	}
+	
+	public static String[] findNamespace(IEntity e){
+		
+		Group group = e.getParent();
+		ArrayList<String> list = new ArrayList<String>();
+		
+		if(group != null){
+			do {
+				list.add(group.getCode() + ".");
+			} while((group = group.getParent()) != null);
+		}
+		
+		// the list is populated reversely
+		// but representation should be from top to bottom
+		Collections.reverse(list);
+		
+		StringBuilder builder = new StringBuilder();
+		for(String name: list){
+			builder.append(name);
+		}
+		
+		return builder.toString().split("\\.");
 	}
 }
