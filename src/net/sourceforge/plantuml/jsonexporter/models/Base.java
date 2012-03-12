@@ -1,11 +1,14 @@
 package net.sourceforge.plantuml.jsonexporter.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.jsonexporter.Options;
+import net.sourceforge.plantuml.jsonexporter.Utils;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
 
 public class Base {
@@ -54,6 +57,15 @@ public class Base {
 		}
 		
 		return null;
+	}
+	
+	public static String toFullName(String className, String[] namespace){
+		if(namespace != null){
+			List<String> parts = new ArrayList<String>(Arrays.asList(namespace));
+			parts.add(className);
+			return Utils.join(parts, ".");
+		}
+		return className;
 	}
 	
 	public static String findClassName(String fullName){
