@@ -14,6 +14,7 @@ public class Entity extends Base {
 	
 	private String className;
 	private String[] namespace;
+	private String fullName;
 	private String type;
 	private EntityInfo inherits;
 	private String stereotype;
@@ -29,10 +30,11 @@ public class Entity extends Base {
 		
 		entity.className = findClassName(e.getCode());
 		entity.namespace = findNamespace(e);
+		entity.fullName = toFullName(entity.className, entity.namespace);
 		entity.type = e.getType().name().toLowerCase();
 		
 		if(e.getStereotype() != null){
-			entity.stereotype = e.getStereotype().getLabel();
+			entity.stereotype = e.getStereotype().getLabel().replaceAll("<<", "").replaceAll(">>", "");
 		}
 		
 		List<Member> members = e.getFieldsToDisplay();
@@ -99,6 +101,10 @@ public class Entity extends Base {
 
 	public String[] getNamespace() {
 		return namespace;
+	}
+	
+	public String getFullName() {
+		return fullName;
 	}
 
 	public ArrayList<Method> getConstructors() {
