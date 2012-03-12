@@ -32,7 +32,7 @@ public class Entity extends Base {
 		entity.type = e.getType().name().toLowerCase();
 		
 		if(e.getStereotype() != null){
-			entity.stereotype = e.getStereotype().getLabel();
+			entity.stereotype = e.getStereotype().getLabel().replaceAll("<<", "").replaceAll(">>", "");
 		}
 		
 		List<Member> members = e.getFieldsToDisplay();

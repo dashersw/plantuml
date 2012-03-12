@@ -12,14 +12,13 @@ public class Parameter extends Base {
 		
 		paramName = paramSignature;
 		
-		Pattern parser = Pattern.compile("(\\w+)(\\s*:\\s*(\\w+))?");
+		Pattern parser = Pattern.compile("\\s*(\\w+)\\s*(:\\s*([\\w|\\.]+))?");
 		Matcher m = parser.matcher(paramSignature);
 		
 		if(m.matches()){
 			paramName = m.group(1);
 			type = toArrayType((m.group(3)));
 		}
-		
 	}
 
 	public String getParamName() {
