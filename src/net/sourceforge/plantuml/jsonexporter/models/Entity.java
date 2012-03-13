@@ -14,7 +14,7 @@ public class Entity extends Base {
 	
 	private String className;
 	private String[] namespace;
-	private String fullName;
+	private String name; // avoiding name collision
 	private String type;
 	private EntityInfo inherits;
 	private String stereotype;
@@ -30,7 +30,7 @@ public class Entity extends Base {
 		
 		entity.className = findClassName(e.getCode());
 		entity.namespace = findNamespace(e);
-		entity.fullName = toFullName(entity.className, entity.namespace);
+		entity.name = toFullName(entity.className, entity.namespace);
 		entity.type = e.getType().name().toLowerCase();
 		
 		if(e.getStereotype() != null){
@@ -103,8 +103,8 @@ public class Entity extends Base {
 		return namespace;
 	}
 	
-	public String getFullName() {
-		return fullName;
+	public String getName() {
+		return name;
 	}
 
 	public ArrayList<Method> getConstructors() {
