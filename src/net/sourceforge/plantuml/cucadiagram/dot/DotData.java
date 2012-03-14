@@ -50,6 +50,7 @@ import net.sourceforge.plantuml.cucadiagram.Group;
 import net.sourceforge.plantuml.cucadiagram.GroupHierarchy;
 import net.sourceforge.plantuml.cucadiagram.IEntity;
 import net.sourceforge.plantuml.cucadiagram.Link;
+import net.sourceforge.plantuml.cucadiagram.LinkDecor;
 import net.sourceforge.plantuml.cucadiagram.PortionShower;
 import net.sourceforge.plantuml.cucadiagram.Rankdir;
 import net.sourceforge.plantuml.skin.VisibilityModifier;
@@ -160,9 +161,17 @@ final public class DotData implements PortionShower {
 		// relationship from given entity
 		
 		for (Link link: getLinks()) {
-			if((link.getEntity1() == ent)
-				&& link.getType().isExtends()){
-				return link.getEntity2();
+			if((link.getEntity2() == ent)){
+				if(link.getType().getDecor2() == LinkDecor.EXTENDS){
+					return link.getEntity1();
+				}
+			}
+			
+			// search mirrored
+			if((link.getEntity1() == ent)){
+				if(link.getType().getDecor1() == LinkDecor.EXTENDS){
+					return link.getEntity2();
+				}
 			}
 		}
 		return null;
@@ -170,10 +179,26 @@ final public class DotData implements PortionShower {
 	
 	public Set<IEntity> getAllRequiredEntities(IEntity ent){
 		
+		// Find all associations and references made from ent
 		Set<IEntity> output = new HashSet<IEntity>();
+		output.add(getInheritedEntity(ent));
+
 		for (Link link: getLinks()) {
-			if(link.getEntity1() == ent){
+			// TODO: move the logic to separate testers.
+			if (link.getEntity1() == ent
+					&& link.getType().getDecor1() == LinkDecor.ARROW) {
 				output.add(link.getEntity2());
+			} else if (link.getEntity2() == ent
+					&& link.getType().getDecor2() == LinkDecor.ARROW) {
+				output.add(link.getEntity1());
+			}
+			
+			if (link.getEntity1() == ent
+					&& link.getType().getDecor2() == LinkDecor.AGREGATION) {
+				output.add(link.getEntity2());
+			} else if (link.getEntity2() == ent
+					&& link.getType().getDecor1() == LinkDecor.AGREGATION) {
+				output.add(link.getEntity1());
 			}
 		}
 		return output;

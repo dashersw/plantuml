@@ -69,7 +69,9 @@ public class Entity extends Base {
 		Iterator<IEntity> requiresIt = requiresSet.iterator();
 		while(requiresIt.hasNext()){
 			IEntity rEntity = requiresIt.next();
-			entity.requires.add(EntityInfo.fromPlantUmlEntity(rEntity));
+			if(rEntity != null){
+				entity.requires.add(EntityInfo.fromPlantUmlEntity(rEntity));
+			}
 		}
 		
 		return entity;

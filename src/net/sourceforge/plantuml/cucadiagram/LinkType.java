@@ -203,7 +203,7 @@ public class LinkType {
 	}
 
 	public boolean isExtends() {
-		return decor1 == LinkDecor.EXTENDS || decor2 == LinkDecor.EXTENDS;
+		return decor2 == LinkDecor.EXTENDS;
 	}
 
 	private boolean isPlus() {
