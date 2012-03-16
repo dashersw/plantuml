@@ -20,7 +20,7 @@ public class Method extends Base {
 		String fullName = member.getDisplayWithoutVisibilityChar().trim();
 		
 		// parses method name and return type
-		Pattern outputTypeSearchPattern = Pattern.compile("(\\w+)\\s*\\([^\\)]*\\)\\s*(:\\s*(\\w+))?");
+		Pattern outputTypeSearchPattern = Pattern.compile("(\\w+)\\s*\\([^\\)]*\\)\\s*(:\\s*(\\w+(\\[\\])?))?");
 		Matcher m = outputTypeSearchPattern.matcher(fullName);
 		
 		while(m.find()){
