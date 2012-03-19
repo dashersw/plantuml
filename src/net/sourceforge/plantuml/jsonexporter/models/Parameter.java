@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 public class Parameter extends Base {
 	
 	private String paramName;
-	private String type;
+	private Type type;
 	
 	public Parameter(String paramSignature) {
 		
@@ -17,7 +17,10 @@ public class Parameter extends Base {
 		
 		if(m.matches()){
 			paramName = m.group(1);
-			type = toArrayType(m.group(3));
+			String typeSignature = (m.group(3));
+			if(typeSignature != null){
+				type = new Type(typeSignature);
+			}
 		}
 	}
 
@@ -25,7 +28,7 @@ public class Parameter extends Base {
 		return paramName;
 	}
 
-	public String getType() {
+	public Type getType() {
 		return type;
 	}
 

@@ -11,7 +11,7 @@ public class Method extends Base {
 	private String methodName;
 	private String visibility;
 	private ArrayList<Parameter> parameters = new ArrayList<Parameter>();
-	private String returns;
+	private Type returns;
 	
 	public static Method fromPlantUmlMember(Member member){
 		
@@ -25,7 +25,10 @@ public class Method extends Base {
 		
 		while(m.find()){
 			method.methodName = m.group(1);
-			method.returns = m.group(3);
+			String returnSignature = m.group(3);
+			if(returnSignature != null){
+				method.returns = new Type(returnSignature);
+			}
 		}
 		
 		
@@ -75,7 +78,7 @@ public class Method extends Base {
 		return parameters;
 	}
 
-	public String getReturns() {
+	public Type getReturns() {
 		return returns;
 	}
 	

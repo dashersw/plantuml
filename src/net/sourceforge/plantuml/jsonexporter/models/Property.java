@@ -6,8 +6,7 @@ public class Property extends Base {
 	
 	private String propName;
 	private String visibility;
-	private String type;
-	private String cmp;
+	private Type type;
 	
 	public static Property fromPlantUmlMember(Member member){
 		
@@ -18,7 +17,7 @@ public class Property extends Base {
 		property.propName = parts[0].trim();
 		
 		if(parts.length > 1){	
-			property.type = toArrayType(parts[1].trim());
+			property.type = new Type(parts[1].trim());
 		}
 		
 		// assign visibility
@@ -37,12 +36,8 @@ public class Property extends Base {
 		return visibility;
 	}
 
-	public String getType() {
+	public Type getType() {
 		return type;
-	}
-
-	public String getCmp() {
-		return cmp;
 	}
 	
 }

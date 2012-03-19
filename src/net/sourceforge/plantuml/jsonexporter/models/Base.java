@@ -13,31 +13,6 @@ import net.sourceforge.plantuml.skin.VisibilityModifier;
 
 public class Base {
 	
-	
-	/**
-	 * Exchanges any array[<ClassName>] types to <ClassName>[]
-	 *
-	 * @param type the type
-	 * @return the string
-	 */
-	public static String toArrayType(String type){
-		
-		String output = type;
-		if(type != null
-			&& type.contains(Options.KEY_ARRAY)){
-			
-			String newType = type.replaceAll(Options.KEY_ARRAY, "")
-					.replaceAll("\\[", "")
-					.replaceAll("\\]", "");
-			
-			output = Options.OUTPUT_ARRAY_PREFIX 
-					+ newType 
-					+ Options.OUTPUT_ARRAY_POSTFIX;
-		}
-		
-		return output;
-	}
-	
 	/**
 	 * Exchanges the VisibilityModifier to public,
 	 * private, protected or package.
