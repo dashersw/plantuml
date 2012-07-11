@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.sourceforge.plantuml.cucadiagram.IEntity;
+import net.sourceforge.plantuml.cucadiagram.Link;
 import net.sourceforge.plantuml.cucadiagram.Member;
 import net.sourceforge.plantuml.cucadiagram.dot.DotData;
 
@@ -19,7 +20,7 @@ public class Entity extends Base {
 	private EntityInfo inherits;
 	private String stereotype;
 	
-	private ArrayList<EntityInfo> requires = new ArrayList<EntityInfo>();
+	private ArrayList<Relation> requires = new ArrayList<Relation>();
 	private ArrayList<Property> properties = new ArrayList<Property>();
 	private ArrayList<Method> constructors = new ArrayList<Method>();
 	private ArrayList<Method> methods = new ArrayList<Method>();
@@ -65,12 +66,13 @@ public class Entity extends Base {
 		}
 		
 		// export inheritance and requiring entities
-		Set<IEntity> requiresSet = data.getAllRequiredEntities(e);
-		Iterator<IEntity> requiresIt = requiresSet.iterator();
-		while(requiresIt.hasNext()){
-			IEntity rEntity = requiresIt.next();
-			if(rEntity != null){
-				entity.requires.add(EntityInfo.fromPlantUmlEntity(rEntity));
+		for (Link link: data.getLinks()) {
+
+			Relation relation = new Relation();			
+			if (entity.className.equals(findClassName(link.getEntity1().getCode()))) {
+				entity.requires.add(relation.fromPlantUmlEntity(link, 2));
+			} else if (entity.className.equals(findClassName(link.getEntity2().getCode()))) {
+				entity.requires.add(relation.fromPlantUmlEntity(link, 1));				
 			}
 		}
 		
@@ -93,7 +95,7 @@ public class Entity extends Base {
 		return stereotype;
 	}
 
-	public ArrayList<EntityInfo> getRequires() {
+	public ArrayList<Relation> getRequires() {
 		return requires;
 	}
 
